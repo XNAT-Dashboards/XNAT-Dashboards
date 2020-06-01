@@ -14,6 +14,8 @@ class Fetcher:
                             password = password   )
 
         self.SELECTOR = SELECTOR
+        self.get_projects_details()
+        self.get_subjects_details()
 
     def get_projects_details(self):
 
@@ -43,19 +45,19 @@ class Fetcher:
             project_details = {}
             
             if(project['proj_mr_count'] == ''):
-                project_details['proj_mr_count'] == 0
+                project_details['proj_mr_count'] = 0
             else:
-                project_details['proj_mr_count'] == int(project['proj_mr_count'])
+                project_details['proj_mr_count'] = int(project['proj_mr_count'])
 
             if(project['proj_ct_count'] == ''):
-                project_details['proj_ct_count'] == 0
+                project_details['proj_ct_count'] = 0
             else:
-                project_details['proj_ct_count'] == int(project['proj_ct_count'])
+                project_details['proj_ct_count'] = int(project['proj_ct_count'])
 
             if(project['proj_pet_count'] == ''):
-                project_details['proj_pet_count'] == 0
+                project_details['proj_pet_count'] = 0
             else:
-                project_details['proj_pet_count'] == int(project['proj_pet_count'])
+                project_details['proj_pet_count'] = int(project['proj_pet_count'])
 
             projects_details[project['id']] = project_details
 
@@ -77,6 +79,7 @@ class Fetcher:
         # to the global stats dictionary
 
         subjects_details = {}
+        subjects_per_project = {}
 
         for subject in subjects: 
             
@@ -93,17 +96,14 @@ class Fetcher:
             subject_details = {}
             
             if(subject['handedness_text'] == ''):
-                subject_details['handedness_text'] == 'U'
+                subject_details['handedness_text'] = 'U'
             else:
-                subject_details['handedness_text'] == int(subject['handedness_text'])
+                subject_details['handedness_text'] = subject['handedness_text']
 
             if(subject['gender_text'] == ''):
-                subject_details['gender_text'] == 'U'
+                subject_details['gender_text'] = 'U'
             else:
-                subject_details['gender_text'] == int(subject['gender_text'])
-
-            subjects_per_project = {}
-
+                subject_details['gender_text'] = subject['gender_text']
 
             if(subject['project'] in subjects_per_project):
                 subjects_per_project[subject['project']] = subjects_per_project[subject['project']] + 1
