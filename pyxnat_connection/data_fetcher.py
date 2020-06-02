@@ -122,10 +122,18 @@ class Fetcher:
 
         subjects_details['number_of_subjects'] = len(subjects_details)
 
-        self.stats['get_project_details'] = subjects_details
+        self.stats['get_subjects_details'] = subjects_details
         self.stats['subjects_per_project'] = subjects_per_project
 
     def get_experiments_details(self):
+
+        '''
+        Using array method to get the experiment information present on XNAT.
+
+        This will add a get_experiment_details key in stats dictionary
+        which will have details of number of experiments, experiment per
+        project, type of experiment, experiment per subjects.
+        '''
 
         experiments = self.SELECTOR.array.experiments(
                                             experiment_type='',
@@ -167,3 +175,88 @@ class Fetcher:
         experiments_details['experiment_per_project'] = experiments_per_project
 
         self.stats['get_experiments_details'] = experiments_details
+
+    def get_scan_details(self):
+
+        '''
+        Using array method to get the scans information present on XNAT.
+
+        This will add a get_scans_details key in stats dictionary
+        which will have details of number of scans, scans per subject,
+        scans per project, scans per experimetn, type of experiment,
+        scan quality (usable or unusable), xsi type of scan.
+        '''
+
+        scans = self.SELECTOR.array.scans(
+            columns=['xnat:imageScanData/quality', 'xnat:imageScanData/type'])
+
+        usable_scans = 0
+        unusable_scans = 0
+
+        for item in scans:
+            if(item['xnat:imagescandata/quality'] == 'usable'):
+                usable_scans = usable_scans+1
+            else:
+                unusable_scans = unusable_scans + 1
+
+        scans_details = {}
+
+        scans_details['usable_scans'] = usable_scans
+        scans_details['unusable_scans'] = unusable_scans
+
+        typeDict = {}
+
+        for item in scans:
+            if(item['xnat:imagescandata/type'] in typeDict):
+                typeDict[item['xnat:imagescandata/type']] =\
+                        typeDict[item['xnat:imagescandata/type']] + 1
+            else:
+                typeDict[item['xnat:imagescandata/type']] = 1
+
+        scans_details['scan_types'] = typeDict
+
+        xsi_type_dict = {}
+
+        for item in scans:
+            if(item['xsiType'] in xsi_type_dict):
+                xsi_type_dict[item['xsiType']] = \
+                                    xsi_type_dict[item['xsiType']] + 1
+            else:
+                xsi_type_dict[item['xsiType']] = 1
+
+        scans_details['xsi_scan_types'] = xsi_type_dict
+
+        scans_per_project = {}
+
+        for item in scans:
+            if(item['project'] in scans_per_project):
+                scans_per_project[item['project']] = \
+                        scans_per_project[item['project']] + 1
+            else:
+                scans_per_project[item['project']] = 1
+
+        scans_details['scans_per_project'] = scans_per_project
+
+        scans_per_subject = {}
+
+        for item in scans:
+            if(item['xnat:imagesessiondata/subject_id'] in scans_per_subject):
+                scans_per_subject[item['xnat:imagesessiondata/subject_id']] = \
+                    scans_per_subject[item['xnat:imagesessiondata/subject_id']] + 1
+            else:
+                scans_per_subject[item['project']] = 1
+
+        scans_details['scans_per_subject'] = scans_per_subject
+
+        scans_per_experiment = {}
+
+        for item in scans:
+            if(item['ID'] in scans_per_subject):
+                scans_per_experiment[item['ID']] = \
+                    scans_per_experiment[item['ID']] + 1
+            else:
+                scans_per_experiment[item['ID']] = 1
+
+        scans_details['scans_per_experiment'] = scans_per_experiment
+        scans_details['number_of_scans'] = len(scans)
+        self.stats['get_scans_details'] = scans_details
