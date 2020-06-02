@@ -14,6 +14,8 @@ class Fetcher:
         self.SELECTOR = SELECTOR
         self.get_projects_details()
         self.get_subjects_details()
+        self.get_experiments_details()
+        self.get_scan_details()
 
     def get_projects_details(self):
 
@@ -204,16 +206,16 @@ class Fetcher:
         scans_details['usable_scans'] = usable_scans
         scans_details['unusable_scans'] = unusable_scans
 
-        typeDict = {}
+        type_dict = {}
 
         for item in scans:
-            if(item['xnat:imagescandata/type'] in typeDict):
-                typeDict[item['xnat:imagescandata/type']] =\
-                        typeDict[item['xnat:imagescandata/type']] + 1
+            if(item['xnat:imagescandata/type'] in type_dict):
+                type_dict[item['xnat:imagescandata/type']] =\
+                        type_dict[item['xnat:imagescandata/type']] + 1
             else:
-                typeDict[item['xnat:imagescandata/type']] = 1
+                type_dict[item['xnat:imagescandata/type']] = 1
 
-        scans_details['scan_types'] = typeDict
+        scans_details['scan_types'] = type_dict
 
         xsi_type_dict = {}
 
