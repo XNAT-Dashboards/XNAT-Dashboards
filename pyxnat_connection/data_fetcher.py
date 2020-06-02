@@ -62,7 +62,9 @@ class Fetcher:
                 project_details['proj_pet_count'] =\
                     int(project['proj_pet_count'])
 
-            projects_details[project['id']] = project_details
+            projects_details[project['id']] = projects_details
+
+        projects_details['number_of_projects'] = len(projects)
 
         self.stats['get_projects_details'] = project_details
 
@@ -118,5 +120,50 @@ class Fetcher:
             subjects_details[subject['xnat_col_subjectdatalabel']] =\
                 subject_details
 
+        subjects_details['number_of_subjects'] = len(subjects_details)
+
         self.stats['get_project_details'] = subjects_details
         self.stats['subjects_per_project'] = subjects_per_project
+
+    def get_experiments_details(self):
+
+        experiments = self.SELECTOR.array.experiments(
+                                            experiment_type='',
+                                            columns=['subject_ID']).data
+
+        experiments_details = {}
+
+        experiments_details['number_of_experiments'] = len(experiments)
+
+        experiments_per_project = {}
+
+        for item in experiments:
+            if(item['project'] in experiments_per_project):
+                experiments_per_project[item['project']] = \
+                    experiments_per_project[item['project']] + 1
+            else:
+                experiments_per_project[item['project']] = 1
+
+        experiment_type = {}
+
+        for item in experiments:
+            if(item['xsiType'] in experiment_type):
+                experiment_type[item['xsiType']] = \
+                    experiment_type[item['xsiType']] + 1
+            else:
+                experiment_type[item['xsiType']] = 1
+
+        experiments_per_subject = {}
+
+        for item in experiments:
+            if(item['subject_ID'] in experiments_per_subject):
+                experiments_per_subject[item['subject_ID']] = \
+                    experiments_per_subject[item['subject_ID']] + 1
+            else:
+                experiments_per_subject[item['subject_ID']] = 1
+
+        experiments_details['experiments_per_subject'] = experiments_per_subject
+        experiments_details['experiment_types'] = experiment_type
+        experiments_details['experiment_per_project'] = experiments_per_project
+
+        self.stats['get_experiments_details'] = experiments_details
