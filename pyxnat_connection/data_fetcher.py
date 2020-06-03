@@ -24,7 +24,7 @@ class Fetcher:
             projects = self.SELECTOR.select('xnat:projectData').all().data
         except Exception:
             print("ERROR : Unable to connect to the database")
-            self.stats['get_subjects_details'] = None
+            self.stats['get_projects_details'] = None
             return None
 
         # Projects_details is a dictionary which will add details of all
@@ -136,10 +136,13 @@ class Fetcher:
         which will have details of number of experiments, experiment per
         project, type of experiment, experiment per subjects.
         '''
-
-        experiments = self.SELECTOR.array.experiments(
+        try:
+            experiments = self.SELECTOR.array.experiments(
                                             experiment_type='',
                                             columns=['subject_ID']).data
+        except Exception:
+            self.stats['get_experiments_details'] = None
+            return None
 
         experiments_details = {}
 
@@ -188,9 +191,13 @@ class Fetcher:
         scans per project, scans per experimetn, type of experiment,
         scan quality (usable or unusable), xsi type of scan.
         '''
-
-        scans = self.SELECTOR.array.scans(
-            columns=['xnat:imageScanData/quality', 'xnat:imageScanData/type'])
+        try:
+            scans = self.SELECTOR.array.scans(
+                columns=['xnat:imageScanData/quality',
+                         'xnat:imageScanData/type'])
+        except Exception:
+            self.stats['get_scans_details'] = None
+            return None
 
         usable_scans = 0
         unusable_scans = 0
