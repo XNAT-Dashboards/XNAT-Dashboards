@@ -4,7 +4,6 @@ from pyxnat import Interface
 class Fetcher:
 
     SELECTOR = None
-    stats = {}
 
     # Initializing the central interface object in the constructor
     def __init__(self, name, password, instance_url):
@@ -12,10 +11,6 @@ class Fetcher:
         SELECTOR = Interface(server=instance_url, user=name, password=password)
 
         self.SELECTOR = SELECTOR
-        self.get_projects_details()
-        self.get_subjects_details()
-        self.get_experiments_details()
-        self.get_scan_details()
 
     def get_projects_details(self):
 
@@ -24,8 +19,7 @@ class Fetcher:
             projects = self.SELECTOR.select('xnat:projectData').all().data
         except Exception:
             print("ERROR : Unable to connect to the database")
-            self.stats['get_projects_details'] = None
-            return None
+            return 1
 
         # Projects_details is a dictionary which will add details of all
         # projects to the global stats dictionary
@@ -68,7 +62,7 @@ class Fetcher:
 
         projects_details['number_of_projects'] = len(projects)
 
-        self.stats['get_projects_details'] = project_details
+        return projects_details
 
     def get_subjects_details(self):
 
@@ -77,8 +71,7 @@ class Fetcher:
             subjects = self.SELECTOR.select('xnat:subjectData').all().data
         except Exception:
             print("ERROR : Unable to connect to the database")
-            self.stats['get_subjects_details'] = None
-            return None
+            return 1
 
         # Subject_details is a dictionary which will add details of
         # all subjects to the global stats dictionary
@@ -124,8 +117,11 @@ class Fetcher:
 
         subjects_details['number_of_subjects'] = len(subjects_details)
 
-        self.stats['get_subjects_details'] = subjects_details
-        self.stats['subjects_per_project'] = subjects_per_project
+        stats = {}
+        stats['get_subjects_details'] = subjects_details
+        stats['subjects_per_project'] = subjects_per_project
+
+        return stats
 
     def get_experiments_details(self):
 
@@ -141,8 +137,7 @@ class Fetcher:
                                             experiment_type='',
                                             columns=['subject_ID']).data
         except Exception:
-            self.stats['get_experiments_details'] = None
-            return None
+            return 1
 
         experiments_details = {}
 
@@ -179,9 +174,9 @@ class Fetcher:
         experiments_details['experiment_types'] = experiment_type
         experiments_details['experiment_per_project'] = experiments_per_project
 
-        self.stats['get_experiments_details'] = experiments_details
+        return experiments_details
 
-    def get_scan_details(self):
+    def get_scans_details(self):
 
         '''
         Using array method to get the scans information present on XNAT.
@@ -196,8 +191,7 @@ class Fetcher:
                 columns=['xnat:imageScanData/quality',
                          'xnat:imageScanData/type'])
         except Exception:
-            self.stats['get_scans_details'] = None
-            return None
+            return 1
 
         usable_scans = 0
         unusable_scans = 0
@@ -268,4 +262,5 @@ class Fetcher:
 
         scans_details['scans_per_experiment'] = scans_per_experiment
         scans_details['number_of_scans'] = len(scans)
-        self.stats['get_scans_details'] = scans_details
+
+        return scans_details
