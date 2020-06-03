@@ -6,4 +6,5 @@ test:
     stage: "test"
     script:
        - pip install -r requirements.txt
-       - pytest tests --cov
+       - py.test --cov pyxnat_connection tests
+
