@@ -6,6 +6,4 @@ test:
     stage: "test"
     script:
        - pip install -r requirements.txt
-       - pytest tests --with-coverage
-       - coverage report -m
-    coverage: '/TOTAL.+ ([0-9]{1,3}%)/'
+       - pytest tests --cov
