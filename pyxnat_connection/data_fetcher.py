@@ -61,6 +61,7 @@ class Fetcher:
             projects_details[project['id']] = projects_details
 
         projects_details['number_of_projects'] = len(projects)
+        projects_details['project_mr_ct_pet'] = project_details
 
         return projects_details
 
@@ -68,7 +69,21 @@ class Fetcher:
 
         try:
             print("Processing............")
-            subjects = self.SELECTOR.select('xnat:subjectData').all().data
+            projectList = self.SELECTOR.get('/data/subjects',
+                                        params= {'columns':['project']})\
+                                        .json()['ResultSet']['Result']
+
+            handednessList = self.SELECTOR.get('/data/subjects',
+                                        params= {'columns':['handedness']})\
+                                        .json()['ResultSet']['Result']
+
+            ageList = self.SELECTOR.get('/data/subjects',
+                                        params = {'columns':['age']})\
+                                        .json()['ResultSet']['Result']
+
+            genderList = self.SELECTOR.get('/data/subjects',
+                                        params={'columns':['gender']})\
+                                        .json()['ResultSet']['Result']
         except Exception:
             print("ERROR : Unable to connect to the database")
             return 1
@@ -77,51 +92,63 @@ class Fetcher:
         # all subjects to the global stats dictionary
 
         subjects_details = {}
+
+        '''
+        Looping through each subject and create a dictonary that will
+        add details like Number of left,right and unknown handed subjects,
+        gender of each subjects
+
+        project_details is another dictionary which will have above
+        information for each project and will add into the projects_details
+        dictionary with the key of project as ID
+
+        This also add a dictionary data showing number of
+        subjects per project
+        '''
+
+        # Subject age information
+
+        subjects_details['age'] = []
+        for item in ageList:
+
+            if(item['age'] != ''):
+                subjects_details['age'].append(item['age'])
+
+        # Subject handedness information
+
+        subjects_details['handedness'] = []
+        for item in handednessList:
+
+            if(item['handedness'] != ''):
+                subjects_details['handedness'].append(item['handedness'])
+
+        # Subject gender information
+
+        subjects_details['gender'] = []
+        for item in genderList:
+
+            if(item['gender'] != ''):
+                subjects_details['gender'].append(
+                    item['gender'].lower()[:1])
+
+        # Number of subjects information
+
+        subjects_details['number_of_subjects'] = len(projectList)
+
+        # Subjects per project information
+
         subjects_per_project = {}
 
-        for subject in subjects:
-
-            '''
-            Looping through each subject and create a dictonary that will
-            add details like Number of left,right and unknown handed subjects,
-            gender of each subjects
-
-            project_details is another dictionary which will have above
-            information for each project and will add into the projects_details
-            dictionary with the key of project as ID
-
-            This also add a dictionary data showing number of
-            subjects per project
-            '''
-
-            subject_details = {}
-
-            if(subject['handedness_text'] == ''):
-                subject_details['handedness_text'] = 'U'
+        for item in projectList:
+            if(item['project'] in subjects_per_project):
+                subjects_per_project[item['project']] = \
+                    subjects_per_project[item['project']] + 1
             else:
-                subject_details['handedness_text'] = subject['handedness_text']
+                subjects_per_project[item['project']] = 1
 
-            if(subject['gender_text'] == ''):
-                subject_details['gender_text'] = 'U'
-            else:
-                subject_details['gender_text'] = subject['gender_text']
+        subjects_details['subjects_per_project'] = subjects_per_project
 
-            if(subject['project'] in subjects_per_project):
-                subjects_per_project[subject['project']] =\
-                    subjects_per_project[subject['project']] + 1
-            else:
-                subjects_per_project[subject['project']] = 1
-
-            subjects_details[subject['xnat_col_subjectdatalabel']] =\
-                subject_details
-
-        subjects_details['number_of_subjects'] = len(subjects_details)
-
-        stats = {}
-        stats['get_subjects_details'] = subjects_details
-        stats['subjects_per_project'] = subjects_per_project
-
-        return stats
+        return subjects_details
 
     def get_experiments_details(self):
 
@@ -143,6 +170,8 @@ class Fetcher:
 
         experiments_details['number_of_experiments'] = len(experiments)
 
+        # Experiments per project information
+
         experiments_per_project = {}
 
         for item in experiments:
@@ -152,6 +181,8 @@ class Fetcher:
             else:
                 experiments_per_project[item['project']] = 1
 
+        # Experiments type information
+
         experiment_type = {}
 
         for item in experiments:
@@ -160,6 +191,8 @@ class Fetcher:
                     experiment_type[item['xsiType']] + 1
             else:
                 experiment_type[item['xsiType']] = 1
+
+        # Experiments per subject information
 
         experiments_per_subject = {}
 
@@ -172,7 +205,7 @@ class Fetcher:
 
         experiments_details['experiments_per_subject'] = experiments_per_subject
         experiments_details['experiment_types'] = experiment_type
-        experiments_details['experiment_per_project'] = experiments_per_project
+        experiments_details['experiments_per_project'] = experiments_per_project
 
         return experiments_details
 
@@ -204,8 +237,7 @@ class Fetcher:
 
         scans_details = {}
 
-        scans_details['usable_scans'] = usable_scans
-        scans_details['unusable_scans'] = unusable_scans
+        # Scans type information
 
         type_dict = {}
 
@@ -216,7 +248,7 @@ class Fetcher:
             else:
                 type_dict[item['xnat:imagescandata/type']] = 1
 
-        scans_details['scan_types'] = type_dict
+        # Scans xsi type information
 
         xsi_type_dict = {}
 
@@ -227,7 +259,7 @@ class Fetcher:
             else:
                 xsi_type_dict[item['xsiType']] = 1
 
-        scans_details['xsi_scan_types'] = xsi_type_dict
+        # Scans per project information
 
         scans_per_project = {}
 
@@ -238,7 +270,7 @@ class Fetcher:
             else:
                 scans_per_project[item['project']] = 1
 
-        scans_details['scans_per_project'] = scans_per_project
+        # Scans per subject information
 
         scans_per_subject = {}
 
@@ -249,7 +281,7 @@ class Fetcher:
             else:
                 scans_per_subject[item['project']] = 1
 
-        scans_details['scans_per_subject'] = scans_per_subject
+        # Scans per experiment information
 
         scans_per_experiment = {}
 
@@ -260,6 +292,12 @@ class Fetcher:
             else:
                 scans_per_experiment[item['ID']] = 1
 
+        scans_details['usable_scans'] = usable_scans
+        scans_details['unusable_scans'] = unusable_scans
+        scans_details['scan_types'] = type_dict
+        scans_details['xsi_scan_types'] = xsi_type_dict
+        scans_details['scans_per_project'] = scans_per_project
+        scans_details['scans_per_subject'] = scans_per_subject
         scans_details['scans_per_experiment'] = scans_per_experiment
         scans_details['number_of_scans'] = len(scans)
 
