@@ -24,9 +24,9 @@ def test_get_subjects_details():
     subject_details = fetch_object_connected.get_subjects_details()
 
     assert type(subject_details['number_of_subjects']) == int
-    assert type(subject_details['age']) == list
-    assert type(subject_details['gender']) == list
-    assert type(subject_details['handedness']) == list
+    assert type(subject_details['age_range']) == dict
+    assert type(subject_details['gender']) == dict
+    assert type(subject_details['handedness']) == dict
     assert type(subject_details['subjects_per_project']) == dict
 
 
@@ -48,8 +48,7 @@ def test_get_scans_details():
     assert type(experiment_details['scans_per_subject']) == dict
     assert type(experiment_details['scans_per_project']) == dict
     assert type(experiment_details['scans_per_experiment']) == dict
-    assert type(experiment_details['usable_scans']) == int
-    assert type(experiment_details['unusable_scans']) == int
+    assert type(experiment_details['scans_quality']) == dict
     assert type(experiment_details['scan_types']) == dict
     assert type(experiment_details['xsi_scan_types']) == dict
 
