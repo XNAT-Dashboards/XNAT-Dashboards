@@ -2,13 +2,13 @@ from pyxnat_connection import data_fetcher
 import pytest
 
 fetch_object_connected = data_fetcher.Fetcher(name='testUser',
-                                            password='testPassword',
-                                    instance_url='https://central.xnat.org')
+                                              password='testPassword',
+                                            server='https://central.xnat.org')
 
 
 fetch_object_disconnected = data_fetcher.Fetcher(name='testUser',
                                                  password='testPassword',
-                                    instance_url='https://central.xnat.org')
+                                            server='https://central.xnat.org')
 
 
 def test_get_projects_details():
@@ -16,7 +16,7 @@ def test_get_projects_details():
     project_details = fetch_object_connected.get_projects_details()
 
     assert type(project_details['number_of_projects']) == int
-    assert type(project_details['project_mr_ct_pet']) == dict
+    assert type(project_details['project_mr_pet_ct']) == dict
 
 
 def test_get_subjects_details():

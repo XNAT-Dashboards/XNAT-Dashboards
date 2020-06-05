@@ -6,9 +6,9 @@ class Fetcher:
     SELECTOR = None
 
     # Initializing the central interface object in the constructor
-    def __init__(self, name, password, instance_url):
+    def __init__(self, name, password, server):
 
-        SELECTOR = Interface(server=instance_url, user=name, password=password)
+        SELECTOR = Interface(server=server, user=name, password=password)
 
         self.SELECTOR = SELECTOR
 
@@ -25,6 +25,9 @@ class Fetcher:
         # projects to the global stats dictionary
 
         projects_details = {}
+        projects_mr_pet_ct = {'project_mr_count': 0,
+                              'project_ct_count': 0,
+                              'project_pet_count': 0}
 
         for project in projects:
 
@@ -38,30 +41,35 @@ class Fetcher:
             dictionary with the key of project as ID
             '''
 
-            project_details = {}
-
             if(project['proj_mr_count'] == ''):
-                project_details['proj_mr_count'] = 0
+                projects_mr_pet_ct['project_mr_count'] =\
+                    projects_mr_pet_ct['project_mr_count']\
+                    + 0
             else:
-                project_details['proj_mr_count'] =\
-                    int(project['proj_mr_count'])
-
-            if(project['proj_ct_count'] == ''):
-                project_details['proj_ct_count'] = 0
-            else:
-                project_details['proj_ct_count'] =\
-                    int(project['proj_ct_count'])
+                projects_mr_pet_ct['project_mr_count'] =\
+                    projects_mr_pet_ct['project_mr_count']\
+                    + int(project['proj_mr_count'])
 
             if(project['proj_pet_count'] == ''):
-                project_details['proj_pet_count'] = 0
+                projects_mr_pet_ct['project_pet_count'] =\
+                    projects_mr_pet_ct['project_pet_count']\
+                    + 0
             else:
-                project_details['proj_pet_count'] =\
-                    int(project['proj_pet_count'])
+                projects_mr_pet_ct['project_pet_count'] =\
+                    projects_mr_pet_ct['project_pet_count']\
+                    + int(project['proj_pet_count'])
 
-            projects_details[project['id']] = projects_details
+            if(project['proj_ct_count'] == ''):
+                projects_mr_pet_ct['project_ct_count'] =\
+                    projects_mr_pet_ct['project_ct_count'] \
+                    + 0
+            else:
+                projects_mr_pet_ct['project_ct_count'] =\
+                    projects_mr_pet_ct['project_ct_count']\
+                    + int(project['proj_ct_count'])
 
         projects_details['number_of_projects'] = len(projects)
-        projects_details['project_mr_ct_pet'] = project_details
+        projects_details['project_mr_pet_ct'] = projects_mr_pet_ct
 
         return projects_details
 
