@@ -30,34 +30,38 @@ class GetInfo:
         '''
 
         stats = {}
-        # preprocessing required in project data for number of scans
+        # preprocessing required in project data for number of projects
         projects_details = self.fetcher_object.get_projects_details()
         stats['Projects'] = projects_details['number_of_projects']
         del projects_details['number_of_projects']
 
         # Pre processing for subject details required
         subjects_details = self.fetcher_object.get_subjects_details()
-        stats['Subjects'] = projects_details['number_of_subjects']
+        stats['Subjects'] = subjects_details['number_of_subjects']
         del subjects_details['number_of_subjects']
 
         # No need in pre processing experiment details
         experiments_details = self.fetcher_object.get_experiments_details()
-        stats['Experiments'] = projects_details['number_of_experiments']
+        stats['Experiments'] = experiments_details['number_of_experiments']
         del experiments_details['number_of_experiments']
 
         # No need in pre processing scans details
         scans_details = self.fetcher_object.get_scans_details()
-        stats['Scans'] = projects_details['number_of_scans']
+        stats['Scans'] = scans_details['number_of_scans']
         del scans_details['number_of_scans']
 
         stat_final = {'Stats': stats}
 
-        # create a final dictionary which will act as a json file
-        return {projects_details,
-                subjects_details,
-                scans_details,
-                experiments_details,
-                stat_final}
+        final_json_dict = {}
+
+        final_json_dict.update(stat_final)
+        final_json_dict.update(projects_details)
+        final_json_dict.update(subjects_details)
+        final_json_dict.update(experiments_details)
+        final_json_dict.update(scans_details)
+
+        # Final dictionary which will act as a json file
+        return final_json_dict
 
     def get_info(self):
 
