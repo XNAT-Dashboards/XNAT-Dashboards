@@ -69,19 +69,19 @@ class Fetcher:
 
         try:
             print("Processing............")
-            projectList = self.SELECTOR.get('/data/subjects',
+            project_list = self.SELECTOR.get('/data/subjects',
                                         params= {'columns':['project']})\
                                         .json()['ResultSet']['Result']
 
-            handednessList = self.SELECTOR.get('/data/subjects',
+            handedness_list = self.SELECTOR.get('/data/subjects',
                                         params= {'columns':['handedness']})\
                                         .json()['ResultSet']['Result']
 
-            ageList = self.SELECTOR.get('/data/subjects',
+            age_list = self.SELECTOR.get('/data/subjects',
                                         params = {'columns':['age']})\
                                         .json()['ResultSet']['Result']
 
-            genderList = self.SELECTOR.get('/data/subjects',
+            gender_list = self.SELECTOR.get('/data/subjects',
                                         params={'columns':['gender']})\
                                         .json()['ResultSet']['Result']
         except Exception:
@@ -108,45 +108,90 @@ class Fetcher:
 
         # Subject age information
 
-        subjects_details['age'] = []
-        for item in ageList:
+        age_range = {'10': 0,
+                     '20': 0,
+                     '30': 0,
+                     '40': 0,
+                     '50': 0,
+                     '60': 0,
+                     '70': 0,
+                     '80': 0,
+                     '90': 0,
+                     '100': 0,
+                     '100 above': 0}
 
-            if(item['age'] != ''):
-                subjects_details['age'].append(item['age'])
+        for item in age_list:
+
+            if(item['age'] == ''):
+                continue
+            elif(int(item['age']) <= 10):
+                age_range['10'] = age_range['10'] + 1
+            elif(int(item['age']) <= 20):
+                age_range['20'] = age_range['20'] + 1
+            elif(int(item['age']) <= 30):
+                age_range['30'] = age_range['30'] + 1
+            elif(int(item['age']) <= 40):
+                age_range['40'] = age_range['40'] + 1
+            elif(int(item['age']) <= 50):
+                age_range['50'] = age_range['50'] + 1
+            elif(int(item['age']) <= 60):
+                age_range['60'] = age_range['60'] + 1
+            elif(int(item['age']) <= 70):
+                age_range['70'] = age_range['70'] + 1
+            elif(int(item['age']) <= 80):
+                age_range['80'] = age_range['80'] + 1
+            elif(int(item['age']) <= 90):
+                age_range['90'] = age_range['90'] + 1
+            elif(int(item['age']) <= 100):
+                age_range['100'] = age_range['100'] + 1
+            else:
+                age_range['100 above'] = age_range['100 above'] + 1
 
         # Subject handedness information
 
-        subjects_details['handedness'] = []
-        for item in handednessList:
+        handedness = {'Right': 0, 'Left': 0, 'Ambidextrous': 0}
 
-            if(item['handedness'] != ''):
-                subjects_details['handedness'].append(item['handedness'])
+        for item in handedness_list:
 
+            if(item['handedness'] == ''):
+                continue
+            if(item['handedness'] == 'right'):
+                handedness['Right'] = handedness['Right'] + 1
+            elif(item['handedness'] == 'left'):
+                handedness['Left'] = handedness['Left'] + 1
+            else:
+                handedness['Ambidextrous'] = handedness['Ambidextrous'] + 1
         # Subject gender information
 
-        subjects_details['gender'] = []
-        for item in genderList:
+        gender = {'Male': 0, 'Female': 0}
 
-            if(item['gender'] != ''):
-                subjects_details['gender'].append(
-                    item['gender'].lower()[:1])
+        for item in gender_list:
 
-        # Number of subjects information
-
-        subjects_details['number_of_subjects'] = len(projectList)
+            if(item['gender'] == ''):
+                continue
+            if(item['gender'].lower()[:1] == 'm'):
+                gender['Male'] = gender['Male'] + 1
+            else:
+                gender['Female'] = gender['Female'] + 1
 
         # Subjects per project information
 
         subjects_per_project = {}
 
-        for item in projectList:
+        for item in project_list:
             if(item['project'] in subjects_per_project):
                 subjects_per_project[item['project']] = \
                     subjects_per_project[item['project']] + 1
             else:
                 subjects_per_project[item['project']] = 1
 
+        # Number of subjects information
+        subjects_details['number_of_subjects'] = len(project_list)
+
         subjects_details['subjects_per_project'] = subjects_per_project
+        subjects_details['age_range'] = age_range
+        subjects_details['gender'] = gender
+        subjects_details['handedness'] = handedness
 
         return subjects_details
 
@@ -226,14 +271,14 @@ class Fetcher:
         except Exception:
             return 1
 
-        usable_scans = 0
-        unusable_scans = 0
+        scan_quality = {'usable_scans': 0, 'unusable_scans': 0}
 
         for item in scans:
             if(item['xnat:imagescandata/quality'] == 'usable'):
-                usable_scans = usable_scans+1
+                scan_quality['usable_scans'] = scan_quality['usable_scans']+1
             else:
-                unusable_scans = unusable_scans + 1
+                scan_quality['unusable_scans'] =\
+                                    scan_quality['unusable_scans'] + 1
 
         scans_details = {}
 
@@ -292,8 +337,7 @@ class Fetcher:
             else:
                 scans_per_experiment[item['ID']] = 1
 
-        scans_details['usable_scans'] = usable_scans
-        scans_details['unusable_scans'] = unusable_scans
+        scans_details['scans_quality'] = scan_quality
         scans_details['scan_types'] = type_dict
         scans_details['xsi_scan_types'] = xsi_type_dict
         scans_details['scans_per_project'] = scans_per_project
