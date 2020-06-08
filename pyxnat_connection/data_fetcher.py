@@ -279,11 +279,15 @@ class Fetcher:
         except Exception:
             return 1
 
-        scan_quality = {'usable_scans': 0, 'unusable_scans': 0}
+        scan_quality = {'usable_scans': 0,
+                        'unusable_scans': 0,
+                        'questionable': 0}
 
         for item in scans:
             if(item['xnat:imagescandata/quality'] == 'usable'):
                 scan_quality['usable_scans'] = scan_quality['usable_scans']+1
+            elif(item['xnat:imagescandata/quality'] == 'questionable'):
+                scan_quality['questionable'] = scan_quality['questionable']+1
             else:
                 scan_quality['unusable_scans'] =\
                                     scan_quality['unusable_scans'] + 1
