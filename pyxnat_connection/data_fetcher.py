@@ -77,21 +77,11 @@ class Fetcher:
 
         try:
             print("Processing............")
-            project_list = self.SELECTOR.get('/data/subjects',
-                                        params= {'columns':['project']})\
-                                        .json()['ResultSet']['Result']
 
-            handedness_list = self.SELECTOR.get('/data/subjects',
-                                        params= {'columns':['handedness']})\
-                                        .json()['ResultSet']['Result']
+            subjects_data = self.SELECTOR.get('/data/subjects',
+                        params= {'columns': 'ID,project,handedness,age,gender'})\
+                        .json()['ResultSet']['Result']
 
-            age_list = self.SELECTOR.get('/data/subjects',
-                                        params = {'columns':['age']})\
-                                        .json()['ResultSet']['Result']
-
-            gender_list = self.SELECTOR.get('/data/subjects',
-                                        params={'columns':['gender']})\
-                                        .json()['ResultSet']['Result']
         except Exception:
             print("ERROR : Unable to connect to the database")
             return 1
@@ -128,7 +118,7 @@ class Fetcher:
                      '100': 0,
                      '100 above': 0}
 
-        for item in age_list:
+        for item in subjects_data:
 
             if(item['age'] == ''):
                 continue
@@ -159,7 +149,7 @@ class Fetcher:
 
         handedness = {'Right': 0, 'Left': 0, 'Ambidextrous': 0}
 
-        for item in handedness_list:
+        for item in subjects_data:
 
             if(item['handedness'] == ''):
                 continue
@@ -169,11 +159,12 @@ class Fetcher:
                 handedness['Left'] = handedness['Left'] + 1
             else:
                 handedness['Ambidextrous'] = handedness['Ambidextrous'] + 1
+
         # Subject gender information
 
         gender = {'Male': 0, 'Female': 0}
 
-        for item in gender_list:
+        for item in subjects_data:
 
             if(item['gender'] == ''):
                 continue
@@ -186,7 +177,7 @@ class Fetcher:
 
         subjects_per_project = {}
 
-        for item in project_list:
+        for item in subjects_data:
             if(item['project'] in subjects_per_project):
                 subjects_per_project[item['project']] = \
                     subjects_per_project[item['project']] + 1
@@ -194,7 +185,7 @@ class Fetcher:
                 subjects_per_project[item['project']] = 1
 
         # Number of subjects information
-        subjects_details['number_of_subjects'] = len(project_list)
+        subjects_details['number_of_subjects'] = len(subjects_data)
 
         subjects_details['subjects_per_project'] = subjects_per_project
         subjects_details['age_range'] = age_range
