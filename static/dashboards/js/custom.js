@@ -23,6 +23,10 @@ $(function() {
             $(".page-wrapper").css("min-height", (height) + "px");
         }
     };
+    $(".nav-toggler").on('click', function() {
+        $("body").toggleClass("show-sidebar");
+
+    });
     $(window).ready(set);
     $(window).on("resize", set);   
     $(".sidebartoggler").on('click', function() {

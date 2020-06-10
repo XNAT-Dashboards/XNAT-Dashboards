@@ -1,7 +1,9 @@
 @import url("https://fonts.googleapis.com/css?family=Rubik:300,400,500,600,700");
+@import url("https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css");
 @import url("https://fonts.googleapis.com/css?family=Rubik:300,400,500,600,700");
 
-
+.skin-default-dark {
+  /*Theme Colors*/ }
   .skin-default-dark .topbar {
     background: #fff; }
     .skin-default-dark .topbar .navbar-dark .navbar-nav .nav-link {
@@ -50,3 +52,4 @@
   @media (min-width: 768px) {
     .skin-default-dark.mini-sidebar .sidebar-nav #sidebarnav > li > ul, .skin-default-dark.mini-sidebar .sidebar-nav #sidebarnav > li:hover > a {
       background: #1f2023; } }
+
