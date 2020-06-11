@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>XNAT Dashboards</title>
-    <!-- Custom CSS -->
+    <!-- CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="../../static/dashboards/css/custom.css" rel="stylesheet">
     <link href="../../static/dashboards/css/custom_bootstrap_overite.css" rel="stylesheet">
@@ -17,9 +17,9 @@
 </head>
 <div class="preloader">
 </div>
-
 <body class="skin-default-dark fixed-layout">
     <div id="main-wrapper" >
+        <!-- Top nav bar start-->
         <header class="topbar">
             <nav class="navbar top-navbar navbar-expand-md navbar-dark">
                 <div class="navbar-header">
@@ -37,6 +37,8 @@
                 </div>
             </nav>
         </header>
+        <!-- Top nav bar end-->
+        <!-- Left sidebar start-->
         <aside class="left-sidebar">
             <div class="d-flex no-block nav-text-box align-items-center">
                 XNAT Dashboards
@@ -54,6 +56,8 @@
                 </nav>
             </div>
         </aside>
+        <!-- Left sidebar end-->
+        <!-- Plotly graphs container start -->
         <div class="page-wrapper ">
             <div class="container-fluid ">
                 <div class="row page-titles">
@@ -82,10 +86,14 @@
                 </div>
             </div>
         </div>
+        <!-- Plotly graphs container end-->
+        <!-- Footer start-->
         <footer class="footer">
             © 2020 XNAT Dashboards
         </footer>
+        <!-- Footer end-->
     </div>    
+    <!-- Js include-->
     <script src="../../static/dashboards/js/bootstrap.min.js"></script>
     <script src="../../static/dashboards/js/jquery-3.2.1.min.js"></script>
     <script src="../../static/dashboards/js/custom.js"></script>

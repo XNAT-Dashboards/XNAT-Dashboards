@@ -6,6 +6,9 @@ $(function() {
     jQuery(document).on('click', '.mega-dropdown', function(e) {
         e.stopPropagation()
     }); 
+
+    // Top header part and sidebar par
+
     var set = function() {
         var width = (window.innerWidth > 0) ? window.innerWidth : this.screen.width;
         var topOffset = 75;
@@ -23,6 +26,9 @@ $(function() {
             $(".page-wrapper").css("min-height", (height) + "px");
         }
     };
+
+    // nav bar icon toggler
+
     $(".nav-toggler").on('click', function() {
         $("body").toggleClass("show-sidebar");
 
