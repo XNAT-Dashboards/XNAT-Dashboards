@@ -9,6 +9,12 @@ function chart_generator(json){
     barchart_generator(graph_name,graph_info)
 }  
 
+function getRandomIntInclusive(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 function barchart_generator(graph_name, graph_info){
     x_axis = [];
     y_axis = [];
@@ -20,12 +26,17 @@ function barchart_generator(graph_name, graph_info){
             y_axis.push(graph_info[x]);
         }
     }
-
+    r = getRandomIntInclusive(0,254);
+    g = getRandomIntInclusive(0,254);
+    b = getRandomIntInclusive(0,254);
     var data = [
         {
           x: x_axis,
           y: y_axis,
-          type: 'bar'
+          type: 'bar',
+          marker: {
+            color: 'rgb('+r+','+g+','+b+')'
+          }
         }
       ];
 
