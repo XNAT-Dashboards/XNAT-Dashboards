@@ -4,14 +4,12 @@ function chart_generator(json){
     var graph_info = {};
     for (var g_name in json){
         graph_name = g_name;
-        alert(g_name);
         graph_info = json[g_name];
     }
     barchart_generator(graph_name,graph_info)
 }  
 
 function barchart_generator(graph_name, graph_info){
-    alert(graph_name);
     x_axis = [];
     y_axis = [];
     for (x in graph_info){
