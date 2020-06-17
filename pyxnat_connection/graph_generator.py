@@ -1,3 +1,6 @@
+import sys
+from os.path import dirname, abspath
+sys.path.insert(0, dirname(dirname(abspath(__file__))))
 from pyxnat_connection import get_info
 import json
 
