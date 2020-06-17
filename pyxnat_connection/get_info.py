@@ -66,7 +66,6 @@ class GetInfo:
 
         final_json_dict.update(stat_final)
 
-        # Final dictionary which will act as a json file
         return final_json_dict
 
     def get_info(self):
