@@ -11,8 +11,8 @@
     <title>XNAT Dashboards</title>
     <!-- CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../../static/dashboards/css/custom.css" rel="stylesheet">
-    <link href="../../static/dashboards/css/custom_bootstrap_overite.css" rel="stylesheet">
+    <link href="/static/dashboards/css/custom.css" rel="stylesheet">
+    <link href="/static/dashboards/css/custom_bootstrap_overite.css" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 </head>
 <div class="preloader">
@@ -68,22 +68,22 @@
 
                     </div>
                 </div>
+                {% for i in data%}
                 <div class="row">
-                    <div class="col-lg-6" id='bigger'>
-                        <div class="card">
-                            <div class="card-body">
-                                <div id='myDiv'><!-- Plotly chart will be drawn inside this DIV --></div>
+                    {% for j in i%}
+                    {% for key in j %}
+                         <div class="col-lg-6" id="myBig{{j['id']}}">
+                            <div class="card">
+                                <div class="card-body" id="graph_id{{j[key]['id']}}">
+                                    <div id="graph_body{{j[key]['id']}}"><!-- Plotly chart will be drawn inside this DIV --></div>
+                                </div>
+                                
                             </div>
                         </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <div id='myDiv1'><!-- Plotly chart will be drawn inside this DIV --></div>
-                            </div>
-                        </div>
-                    </div>
+                    {% endfor %}
+                    {% endfor %}
                 </div>
+                {% endfor %}
             </div>
         </div>
         <!-- Plotly graphs container end-->
@@ -94,17 +94,24 @@
         <!-- Footer end-->
     </div>    
     <!-- Js include-->
-    <script src="../../static/dashboards/js/bootstrap.min.js"></script>
-    <script src="../../static/dashboards/js/jquery-3.2.1.min.js"></script>
-    <script src="../../static/dashboards/js/custom.js"></script>
-    <script src="../../static/dashboards/js/sidebarmenu.js"></script>
-    <script src="../../static/dashboards/js/jquery.sparkline.min.js"></script>
-    <script src="../../static/dashboards/js/popper.min.js"></script>
-    <script src="../../static/dashboards/js/perfect-scrollbar.jquery.min.js"></script>
-    <script src="../../static/dashboards/js/sticky-kit.min.js"></script>
+    <script src="/static/dashboards/js/bootstrap.min.js"></script>
+    <script src="/static/dashboards/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/dashboards/js/custom.js"></script>
+    <script src="/static/dashboards/js/sidebarmenu.js"></script>
+    <script src="/static/dashboards/js/jquery.sparkline.min.js"></script>
+    <script src="/static/dashboards/js/popper.min.js"></script>
+    <script src="/static/dashboards/js/perfect-scrollbar.jquery.min.js"></script>
+    <script src="/static/dashboards/js/sticky-kit.min.js"></script>
 
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <script src="../../static/dashboards/js/plotlyt.js"></script>
+    <script src="/static/dashboards/js/plotly_chart_generator.js"></script>
+    {% for i in data%}
+        {% for j in i%}
+            <script>             
+                chart_generator({{ j | tojson}});
+            </script>
+        {%endfor%}
+    {%endfor%}
 </body>
 
 </html>
