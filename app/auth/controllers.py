@@ -7,15 +7,6 @@ auth = Blueprint('auth', __name__, url_prefix='/auth')
 
 
 # Set the route and accepted methods
-@auth.route('/login/', methods=['GET', 'POST'])
+@auth.route('/login/')
 def stats():
-
-    if(request.method == 'POST'):
-
-        user_detail = request.form
-        session['user_d'] = user_detail
-        return redirect(url_for("dashboards.stats"))
-
-    else:
-
-        return render_template('auth/login.html')
+    return render_template('auth/login.html')
