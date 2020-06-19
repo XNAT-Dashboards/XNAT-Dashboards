@@ -2,7 +2,7 @@
     <head>
     </head>
     <body>
-    <form method="POST">
+    <form action="" method="POST">
         <div class="container">   
             <label>Username : </label>   
             <input type="text" placeholder="Enter Username" name="username" required>  
@@ -14,4 +14,25 @@
         </div>   
     </form>
     </body>
+
+    <script src="/static/dashboards/js/jquery-3.2.1.min.js"></script>
+    <script>
+        $(function() {
+    $('button').click(function(e) {
+        e.preventDefault()
+        $.ajax({
+            url: "{{ url_for('dashboards.stats') }}",
+            data: $('form').serialize(),
+            type: 'POST',
+            success: function(response) {
+                alert("re");
+                window.location.href = "{{ url_for('dashboards.stats') }}"
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    });
+});
+    </script>
 </html>
