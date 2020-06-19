@@ -8,7 +8,7 @@
 
 ### Installing
 
-Install the dependency using ```pip3 install requirements.txt```
+Install the dependencies using ```pip3 install -r requirements.txt```
 
 ### Starting the server
 
