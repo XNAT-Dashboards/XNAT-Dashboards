@@ -8,13 +8,34 @@ def test_login():
 
 
 def test_dashboard():
-    data = dict(username='testUser',
-                password='testPassword',
-                server='https://central.xnat.org')
+
+    data_correct = dict(username='testUser',
+                        password='testPassword',
+                        server='https://central.xnat.org')
     # Checks if we are getting correct response that is 200
-    response_post = app.test_client().post('dashboards/stats/',
-                                           data=data).status_code
-    assert response_post == 200
+    response_post_correct = app.test_client().post(
+                                    'dashboards/stats/',
+                                    data=data_correct).status_code
+
+    # Checks if we are redirecting if wrong password
+    data_incorrect_1 = dict(username='testUser',
+                            password='testPasswor',
+                            server='https://central.xnat.org')
+    response_post_incorrect_1 = app.test_client().post(
+                                'dashboards/stats/', follow_redirects=True,
+                                data=data_incorrect_1).status_code
+
+    # Checks if we are redirecting if wrong url
+    data_incorrect_2 = dict(username='testUser',
+                            password='testPasswor',
+                            server='https://central.xnat.org')
+    response_post_incorrect_2 = app.test_client().post(
+                                'dashboards/stats/', follow_redirects=True,
+                                data=data_incorrect_2).status_code
+
+    assert response_post_correct == 200
+    assert response_post_incorrect_1 == 200
+    assert response_post_incorrect_2 == 200
 
 
 def test_home_redirect():
