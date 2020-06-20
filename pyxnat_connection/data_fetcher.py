@@ -1,5 +1,4 @@
 from pyxnat import Interface
-from pyxnat_connection import pyxnat_exception
 
 
 class Fetcher:
