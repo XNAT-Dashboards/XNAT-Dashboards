@@ -1,4 +1,5 @@
 from pyxnat import Interface
+from pyxnat_connection import pyxnat_exception
 
 
 class Fetcher:
@@ -17,9 +18,16 @@ class Fetcher:
         try:
             print("Processing............")
             projects = self.SELECTOR.select('xnat:projectData').all().data
-        except Exception:
-            print("ERROR : Unable to connect to the database")
-            return 1
+        except Exception as e:
+            # 500 represent error in url
+            if(str(e).find('500') != -1):
+                return 500
+            # 400 represent error in login details
+            elif(str(e).find('401') != -1):
+                return 401
+            # 1 represent Error in whole url
+            else:
+                return 1
 
         # Projects_details is a dictionary which will add details of all
         # projects to the global stats dictionary

@@ -36,10 +36,12 @@ class GetInfo:
         projects_details = self.fetcher_object.get_projects_details()
         # If some error in connection 1 will be returned and we will
         # not go further
-        if(projects_details != 1):
+        if(type(projects_details) != int):
             stats['Projects'] = projects_details['number_of_projects']
             del projects_details['number_of_projects']
             final_json_dict.update(projects_details)
+        else:
+            return projects_details
 
         # Pre processing for subject details required
         subjects_details = self.fetcher_object.get_subjects_details()

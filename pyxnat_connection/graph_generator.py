@@ -52,6 +52,10 @@ class GraphGenerator:
             exit(1)
 
         counter_id = 0
+
+        if(type(self.data) != dict):
+            return self.data
+
         final_json_dict = self.data
 
         for final_json in final_json_dict:
@@ -74,6 +78,8 @@ class GraphGenerator:
         counter = 0
 
         graph_data = self.graph_pre_processor()
+        if(type(graph_data) == int):
+            return graph_data
 
         for final_json in graph_data:
             array_1d.append({final_json: graph_data[final_json]})

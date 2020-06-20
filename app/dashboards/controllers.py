@@ -1,5 +1,5 @@
 # Import flask dependencies
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, redirect, url_for
 from pyxnat_connection import graph_generator
 
 # Define the blueprint: 'dashboards', set its url prefix: app.url/dashboards
@@ -24,4 +24,8 @@ def stats():
                                             server).graph_generator()
         return 'correct'
     else:
-        return render_template('dashboards/stats_dashboards.html', data=data)
+        if(data == {} or type(data) == int):
+            return redirect(url_for('auth.login'))
+        else:
+            return render_template('dashboards/stats_dashboards.html',
+                                   data=data)

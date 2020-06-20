@@ -8,5 +8,5 @@ auth = Blueprint('auth', __name__, url_prefix='/auth')
 
 # Set the route and accepted methods
 @auth.route('/login/')
-def stats():
+def login():
     return render_template('auth/login.html')
