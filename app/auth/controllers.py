@@ -9,4 +9,19 @@ auth = Blueprint('auth', __name__, url_prefix='/auth')
 # Set the route and accepted methods
 @auth.route('/login/')
 def login():
-    return render_template('auth/login.html')
+
+    if('error' in session):
+        print('yes')
+        if(session['error'] == 500):
+            display_error = "Wrong XNAT URI"
+        elif(session['error'] == 401):
+            display_error = "Wrong Username or Password"
+        elif(session['error'] == 1):
+            display_error = "Wrong URL"
+        else:
+            display_error = None
+        del session['error']
+        return render_template('auth/login.html',
+                               error=display_error)
+    else:
+        return render_template('auth/login.html')
