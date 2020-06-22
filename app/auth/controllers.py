@@ -19,7 +19,7 @@ def login():
         elif(session['error'] == 1):
             display_error = "Wrong URL"
         else:
-            display_error = None
+            display_error = "No Session Available"
         del session['error']
         return render_template('auth/login.html',
                                error=display_error)
