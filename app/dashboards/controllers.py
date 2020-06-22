@@ -1,31 +1,44 @@
 # Import flask dependencies
 from flask import Blueprint, render_template, session, request, redirect, url_for
-from pyxnat_connection import graph_generator
+from generators import graph_generator, project_generator
 
 # Define the blueprint: 'dashboards', set its url prefix: app.url/dashboards
 dashboards = Blueprint('dashboards', __name__, url_prefix='/dashboards')
 
+graph_data = {}
+project_list = []
+username = ''
+server = ''
 
-data = {}
 
 # Set the route and accepted methods
 @dashboards.route('/stats/', methods=['POST', 'GET'])
 def stats():
 
     if(request.method == "POST"):
+        global username, server
         user_details = request.form
         username = user_details['username']
         password = user_details['password']
         server = user_details['server']
-        global data
-        data = graph_generator.GraphGenerator(username,
-                                            password,
-                                            server).graph_generator()
+        global graph_data
+        global project_list
+        graph_data = graph_generator.GraphGenerator(username,
+                                                    password,
+                                                    server).graph_generator()
+        project_list = project_generator.projectGenerator(
+                                                        username,
+                                                        password,
+                                                        server).project_list()
+
         return 'correct'
     else:
-        if(data == {} or type(data) == int):
-            session['error'] = data
+        if(graph_data == {} or type(graph_data) == int):
+            session['error'] = graph_data
             return redirect(url_for('auth.login'))
         else:
             return render_template('dashboards/stats_dashboards.html',
-                                   data=data)
+                                   graph_data=graph_data,
+                                   project_list=project_list,
+                                   username=username.capitalize(),
+                                   server=server)
