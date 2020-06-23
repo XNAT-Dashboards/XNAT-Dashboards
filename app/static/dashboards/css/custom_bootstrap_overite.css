@@ -143,7 +143,7 @@
   body {
     margin: 0;
     overflow-x: hidden;
-    color: #6c757d; }
+    color: #000; }
   
   html {
     position: relative;
@@ -1153,11 +1153,11 @@
       background: transparent;
       font-size: 12px; }
       .page-titles .breadcrumb li a {
-        color: #212529; }
+        color: #009efb; }
       .page-titles .breadcrumb .breadcrumb-item + .breadcrumb-item::before {
-        content: "\e649";
+        content: ">";
         font-family: themify;
-        color: #ced4da;
+        color: #000;
         font-size: 11px; }
       .page-titles .breadcrumb .breadcrumb-item.active {
         color: #009efb;

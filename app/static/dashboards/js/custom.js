@@ -1,8 +1,5 @@
 $(function() {
-    "use strict";
-    $(function() {
-        $(".preloader").fadeOut();
-    });
+
     jQuery(document).on('click', '.mega-dropdown', function(e) {
         e.stopPropagation()
     }); 
@@ -58,4 +55,30 @@ $(function() {
         $(this).closest('.card').removeClass().slideUp('fast');
     });
 
+});
+
+$( ".card" ).hover(
+    function() {
+      $(this).addClass('shadow-lg').css('cursor', 'pointer'); 
+    }, function() {
+      $(this).removeClass('shadow-lg');
+    }
+  );
+
+// Add hide and show logic
+
+$(".project_part").addClass("hide");
+$("#overview").addClass("highlight");
+
+$("#overview").click(function(){
+    $(".project_part").addClass("hide");
+    $(".overview_part").removeClass("hide");
+    $("#overview").addClass("highlight");
+    $("#projects").removeClass("highlight");
+});
+$("#projects").click(function(){
+    $(".project_part").removeClass("hide");
+    $(".overview_part").addClass("hide");
+    $("#projects").addClass("highlight");
+    $("#overview").removeClass("highlight");
 });
