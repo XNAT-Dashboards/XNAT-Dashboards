@@ -98,7 +98,7 @@ if __name__ == "__main__":
     '''
     This will run and create the graph_type.json file
     '''
-    graph_object = GraphGenerator('testUserCred',
-                                  'testPasswordCred',
-                                  'ServerCred')
+    graph_object = GraphGenerator('testUser',
+                                  'testPassword',
+                                  'https://central.xnat.org')
     graph_object.graph_type_generator()
