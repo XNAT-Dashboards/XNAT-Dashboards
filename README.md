@@ -3,25 +3,41 @@
 [![pipeline status](https://gitlab.com/Udolf47/xnat_dashboards/badges/develop/pipeline.svg)](https://gitlab.com/Udolf47/xnat_dashboards/commits/develop)
 [![coverage report](https://gitlab.com/Udolf47/xnat_dashboards/badges/develop/coverage.svg)](https://gitlab.com/Udolf47/xnat_dashboards/commits/develop)
 
+This project is about creating a responsive dashboard framework for extensive exploration, monitoring, and reviewing large neurological imaging datasets present on the XNAT server instance. This dashboard will fetch data from any XNAT instance servers and will generate highly-visualized, summarized representations of complex scientific data present on the servers and facilitate user navigation through large cohorts. This dashboard will be a light-weight, flexible and modular framework that can adapt and change as per the new needs of the users.
 
 ## Getting Started
 
+To run this project locally for testing or development
+
+- Install Python 3
+- Install virtual env
+- Tests can be found in test directory
+
 ### Installing
 
-Install the dependencies using ```pip3 install -r requirements.txt```
+- ```source env/bin/activate```
+- ```pip3 install -r requirements.txt```
 
 ### Starting the server
 
 ```python3 run.py```
 
+## Running the tests
+
+Pytest is used as a testing framework to run test
+
+- ``` pytest tests ```          (Without coverage)
+- ``` pytest --cov tests ```    (With coverage)
+
 To access the Central XNAT server a type.json file is already provided.
 
-### To access other XNAT server
+## Access other XNAT server
 
 - Open graph_generator.py
 - In the last line add the credentials of your different server.
 - run python pyxnat_connection/graph_generator.py in the root of the project.
-- for each required input field type ```bar```.
+- for each required input field type ```bar```,```pie```,```scatter```,```line```.
 - This will generate a graph_type.json file in utils directory.
 
 - Start the server using ```python3 run.py```
+
