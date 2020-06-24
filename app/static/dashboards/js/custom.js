@@ -1,3 +1,8 @@
+// Removes preloader after all files loaded
+$(window).on('load', function () {
+    $(".preloader").remove();
+});
+
 $(function() {
 
     jQuery(document).on('click', '.mega-dropdown', function(e) {
@@ -65,7 +70,7 @@ $( ".card" ).hover(
     }
   );
 
-// Add hide and show logic
+// Add hide and show logic for project list and overview graphs
 
 $(".project_part").addClass("hide");
 $("#overview").addClass("highlight");
@@ -82,3 +87,4 @@ $("#projects").click(function(){
     $("#projects").addClass("highlight");
     $("#overview").removeClass("highlight");
 });
+

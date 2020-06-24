@@ -3,7 +3,7 @@ $(function() {
 $('.loader__label').text("Loading");
 $('button').click(function(e) {
 $('.loader__label').text("Fetching Data");
-$(".loading").hide();
+$(".loading").hide();   // Text loading
 $(".preloader").show();
 e.preventDefault()
 $.ajax({
