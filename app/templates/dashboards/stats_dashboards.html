@@ -14,11 +14,18 @@
     <link href="/static/dashboards/css/custom.css" rel="stylesheet">
     <link href="/static/dashboards/css/custom_bootstrap_overite.css" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="icon" href="data:;base64,=">
 </head>
 <div class="preloader">
 </div>
 <body class="skin-default-dark fixed-layout">
     <div id="main-wrapper" >
+        <div class="preloader">
+            <div class="loader">
+                <div class="loader__figure"></div>
+                <p class="loader__label">Plotting Data</p>
+            </div>
+        </div>
         <!-- Top nav bar start-->
         <header class="topbar">
             <nav class="navbar top-navbar navbar-expand-md navbar-dark">
@@ -31,7 +38,13 @@
                     </ul>
                     <ul class="navbar-nav my-lg-0">
                         <li class="nav-item dropdown">
-                        Asif Hashmi    
+                        {{username}}   
+                        </li>
+                        <li>
+                            &nbsp&nbsp&nbsp
+                        </li>
+                        <li>
+                            <i class="fa fa-user" aria-hidden="true"></i>
                         </li>
                     </ul>
                 </div>
@@ -48,7 +61,8 @@
             <div class="scroll-sidebar">
                 <nav class="sidebar-nav">
                     <ul id="sidebarnav">
-                        <li> <a class="waves-effect waves-dark" href="index.html" aria-expanded="false"><i class="fa fa-tachometer"></i><span class="hide-menu">Dashboard</span></a></li>
+                        <li id="overview"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-eye"></i><span class="hide-menu">Overview</span></a></li>
+                        <li id="projects"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-list"></i><span class="hide-menu">Projects</span></a></li>                       
                         <div class="text-center m-t-30">
                             <a href="" class="btn waves-effect waves-light btn-success hidden-md-down"> Logout </a>
                         </div>
@@ -62,25 +76,50 @@
             <div class="container-fluid ">
                 <div class="row page-titles">
                     <div class="col-md-5 align-self-center">
-                        <h4 class="text-themecolor">DASHBOARD</h4>
+                        <h4 class="text-themecolor overview_part">Overview Dashboard</h4>
+                        <h4 class="text-themecolor project_part">Projects Information</h4>
                     </div>
                     <div class="col-md-7 align-self-center text-right">
-
+                        <div class="d-flex justify-content-end align-items-center">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="javascript:void(0)">Connected</a></li>
+                                <li class="breadcrumb-item active">{{server}}</li>
+                            </ol>
+                            <button type="button" class="btn btn-success d-none d-lg-block m-l-15"> RealTime </button>
+                        </div>
                     </div>
                 </div>
-                {% for i in data%}
+                <div class = "overview_part">
+                    {% for i in graph_data%}
+                    <div class="row">
+                        {% for j in i%}
+                        {% for key in j %}
+                            <div class="col-lg-6" id="myBig{{j['id']}}">
+                                <div class="card">
+                                    <div class="card-body" id="graph_id{{j[key]['id']}}">
+                                        <div id="graph_body{{j[key]['id']}}"><!-- Plotly chart will be drawn inside this DIV --></div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        {% endfor %}
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="project_part">
+                {% for i in project_list%}
                 <div class="row">
                     {% for j in i%}
-                    {% for key in j %}
-                         <div class="col-lg-6" id="myBig{{j['id']}}">
-                            <div class="card">
-                                <div class="card-body" id="graph_id{{j[key]['id']}}">
-                                    <div id="graph_body{{j[key]['id']}}"><!-- Plotly chart will be drawn inside this DIV --></div>
+                        <div class="col-lg-3">
+                            <div class="card project">
+                                <div class="card-body" >
+                                    {{j}}
                                 </div>
                                 
                             </div>
                         </div>
-                    {% endfor %}
                     {% endfor %}
                 </div>
                 {% endfor %}
@@ -94,24 +133,25 @@
         <!-- Footer end-->
     </div>    
     <!-- Js include-->
-    <script src="/static/dashboards/js/bootstrap.min.js"></script>
-    <script src="/static/dashboards/js/jquery-3.2.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="/static/common/js/jquery-3.2.1.min.js"></script>
     <script src="/static/dashboards/js/custom.js"></script>
     <script src="/static/dashboards/js/sidebarmenu.js"></script>
     <script src="/static/dashboards/js/jquery.sparkline.min.js"></script>
     <script src="/static/dashboards/js/popper.min.js"></script>
-    <script src="/static/dashboards/js/perfect-scrollbar.jquery.min.js"></script>
+    <script src="/static/common/css/perfect-scrollbar.css"></script>
     <script src="/static/dashboards/js/sticky-kit.min.js"></script>
 
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="/static/dashboards/js/plotly_chart_generator.js"></script>
-    {% for i in data%}
+    {% for i in graph_data%}
         {% for j in i%}
             <script>             
                 chart_generator({{ j | tojson}});
             </script>
         {%endfor%}
     {%endfor%}
+    <script src="/static/dashboards/js/per_project.js"></script>
 </body>
 
 </html>
