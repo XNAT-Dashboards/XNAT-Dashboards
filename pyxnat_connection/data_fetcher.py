@@ -36,6 +36,15 @@ class Fetcher:
                               'project_ct_count': 0,
                               'project_pet_count': 0}
 
+        project_acccess = {}
+
+        for item in projects:
+            if(item['project_access'] in project_acccess):
+                project_acccess[item['project_access']] = \
+                    project_acccess[item['project_access']] + 1
+            else:
+                project_acccess[item['project_access']] = 1
+
         for project in projects:
 
             '''
@@ -75,8 +84,9 @@ class Fetcher:
                     projects_mr_pet_ct['project_ct_count']\
                     + int(project['proj_ct_count'])
 
-        projects_details['number_of_projects'] = len(projects)
-        projects_details['project_mr_pet_ct'] = projects_mr_pet_ct
+        projects_details['Number of Projects'] = len(projects)
+        projects_details['Project MR PET CT count'] = projects_mr_pet_ct
+        projects_details['Project Visibility'] = project_acccess
 
         return projects_details
 
@@ -88,7 +98,6 @@ class Fetcher:
             subjects_data = self.SELECTOR.get('/data/subjects',
                         params= {'columns': 'ID,project,handedness,age,gender'})\
                         .json()['ResultSet']['Result']
-
         except Exception:
             print("ERROR : Unable to connect to the database")
             return 1
@@ -192,12 +201,12 @@ class Fetcher:
                 subjects_per_project[item['project']] = 1
 
         # Number of subjects information
-        subjects_details['number_of_subjects'] = len(subjects_data)
+        subjects_details['Number of Subjects'] = len(subjects_data)
 
-        subjects_details['subjects_per_project'] = subjects_per_project
-        subjects_details['age_range'] = age_range
-        subjects_details['gender'] = gender
-        subjects_details['handedness'] = handedness
+        subjects_details['Subjects/Project'] = subjects_per_project
+        subjects_details['Age Range'] = age_range
+        subjects_details['Gender'] = gender
+        subjects_details['Handedness'] = handedness
 
         return subjects_details
 
@@ -219,7 +228,7 @@ class Fetcher:
 
         experiments_details = {}
 
-        experiments_details['number_of_experiments'] = len(experiments)
+        experiments_details['Number of Experiments'] = len(experiments)
 
         # Experiments per project information
 
@@ -254,9 +263,9 @@ class Fetcher:
             else:
                 experiments_per_subject[item['subject_ID']] = 1
 
-        experiments_details['experiments_per_subject'] = experiments_per_subject
-        experiments_details['experiment_types'] = experiment_type
-        experiments_details['experiments_per_project'] = experiments_per_project
+        experiments_details['Experiments/Subject'] = experiments_per_subject
+        experiments_details['Experiment Types'] = experiment_type
+        experiments_details['Experiments/Project'] = experiments_per_project
 
         return experiments_details
 
@@ -347,12 +356,30 @@ class Fetcher:
             else:
                 scans_per_experiment[item['ID']] = 1
 
-        scans_details['scans_quality'] = scan_quality
-        scans_details['scan_types'] = type_dict
-        scans_details['xsi_scan_types'] = xsi_type_dict
-        scans_details['scans_per_project'] = scans_per_project
-        scans_details['scans_per_subject'] = scans_per_subject
-        scans_details['scans_per_experiment'] = scans_per_experiment
-        scans_details['number_of_scans'] = len(scans)
+        scans_details['Scans Quality'] = scan_quality
+        scans_details['Scan Types'] = type_dict
+        scans_details['XSI Scan Types'] = xsi_type_dict
+        scans_details['Scans/Project'] = scans_per_project
+        scans_details['Scans/Subject'] = scans_per_subject
+        scans_details['Scans/Experiment'] = scans_per_experiment
+        scans_details['Number of Scans'] = len(scans)
 
         return scans_details
+
+    def get_projects_details_specific(self):
+
+        try:
+            print("Processing............")
+            projects = self.SELECTOR.select('xnat:projectData').all().data
+        except Exception as e:
+            # 500 represent error in url
+            if(str(e).find('500') != -1):
+                return 500
+            # 400 represent error in login details
+            elif(str(e).find('401') != -1):
+                return 401
+            # 1 represent Error in whole url
+            else:
+                return 1
+
+        return [project['id'] for project in projects]
