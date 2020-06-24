@@ -37,8 +37,8 @@ class GetInfo:
         # If some error in connection 1 will be returned and we will
         # not go further
         if(type(projects_details) != int):
-            stats['Projects'] = projects_details['number_of_projects']
-            del projects_details['number_of_projects']
+            stats['Projects'] = projects_details['Number of Projects']
+            del projects_details['Number of Projects']
             final_json_dict.update(projects_details)
         else:
             return projects_details
@@ -46,22 +46,22 @@ class GetInfo:
         # Pre processing for subject details required
         subjects_details = self.fetcher_object.get_subjects_details()
         if(subjects_details != 1):
-            stats['Subjects'] = subjects_details['number_of_subjects']
-            del subjects_details['number_of_subjects']
+            stats['Subjects'] = subjects_details['Number of Subjects']
+            del subjects_details['Number of Subjects']
             final_json_dict.update(subjects_details)
 
         # Pre processing experiment details
         experiments_details = self.fetcher_object.get_experiments_details()
         if(experiments_details != 1):
-            stats['Experiments'] = experiments_details['number_of_experiments']
-            del experiments_details['number_of_experiments']
+            stats['Experiments'] = experiments_details['Number of Experiments']
+            del experiments_details['Number of Experiments']
             final_json_dict.update(experiments_details)
 
         # Pre processing scans details
         scans_details = self.fetcher_object.get_scans_details()
         if(scans_details != 1):
-            stats['Scans'] = scans_details['number_of_scans']
-            del scans_details['number_of_scans']
+            stats['Scans'] = scans_details['Number of Scans']
+            del scans_details['Number of Scans']
             final_json_dict.update(scans_details)
 
         stat_final = {'Stats': stats}
@@ -73,3 +73,7 @@ class GetInfo:
     def get_info(self):
 
         return self.__preprocessor()
+
+    def get_project_list(self):
+
+        return self.fetcher_object.get_projects_details_specific()

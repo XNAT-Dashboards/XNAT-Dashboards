@@ -1,4 +1,4 @@
-from pyxnat_connection import graph_generator
+from generators import graph_generator
 from utils import input_processor
 import pathlib
 
@@ -12,7 +12,7 @@ def test_graph_type_generator():
     input_processor.set_keyboard_input(['bar', 'bar', 'bar', 'bar',
                                         'bar', 'bar', 'bar', 'bar',
                                         'bar', 'bar', 'bar', 'bar',
-                                        'bar', 'bar', 'bar'])
+                                        'bar', 'bar', 'bar', 'bar'])
     graph_object.graph_type_generator()
 
     assert pathlib.Path('utils/graph_type.json').exists

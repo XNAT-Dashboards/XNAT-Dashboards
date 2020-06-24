@@ -27,8 +27,9 @@ def test_get_projects_details():
 
     project_details = fetch_object_connected.get_projects_details()
 
-    assert type(project_details['number_of_projects']) == int
-    assert type(project_details['project_mr_pet_ct']) == dict
+    assert type(project_details['Number of Projects']) == int
+    assert type(project_details['Project MR PET CT count']) == dict
+    assert type(project_details['Project Visibility']) == dict
     assert fetch_object_disconn_pwd_incorrect.get_projects_details() == 401
     assert fetch_object_disconn_url_incorrect.get_projects_details() == 500
 
@@ -37,34 +38,42 @@ def test_get_subjects_details():
 
     subject_details = fetch_object_connected.get_subjects_details()
 
-    assert type(subject_details['number_of_subjects']) == int
-    assert type(subject_details['age_range']) == dict
-    assert type(subject_details['gender']) == dict
-    assert type(subject_details['handedness']) == dict
-    assert type(subject_details['subjects_per_project']) == dict
+    assert type(subject_details['Number of Subjects']) == int
+    assert type(subject_details['Age Range']) == dict
+    assert type(subject_details['Gender']) == dict
+    assert type(subject_details['Handedness']) == dict
+    assert type(subject_details['Subjects/Project']) == dict
 
 
 def test_get_experiments_details():
 
     experiment_details = fetch_object_connected.get_experiments_details()
 
-    assert type(experiment_details['number_of_experiments']) == int
-    assert type(experiment_details['experiments_per_subject']) == dict
-    assert type(experiment_details['experiments_per_project']) == dict
-    assert type(experiment_details['experiment_types']) == dict
+    assert type(experiment_details['Number of Experiments']) == int
+    assert type(experiment_details['Experiments/Subject']) == dict
+    assert type(experiment_details['Experiments/Project']) == dict
+    assert type(experiment_details['Experiment Types']) == dict
 
 
 def test_get_scans_details():
 
     experiment_details = fetch_object_connected.get_scans_details()
 
-    assert type(experiment_details['number_of_scans']) == int
-    assert type(experiment_details['scans_per_subject']) == dict
-    assert type(experiment_details['scans_per_project']) == dict
-    assert type(experiment_details['scans_per_experiment']) == dict
-    assert type(experiment_details['scans_quality']) == dict
-    assert type(experiment_details['scan_types']) == dict
-    assert type(experiment_details['xsi_scan_types']) == dict
+    assert type(experiment_details['Number of Scans']) == int
+    assert type(experiment_details['Scans/Subject']) == dict
+    assert type(experiment_details['Scans/Project']) == dict
+    assert type(experiment_details['Scans/Experiment']) == dict
+    assert type(experiment_details['Scans Quality']) == dict
+    assert type(experiment_details['Scan Types']) == dict
+    assert type(experiment_details['XSI Scan Types']) == dict
+
+
+def test_get_projects_details_specific():
+
+    assert type(fetch_object_connected.get_projects_details_specific())\
+           == list
+    assert fetch_object_disconn_pwd_incorrect.get_projects_details_specific() == 401
+    assert fetch_object_disconn_url_incorrect.get_projects_details_specific() == 500
 
 
 @pytest.mark.disable_socket
