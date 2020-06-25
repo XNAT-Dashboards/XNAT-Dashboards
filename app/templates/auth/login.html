@@ -7,6 +7,7 @@
 	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link rel="stylesheet" type="text/css" href="/static/auth/css/animate.css">
+	<link rel="icon" type="image/png" sizes="16x16" href="/static/common/images/Logo.png">
 	<link rel="stylesheet" type="text/css" href="/static/auth/css/hamburgers.min.css">
 	<link rel="stylesheet" type="text/css" href="/static/auth/css/select2.min.css">
 	<link rel="stylesheet" type="text/css" href="/static/auth/css/util.css">
@@ -25,7 +26,7 @@
 		</div>
 		<div class="container-login100">
 			<div class="wrap-login100">
-				<form class="login100-form validate-form">
+				<form method="POST" action="{{ url_for('dashboards.stats') }}" class="login100-form validate-form">
                     
 					<span class="login100-form-title p-b-43">
 						Login to continue
