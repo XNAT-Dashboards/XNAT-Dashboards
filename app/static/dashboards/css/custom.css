@@ -210,3 +210,14 @@
     width: 40px;
     height: 40px;
     padding: 10px; }
+
+.logo{
+  width: 35px;
+  height: 30;
+}
+#logo{
+  color: black;
+}
+.left_pane{
+  color: white;
+}
