@@ -33,9 +33,14 @@ def test_dashboard():
                                 'dashboards/stats/', follow_redirects=True,
                                 data=data_incorrect_2).status_code
 
+    # Checks if we are getting redirected to login through logout
+    logout = app.test_client().get('dashboards/logout/',
+                                   follow_redirects=True).status_code
+
     assert response_post_correct == 200
     assert response_post_incorrect_1 == 200
     assert response_post_incorrect_2 == 200
+    assert logout == 200
 
 
 def test_home_redirect():
