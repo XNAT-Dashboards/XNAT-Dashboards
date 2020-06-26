@@ -42,3 +42,12 @@ def stats():
                                    project_list=project_list,
                                    username=username.capitalize(),
                                    server=server)
+
+
+# Set the route and accepted methods
+@dashboards.route('/logout/', methods=['POST', 'GET'])
+def logout():
+    global graph_data
+    graph_data = {}
+    session['error'] = -1
+    return redirect(url_for('auth.login'))
