@@ -345,23 +345,11 @@ class Fetcher:
             else:
                 scans_per_subject[item['project']] = 1
 
-        # Scans per experiment information
-
-        scans_per_experiment = {}
-
-        for item in scans:
-            if(item['ID'] in scans_per_subject):
-                scans_per_experiment[item['ID']] = \
-                    scans_per_experiment[item['ID']] + 1
-            else:
-                scans_per_experiment[item['ID']] = 1
-
         scans_details['Scans Quality'] = scan_quality
         scans_details['Scan Types'] = type_dict
         scans_details['XSI Scan Types'] = xsi_type_dict
         scans_details['Scans/Project'] = scans_per_project
         scans_details['Scans/Subject'] = scans_per_subject
-        scans_details['Scans/Experiment'] = scans_per_experiment
         scans_details['Number of Scans'] = len(scans)
 
         return scans_details

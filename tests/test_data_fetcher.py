@@ -62,7 +62,6 @@ def test_get_scans_details():
     assert type(experiment_details['Number of Scans']) == int
     assert type(experiment_details['Scans/Subject']) == dict
     assert type(experiment_details['Scans/Project']) == dict
-    assert type(experiment_details['Scans/Experiment']) == dict
     assert type(experiment_details['Scans Quality']) == dict
     assert type(experiment_details['Scan Types']) == dict
     assert type(experiment_details['XSI Scan Types']) == dict

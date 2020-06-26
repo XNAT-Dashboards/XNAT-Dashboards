@@ -12,7 +12,7 @@ def test_graph_type_generator():
     input_processor.set_keyboard_input(['bar', 'bar', 'bar', 'bar',
                                         'bar', 'bar', 'bar', 'bar',
                                         'bar', 'bar', 'bar', 'bar',
-                                        'bar', 'bar', 'bar', 'bar'])
+                                        'bar', 'bar', 'bar'])
     graph_object.graph_type_generator()
 
     assert pathlib.Path('utils/graph_type.json').exists
