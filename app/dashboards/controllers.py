@@ -44,8 +44,8 @@ def stats():
                                    server=server)
 
 
-# Set the route and accepted methods
-@dashboards.route('/logout/', methods=['POST', 'GET'])
+# Logout route
+@dashboards.route('/logout/', methods=['GET'])
 def logout():
     global graph_data
     graph_data = {}
