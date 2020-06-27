@@ -32,9 +32,9 @@ class Fetcher:
         # projects to the global stats dictionary
 
         projects_details = {}
-        projects_mr_pet_ct = {'project_mr_count': 0,
-                              'project_ct_count': 0,
-                              'project_pet_count': 0}
+        projects_mr_pet_ct = {'mr_count': 0,
+                              'ct_count': 0,
+                              'pet_count': 0}
 
         project_acccess = {}
 
@@ -57,36 +57,36 @@ class Fetcher:
             dictionary with the key of project as ID
             '''
 
-            if(project['proj_mr_count'] == ''):
-                projects_mr_pet_ct['project_mr_count'] =\
-                    projects_mr_pet_ct['project_mr_count']\
+            if(project['mr_count'] == ''):
+                projects_mr_pet_ct['mr_count'] =\
+                    projects_mr_pet_ct['mr_count']\
                     + 0
             else:
-                projects_mr_pet_ct['project_mr_count'] =\
-                    projects_mr_pet_ct['project_mr_count']\
-                    + int(project['proj_mr_count'])
+                projects_mr_pet_ct['mr_count'] =\
+                    projects_mr_pet_ct['mr_count']\
+                    + int(project['mr_count'])
 
-            if(project['proj_pet_count'] == ''):
-                projects_mr_pet_ct['project_pet_count'] =\
+            if(project['pet_count'] == ''):
+                projects_mr_pet_ct['pet_count'] =\
                     projects_mr_pet_ct['project_pet_count']\
                     + 0
             else:
-                projects_mr_pet_ct['project_pet_count'] =\
-                    projects_mr_pet_ct['project_pet_count']\
-                    + int(project['proj_pet_count'])
+                projects_mr_pet_ct['pet_count'] =\
+                    projects_mr_pet_ct['pet_count']\
+                    + int(project['pet_count'])
 
-            if(project['proj_ct_count'] == ''):
-                projects_mr_pet_ct['project_ct_count'] =\
-                    projects_mr_pet_ct['project_ct_count'] \
+            if(project['ct_count'] == ''):
+                projects_mr_pet_ct['ct_count'] =\
+                    projects_mr_pet_ct['ct_count'] \
                     + 0
             else:
-                projects_mr_pet_ct['project_ct_count'] =\
-                    projects_mr_pet_ct['project_ct_count']\
-                    + int(project['proj_ct_count'])
+                projects_mr_pet_ct['ct_count'] =\
+                    projects_mr_pet_ct['ct_count']\
+                    + int(project['ct_count'])
 
         projects_details['Number of Projects'] = len(projects)
-        projects_details['Project MR PET CT count'] = projects_mr_pet_ct
-        projects_details['Project Visibility'] = project_acccess
+        projects_details['Total MR PET CT Sessions'] = projects_mr_pet_ct
+        projects_details['Projects Visibility'] = project_acccess
 
         return projects_details
 

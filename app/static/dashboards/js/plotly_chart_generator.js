@@ -72,9 +72,27 @@ function barchart_generator(graph_name, graph_info){
         }
       ];
 
-      var layout = {
-        title: graph_name,
-        showlegend: false
+    updatemenus= [{
+            y: 1.3,
+            yanchor: 'top',
+            x:0,
+            xanchor:"left",
+            pad:{"r": 10, "t": 10},
+            buttons: [{
+                method: 'relayout',
+                args: [{"yaxis.type": "linear"}],
+                label: 'Linear'
+            },{
+                method: 'relayout',
+                args: [{"yaxis.type": "log"}],
+                label: 'Log'
+            }]
+        }]
+
+    var layout = {
+            title: graph_name,
+            showlegend: false,
+            updatemenus:updatemenus
     };
 
     var config = {responsive: true}

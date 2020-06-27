@@ -39,7 +39,6 @@ class GetInfo:
         if(type(projects_details) != int):
             stats['Projects'] = projects_details['Number of Projects']
             del projects_details['Number of Projects']
-            final_json_dict.update(projects_details)
         else:
             return projects_details
 
@@ -48,25 +47,26 @@ class GetInfo:
         if(subjects_details != 1):
             stats['Subjects'] = subjects_details['Number of Subjects']
             del subjects_details['Number of Subjects']
-            final_json_dict.update(subjects_details)
 
         # Pre processing experiment details
         experiments_details = self.fetcher_object.get_experiments_details()
         if(experiments_details != 1):
             stats['Experiments'] = experiments_details['Number of Experiments']
             del experiments_details['Number of Experiments']
-            final_json_dict.update(experiments_details)
 
         # Pre processing scans details
         scans_details = self.fetcher_object.get_scans_details()
         if(scans_details != 1):
             stats['Scans'] = scans_details['Number of Scans']
             del scans_details['Number of Scans']
-            final_json_dict.update(scans_details)
 
         stat_final = {'Stats': stats}
 
         final_json_dict.update(stat_final)
+        final_json_dict.update(projects_details)
+        final_json_dict.update(subjects_details)
+        final_json_dict.update(experiments_details)
+        final_json_dict.update(scans_details)
 
         return final_json_dict
 
