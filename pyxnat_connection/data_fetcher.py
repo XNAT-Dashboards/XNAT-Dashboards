@@ -64,16 +64,16 @@ class Fetcher:
             else:
                 projects_mr_pet_ct['mr_count'] =\
                     projects_mr_pet_ct['mr_count']\
-                    + int(project['mr_count'])
+                    + int(project['proj_mr_count'])
 
             if(project['proj_pet_count'] == ''):
                 projects_mr_pet_ct['pet_count'] =\
-                    projects_mr_pet_ct['project_pet_count']\
+                    projects_mr_pet_ct['pet_count']\
                     + 0
             else:
                 projects_mr_pet_ct['pet_count'] =\
                     projects_mr_pet_ct['pet_count']\
-                    + int(project['pet_count'])
+                    + int(project['proj_pet_count'])
 
             if(project['proj_ct_count'] == ''):
                 projects_mr_pet_ct['ct_count'] =\
@@ -82,7 +82,7 @@ class Fetcher:
             else:
                 projects_mr_pet_ct['ct_count'] =\
                     projects_mr_pet_ct['ct_count']\
-                    + int(project['ct_count'])
+                    + int(project['proj_ct_count'])
 
         projects_details['Number of Projects'] = len(projects)
         projects_details['Total MR PET CT Sessions'] = projects_mr_pet_ct
