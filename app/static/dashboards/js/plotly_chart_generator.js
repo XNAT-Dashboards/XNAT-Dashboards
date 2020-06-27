@@ -91,7 +91,6 @@ function barchart_generator(graph_name, graph_info){
 
     var layout = {
             title: graph_name,
-            showlegend: false,
             updatemenus:updatemenus
     };
 
@@ -130,8 +129,7 @@ function scatterchart_generator(graph_name, graph_info){
       ];
 
       var layout = {
-        title: graph_name,
-        showlegend: false
+        title: graph_name
     };
 
     var config = {responsive: true}
@@ -144,6 +142,7 @@ function scatterchart_generator(graph_name, graph_info){
 function piechart_generator(graph_name, graph_info){
     x_axis = [];
     y_axis = [];
+
     for (x in graph_info){
         if(x == 'graph_type' || x == 'id'){
             continue;
@@ -165,8 +164,8 @@ function piechart_generator(graph_name, graph_info){
 
     var data = [
         {
-          labels: x_axis,
           values: y_axis,
+          labels: x_axis,
           type: 'pie',
           marker: {
             colors: colors_list // Adding color for each part of pie
@@ -175,8 +174,7 @@ function piechart_generator(graph_name, graph_info){
       ];
 
       var layout = {
-        title: graph_name,
-        showlegend: false
+        title: graph_name
     };
 
     var config = {responsive: true}
@@ -213,8 +211,7 @@ function linechart_generator(graph_name, graph_info){
       ];
 
       var layout = {
-        title: graph_name,
-        showlegend: false
+        title: graph_name
     };
 
     var config = {responsive: true}
