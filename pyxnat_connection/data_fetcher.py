@@ -57,7 +57,7 @@ class Fetcher:
             dictionary with the key of project as ID
             '''
 
-            if(project['mr_count'] == ''):
+            if(project['project_mr_count'] == ''):
                 projects_mr_pet_ct['mr_count'] =\
                     projects_mr_pet_ct['mr_count']\
                     + 0
@@ -66,7 +66,7 @@ class Fetcher:
                     projects_mr_pet_ct['mr_count']\
                     + int(project['mr_count'])
 
-            if(project['pet_count'] == ''):
+            if(project['project_pet_count'] == ''):
                 projects_mr_pet_ct['pet_count'] =\
                     projects_mr_pet_ct['project_pet_count']\
                     + 0
@@ -75,7 +75,7 @@ class Fetcher:
                     projects_mr_pet_ct['pet_count']\
                     + int(project['pet_count'])
 
-            if(project['ct_count'] == ''):
+            if(project['project_ct_count'] == ''):
                 projects_mr_pet_ct['ct_count'] =\
                     projects_mr_pet_ct['ct_count'] \
                     + 0
