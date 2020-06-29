@@ -8,11 +8,19 @@ import json
 class GraphGenerator:
 
     data = {}
+    project_list = []
+    project_list_ow_co_me = []
 
     def __init__(self, user, password, server):
-        self.data = get_info.GetInfo(user,
-                                     password,
-                                     server).get_info()
+        data_object = get_info.GetInfo(user,
+                                       password,
+                                       server)
+        self.data = data_object.get_info()
+        projects_data = data_object.get_project_list()
+        if type(projects_data) != int:
+            self.project_list = projects_data['project_list']
+            self.project_list_ow_co_me = projects_data[
+                                          'project_list_ow_co_me']
 
     def graph_type_generator(self):
 
@@ -53,7 +61,7 @@ class GraphGenerator:
 
         counter_id = 0
 
-        if(type(self.data) != dict):
+        if type(self.data) != dict:
             return self.data
 
         final_json_dict = self.data
@@ -78,13 +86,14 @@ class GraphGenerator:
         counter = 0
 
         graph_data = self.graph_pre_processor()
-        if(type(graph_data) == int):
+
+        if type(graph_data) == int:
             return graph_data
 
         for final_json in graph_data:
             array_1d.append({final_json: graph_data[final_json]})
             counter = counter + 1
-            if(counter == 2 or length_check == len(graph_data)-1):
+            if counter == 2 or length_check == len(graph_data)-1:
                 counter = 0
                 array_2d.append(array_1d)
                 array_1d = []
@@ -93,6 +102,49 @@ class GraphGenerator:
 
         return array_2d
 
+    def project_list_generator(self):
+
+        # Returns a the names of project based in a 2dArray
+        # To be processed by frontend
+        length_check = 0
+        length_check_ow_co_me = 0
+        array_2d = []
+        array_1d = []
+        array_1d_ow_co_me = []
+        array_2d_ow_co_me = []
+        counter = 0
+        counter_ow_co_me = 0
+
+        list_data = self.project_list
+        list_data_ow_co_me = self.project_list_ow_co_me
+
+        if type(list_data) == int:
+            return list_data
+
+        for data in list_data:
+            array_1d.append(data)
+            counter = counter + 1
+            if counter == 4 or length_check == len(list_data)-1:
+                counter = 0
+                array_2d.append(array_1d)
+                array_1d = []
+
+        if len(self.project_list_ow_co_me) == 0:
+            array_2d_ow_co_me = [[]]
+        else:
+            for data in list_data_ow_co_me:
+
+                array_1d_ow_co_me.append(data)
+                counter_ow_co_me = counter_ow_co_me + 1
+                if counter_ow_co_me == 4 or length_check_ow_co_me == len(list_data_ow_co_me)-1:
+
+                    counter_ow_co_me = 0
+                    array_2d_ow_co_me.append(array_1d_ow_co_me)
+                    array_1d_ow_co_me = []
+
+                length_check_ow_co_me = length_check_ow_co_me+1
+
+        return [array_2d, array_2d_ow_co_me]
 
 if __name__ == "__main__":
     '''
