@@ -70,9 +70,9 @@ def test_get_scans_details():
 def test_get_projects_details_specific():
 
     assert type(fetch_object_connected.get_projects_details_specific())\
-           == list
-    assert fetch_object_disconn_pwd_incorrect.get_projects_details_specific() == 401
-    assert fetch_object_disconn_url_incorrect.get_projects_details_specific() == 500
+           == dict
+    assert fetch_object_disconn_pwd_incorrect.get_projects_details_specific() == 1
+    assert fetch_object_disconn_url_incorrect.get_projects_details_specific() == 1
 
 
 @pytest.mark.disable_socket
