@@ -1,28 +1,37 @@
 from pyxnat import Interface
+from collections import Counter, OrderedDict
+import numpy as np
 
 
 class Fetcher:
 
     SELECTOR = None
+    projects = None
+    subjects = None
+    experiments = None
+    name = None
+    scans = None
 
     # Initializing the central interface object in the constructor
     def __init__(self, name, password, server):
 
         SELECTOR = Interface(server=server, user=name, password=password)
-
+        self.name = name
         self.SELECTOR = SELECTOR
 
     def get_projects_details(self):
 
         try:
-            print("Processing............")
-            projects = self.SELECTOR.select('xnat:projectData').all().data
+            self.projects = self.SELECTOR.select('xnat:projectData').all().data
+            projects = self.projects
         except Exception as e:
+            # Exception raised is Database error which is not a exception in
+            # python thus using whole exception class
             # 500 represent error in url
-            if(str(e).find('500') != -1):
+            if str(e).find('500') != -1:
                 return 500
             # 400 represent error in login details
-            elif(str(e).find('401') != -1):
+            elif str(e).find('401') != -1:
                 return 401
             # 1 represent Error in whole url
             else:
@@ -32,57 +41,25 @@ class Fetcher:
         # projects to the global stats dictionary
 
         projects_details = {}
-        projects_mr_pet_ct = {'mr_count': 0,
-                              'ct_count': 0,
-                              'pet_count': 0}
-
+        projects_mr_pet_ct = {}
         project_acccess = {}
 
-        for item in projects:
-            if(item['project_access'] in project_acccess):
-                project_acccess[item['project_access']] = \
-                    project_acccess[item['project_access']] + 1
-            else:
-                project_acccess[item['project_access']] = 1
+        project_acccess_list = [item['project_access'] for item in projects
+                                if item['project_access'] != '']
+        project_acccess = dict(Counter(project_acccess_list))
 
-        for project in projects:
-
-            '''
-            Looping through each project and create a dictonary that will add
-            details like:
-            Number of MR, PET and CT present in project to project_details.
-
-            project_details is another dictionary which will have above
-            information for each project and will add into the projects_details
-            dictionary with the key of project as ID
-            '''
-
-            if(project['proj_mr_count'] == ''):
-                projects_mr_pet_ct['mr_count'] =\
-                    projects_mr_pet_ct['mr_count']\
-                    + 0
-            else:
-                projects_mr_pet_ct['mr_count'] =\
-                    projects_mr_pet_ct['mr_count']\
-                    + int(project['proj_mr_count'])
-
-            if(project['proj_pet_count'] == ''):
-                projects_mr_pet_ct['pet_count'] =\
-                    projects_mr_pet_ct['pet_count']\
-                    + 0
-            else:
-                projects_mr_pet_ct['pet_count'] =\
-                    projects_mr_pet_ct['pet_count']\
-                    + int(project['proj_pet_count'])
-
-            if(project['proj_ct_count'] == ''):
-                projects_mr_pet_ct['ct_count'] =\
-                    projects_mr_pet_ct['ct_count'] \
-                    + 0
-            else:
-                projects_mr_pet_ct['ct_count'] =\
-                    projects_mr_pet_ct['ct_count']\
-                    + int(project['proj_ct_count'])
+        projects_mr_pet_ct['ct_count'] = sum([int(project['proj_ct_count'])
+                                              for project in projects
+                                              if project['proj_ct_count']
+                                              != ''])
+        projects_mr_pet_ct['pet_count'] = sum([int(project['proj_pet_count'])
+                                               for project in projects
+                                               if project['proj_pet_count']
+                                               != ''])
+        projects_mr_pet_ct['mr_count'] = sum([int(project['proj_mr_count'])
+                                              for project in projects
+                                              if project['proj_mr_count']
+                                              != ''])
 
         projects_details['Number of Projects'] = len(projects)
         projects_details['Total MR PET CT Sessions'] = projects_mr_pet_ct
@@ -93,13 +70,11 @@ class Fetcher:
     def get_subjects_details(self):
 
         try:
-            print("Processing............")
-
-            subjects_data = self.SELECTOR.get('/data/subjects',
+            self.subjects = self.SELECTOR.get('/data/subjects',
                         params= {'columns': 'ID,project,handedness,age,gender'})\
                         .json()['ResultSet']['Result']
+            subjects_data = self.subjects
         except Exception:
-            print("ERROR : Unable to connect to the database")
             return 1
 
         # Subject_details is a dictionary which will add details of
@@ -107,98 +82,38 @@ class Fetcher:
 
         subjects_details = {}
 
-        '''
-        Looping through each subject and create a dictonary that will
-        add details like Number of left,right and unknown handed subjects,
-        gender of each subjects
-
-        project_details is another dictionary which will have above
-        information for each project and will add into the projects_details
-        dictionary with the key of project as ID
-
-        This also add a dictionary data showing number of
-        subjects per project
-        '''
-
         # Subject age information
 
-        age_range = {'10': 0,
-                     '20': 0,
-                     '30': 0,
-                     '40': 0,
-                     '50': 0,
-                     '60': 0,
-                     '70': 0,
-                     '80': 0,
-                     '90': 0,
-                     '100': 0,
-                     '100 above': 0}
+        age = [int(item['age']) for item in subjects_data if item['age'] != '']
 
-        for item in subjects_data:
+        # Create bins and their labels
+        bins = np.arange(11)*10+10
+        age_range_bins = dict(Counter(np.digitize(age, bins)))
 
-            if(item['age'] == ''):
-                continue
-            elif(int(item['age']) <= 10):
-                age_range['10'] = age_range['10'] + 1
-            elif(int(item['age']) <= 20):
-                age_range['20'] = age_range['20'] + 1
-            elif(int(item['age']) <= 30):
-                age_range['30'] = age_range['30'] + 1
-            elif(int(item['age']) <= 40):
-                age_range['40'] = age_range['40'] + 1
-            elif(int(item['age']) <= 50):
-                age_range['50'] = age_range['50'] + 1
-            elif(int(item['age']) <= 60):
-                age_range['60'] = age_range['60'] + 1
-            elif(int(item['age']) <= 70):
-                age_range['70'] = age_range['70'] + 1
-            elif(int(item['age']) <= 80):
-                age_range['80'] = age_range['80'] + 1
-            elif(int(item['age']) <= 90):
-                age_range['90'] = age_range['90'] + 1
-            elif(int(item['age']) <= 100):
-                age_range['100'] = age_range['100'] + 1
+        age_range_od = OrderedDict()
+        for key, value in sorted(age_range_bins.items()):
+            if key != 11:
+                age_range_od[str(key*10)+'-'+str(key*10+10)] = int(value)
             else:
-                age_range['100 above'] = age_range['100 above'] + 1
+                age_range_od['100+'] = int(value)
+
+        age_range = dict(age_range_od)
 
         # Subject handedness information
 
-        handedness = {'Right': 0, 'Left': 0, 'Ambidextrous': 0}
-
-        for item in subjects_data:
-
-            if(item['handedness'] == ''):
-                continue
-            if(item['handedness'] == 'right'):
-                handedness['Right'] = handedness['Right'] + 1
-            elif(item['handedness'] == 'left'):
-                handedness['Left'] = handedness['Left'] + 1
-            else:
-                handedness['Ambidextrous'] = handedness['Ambidextrous'] + 1
+        handedness = dict(Counter([item['handedness']
+                          for item in subjects_data
+                          if item['handedness'] != '']))
 
         # Subject gender information
 
-        gender = {'Male': 0, 'Female': 0}
-
-        for item in subjects_data:
-
-            if(item['gender'] == ''):
-                continue
-            if(item['gender'].lower()[:1] == 'm'):
-                gender['Male'] = gender['Male'] + 1
-            else:
-                gender['Female'] = gender['Female'] + 1
+        gender = dict(Counter([item['gender'][0].upper()
+                      for item in subjects_data if item['gender'] != '']))
 
         # Subjects per project information
 
-        subjects_per_project = {}
-
-        for item in subjects_data:
-            if(item['project'] in subjects_per_project):
-                subjects_per_project[item['project']] = \
-                    subjects_per_project[item['project']] + 1
-            else:
-                subjects_per_project[item['project']] = 1
+        subjects_per_project = dict(Counter([item['project']
+                                    for item in subjects_data]))
 
         # Number of subjects information
         subjects_details['Number of Subjects'] = len(subjects_data)
@@ -220,9 +135,10 @@ class Fetcher:
         project, type of experiment, experiment per subjects.
         '''
         try:
-            experiments = self.SELECTOR.array.experiments(
+            self.experiments = self.SELECTOR.array.experiments(
                                             experiment_type='',
                                             columns=['subject_ID']).data
+            experiments = self.experiments
         except Exception:
             return 1
 
@@ -232,36 +148,21 @@ class Fetcher:
 
         # Experiments per project information
 
-        experiments_per_project = {}
-
-        for item in experiments:
-            if(item['project'] in experiments_per_project):
-                experiments_per_project[item['project']] = \
-                    experiments_per_project[item['project']] + 1
-            else:
-                experiments_per_project[item['project']] = 1
+        experiments_per_project = dict(Counter([item['project']
+                                       for item in experiments
+                                       if item['project'] != '']))
 
         # Experiments type information
 
-        experiment_type = {}
-
-        for item in experiments:
-            if(item['xsiType'] in experiment_type):
-                experiment_type[item['xsiType']] = \
-                    experiment_type[item['xsiType']] + 1
-            else:
-                experiment_type[item['xsiType']] = 1
+        experiment_type = dict(Counter([item['xsiType']
+                               for item in experiments
+                               if item['xsiType'] != '']))
 
         # Experiments per subject information
 
-        experiments_per_subject = {}
-
-        for item in experiments:
-            if(item['subject_ID'] in experiments_per_subject):
-                experiments_per_subject[item['subject_ID']] = \
-                    experiments_per_subject[item['subject_ID']] + 1
-            else:
-                experiments_per_subject[item['subject_ID']] = 1
+        experiments_per_subject = dict(Counter([item['subject_ID']
+                                       for item in experiments
+                                       if item['subject_ID'] != '']))
 
         experiments_details['Experiments/Subject'] = experiments_per_subject
         experiments_details['Experiment Types'] = experiment_type
@@ -280,70 +181,43 @@ class Fetcher:
         scan quality (usable or unusable), xsi type of scan.
         '''
         try:
-            scans = self.SELECTOR.array.scans(
+            self.scans = self.SELECTOR.array.scans(
                 columns=['xnat:imageScanData/quality',
                          'xnat:imageScanData/type'])
+            scans = self.scans
         except Exception:
             return 1
 
-        scan_quality = {'usable_scans': 0,
-                        'unusable_scans': 0,
-                        'questionable': 0}
-
-        for item in scans:
-            if(item['xnat:imagescandata/quality'] == 'usable'):
-                scan_quality['usable_scans'] = scan_quality['usable_scans']+1
-            elif(item['xnat:imagescandata/quality'] == 'questionable'):
-                scan_quality['questionable'] = scan_quality['questionable']+1
-            else:
-                scan_quality['unusable_scans'] =\
-                                    scan_quality['unusable_scans'] + 1
-
         scans_details = {}
 
+        scan_quality = dict(Counter([item['xnat:imagescandata/quality']
+                            for item in scans
+                            if item['xnat:imagescandata/quality'] != '']))
         # Scans type information
 
-        type_dict = {}
-
-        for item in scans:
-            if(item['xnat:imagescandata/type'] in type_dict):
-                type_dict[item['xnat:imagescandata/type']] =\
-                        type_dict[item['xnat:imagescandata/type']] + 1
-            else:
-                type_dict[item['xnat:imagescandata/type']] = 1
+        type_dict = dict(Counter([item['xnat:imagescandata/type']
+                         for item in scans
+                         if item['xnat:imagescandata/type'] != '']))
 
         # Scans xsi type information
 
-        xsi_type_dict = {}
-
-        for item in scans:
-            if(item['xsiType'] in xsi_type_dict):
-                xsi_type_dict[item['xsiType']] = \
-                                    xsi_type_dict[item['xsiType']] + 1
-            else:
-                xsi_type_dict[item['xsiType']] = 1
+        xsi_type_dict = dict(Counter([item['xsiType']
+                             for item in scans
+                             if item['xsiType'] != '']))
 
         # Scans per project information
 
-        scans_per_project = {}
-
-        for item in scans:
-            if(item['project'] in scans_per_project):
-                scans_per_project[item['project']] = \
-                        scans_per_project[item['project']] + 1
-            else:
-                scans_per_project[item['project']] = 1
+        scans_per_project = dict(Counter([item['project']
+                                 for item in scans
+                                 if item['project'] != '']))
 
         # Scans per subject information
 
-        scans_per_subject = {}
-
-        for item in scans:
-            if(item['xnat:imagesessiondata/subject_id'] in scans_per_subject):
-                scans_per_subject[item['xnat:imagesessiondata/subject_id']] = \
-                    scans_per_subject[item['xnat:imagesessiondata/subject_id']] + 1
-            else:
-                scans_per_subject[item['project']] = 1
+        scans_per_subject = dict(Counter(
+                            [item['xnat:imagesessiondata/subject_id']
+                             for item in scans
+                             if item['xnat:imagesessiondata/subject_id']
+                             != '']))
 
         scans_details['Scans Quality'] = scan_quality
         scans_details['Scan Types'] = type_dict
@@ -357,17 +231,37 @@ class Fetcher:
     def get_projects_details_specific(self):
 
         try:
-            print("Processing............")
-            projects = self.SELECTOR.select('xnat:projectData').all().data
+            projects = self.projects
+            if projects is None:
+                raise Exception('No Information found')
         except Exception as e:
             # 500 represent error in url
-            if(str(e).find('500') != -1):
+            if str(e).find('500') != -1:
                 return 500
             # 400 represent error in login details
-            elif(str(e).find('401') != -1):
+            elif str(e).find('401') != -1:
                 return 401
             # 1 represent Error in whole url
             else:
                 return 1
 
-        return [project['id'] for project in projects]
+        project_list_owned_collab_member = []
+
+        for project in projects:
+            project_owner = project['project_owners']
+            project_collabs = project['project_collabs']
+            project_member = project['project_members']
+            user = self.name
+
+            if project_owner.find(user) != -1\
+               or project_collabs.find(user) != -1\
+               or project_member.find(user) != -1:
+                project_list_owned_collab_member.append(project['id'])
+
+        project_list_all = [project['id'] for project in projects]
+
+        list_data = {}
+        list_data['project_list'] = project_list_all
+        list_data['project_list_ow_co_me'] = project_list_owned_collab_member
+
+        return list_data
