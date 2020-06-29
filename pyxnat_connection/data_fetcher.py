@@ -19,6 +19,10 @@ class Fetcher:
         self.name = name
         self.SELECTOR = SELECTOR
 
+    def __del__(self):
+        print("Disconnected")
+        self.SELECTOR.disconnect()
+
     def get_projects_details(self):
 
         try:

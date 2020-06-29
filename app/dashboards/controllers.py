@@ -16,7 +16,7 @@ server = ''
 @dashboards.route('/stats/', methods=['POST', 'GET'])
 def stats():
 
-    if(request.method == "POST"):
+    if request.method == "POST":
         global username, server
         user_details = request.form
         username = user_details['username']
@@ -30,14 +30,12 @@ def stats():
                                                          server)
         graph_data = plotting_object.graph_generator()
         project_lists = plotting_object.project_list_generator()
-        print(project_list)
         project_list = project_lists[0]
         project_list_ow_co_me = project_lists[1]
-        print(project_lists[1])
-
+        del plotting_object
         return 'correct'
     else:
-        if(graph_data == {} or type(graph_data) == int):
+        if graph_data == {} or type(graph_data) == int:
             session['error'] = graph_data
             return redirect(url_for('auth.login'))
         else:
