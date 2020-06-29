@@ -5,6 +5,7 @@ from app.auth.controllers import auth
 
 # Define the WSGI application object
 app = Flask(__name__)
+app.config['JSON_SORT_KEYS'] = False
 
 
 # Set the redirecting route for dashboard
