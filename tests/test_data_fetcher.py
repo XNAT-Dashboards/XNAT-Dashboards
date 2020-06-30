@@ -30,7 +30,7 @@ def test_get_projects_details():
     assert type(project_details['Number of Projects']) == int
     assert type(project_details['Imaging Sessions']) == dict
     assert type(project_details['Projects Visibility']) == dict
-    assert type(project_details['MR Sessions/Project']) == int
+    assert type(project_details['MR Sessions/Project']) == dict
     assert type(project_details['PET Sessions/Project']) == dict
     assert type(project_details['CT Sessions/Project']) == dict
     assert type(project_details['UT Sessions/Project']) == dict
