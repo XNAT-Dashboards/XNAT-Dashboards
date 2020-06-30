@@ -28,8 +28,12 @@ def test_get_projects_details():
     project_details = fetch_object_connected.get_projects_details()
 
     assert type(project_details['Number of Projects']) == int
-    assert type(project_details['Total MR PET CT Sessions']) == dict
+    assert type(project_details['Imaging Sessions']) == dict
     assert type(project_details['Projects Visibility']) == dict
+    assert type(project_details['MR Sessions/Project']) == int
+    assert type(project_details['PET Sessions/Project']) == dict
+    assert type(project_details['CT Sessions/Project']) == dict
+    assert type(project_details['UT Sessions/Project']) == dict
     assert fetch_object_disconn_pwd_incorrect.get_projects_details() == 401
     assert fetch_object_disconn_url_incorrect.get_projects_details() == 500
 

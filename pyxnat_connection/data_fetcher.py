@@ -45,29 +45,60 @@ class Fetcher:
         # projects to the global stats dictionary
 
         projects_details = {}
-        projects_mr_pet_ct = {}
+        projects_ims = {}
         project_acccess = {}
+        mr_sessions_per_project = {}
+        ct_sessions_per_project = {}
+        pet_sessions_per_project = {}
+        ut_sessions_per_project = {}
 
         project_acccess_list = [item['project_access'] for item in projects
                                 if item['project_access'] != '']
         project_acccess = dict(Counter(project_acccess_list))
 
-        projects_mr_pet_ct['ct_count'] = sum([int(project['proj_ct_count'])
-                                              for project in projects
-                                              if project['proj_ct_count']
-                                              != ''])
-        projects_mr_pet_ct['pet_count'] = sum([int(project['proj_pet_count'])
-                                               for project in projects
-                                               if project['proj_pet_count']
-                                               != ''])
-        projects_mr_pet_ct['mr_count'] = sum([int(project['proj_mr_count'])
-                                              for project in projects
-                                              if project['proj_mr_count']
-                                              != ''])
+        projects_ims['CT Sessions'] = sum([int(project['proj_ct_count'])
+                                           for project in projects
+                                           if project['proj_ct_count'] != ''])
+        projects_ims['PET Sessions'] = sum([int(project['proj_pet_count'])
+                                            for project in projects
+                                            if project['proj_pet_count']
+                                            != ''])
+        projects_ims['MR Sessions'] = sum([int(project['proj_mr_count'])
+                                           for project in projects
+                                           if project['proj_mr_count'] != ''])
+        projects_ims['UT Sessions'] = sum([int(project['proj_ut_count'])
+                                           for project in projects
+                                           if project['proj_ut_count'] != ''])
+
+        for item in projects:
+
+            if item['proj_mr_count'] != '':
+                mr_sessions_per_project[item['id']] = int(item['proj_mr_count'])
+            else:
+                mr_sessions_per_project[item['id']] = 0
+
+            if item['proj_pet_count'] != '':
+                pet_sessions_per_project[item['id']] = int(item['proj_pet_count'])
+            else:
+                pet_sessions_per_project[item['id']] = 0
+
+            if item['proj_ct_count'] != '':
+                ct_sessions_per_project[item['id']] = int(item['proj_ct_count'])
+            else:
+                ct_sessions_per_project[item['id']] = 0
+
+            if item['proj_ut_count'] != '':
+                ut_sessions_per_project[item['id']] = int(item['proj_ut_count'])
+            else:
+                ut_sessions_per_project[item['id']] = 0
 
         projects_details['Number of Projects'] = len(projects)
-        projects_details['Total MR PET CT Sessions'] = projects_mr_pet_ct
+        projects_details['Imaging Sessions'] = projects_ims
         projects_details['Projects Visibility'] = project_acccess
+        projects_details['MR Sessions/Project'] = mr_sessions_per_project
+        projects_details['PET Sessions/Project'] = pet_sessions_per_project
+        projects_details['CT Sessions/Project'] = ct_sessions_per_project
+        projects_details['UT Sessions/Project'] = ut_sessions_per_project
 
         return projects_details
 
