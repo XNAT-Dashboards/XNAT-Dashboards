@@ -70,21 +70,33 @@ $( ".card" ).hover(
     }
   );
 
-// Add hide and show logic for project list and overview graphs
+// Add hide and show logic for project list and overview dashboards
 
 $(".project_part").addClass("hide");
+$(".project_part_ow_co_me").addClass("hide");
 $("#overview").addClass("highlight");
 
 $("#overview").click(function(){
     $(".project_part").addClass("hide");
+    $(".project_part_ow_co_me").addClass("hide");
     $(".overview_part").removeClass("hide");
     $("#overview").addClass("highlight");
     $("#projects").removeClass("highlight");
+    $("#projects_ow_co_me").removeClass("highlight");
 });
 $("#projects").click(function(){
     $(".project_part").removeClass("hide");
+    $(".project_part_ow_co_me").addClass("hide");
     $(".overview_part").addClass("hide");
     $("#projects").addClass("highlight");
     $("#overview").removeClass("highlight");
+    $("#projects_ow_co_me").removeClass("highlight");
 });
-
+$("#projects_ow_co_me").click(function(){
+    $(".project_part_ow_co_me").removeClass("hide");
+    $(".project_part").addClass("hide");
+    $(".overview_part").addClass("hide");
+    $("#projects").removeClass("highlight");
+    $("#overview").removeClass("highlight");
+    $("#projects_ow_co_me").addClass("highlight");
+});
