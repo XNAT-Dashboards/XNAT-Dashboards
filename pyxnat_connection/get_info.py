@@ -62,11 +62,21 @@ class GetInfo:
 
         stat_final = {'Stats': stats}
 
-        final_json_dict.update(stat_final)
         final_json_dict.update(projects_details)
         final_json_dict.update(subjects_details)
         final_json_dict.update(experiments_details)
         final_json_dict.update(scans_details)
+        final_json_dict.update(stat_final)
+
+        '''
+        returns a nested dict
+        {
+            Graph1_name : { x_axis_values, y_axis_values},
+            Graph2_name : { x_axis_values, y_axis_values},
+            Graph3_name : { x_axis_values, y_axis_values},
+            Graph4_name : { x_axis_values, y_axis_values},
+        }
+        '''
 
         return final_json_dict
 

@@ -15,10 +15,13 @@ class Fetcher:
     # Initializing the central interface object in the constructor
     def __init__(self, name, password, server):
 
-        SELECTOR = Interface(server=server, user=name, password=password)
+        SELECTOR = Interface(server=server,
+                             user=name,
+                             password=password)
         self.name = name
         self.SELECTOR = SELECTOR
 
+    # Disconnect with the instance
     def __del__(self):
         print("Disconnected")
         self.SELECTOR.disconnect()
