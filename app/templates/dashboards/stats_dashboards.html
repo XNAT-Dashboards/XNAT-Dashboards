@@ -9,24 +9,27 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>XNAT Dashboards</title>
-    <!-- CSS -->
+    <!-- CSS import Start -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
     <link rel="icon" type="image/png" sizes="16x16" href="/static/common/images/Logo.png">
     <link href="/static/dashboards/css/custom.css" rel="stylesheet">
     <link href="/static/dashboards/css/custom_bootstrap_overite.css" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="icon" href="data:;base64,=">
+    <!-- CSS import End -->
 </head>
 <div class="preloader">
 </div>
 <body class="skin-default-dark fixed-layout">
     <div id="main-wrapper" >
+        <!-- Preloader Start -->
         <div class="preloader">
             <div class="loader">
                 <div class="loader__figure"></div>
                 <p class="loader__label">Plotting Data</p>
             </div>
         </div>
+        <!-- Preloader End -->
         <!-- Top nav bar start-->
         <header class="topbar">
             <nav class="navbar top-navbar navbar-expand-md navbar-dark">
@@ -96,24 +99,43 @@
                     </div>
                 </div>
                 <div class = "overview_part">
-                    {% for i in graph_data%}
+                    <!-- Counter Start -->
+                    <div class = "card">
+                        <div class="card-body">
+                                <div class="row">
+                                    {% for key in stats_data %}
+                                    <div class="col-3">
+                                        <div class="counter">
+                                            <h2 class="timer count-title count-number" data-to="{{stats_data[key]}}" data-speed="1000"></h2>
+                                            <p class="count-text ">{{key}}</p>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                        </div>
+                    </div>
+                    <!-- Counter End -->
+                    <!-- Graph plotting Start -->
+                    {% for i in graph_data %}
                     <div class="row">
-                        {% for j in i%}
+                        {% for j in i %}
                         {% for key in j %}
                             <div class="col-lg-6" id="myBig{{j['id']}}">
                                 <div class="card">
                                     <div class="card-body" id="graph_id{{j[key]['id']}}">
                                         <div id="graph_body{{j[key]['id']}}"><!-- Plotly chart will be drawn inside this DIV --></div>
                                     </div>
-                                    
                                 </div>
                             </div>
                         {% endfor %}
                         {% endfor %}
                     </div>
                     {% endfor %}
+                    <!-- Graph plotting End -->
                 </div>
             </div>
+            <!-- Project List Start -->
+            <!-- Project list for all visible projects Start -->
             <div class="project_part">
                 {% for i in project_list%}
                 <div class="row">
@@ -130,6 +152,8 @@
                 </div>
                 {% endfor %}
             </div>
+            <!-- Project list for all visible projects End -->
+            <!-- Project list for owned, collab or member projects Start -->
             <div class="project_part_ow_co_me">
                 {% for i in project_list_ow_co_me%}
                 <div class="row">
@@ -146,6 +170,8 @@
                 </div>
                 {% endfor %}
             </div>
+            <!-- Project list for owned, collab or member projects End -->
+            <!-- Project List End -->
         </div>
         <!-- Plotly graphs container end-->
         <!-- Footer start-->
@@ -154,7 +180,7 @@
         </footer>
         <!-- Footer end-->
     </div>    
-    <!-- Js include-->
+    <!-- Js include Start -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <script src="/static/common/js/jquery-3.2.1.min.js"></script>
     <script src="/static/dashboards/js/custom.js"></script>
@@ -175,6 +201,7 @@
         {%endfor%}
     {%endfor%}
     <script src="/static/dashboards/js/per_project.js"></script>
+    <!-- Js include End -->
 </body>
 
 </html>

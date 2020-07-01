@@ -50,7 +50,7 @@ function barchart_generator(graph_name, graph_info){
     x_axis = [];
     y_axis = [];
     for (x in graph_info){
-        if(x == 'graph_type' || x == 'id'){
+        if(x == 'graph_type' || x == 'id' ){
             continue;
         }else{
             x_axis.push(x);
