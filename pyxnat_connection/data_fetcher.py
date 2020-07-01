@@ -55,8 +55,11 @@ class Fetcher:
         pet_sessions_per_project = {}
         ut_sessions_per_project = {}
 
-        project_acccess_list = [item['project_access'] for item in projects
-                                if item['project_access'] != '']
+        project_acccess_list = [item['project_access']
+                                if item['project_access'] != ''
+                                else
+                                "No Data"
+                                for item in projects]
         project_acccess = dict(Counter(project_acccess_list))
 
         projects_ims['CT Sessions'] = sum([int(project['proj_ct_count'])
@@ -102,6 +105,10 @@ class Fetcher:
         projects_details['PET Sessions/Project'] = pet_sessions_per_project
         projects_details['CT Sessions/Project'] = ct_sessions_per_project
         projects_details['UT Sessions/Project'] = ut_sessions_per_project
+        projects_details['Total Sessions'] = projects_ims['PET Sessions']\
+                                           + projects_ims['MR Sessions']\
+                                           + projects_ims['UT Sessions']\
+                                           + projects_ims['CT Sessions']
 
         return projects_details
 
@@ -121,8 +128,13 @@ class Fetcher:
         subjects_details = {}
 
         # Subject age information
-
-        age = [int(item['age']) for item in subjects_data if item['age'] != '']
+        no_age_data_counter = 0
+        age = []
+        for item in subjects_data:
+            if item['age'] != '':
+                age.append(int(item['age']))
+            else:
+                no_age_data_counter = no_age_data_counter + 1
 
         # Create bins and their labels
         bins = np.arange(11)*10+10
@@ -136,17 +148,23 @@ class Fetcher:
                 age_range_od['100+'] = int(value)
 
         age_range = dict(age_range_od)
+        age_range.update({"No Age Data": no_age_data_counter})
 
         # Subject handedness information
 
         handedness = dict(Counter([item['handedness']
-                          for item in subjects_data
-                          if item['handedness'] != '']))
+                          if item['handedness'] != ''
+                          else
+                          "No Data"
+                          for item in subjects_data]))
 
         # Subject gender information
 
         gender = dict(Counter([item['gender'][0].upper()
-                      for item in subjects_data if item['gender'] != '']))
+                      if item['gender'] != ''
+                      else
+                      "No Data"
+                      for item in subjects_data]))
 
         # Subjects per project information
 
@@ -187,20 +205,26 @@ class Fetcher:
         # Experiments per project information
 
         experiments_per_project = dict(Counter([item['project']
-                                       for item in experiments
-                                       if item['project'] != '']))
+                                       if item['project'] != ''
+                                       else
+                                       "No Data"
+                                       for item in experiments]))
 
         # Experiments type information
 
         experiment_type = dict(Counter([item['xsiType']
-                               for item in experiments
-                               if item['xsiType'] != '']))
+                               if item['xsiType'] != ''
+                               else
+                               "No Data"
+                               for item in experiments]))
 
         # Experiments per subject information
 
         experiments_per_subject = dict(Counter([item['subject_ID']
-                                       for item in experiments
-                                       if item['subject_ID'] != '']))
+                                       if item['subject_ID'] != ''
+                                       else
+                                       "No Data"
+                                       for item in experiments]))
 
         experiments_details['Experiments/Subject'] = experiments_per_subject
         experiments_details['Experiment Types'] = experiment_type
@@ -229,33 +253,43 @@ class Fetcher:
         scans_details = {}
 
         scan_quality = dict(Counter([item['xnat:imagescandata/quality']
-                            for item in scans
-                            if item['xnat:imagescandata/quality'] != '']))
+                            if item['xnat:imagescandata/quality'] != ''
+                            else
+                            "No Data"
+                            for item in scans]))
         # Scans type information
 
         type_dict = dict(Counter([item['xnat:imagescandata/type']
-                         for item in scans
-                         if item['xnat:imagescandata/type'] != '']))
+                         if item['xnat:imagescandata/type'] != ''
+                         else
+                         "No Data"
+                         for item in scans]))
 
         # Scans xsi type information
 
         xsi_type_dict = dict(Counter([item['xsiType']
-                             for item in scans
-                             if item['xsiType'] != '']))
+                             if item['xsiType'] != ''
+                             else
+                             "No Data"
+                             for item in scans]))
 
         # Scans per project information
 
         scans_per_project = dict(Counter([item['project']
-                                 for item in scans
-                                 if item['project'] != '']))
+                                 if item['project'] != ''
+                                 else
+                                 "No Data"
+                                 for item in scans]))
 
         # Scans per subject information
 
         scans_per_subject = dict(Counter(
                             [item['xnat:imagesessiondata/subject_id']
-                             for item in scans
                              if item['xnat:imagesessiondata/subject_id']
-                             != '']))
+                             != ''
+                             else
+                             "No Data"
+                             for item in scans]))
 
         scans_details['Scans Quality'] = scan_quality
         scans_details['Scan Types'] = type_dict

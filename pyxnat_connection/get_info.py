@@ -38,7 +38,9 @@ class GetInfo:
         # not go further
         if type(projects_details) != int:
             stats['Projects'] = projects_details['Number of Projects']
+            sessionDetails = projects_details['Total Sessions']
             del projects_details['Number of Projects']
+            del projects_details['Total Sessions']
         else:
             return projects_details
 
@@ -53,6 +55,8 @@ class GetInfo:
         if experiments_details != 1:
             stats['Experiments'] = experiments_details['Number of Experiments']
             del experiments_details['Number of Experiments']
+
+        stats['Sessions'] = sessionDetails
 
         # Pre processing scans details
         scans_details = self.fetcher_object.get_scans_details()
