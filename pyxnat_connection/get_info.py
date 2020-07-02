@@ -5,11 +5,12 @@ class GetInfo:
 
     fetcher_object = None
 
-    def __init__(self, user, password, server):
+    def __init__(self, user, password, server, ssl):
 
         self.fetcher_object = data_fetcher.Fetcher(user,
                                                    password,
-                                                   server)
+                                                   server,
+                                                   ssl)
 
     def __preprocessor(self):
 

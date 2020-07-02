@@ -4,7 +4,8 @@ import pathlib
 
 graph_object = graph_generator.GraphGenerator("testUser",
                                               "testPassword",
-                                              "https://central.xnat.org")
+                                              "https://central.xnat.org",
+                                              ssl=False)
 
 
 def test_graph_type_generator():

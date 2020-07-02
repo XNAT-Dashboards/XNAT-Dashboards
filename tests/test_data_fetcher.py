@@ -4,23 +4,27 @@ import pytest
 fetch_object_connected = data_fetcher.Fetcher(
                                             name='testUser',
                                             password='testPassword',
-                                            server='https://central.xnat.org')
+                                            server='https://central.xnat.org',
+                                            ssl=False)
 
 
 fetch_object_disconnected = data_fetcher.Fetcher(
                                             name='testUser',
                                             password='testPassword',
-                                            server='https://central.xnat.org')
+                                            server='https://central.xnat.org',
+                                            ssl=False)
 
 fetch_object_disconn_pwd_incorrect = data_fetcher.Fetcher(
                                             name='testUser',
                                             password='testPaword',
-                                            server='https://central.xnat.org')
+                                            server='https://central.xnat.org',
+                                            ssl=False)
 
 fetch_object_disconn_url_incorrect = data_fetcher.Fetcher(
                                             name='testUser',
                                             password='testPassword',
-                                            server='https://central.xnat.org/')
+                                            server='https://central.xnat.org/',
+                                            ssl=False)
 
 
 def test_get_projects_details():
@@ -83,8 +87,9 @@ def test_get_projects_details_specific():
 def test_get_details_disconnected():
 
     fetch_object_disconnected = data_fetcher.Fetcher(name='testUser',
-                                                 password='testPassword',
-                                            server='https://central.xnat.org')
+                                                     password='testPassword',
+                                                     server='https://central.xnat.org',
+                                                     ssl=False)
 
     # Network access removed using pytest_socket
     assert fetch_object_disconnected.get_projects_details() == 1

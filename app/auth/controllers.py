@@ -18,6 +18,8 @@ def login():
             display_error = "Wrong Username or Password"
         elif(session['error'] == 1):
             display_error = "Wrong URL"
+        elif(session['error'] == 191912):
+            display_error = "SSL Error"
         elif(session['error'] == -1):
             display_error = "Logged out"
         else:

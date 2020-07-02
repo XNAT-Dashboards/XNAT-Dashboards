@@ -11,10 +11,11 @@ class GraphGenerator:
     project_list = []
     project_list_ow_co_me = []
 
-    def __init__(self, user, password, server):
+    def __init__(self, user, password, server, ssl):
         data_object = get_info.GetInfo(user,
                                        password,
-                                       server)
+                                       server,
+                                       ssl)
         self.data = data_object.get_info()
         projects_data = data_object.get_project_list()
 
