@@ -77,15 +77,15 @@ textarea:focus:-moz-placeholder { color:transparent; }
 textarea:focus::-moz-placeholder { color:transparent; }
 textarea:focus:-ms-input-placeholder { color:transparent; }
 
-input::-webkit-input-placeholder { color: #999999;}
-input:-moz-placeholder { color: #999999;}
-input::-moz-placeholder { color: #999999;}
-input:-ms-input-placeholder { color: #999999;}
+input::-webkit-input-placeholder { color: #000000;}
+input:-moz-placeholder { color: #000000;}
+input::-moz-placeholder { color: #000000;}
+input:-ms-input-placeholder { color: #000000;}
 
-textarea::-webkit-input-placeholder { color: #999999;}
-textarea:-moz-placeholder { color: #999999;}
-textarea::-moz-placeholder { color: #999999;}
-textarea:-ms-input-placeholder { color: #999999;}
+textarea::-webkit-input-placeholder { color: #000000;}
+textarea:-moz-placeholder { color: #000000;}
+textarea::-moz-placeholder { color: #000000;}
+textarea:-ms-input-placeholder { color: #000000;}
 
 
 label {
@@ -224,7 +224,7 @@ iframe {
 
 .label-input100 {
   font-size: 18px;
-  color: #999999;
+  color: #000000;
   line-height: 1.2;
 
   display: block;
@@ -636,7 +636,7 @@ input.input100 {
     .label-checkbox100 {
       font-family: Poppins-Regular;
       font-size: 13px;
-      color: #999999;
+      color: red;
       line-height: 1.4;
     
       display: block;
@@ -663,7 +663,7 @@ input.input100 {
       height: 18px;
       border-radius: 2px;
       background: #fff;
-      border: 1px solid #51a7f7;
+      border: 1px solid red;
       left: 0;
       top: 50%;
       -webkit-transform: translateY(-50%);
@@ -674,7 +674,7 @@ input.input100 {
     }
     
     .input-checkbox100:checked + .label-checkbox100::before {
-      color: #51a7f7;
+      color: red;
     }
     
     
