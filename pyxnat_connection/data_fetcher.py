@@ -13,11 +13,12 @@ class Fetcher:
     scans = None
 
     # Initializing the central interface object in the constructor
-    def __init__(self, name, password, server):
+    def __init__(self, name, password, server, ssl):
 
         SELECTOR = Interface(server=server,
                              user=name,
-                             password=password)
+                             password=password,
+                             verify=(not ssl))
         self.name = name
         self.SELECTOR = SELECTOR
 
@@ -41,6 +42,8 @@ class Fetcher:
             elif str(e).find('401') != -1:
                 return 401
             # 1 represent Error in whole url
+            elif str(e).find('SSL') != -1:
+                return 191912
             else:
                 return 1
 

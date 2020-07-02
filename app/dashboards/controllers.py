@@ -22,13 +22,15 @@ def stats():
         username = user_details['username']
         password = user_details['password']
         server = user_details['server']
-
+        ssl = False if user_details.get('ssl') is None else True
         global graph_data_stats
         global project_lists
         global stats_data
+
         plotting_object = graph_generator.GraphGenerator(username,
                                                          password,
-                                                         server)
+                                                         server,
+                                                         ssl)
         graph_data_stats = plotting_object.graph_generator()
         project_lists = plotting_object.project_list_generator()
 
