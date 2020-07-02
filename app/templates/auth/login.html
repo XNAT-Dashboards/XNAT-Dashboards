@@ -39,7 +39,7 @@
 				<!-- Login form start -->
 				<form method="POST" action="{{ url_for('dashboards.stats') }}" class="login100-form validate-form">
 					<span class="login100-form-title p-b-43">
-						Login to continue
+						Login to XNAT Instance
                     </span>
                     {% if error is defined %}
 					<div class="alert alert-danger" role="alert" id = "success-alert">
@@ -52,7 +52,6 @@
 						<span class="label-input100">User Name</span>
 					</div>
 					
-					
 					<div class="wrap-input100 validate-input" data-validate="Password is required">
 						<input class="input100" type="password" name="password">
 						<span class="focus-input100"></span>
@@ -63,6 +62,14 @@
 						<input class="input100" type="text" name="server">
 						<span class="focus-input100"></span>
 						<span class="label-input100">Server</span>
+					</div>
+					<div class="flex-sb-m w-full p-t-3 p-b-32">
+						<div class="contact100-form-checkbox">
+							<input class="input-checkbox100" id="ckb1" type="checkbox" name="ssl">
+							<label class="label-checkbox100" for="ckb1">
+								SSL OFF
+							</label>
+						</div>
 					</div>
 					<div class="container-login100-form-btn">
 						<button class="login100-form-btn">

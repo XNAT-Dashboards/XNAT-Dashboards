@@ -253,3 +253,21 @@ Counter for stats data
   float: none;
   display: table;
 }
+
+/* Nav bar Logout and username */
+
+.username{
+  color:#51a7f7;
+}
+.username:hover{
+  color:blue;
+}
+.logout{
+  color: #DC3446;
+}
+.logout:hover{
+  color:red;
+}
+a.logout:hover{
+  color: red;
+}
