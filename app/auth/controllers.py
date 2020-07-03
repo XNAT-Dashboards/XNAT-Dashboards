@@ -11,7 +11,6 @@ auth = Blueprint('auth', __name__, url_prefix='/auth')
 def login():
 
     if('error' in session):
-        print('yes')
         if(session['error'] == 500):
             display_error = "Wrong XNAT URI"
         elif(session['error'] == 401):
@@ -19,7 +18,7 @@ def login():
         elif(session['error'] == 1):
             display_error = "Wrong URL"
         elif(session['error'] == 191912):
-            display_error = "SSL Error"
+            display_error = "Unable to verify remote host"
         elif(session['error'] == -1):
             display_error = "Logged out"
         else:

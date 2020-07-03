@@ -636,7 +636,7 @@ input.input100 {
     .label-checkbox100 {
       font-family: Poppins-Regular;
       font-size: 13px;
-      color: #999999;
+      color: #000000;
       line-height: 1.4;
     
       display: block;
@@ -674,7 +674,7 @@ input.input100 {
     }
     
     .input-checkbox100:checked + .label-checkbox100::before {
-      color: #51a7f7;
+      color: red;
     }
     
     

@@ -121,8 +121,8 @@ class GraphGenerator:
             Returns a nested list with dict inside
             [
                 array_2d[
-                    [project1_info, project2_info]
-                    [project3_info, project4_info]
+                    [graph1_info, graph2_info]
+                    [graph3_info, graph4_info]
                 ]
                 graph_data['Stats']{
                     Projects: count
@@ -205,5 +205,6 @@ if __name__ == "__main__":
     '''
     graph_object = GraphGenerator('testUser',
                                   'testPassword',
-                                  'https://central.xnat.org')
+                                  'https://central.xnat.org',
+                                  ssl=True)
     graph_object.graph_type_generator()
