@@ -82,22 +82,26 @@ class Fetcher:
         for item in projects:
 
             if item['proj_mr_count'] != '':
-                mr_sessions_per_project[item['id']] = int(item['proj_mr_count'])
+                mr_sessions_per_project[item['id']] =\
+                                                    int(item['proj_mr_count'])
             else:
                 mr_sessions_per_project[item['id']] = 0
 
             if item['proj_pet_count'] != '':
-                pet_sessions_per_project[item['id']] = int(item['proj_pet_count'])
+                pet_sessions_per_project[item['id']] =\
+                                                    int(item['proj_pet_count'])
             else:
                 pet_sessions_per_project[item['id']] = 0
 
             if item['proj_ct_count'] != '':
-                ct_sessions_per_project[item['id']] = int(item['proj_ct_count'])
+                ct_sessions_per_project[item['id']] =\
+                                                    int(item['proj_ct_count'])
             else:
                 ct_sessions_per_project[item['id']] = 0
 
             if item['proj_ut_count'] != '':
-                ut_sessions_per_project[item['id']] = int(item['proj_ut_count'])
+                ut_sessions_per_project[item['id']] =\
+                                                    int(item['proj_ut_count'])
             else:
                 ut_sessions_per_project[item['id']] = 0
 
@@ -109,9 +113,8 @@ class Fetcher:
         projects_details['CT Sessions/Project'] = ct_sessions_per_project
         projects_details['UT Sessions/Project'] = ut_sessions_per_project
         projects_details['Total Sessions'] = projects_ims['PET Sessions']\
-                                           + projects_ims['MR Sessions']\
-                                           + projects_ims['UT Sessions']\
-                                           + projects_ims['CT Sessions']
+            + projects_ims['MR Sessions'] + projects_ims['UT Sessions']\
+            + projects_ims['CT Sessions']
 
         return projects_details
 
@@ -119,8 +122,9 @@ class Fetcher:
 
         try:
             self.subjects = self.SELECTOR.get('/data/subjects',
-                        params= {'columns': 'ID,project,handedness,age,gender'})\
-                        .json()['ResultSet']['Result']
+                                              params={'columns': 'ID,\
+                                              project,handedness,age,gender'})\
+                                              .json()['ResultSet']['Result']
             subjects_data = self.subjects
         except Exception:
             return 1

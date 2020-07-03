@@ -1,5 +1,6 @@
 # Import flask dependencies
-from flask import Blueprint, render_template, session, request, redirect, url_for
+from flask import Blueprint, render_template,\
+                  session, request, redirect, url_for
 from generators import graph_generator
 
 # Define the blueprint: 'dashboards', set its url prefix: app.url/dashboards

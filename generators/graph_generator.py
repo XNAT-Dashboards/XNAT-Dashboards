@@ -1,8 +1,8 @@
 import sys
 from os.path import dirname, abspath
+import json
 sys.path.insert(0, dirname(dirname(abspath(__file__))))
 from pyxnat_connection import get_info
-import json
 
 
 class GraphGenerator:
@@ -106,7 +106,7 @@ class GraphGenerator:
             return graph_data
 
         for final_json in graph_data:
-            if(final_json == 'Stats'):
+            if final_json == 'Stats':
                 continue
             array_1d.append({final_json: graph_data[final_json]})
             counter = counter + 1
@@ -198,6 +198,7 @@ class GraphGenerator:
             ]
         '''
         return [array_2d, array_2d_ow_co_me]
+
 
 if __name__ == "__main__":
     '''

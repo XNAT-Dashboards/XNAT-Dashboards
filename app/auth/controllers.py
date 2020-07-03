@@ -1,6 +1,5 @@
 # Import flask dependencies
-from flask import Blueprint, request, redirect,\
-                  render_template, session, url_for
+from flask import Blueprint, render_template, session
 
 # Define the blueprint: 'auth', set its url prefix: app.url/auth
 auth = Blueprint('auth', __name__, url_prefix='/auth')
