@@ -83,7 +83,7 @@ class Fetcher:
 
             if item['proj_mr_count'] != '':
                 mr_sessions_per_project[item['id']] =\
-                                                    int(item['proj_mr_count'])
+                                        int(item['proj_mr_count'])
             else:
                 mr_sessions_per_project[item['id']] = 0
 
@@ -122,8 +122,9 @@ class Fetcher:
 
         try:
             self.subjects = self.SELECTOR.get('/data/subjects',
-                                              params={'columns': 'ID,\
-                                              project,handedness,age,gender'})\
+                                              params={'columns': 'ID,'
+                                                      'project,handedness,'
+                                                      'age,gender'})\
                                               .json()['ResultSet']['Result']
             subjects_data = self.subjects
         except Exception:
