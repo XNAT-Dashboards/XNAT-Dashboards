@@ -2,6 +2,7 @@
 [![coverage report](https://gitlab.com/Udolf47/xnat_dashboards/badges/release/0.1.0/coverage.svg)](https://gitlab.com/Udolf47/xnat_dashboards/-/commits/release/0.1.0)
 [![version](https://img.shields.io/badge/version-v0.1.0-brightgreen)](https://gitlab.com/Udolf47/xnat_dashboards/-/commits/release/0.1.0)
 
+
 # XNAT Dashboards
 
 This project is about creating a responsive dashboard framework for extensive exploration, monitoring, and reviewing large neurological imaging datasets present on the XNAT server instance. This dashboard will fetch data from any XNAT instance servers and will generate highly-visualized, summarized representations of complex scientific data present on the servers and facilitate user navigation through large cohorts. This dashboard will be a light-weight, flexible and modular framework that can adapt and change as per the new needs of the users.
