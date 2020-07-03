@@ -10,7 +10,7 @@ This project is about creating a responsive dashboard framework for extensive ex
 
 - XNAT instance.
 - Username and Password for that xnat instance.
-- If no local instance available you can register at [CENTRAL]('https://central.xnat.org')
+- If no local instance available you can register at [CENTRAL](https://central.xnat.org)
 - Graph type assignment file present in util/graph_type.json
 
 ## Getting Started
