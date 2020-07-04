@@ -1,5 +1,7 @@
 from pyxnat import Interface
 from collections import Counter, OrderedDict
+import pyxnat.core.errors as pyxnat_errors
+import socket
 import numpy as np
 
 
@@ -32,19 +34,19 @@ class Fetcher:
         try:
             self.projects = self.SELECTOR.select('xnat:projectData').all().data
             projects = self.projects
-        except Exception as e:
-            # Exception raised is Database error which is not a exception in
-            # python thus using whole exception class
-            # 500 represent error in url
-            if str(e).find('500') != -1:
+        except pyxnat_errors.DatabaseError as dbe:
+            if str(dbe).find('500') != -1:
+                # 500 represent error in url or uri
                 return 500
-            # 400 represent error in login details
-            elif str(e).find('401') != -1:
+            elif str(dbe).find('401') != -1:
+                # 401 represent error in login details
                 return 401
-            # 1 represent Error in whole url
-            elif str(e).find('SSL') != -1:
+        except socket.error as se:
+            if str(se).find('SSL') != -1:
+                # If verification enable and host unable to verify
                 return 191912
             else:
+                # Wrong URL Connection can't be established
                 return 1
 
         # Projects_details is a dictionary which will add details of all
@@ -127,8 +129,20 @@ class Fetcher:
                                                       'age,gender'})\
                                               .json()['ResultSet']['Result']
             subjects_data = self.subjects
-        except Exception:
-            return 1
+        except pyxnat_errors.DatabaseError as dbe:
+            if str(dbe).find('500') != -1:
+                # 500 represent error in url or uri
+                return 500
+            elif str(dbe).find('401') != -1:
+                # 401 represent error in login details
+                return 401
+        except socket.error as se:
+            if str(se).find('SSL') != -1:
+                # If verification enable and host unable to verify
+                return 191912
+            else:
+                # Wrong URL Connection can't be established
+                return 1
 
         # Subject_details is a dictionary which will add details of
         # all subjects to the global stats dictionary
@@ -203,8 +217,20 @@ class Fetcher:
                                             experiment_type='',
                                             columns=['subject_ID']).data
             experiments = self.experiments
-        except Exception:
-            return 1
+        except pyxnat_errors.DatabaseError as dbe:
+            if str(dbe).find('500') != -1:
+                # 500 represent error in url or uri
+                return 500
+            elif str(dbe).find('401') != -1:
+                # 401 represent error in login details
+                return 401
+        except socket.error as se:
+            if str(se).find('SSL') != -1:
+                # If verification enable and host unable to verify
+                return 191912
+            else:
+                # Wrong URL Connection can't be established
+                return 1
 
         experiments_details = {}
 
@@ -255,8 +281,20 @@ class Fetcher:
                 columns=['xnat:imageScanData/quality',
                          'xnat:imageScanData/type'])
             scans = self.scans
-        except Exception:
-            return 1
+        except pyxnat_errors.DatabaseError as dbe:
+            if str(dbe).find('500') != -1:
+                # 500 represent error in url or uri
+                return 500
+            elif str(dbe).find('401') != -1:
+                # 401 represent error in login details
+                return 401
+        except socket.error as se:
+            if str(se).find('SSL') != -1:
+                # If verification enable and host unable to verify
+                return 191912
+            else:
+                # Wrong URL Connection can't be established
+                return 1
 
         scans_details = {}
 
@@ -313,17 +351,9 @@ class Fetcher:
         try:
             projects = self.projects
             if projects is None:
-                raise Exception('No Information found')
-        except Exception as e:
-            # 500 represent error in url
-            if str(e).find('500') != -1:
-                return 500
-            # 400 represent error in login details
-            elif str(e).find('401') != -1:
-                return 401
-            # 1 represent Error in whole url
-            else:
-                return 1
+                raise socket.error
+        except socket.error:
+            return 1
 
         project_list_owned_collab_member = []
 
