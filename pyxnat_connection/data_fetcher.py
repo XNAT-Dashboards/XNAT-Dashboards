@@ -2,6 +2,7 @@ from pyxnat import Interface
 from collections import Counter, OrderedDict
 import pyxnat.core.errors as pyxnat_errors
 import socket
+import json
 import numpy as np
 
 
@@ -126,14 +127,14 @@ class Fetcher:
             self.subjects = self.SELECTOR.get('/data/subjects',
                                               params={'columns': 'ID,'
                                                       'project,handedness,'
-                                                      'age,gender'})\
-                                              .json()['ResultSet']['Result']
-            subjects_data = self.subjects
-        except pyxnat_errors.DatabaseError as dbe:
-            if str(dbe).find('500') != -1:
+                                                      'age,gender'})
+
+            subjects_data = self.subjects.json()['ResultSet']['Result']
+        except json.JSONDecodeError:
+            if str(self.subjects).find('500') != -1:
                 # 500 represent error in url or uri
                 return 500
-            elif str(dbe).find('401') != -1:
+            elif str(self.subjects).find('401') != -1:
                 # 401 represent error in login details
                 return 401
         except socket.error as se:
@@ -352,20 +353,8 @@ class Fetcher:
             projects = self.projects
             if projects is None:
                 raise socket.error
-        except pyxnat_errors.DatabaseError as dbe:
-            if str(dbe).find('500') != -1:
-                # 500 represent error in url or uri
-                return 500
-            elif str(dbe).find('401') != -1:
-                # 401 represent error in login details
-                return 401
-        except socket.error as se:
-            if str(se).find('SSL') != -1:
-                # If verification enable and host unable to verify
-                return 191912
-            else:
-                # Wrong URL Connection can't be established
-                return 1
+        except socket.error:
+            return 1
 
         project_list_owned_collab_member = []
 
