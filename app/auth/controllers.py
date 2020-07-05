@@ -57,14 +57,11 @@ def register_DB():
         return redirect(url_for('auth.login_DB'))
 
 
-def save_data(username, password, server, ssl):
-    users = mongo.db.users
-    users.insert({'username': username,
-                  'password': password,
-                  'server': server,
-                  'ssl': ssl})
-    db = save_to_db.SaveToDb(username, password, server, ssl)
-    db.save()
+def save_data(username, password, server, ssl, test=False):
+
+    db = save_to_db.SaveToDb(username, password, server, ssl, test)
+    db.save_user(username, password, server, ssl)
+    db.save_data()
 
 
 # Set the route and accepted methods
