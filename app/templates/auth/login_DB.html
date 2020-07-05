@@ -23,7 +23,6 @@
 </head>
 
 <body>
-
 	<div class="limiter">
 		<!-- Preloader Start -->
 		<div class="preloader">
@@ -37,9 +36,9 @@
 		<div class="container-login100">
 			<div class="wrap-login100">
 				<!-- Login form start -->
-				<form method="POST" action="{{ url_for('dashboards.stats') }}" class="login100-form validate-form">
+				<form method="POST" action="{{ url_for('dashboards.stats_db') }}" class="login100-form validate-form">
 					<span class="login100-form-title p-b-43">
-						Login to XNAT Instance
+						Login to XNAT Dashboards
                     </span>
                     {% if error is defined %}
 					<div class="alert alert-danger" role="alert" id = "success-alert">

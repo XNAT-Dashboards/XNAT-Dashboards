@@ -37,9 +37,9 @@
 		<div class="container-login100">
 			<div class="wrap-login100">
 				<!-- Login form start -->
-				<form method="POST" action="{{ url_for('dashboards.stats') }}" class="login100-form validate-form">
+				<form method="POST" action="{{url_for('auth.register_DB')}}" class="login100-form validate-form">
 					<span class="login100-form-title p-b-43">
-						Login to XNAT Instance
+						Register for XNAT Dashboards
                     </span>
                     {% if error is defined %}
 					<div class="alert alert-danger" role="alert" id = "success-alert">
@@ -93,6 +93,6 @@
     <script src="/static/auth/js/moment.min.js"></script>
     <script src="/static/auth/js/daterangepicker.js"></script>
     <script src="/static/auth/js/countdowntime.js"></script>
-<script src="/static/auth/js/main.js"></script>
+	<script src="/static/auth/js/main.js"></script>
     <!-- Js include End -->
 </html>
