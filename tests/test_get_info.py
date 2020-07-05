@@ -1,4 +1,4 @@
-from pyxnat_connection import get_info
+from pyxnat_api import get_info
 
 info_object = get_info.GetInfo(user='testUser',
                                password='testPassword',

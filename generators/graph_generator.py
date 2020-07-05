@@ -1,7 +1,7 @@
 import sys
 from os.path import dirname, abspath
 sys.path.insert(0, dirname(dirname(abspath(__file__))))
-from pyxnat_connection import get_info
+from pyxnat_api import get_info
 import json
 
 
@@ -205,5 +205,6 @@ if __name__ == "__main__":
     '''
     graph_object = GraphGenerator('testUser',
                                   'testPassword',
-                                  'https://central.xnat.org')
+                                  'https://central.xnat.org',
+                                  ssl=False)
     graph_object.graph_type_generator()

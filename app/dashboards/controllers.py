@@ -1,5 +1,6 @@
 # Import flask dependencies
-from flask import Blueprint, render_template, session, request, redirect, url_for
+from flask import Blueprint, render_template, session, request,\
+                  redirect, url_for
 from generators import graph_generator
 
 # Define the blueprint: 'dashboards', set its url prefix: app.url/dashboards
@@ -9,7 +10,6 @@ graph_data_stats = []
 project_lists = []
 username = ''
 server = ''
-stats_data = {}
 
 
 # Set the route and accepted methods
@@ -25,7 +25,6 @@ def stats():
         ssl = False if user_details.get('ssl') is None else True
         global graph_data_stats
         global project_lists
-        global stats_data
 
         plotting_object = graph_generator.GraphGenerator(username,
                                                          password,

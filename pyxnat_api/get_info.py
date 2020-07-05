@@ -1,4 +1,4 @@
-from pyxnat_connection import data_fetcher
+from pyxnat_api import data_fetcher
 
 
 class GetInfo:
