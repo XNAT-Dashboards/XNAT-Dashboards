@@ -11,19 +11,20 @@ class GraphGenerator:
     project_list = []
     project_list_ow_co_me = []
 
-    def __init__(self, user, password, server, ssl):
-        data_object = get_info.GetInfo(user,
-                                       password,
-                                       server,
-                                       ssl)
-        self.data = data_object.get_info()
-        projects_data = data_object.get_project_list()
+    def __init__(self, user, password, server, ssl, db=False):
+        if not db:
+            data_object = get_info.GetInfo(user,
+                                           password,
+                                           server,
+                                           ssl)
+            self.data = data_object.get_info()
+            projects_data = data_object.get_project_list()
 
-        # Checking for error
-        if type(projects_data) != int:
-            self.project_list = projects_data['project_list']
-            self.project_list_ow_co_me = projects_data[
-                                          'project_list_ow_co_me']
+            # Checking for error
+            if type(projects_data) != int:
+                self.project_list = projects_data['project_list']
+                self.project_list_ow_co_me = projects_data[
+                                            'project_list_ow_co_me']
 
     def graph_type_generator(self):
 
@@ -198,6 +199,15 @@ class GraphGenerator:
             ]
         '''
         return [array_2d, array_2d_ow_co_me]
+
+    def process_db(self, data, projects_data):
+        self.data = data
+        self.project_list = projects_data['project_list']
+        self.project_list_ow_co_me = projects_data['project_list_ow_co_me']
+        graph_generator = self.graph_generator()
+        project_list_generator = self.project_list_generator()
+
+        return [graph_generator, project_list_generator]
 
 if __name__ == "__main__":
     '''
