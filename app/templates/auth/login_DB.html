@@ -56,13 +56,7 @@
 						<span class="focus-input100"></span>
 						<span class="label-input100">Password</span>
 					</div>
-
-					<div class="wrap-input100 validate-input">
-						<input class="input100" type="text" name="server">
-						<span class="focus-input100"></span>
-						<span class="label-input100">Server</span>
-					</div>
-					<div class="flex-sb-m w-full p-t-3 p-b-32">
+					<div class="flex-sb-m w-full p-t-10 p-b-30">
 						<div class="contact100-form-checkbox">
 							<input class="input-checkbox100" id="ckb1" type="checkbox" name="ssl">
 							<label class="label-checkbox100 ssl" for="ckb1">
@@ -75,7 +69,16 @@
 							Login
 						</button>
 					</div>
-
+					<div class="text-center p-t-30 p-b-10">
+						<a href="{{url_for('auth.register_DB')}}" class="txt2">
+							New to XNAT Dashboards? Register
+						</a>
+					</div>
+					<div class="text-center">
+						<a href="{{url_for('auth.login')}}" class="txt2">
+							Want realtime data?
+						</a>
+					</div>
 					</div>
 				</form>
 				<!-- Login form End -->
