@@ -75,6 +75,8 @@ def login_DB():
         if session['error'] == -1:
             display_error = "Logged out"
             del session['error']
+        else:
+            display_error = session['error']
 
         return render_template('auth/login_DB.html', error=display_error)
     else:

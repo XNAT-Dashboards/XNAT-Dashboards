@@ -100,14 +100,13 @@ def stats_db():
         user_details = request.form
         username = user_details['username']
         password = user_details['password']
-        server = user_details['server']
-        ssl = False if user_details.get('ssl') is None else True
+
         global graph_data_stats
         global project_lists
         users = mongo.db.users
         existing_users = users.find_one({'username': request.form['username']})
 
-        if 'username' in session:
+        if 'username' in session and graph_data_stats != []:
             session['error'] = "Already logged in"
         elif existing_users is not None:
             if existing_users['password'] == password:
@@ -122,8 +121,7 @@ def stats_db():
                     plotting_array = graph_generator.GraphGenerator(
                                                 username,
                                                 password,
-                                                server,
-                                                ssl,
+                                                None,
                                                 db=db).process_db(
                                                     users_data['info'],
                                                     users_data['project_list']
@@ -163,7 +161,7 @@ def stats_db():
 
         if graph_data_stats == [] or type(graph_data_stats) == int:
             session['error'] = graph_data_stats
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('auth.login_DB'))
         else:
 
             project_list = project_lists[0]
