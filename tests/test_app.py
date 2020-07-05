@@ -7,6 +7,46 @@ def test_login():
     assert response_get.status_code == 200
 
 
+def test_login_db():
+
+    respone_get = app.test_client().get('auth/db/login/')
+    assert respone_get.status_code == 200
+
+
+def test_register_db():
+
+    response_get = app.test_client().get('auth/db/register/').status_code
+    assert response_get == 200
+
+    data_post_register_present = dict(username='testUser',
+                                      password='testPassword',
+                                      server='https://central.xnat.org',
+                                      ssl=False)
+
+    resposne_post = app.test_client().post('auth/db/register/',
+                                           follow_redirects=True,
+                                           data=data_post_register_present,
+                                           )
+
+    assert resposne_post.status_code == 200
+
+
+def test_dashboard_db():
+
+    data_post_login_dash_present = dict(username='testUser',
+                                        password='testPassword')
+
+    response_post = app.test_client().post('dashboards/db/stats/',
+                                           data=data_post_login_dash_present,
+                                           ).status_code
+
+    assert response_post == 200
+
+    response_get = app.test_client().get('dashboards/db/stats/').status_code
+
+    assert response_get == 200
+
+
 def test_dashboard():
 
     data_correct = dict(username='testUser',
