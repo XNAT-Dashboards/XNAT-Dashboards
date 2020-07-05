@@ -43,27 +43,27 @@ def register_DB():
     else:
 
         users = mongo.db.users
-        existing_users = users.find_one({'name': request.form['username']})
+        existing_users = users.find_one({'username': request.form['username']})
         if existing_users is None:
-            name = request.form['username']
+            username = request.form['username']
             password = request.form['password']
             server = request.form['server']
             ssl = False if request.form.get('ssl') is None else True
             thread = threading.Thread(target=save_data,
-                                      args=(name, password, server, ssl))
+                                      args=(username, password, server, ssl))
             thread.start()
         else:
             session['error'] = "Username already exists"
         return redirect(url_for('auth.login_DB'))
 
 
-def save_data(name, password, server, ssl):
+def save_data(username, password, server, ssl):
     users = mongo.db.users
-    users.insert({'name': name,
+    users.insert({'username': username,
                   'password': password,
                   'server': server,
                   'ssl': ssl})
-    db = save_to_db.SaveToDb(name, password, server, ssl)
+    db = save_to_db.SaveToDb(username, password, server, ssl)
     db.save()
 
 

@@ -52,7 +52,8 @@ def stats():
                                    stats_data=stats_data,
                                    project_list_ow_co_me=project_list_ow_co_me,
                                    username=username.capitalize(),
-                                   server=server)
+                                   server=server,
+                                   db=False)
     else:
         if graph_data_stats == [] or type(graph_data_stats) == int:
             session['error'] = graph_data_stats
@@ -68,7 +69,8 @@ def stats():
                                    stats_data=stats_data,
                                    project_list_ow_co_me=project_list_ow_co_me,
                                    username=username.capitalize(),
-                                   server=server)
+                                   server=server,
+                                   db=False)
 
 
 # Logout route
@@ -97,16 +99,16 @@ def stats_db():
         global graph_data_stats
         global project_lists
         users = mongo.db.users
-        existing_users = users.find_one({'name': request.form['username']})
+        existing_users = users.find_one({'username': request.form['username']})
 
-        if existing_users is not None and 'username' not in session:
+        if existing_users is not None:
             if existing_users['password'] == password:
 
                 users_data_tb = mongo.db.users_data
                 users_data = users_data_tb.find_one(
                             {'username': username})
 
-                if users_data_tb is not None:
+                if users_data is not None:
 
                     session['username'] = username
                     plotting_array = graph_generator.GraphGenerator(
@@ -146,7 +148,8 @@ def stats_db():
                                    stats_data=stats_data,
                                    project_list_ow_co_me=project_list_ow_co_me,
                                    username=username.capitalize(),
-                                   server=server)
+                                   server=server,
+                                   db=True)
 
     else:
 
@@ -165,4 +168,5 @@ def stats_db():
                                    stats_data=stats_data,
                                    project_list_ow_co_me=project_list_ow_co_me,
                                    username=username.capitalize(),
-                                   server=server)
+                                   server=server,
+                                   db=True)
