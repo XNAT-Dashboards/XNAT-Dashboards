@@ -24,16 +24,16 @@ To run this project locally for testing or development
 
 ### Installing
 
-- ``` source env/bin/activate```
-- ``` pip3 install -r requirements.txt```
-- ``` Create a mongodb acccount online ```
-- ``` Create a database xnat_dashboards ```
-- ``` Create 2 collections users and users data ```
-- ``` click on connect to get the url details for shell or python ```
-- ``` Add the following code in config.py ```
-- ``` MONGO_URI=mongodb+srv://<username>:<password>@cluster0.x38yt.gcp.mongodb.net/<dbname>?retryWrites=true&w=majority ```
-- ``` MONGO_DB=<dbname>```
-- ``` change username, password and dbname as per instance ```
+- ```source env/bin/activate```
+- ```pip3 install -r requirements.txt```
+- ```Create a mongodb acccount online```
+- ```Create a database xnat_dashboards```
+- ```Create 2 collections users and users data```
+- ```Click on connect to get the url details for shell or python```
+- ```Add the following code in config.py```
+- ```MONGO_URI=<mongodb+srv://urldetails>```
+- ```MONGO_DB=<dbname>```
+- ```Change username, password and dbname as per instance```
 
 ### Starting the server
 
