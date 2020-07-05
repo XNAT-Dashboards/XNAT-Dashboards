@@ -12,6 +12,7 @@ graph_data_stats = []
 project_lists = []
 username = ''
 server = ''
+db = False
 
 
 # Set the route and accepted methods
@@ -27,7 +28,7 @@ def stats():
         ssl = False if user_details.get('ssl') is None else True
         global graph_data_stats
         global project_lists
-
+        global db
         plotting_object = graph_generator.GraphGenerator(username,
                                                          password,
                                                          server,
@@ -53,7 +54,7 @@ def stats():
                                    project_list_ow_co_me=project_list_ow_co_me,
                                    username=username.capitalize(),
                                    server=server,
-                                   db=False)
+                                   db=db)
     else:
         if graph_data_stats == [] or type(graph_data_stats) == int:
             session['error'] = graph_data_stats
@@ -70,7 +71,7 @@ def stats():
                                    project_list_ow_co_me=project_list_ow_co_me,
                                    username=username.capitalize(),
                                    server=server,
-                                   db=False)
+                                   db=db)
 
 
 # Logout route
@@ -82,13 +83,18 @@ def logout():
 
     if 'username' in session:
         del session['username']
+    global db
 
-    return redirect(url_for('auth.login'))
+    if db:
+        return redirect(url_for('auth.login_DB'))
+    else:
+        return redirect(url_for('auth.login'))
 
 
 @dashboards.route('/db/stats/', methods=['GET', 'POST'])
 def stats_db():
-
+    global db
+    db = True
     if request.method == 'POST':
         global username, server
         user_details = request.form
@@ -101,7 +107,9 @@ def stats_db():
         users = mongo.db.users
         existing_users = users.find_one({'username': request.form['username']})
 
-        if existing_users is not None:
+        if 'username' in session:
+            session['error'] = "Already logged in"
+        elif existing_users is not None:
             if existing_users['password'] == password:
 
                 users_data_tb = mongo.db.users_data
@@ -116,7 +124,7 @@ def stats_db():
                                                 password,
                                                 server,
                                                 ssl,
-                                                db=True).process_db(
+                                                db=db).process_db(
                                                     users_data['info'],
                                                     users_data['project_list']
                                                 )
@@ -124,7 +132,7 @@ def stats_db():
                     project_lists = plotting_array[1]
 
                 else:
-                    session['error'] = "Registered fetching data incomplete"
+                    session['error'] = "User Registered: Data fetching incomplete"
 
             else:
                 session['error'] = "Wrong Password"
@@ -149,7 +157,7 @@ def stats_db():
                                    project_list_ow_co_me=project_list_ow_co_me,
                                    username=username.capitalize(),
                                    server=server,
-                                   db=True)
+                                   db=db)
 
     else:
 
@@ -169,4 +177,4 @@ def stats_db():
                                    project_list_ow_co_me=project_list_ow_co_me,
                                    username=username.capitalize(),
                                    server=server,
-                                   db=True)
+                                   db=db)

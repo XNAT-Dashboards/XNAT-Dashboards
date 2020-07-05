@@ -71,9 +71,11 @@ def save_data(username, password, server, ssl):
 @auth.route('db/login/')
 def login_DB():
     if 'error' in session:
-        display_error = session['error']
-        del session['error']
-        print(display_error)
+
+        if session['error'] == -1:
+            display_error = "Logged out"
+            del session['error']
+
         return render_template('auth/login_DB.html', error=display_error)
     else:
         return render_template('auth/login_DB.html')
