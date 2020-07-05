@@ -58,6 +58,8 @@ def test_dashboard():
                                     'dashboards/stats/',
                                     data=data_correct).status_code
 
+    response_get = app.test_client().get('dashboards/stats/').status_code
+
     # Checks if we are redirecting if wrong password
     data_incorrect_1 = dict(username='testUser',
                             password='testPasswor',
@@ -81,6 +83,7 @@ def test_dashboard():
                                    follow_redirects=True).status_code
 
     assert response_post_correct == 200
+    assert response_get == 200
     assert response_post_incorrect_1 == 200
     assert response_post_incorrect_2 == 200
     assert logout == 200
