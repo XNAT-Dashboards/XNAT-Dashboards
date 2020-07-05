@@ -11,7 +11,7 @@ class GraphGenerator:
     project_list = []
     project_list_ow_co_me = []
 
-    def __init__(self, user, password, server, ssl, db=False):
+    def __init__(self, user, password, server, ssl=True, db=False):
         if not db:
             data_object = get_info.GetInfo(user,
                                            password,
