@@ -31,22 +31,6 @@ def test_register_db():
     assert resposne_post.status_code == 200
 
 
-def test_dashboard_db():
-
-    data_post_login_dash_present = dict(username='testUser',
-                                        password='testPassword')
-
-    response_post = app.test_client().post('dashboards/db/stats/',
-                                           data=data_post_login_dash_present,
-                                           ).status_code
-
-    assert response_post == 200
-
-    response_get = app.test_client().get('dashboards/db/stats/').status_code
-
-    assert response_get == 200
-
-
 def test_dashboard():
 
     data_correct = dict(username='testUser',
@@ -87,6 +71,22 @@ def test_dashboard():
     assert response_post_incorrect_1 == 200
     assert response_post_incorrect_2 == 200
     assert logout == 200
+
+
+def test_dashboard_db():
+
+    data_post_login_dash_present = dict(username='testUser',
+                                        password='testPassword')
+
+    response_post = app.test_client().post('dashboards/db/stats/',
+                                           data=data_post_login_dash_present,
+                                           ).status_code
+
+    assert response_post == 200
+
+    response_get = app.test_client().get('dashboards/db/stats/').status_code
+
+    assert response_get == 200
 
 
 def test_home_redirect():
