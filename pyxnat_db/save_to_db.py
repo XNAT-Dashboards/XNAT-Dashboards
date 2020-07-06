@@ -52,7 +52,12 @@ class SaveToDb:
 
         info = self.info.get_info()
         project_list = self.info.get_project_list()
-        self.__save_to_db(info, project_list)
+        print(type(info))
+        if type(info) != int:
+            self.__save_to_db(info, project_list)
+            return 0
+        else:
+            return info
 
     def save_user(self, username, password, server, ssl):
 
