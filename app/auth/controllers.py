@@ -157,12 +157,15 @@ def login_DB():
         elif session['error'] == 'wait':
             display_error = "Please wait for 10 seconds Checking....."
             del session['error']
+        elif session['error'] == 'saved':
+            display_error = "Saved user details"
+            del session['error']
         # Case 4: Error has occured from saved data
         else:
             # Since error occured in saved data during fetching of info
             # We have already saved user details thus we need to delete
             # user details from users collections
-
+            print('dont go'+str(session['error']))
             display_error = session['error']
             del session['error']
             global delete_username
