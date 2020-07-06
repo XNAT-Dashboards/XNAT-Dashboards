@@ -1,6 +1,6 @@
 # Import flask dependencies
 from flask import Blueprint, render_template, session, request,\
-                  redirect, url_for
+    redirect, url_for
 from generators import graph_generator
 from app.init_database import mongo
 
@@ -112,26 +112,22 @@ def stats_db():
             if existing_users['password'] == password:
 
                 users_data_tb = mongo.db.users_data
-                users_data = users_data_tb.find_one(
-                            {'username': username})
+                users_data = users_data_tb.find_one({'username': username})
 
                 if users_data is not None:
 
                     session['username'] = username
                     plotting_array = graph_generator.GraphGenerator(
-                                                username,
-                                                password,
-                                                None,
-                                                db=db).process_db(
-                                                    users_data['info'],
-                                                    users_data['project_list']
-                                                )
+                        username,
+                        password,
+                        None,
+                        db=db).process_db(users_data['info'],
+                                          users_data['project_list'])
                     graph_data_stats = plotting_array[0]
                     project_lists = plotting_array[1]
 
                 else:
-                    session['error'] = "User Registered:"\
-                                     + "Data fetching incomplete"
+                    session['error'] = "User Registered: Fetching incomplete"
 
             else:
                 session['error'] = "Wrong Password"

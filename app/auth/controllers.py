@@ -1,6 +1,6 @@
 # Import flask dependencies
 from flask import Blueprint, redirect, request, jsonify,\
-                  render_template, session, url_for
+    render_template, session, url_for
 from app.init_database import mongo
 from pyxnat_db import save_to_db
 import threading

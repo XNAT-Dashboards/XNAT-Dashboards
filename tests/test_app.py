@@ -55,8 +55,8 @@ def test_dashboard():
                         ssl=False)
     # Checks if we are getting correct response that is 200
     response_post_correct = app.test_client().post(
-                                    'dashboards/stats/',
-                                    data=data_correct).status_code
+        'dashboards/stats/',
+        data=data_correct).status_code
 
     response_get = app.test_client().get('dashboards/stats/').status_code
 
@@ -66,8 +66,8 @@ def test_dashboard():
                             server='https://central.xnat.org',
                             ssl=False)
     response_post_incorrect_1 = app.test_client().post(
-                                'dashboards/stats/', follow_redirects=True,
-                                data=data_incorrect_1).status_code
+        'dashboards/stats/', follow_redirects=True,
+        data=data_incorrect_1).status_code
 
     # Checks if we are redirecting if wrong url
     data_incorrect_2 = dict(username='testUser',
@@ -75,8 +75,8 @@ def test_dashboard():
                             server='https://central.xnat.org',
                             ssl=False)
     response_post_incorrect_2 = app.test_client().post(
-                                'dashboards/stats/', follow_redirects=True,
-                                data=data_incorrect_2).status_code
+        'dashboards/stats/', follow_redirects=True,
+        data=data_incorrect_2).status_code
 
     # Checks if we are getting redirected to login through logout
     logout = app.test_client().get('dashboards/logout/',
