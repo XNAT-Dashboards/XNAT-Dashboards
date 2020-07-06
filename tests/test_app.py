@@ -75,6 +75,18 @@ def test_dashboard():
 
 def test_dashboard_db():
 
+    data_post_register_present = dict(username='testUser',
+                                      password='testPassword',
+                                      server='https://central.xnat.org',
+                                      ssl=False)
+
+    resposne_post = app.test_client().post('auth/db/register/',
+                                           follow_redirects=True,
+                                           data=data_post_register_present,
+                                           )
+
+    assert resposne_post.status_code == 200
+
     data_post_login_dash_present = dict(username='testUser',
                                         password='testPassword')
 

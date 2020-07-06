@@ -6,13 +6,9 @@ sys.path.insert(0, dirname(dirname(abspath(__file__))))
 
 
 def test_end_testing():
-    try:
-        with open('utils/db_config.json') as json_file:
+
+    with open('utils/db_config.json') as json_file:
             db_json = json.load(json_file)
-    except OSError:
-        print("db_json not found")
-        exit(1)
-    print(db_json['url'])
 
     client = MongoClient(db_json['url'])
     db = client['xnat_dashboards']
