@@ -79,12 +79,12 @@ def stats():
 def logout():
     global graph_data_stats
     graph_data_stats = []
-    session['error'] = -1
 
     if 'username' in session:
         del session['username']
-    global db
+    session['error'] = -1
 
+    global db
     if db:
         return redirect(url_for('auth.login_DB'))
     else:
@@ -130,7 +130,8 @@ def stats_db():
                     project_lists = plotting_array[1]
 
                 else:
-                    session['error'] = "User Registered: Data fetching incomplete"
+                    session['error'] = "User Registered:"\
+                                     + "Data fetching incomplete"
 
             else:
                 session['error'] = "Wrong Password"

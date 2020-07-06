@@ -179,5 +179,4 @@ def login_DB():
         # page using browser instead of a redirect
 
         return render_template('auth/login_DB.html',
-                               saved_flag=saved_flag,
-                               display_error=display_error)
+                               saved_flag=saved_flag)
