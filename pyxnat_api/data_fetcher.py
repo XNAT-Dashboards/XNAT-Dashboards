@@ -108,13 +108,17 @@ class Fetcher:
             else:
                 ut_sessions_per_project[item['id']] = 0
 
+        projects_sessions = {}
+
+        projects_sessions['MR Sessions/Project'] = mr_sessions_per_project
+        projects_sessions['PET Sessions/Project'] = pet_sessions_per_project
+        projects_sessions['CT Sessions/Project'] = ct_sessions_per_project
+        projects_sessions['UT Sessions/Project'] = ut_sessions_per_project
+
         projects_details['Number of Projects'] = len(projects)
         projects_details['Imaging Sessions'] = projects_ims
         projects_details['Projects Visibility'] = project_acccess
-        projects_details['MR Sessions/Project'] = mr_sessions_per_project
-        projects_details['PET Sessions/Project'] = pet_sessions_per_project
-        projects_details['CT Sessions/Project'] = ct_sessions_per_project
-        projects_details['UT Sessions/Project'] = ut_sessions_per_project
+        projects_details['Sessions types/Project'] = projects_sessions
         projects_details['Total Sessions'] = projects_ims['PET Sessions']\
             + projects_ims['MR Sessions'] + projects_ims['UT Sessions']\
             + projects_ims['CT Sessions']
