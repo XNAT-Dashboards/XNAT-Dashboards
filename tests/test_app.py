@@ -73,22 +73,6 @@ def test_dashboard():
     assert logout == 200
 
 
-def test_dashboard_db():
-
-    data_post_login_dash_present = dict(username='testUser',
-                                        password='testPassword')
-
-    response_post = app.test_client().post('dashboards/db/stats/',
-                                           data=data_post_login_dash_present,
-                                           ).status_code
-
-    assert response_post == 200
-
-    response_get = app.test_client().get('dashboards/db/stats/').status_code
-
-    assert response_get == 200
-
-
 def test_home_redirect():
     response_post = app.test_client().get('/',
                                           follow_redirects=True).status_code
@@ -110,3 +94,19 @@ def test_register_userexist():
         data=data_post_register_present)
 
     assert response_post_register.status_code == 200
+
+
+def test_dashboard_db():
+
+    data_post_login_dash_present = dict(username='testUser',
+                                        password='testPassword')
+
+    response_post = app.test_client().post('dashboards/db/stats/',
+                                           data=data_post_login_dash_present,
+                                           ).status_code
+
+    assert response_post == 200
+
+    response_get = app.test_client().get('dashboards/db/stats/').status_code
+
+    assert response_get == 200
