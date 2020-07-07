@@ -25,7 +25,7 @@ def test_register_db():
 
     resposne_post = app.test_client().post('auth/db/register/',
                                            follow_redirects=True,
-                                           data=data_post_register_present,
+                                           data=data_post_register_present
                                            )
 
     assert resposne_post.status_code == 200
@@ -75,18 +75,6 @@ def test_dashboard():
 
 def test_dashboard_db():
 
-    data_post_register_present = dict(username='testUser',
-                                      password='testPassword',
-                                      server='https://central.xnat.org',
-                                      ssl=False)
-
-    resposne_post = app.test_client().post('auth/db/register/',
-                                           follow_redirects=True,
-                                           data=data_post_register_present,
-                                           )
-
-    assert resposne_post.status_code == 200
-
     data_post_login_dash_present = dict(username='testUser',
                                         password='testPassword')
 
@@ -107,3 +95,18 @@ def test_home_redirect():
     # Checks if we are getting correct response that is 200
     # after redirecting
     response_post == 200
+
+
+def test_register_userexist():
+
+    data_post_register_present = dict(username='testUser',
+                                      password='testPassword',
+                                      server='https://central.xnat.org',
+                                      ssl=False)
+
+    response_post_register = app.test_client().post(
+        'auth/db/register/',
+        follow_redirects=True,
+        data=data_post_register_present)
+
+    assert response_post_register.status_code == 200
