@@ -32,9 +32,9 @@ def login():
             display_error = "No Session Available"
         del session['error']
         return render_template('auth/login.html',
-                               error=display_error)
+                               error=display_error, saved_flag=saved_flag)
     else:
-        return render_template('auth/login.html')
+        return render_template('auth/login.html', saved_flag=saved_flag)
 
 
 # Set the route and accepted methods
@@ -43,7 +43,7 @@ def register_DB():
 
     if request.method == 'GET':
 
-        return render_template('auth/register_DB.html')
+        return render_template('auth/register_DB.html', saved_flag=saved_flag)
     else:
 
         users = mongo.db.users
