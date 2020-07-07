@@ -73,8 +73,8 @@ class Fetcher:
                                            if project['proj_ct_count'] != ''])
         projects_ims['PET Sessions'] = sum([int(project['proj_pet_count'])
                                             for project in projects
-                                            if project['proj_pet_count']
-                                            != ''])
+                                            if project['proj_pet_count'] != ''
+                                            ])
         projects_ims['MR Sessions'] = sum([int(project['proj_mr_count'])
                                            for project in projects
                                            if project['proj_mr_count'] != ''])
@@ -86,25 +86,25 @@ class Fetcher:
 
             if item['proj_mr_count'] != '':
                 mr_sessions_per_project[item['id']] =\
-                                        int(item['proj_mr_count'])
+                    int(item['proj_mr_count'])
             else:
                 mr_sessions_per_project[item['id']] = 0
 
             if item['proj_pet_count'] != '':
                 pet_sessions_per_project[item['id']] =\
-                                                    int(item['proj_pet_count'])
+                    int(item['proj_pet_count'])
             else:
                 pet_sessions_per_project[item['id']] = 0
 
             if item['proj_ct_count'] != '':
                 ct_sessions_per_project[item['id']] =\
-                                                    int(item['proj_ct_count'])
+                    int(item['proj_ct_count'])
             else:
                 ct_sessions_per_project[item['id']] = 0
 
             if item['proj_ut_count'] != '':
                 ut_sessions_per_project[item['id']] =\
-                                                    int(item['proj_ut_count'])
+                    int(item['proj_ut_count'])
             else:
                 ut_sessions_per_project[item['id']] = 0
 
@@ -160,13 +160,14 @@ class Fetcher:
                 no_age_data_counter = no_age_data_counter + 1
 
         # Create bins and their labels
-        bins = np.arange(11)*10+10
+        bins = np.arange(11) * 10 + 10
         age_range_bins = dict(Counter(np.digitize(age, bins)))
 
         age_range_od = OrderedDict()
         for key, value in sorted(age_range_bins.items()):
             if key != 11:
-                age_range_od[str(key*10)+'-'+str(key*10+10)] = int(value)
+                age_range_od[str(key * 10) + '-' + str(key * 10 + 10)] =\
+                    int(value)
             else:
                 age_range_od['100+'] = int(value)
 
@@ -215,8 +216,8 @@ class Fetcher:
         '''
         try:
             self.experiments = self.SELECTOR.array.experiments(
-                                            experiment_type='',
-                                            columns=['subject_ID']).data
+                experiment_type='',
+                columns=['subject_ID']).data
             experiments = self.experiments
         except pyxnat_errors.DatabaseError as dbe:
             if str(dbe).find('500') != -1:
@@ -331,12 +332,9 @@ class Fetcher:
         # Scans per subject information
 
         scans_per_subject = dict(Counter(
-                            [item['xnat:imagesessiondata/subject_id']
-                             if item['xnat:imagesessiondata/subject_id']
-                             != ''
-                             else
-                             "No Data"
-                             for item in scans]))
+            [item['xnat:imagesessiondata/subject_id']
+                if item['xnat:imagesessiondata/subject_id'] != ''
+                else "No Data" for item in scans]))
 
         scans_details['Scans Quality'] = scan_quality
         scans_details['Scan Types'] = type_dict

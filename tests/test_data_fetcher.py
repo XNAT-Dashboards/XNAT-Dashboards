@@ -1,28 +1,28 @@
 from pyxnat_api import data_fetcher
 
 fetch_object_connected = data_fetcher.Fetcher(
-                                            name='testUser',
-                                            password='testPassword',
-                                            server='https://central.xnat.org',
-                                            ssl=False)
+    name='testUser',
+    password='testPassword',
+    server='https://central.xnat.org',
+    ssl=False)
 
 fetch_object_conn_pwd_incorrect = data_fetcher.Fetcher(
-                                            name='testUser',
-                                            password='testPaword',
-                                            server='https://central.xnat.org',
-                                            ssl=False)
+    name='testUser',
+    password='testPaword',
+    server='https://central.xnat.org',
+    ssl=False)
 
 fetch_object_conn_uri_incorrect = data_fetcher.Fetcher(
-                                            name='testUser',
-                                            password='testPassword',
-                                            server='https://central.xnat.org/',
-                                            ssl=False)
+    name='testUser',
+    password='testPassword',
+    server='https://central.xnat.org/',
+    ssl=False)
 
 fetch_object_conn_url_incorrect = data_fetcher.Fetcher(
-                                            name='testUser',
-                                            password='testPassword',
-                                            server='https://centrat.org/',
-                                            ssl=False)
+    name='testUser',
+    password='testPassword',
+    server='https://centrat.org/',
+    ssl=False)
 
 
 def test_get_projects_details():

@@ -16,6 +16,7 @@ Flask-BabelEx==0.9.4
 Flask-Login==0.5.0
 Flask-Mail==0.9.1
 Flask-Principal==0.4.0
+Flask-PyMongo==2.3.0
 Flask-Security==3.0.0
 Flask-WTF==0.14.3
 gunicorn==20.0.4
@@ -32,9 +33,12 @@ numpy==1.19.0
 packaging==20.4
 passlib==1.7.2
 pathlib==1.0.1
+pep8==1.7.1
 pluggy==0.13.1
 py==1.8.1
+pycodestyle==2.6.0
 pycparser==2.20
+pymongo==3.10.1
 PyMySQL==0.9.3
 pyOpenSSL==19.1.0
 pyparsing==2.4.7

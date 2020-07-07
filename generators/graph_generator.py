@@ -1,8 +1,8 @@
 import sys
 from os.path import dirname, abspath
+import json
 sys.path.insert(0, dirname(dirname(abspath(__file__))))
 from pyxnat_api import get_info
-import json
 
 
 class GraphGenerator:
@@ -11,19 +11,20 @@ class GraphGenerator:
     project_list = []
     project_list_ow_co_me = []
 
-    def __init__(self, user, password, server, ssl):
-        data_object = get_info.GetInfo(user,
-                                       password,
-                                       server,
-                                       ssl)
-        self.data = data_object.get_info()
-        projects_data = data_object.get_project_list()
+    def __init__(self, user, password, server, ssl=True, db=False):
+        if not db:
+            data_object = get_info.GetInfo(user,
+                                           password,
+                                           server,
+                                           ssl)
+            self.data = data_object.get_info()
+            projects_data = data_object.get_project_list()
 
-        # Checking for error
-        if type(projects_data) != int:
-            self.project_list = projects_data['project_list']
-            self.project_list_ow_co_me = projects_data[
-                                          'project_list_ow_co_me']
+            # Checking for error
+            if type(projects_data) != int:
+                self.project_list = projects_data['project_list']
+                self.project_list_ow_co_me = projects_data[
+                    'project_list_ow_co_me']
 
     def graph_type_generator(self):
 
@@ -38,8 +39,8 @@ class GraphGenerator:
 
         for json_dict in data:
             dict_output[json_dict] =\
-                input("Enter the graph type for graph name "
-                      + json_dict + ": ")
+                input(
+                    "Enter the graph type for graph name " + json_dict + ": ")
 
         graph_type = json.dumps(dict_output)
         f = open("utils/graph_type.json", "w")
@@ -58,8 +59,7 @@ class GraphGenerator:
             with open('utils/graph_type.json') as json_file:
                 graph_type = json.load(json_file)
         except OSError:
-            print("graph_type.json file not found\n please"
-                  + " generate by running graph_generator.py first")
+            print("graph_type.json file not found run graph_generator")
             exit(1)
 
         counter_id = 0
@@ -110,12 +110,12 @@ class GraphGenerator:
                 continue
             array_1d.append({final_json: graph_data[final_json]})
             counter = counter + 1
-            if counter == 2 or length_check == len(graph_data)-1:
+            if counter == 2 or length_check == len(graph_data) - 1:
                 counter = 0
                 array_2d.append(array_1d)
                 array_1d = []
 
-            length_check = length_check+1
+            length_check = length_check + 1
 
         '''
             Returns a nested list with dict inside
@@ -162,7 +162,7 @@ class GraphGenerator:
         for data in list_data:
             array_1d.append(data)
             counter = counter + 1
-            if counter == 4 or length_check == len(list_data)-1:
+            if counter == 4 or length_check == len(list_data) - 1:
                 counter = 0
                 array_2d.append(array_1d)
                 array_1d = []
@@ -176,13 +176,13 @@ class GraphGenerator:
                 counter_ow_co_me = counter_ow_co_me + 1
 
                 if counter_ow_co_me == 4\
-                   or length_check_ow_co_me == len(list_data_ow_co_me)-1:
+                   or length_check_ow_co_me == len(list_data_ow_co_me) - 1:
 
                     counter_ow_co_me = 0
                     array_2d_ow_co_me.append(array_1d_ow_co_me)
                     array_1d_ow_co_me = []
 
-                length_check_ow_co_me = length_check_ow_co_me+1
+                length_check_ow_co_me = length_check_ow_co_me + 1
 
         '''
             Returns a nested list
@@ -198,6 +198,16 @@ class GraphGenerator:
             ]
         '''
         return [array_2d, array_2d_ow_co_me]
+
+    def process_db(self, data, projects_data):
+        self.data = data
+        self.project_list = projects_data['project_list']
+        self.project_list_ow_co_me = projects_data['project_list_ow_co_me']
+        graph_generator = self.graph_generator()
+        project_list_generator = self.project_list_generator()
+
+        return [graph_generator, project_list_generator]
+
 
 if __name__ == "__main__":
     '''

@@ -23,7 +23,6 @@
 </head>
 
 <body>
-
 	<div class="limiter">
 		<!-- Preloader Start -->
 		<div class="preloader">
@@ -37,9 +36,9 @@
 		<div class="container-login100">
 			<div class="wrap-login100">
 				<!-- Login form start -->
-				<form method="POST" action="{{ url_for('dashboards.stats') }}" class="login100-form validate-form">
+				<form method="POST" action="{{ url_for('dashboards.stats_db') }}" class="login100-form validate-form">
 					<span class="login100-form-title p-b-43">
-						Login to XNAT Instance
+						Login to XNAT Dashboards
                     </span>
                     {% if error is defined %}
 					<div class="alert alert-danger" role="alert" id = "success-alert">
@@ -57,28 +56,19 @@
 						<span class="focus-input100"></span>
 						<span class="label-input100">Password</span>
 					</div>
-
-					<div class="wrap-input100 validate-input">
-						<input class="input100" type="text" name="server">
-						<span class="focus-input100"></span>
-						<span class="label-input100">Server</span>
-					</div>
-					<div class="flex-sb-m w-full p-t-3 p-b-20">
-						<div class="contact100-form-checkbox">
-							<input class="input-checkbox100" id="ckb1" type="checkbox" name="ssl">
-							<label class="label-checkbox100 ssl" for="ckb1">
-								Disable host verification
-							</label>
-						</div>
-					</div>
 					<div class="container-login100-form-btn">
 						<button class="login100-form-btn">
 							Login
 						</button>
 					</div>
-					<div class="text-center p-t-26 p-b-10">
-						<a href="{{url_for('auth.login_DB')}}" class="txt2">
-							Login using Database?
+					<div class="text-center p-t-30 p-b-10">
+						<a href="{{url_for('auth.register_DB')}}" class="txt2">
+							New to XNAT Dashboards? Register
+						</a>
+					</div>
+					<div class="text-center">
+						<a href="{{url_for('auth.login')}}" class="txt2">
+							Want realtime data?
 						</a>
 					</div>
 					</div>
@@ -98,6 +88,7 @@
     <script src="/static/auth/js/daterangepicker.js"></script>
     <script src="/static/auth/js/countdowntime.js"></script>
 <script src="/static/auth/js/main.js"></script>
+
 {% if saved_flag != -1 %}
 	<script>
 		// Script check whether the thread is done fetching the data from XNAT instance
@@ -117,5 +108,6 @@
 		});
 	</script>
 {% endif %}
+
     <!-- Js include End -->
 </html>
