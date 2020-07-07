@@ -11,4 +11,4 @@ def test_info():
     info = info_object.get_info()
 
     assert type(info) == dict   # Return type should be a dict
-    assert len(info) == 19      # Currently 19 dicts to be returned
+    assert len(info) == 16      # Currently 16 dicts to be returned
