@@ -1,4 +1,20 @@
 // Generate Charts using the json provided from html jinja
+stack_count = {"Stats": false,
+               "Sessions types/Project":true,
+               "Imaging Sessions": false,
+               "Projects Visibility": false,
+               "Subjects/Project": false,
+               "Age Range":false,
+               "Gender": false,
+               "Handedness": false,
+               "Experiments/Subject": false,
+               "Experiment Types": false,
+               "Experiments/Project": false,
+               "Scans Quality": false,
+               "Scan Types":false,
+               "XSI Scan Types": false,
+               "Scans/Project": false, 
+               "Scans/Subject": false};
 
 function chart_generator(json){
 
@@ -47,30 +63,65 @@ function getRandomIntInclusive(min, max) {
 
 // Code for barchart
 function barchart_generator(graph_name, graph_info){
-    x_axis = [];
-    y_axis = [];
-    for (x in graph_info){
-        if(x == 'graph_type' || x == 'id' ){
-            continue;
-        }else{
-            x_axis.push(x);
-            y_axis.push(graph_info[x]);
+
+    if(stack_count[graph_name]){
+        
+        data = [];
+        for (gi in graph_info){
+            var x_axis = [];
+            var y_axis = [];
+            for( x in graph_info[gi]){
+                if(gi == 'graph_type' || gi == 'id' ){
+                    continue;
+                }else{
+                    console.log(x);
+                    console.log(graph_info[gi][x]);
+                    x_axis.push(x);
+                    y_axis.push(graph_info[gi][x]);
+                }
+            }
+            trace = {};
+            r = getRandomIntInclusive(0,254);
+            g = getRandomIntInclusive(0,254);
+            b = getRandomIntInclusive(0,254);
+            trace = {
+                x: x_axis,
+                y: y_axis,
+                name: gi,
+                type: 'bar',
+                marker: {
+                  color: 'rgb('+r+','+g+','+b+')' // Adding color values
+                }
+              };
+              data.push(trace);
         }
+
+    }else{
+        x_axis = [];
+        y_axis = [];
+        for (x in graph_info){
+            if(x == 'graph_type' || x == 'id' ){
+                continue;
+            }else{
+                x_axis.push(x);
+                y_axis.push(graph_info[x]);
+            }
+        }
+        // Generating color values
+        r = getRandomIntInclusive(0,254);
+        g = getRandomIntInclusive(0,254);
+        b = getRandomIntInclusive(0,254);
+        var data = [
+            {
+              x: x_axis,
+              y: y_axis,
+              type: 'bar',
+              marker: {
+                color: 'rgb('+r+','+g+','+b+')' // Adding color values
+              }
+            }
+          ];
     }
-    // Generating color values
-    r = getRandomIntInclusive(0,254);
-    g = getRandomIntInclusive(0,254);
-    b = getRandomIntInclusive(0,254);
-    var data = [
-        {
-          x: x_axis,
-          y: y_axis,
-          type: 'bar',
-          marker: {
-            color: 'rgb('+r+','+g+','+b+')' // Adding color values
-          }
-        }
-      ];
 
     updatemenus= [{
             y: 1.3,
@@ -91,7 +142,8 @@ function barchart_generator(graph_name, graph_info){
 
     var layout = {
             title: graph_name,
-            updatemenus:updatemenus
+            updatemenus:updatemenus,
+            barmode:'stack'
     };
 
     var config = {responsive: true}
@@ -99,6 +151,7 @@ function barchart_generator(graph_name, graph_info){
     Plotly.newPlot('graph_body'+graph_info['id'], data, layout, config);
 
 }
+
 
 // Code for scatterchart
 function scatterchart_generator(graph_name, graph_info){
