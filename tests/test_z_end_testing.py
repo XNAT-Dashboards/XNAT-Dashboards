@@ -17,7 +17,7 @@ def test_end_testing():
     db.users_data.remove({'username': 'testUser'})
 
     client = MongoClient(db_json['test_url'])
-    db2 = client['xnat_dashboards']
+    db2 = client['test_xnat_dashboards']
 
     db2.users.remove({'username': 'testUser'})
     db2.users_data.remove({'username': 'testUser'})
