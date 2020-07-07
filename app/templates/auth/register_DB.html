@@ -98,5 +98,24 @@
     <script src="/static/auth/js/daterangepicker.js"></script>
     <script src="/static/auth/js/countdowntime.js"></script>
 	<script src="/static/auth/js/main.js"></script>
-    <!-- Js include End -->
+	<!-- Js include End -->
+	{% if saved_flag != -1 %}
+		<script>
+			// Script check whether the thread is done fetching the data from XNAT instance
+			$(document).ready(function() {
+				var refresh_id = setInterval(function() {
+					$.get(
+					"{{ url_for('auth.status') }}",
+					function(data) {
+						console.log(data);
+							if (data.status == 'completed') {
+
+							window.location.replace("{{ url_for('auth.login_DB') }}");
+							}
+					}
+					)}
+				, 1000);
+			});
+		</script>
+	{% endif %}
 </html>
