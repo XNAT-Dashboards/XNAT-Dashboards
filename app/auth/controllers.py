@@ -16,6 +16,8 @@ delete_username = None  # Flag whether to delete username registered
 @auth.route('/login/')
 def login():
 
+    global saved_flag
+
     if 'error' in session:
 
         if session['error'] == 500:
@@ -40,6 +42,7 @@ def login():
 # Set the route and accepted methods
 @auth.route('db/register/', methods=['POST', 'GET'])
 def register_DB():
+    global saved_flag
 
     if request.method == 'GET':
 
@@ -63,7 +66,6 @@ def register_DB():
             thread.start()
             # Set save flag to 200 meaning the data is currently saving on
             # another thread
-            global saved_flag
             saved_flag = 200
 
             # A alert to user to wait at login page, If something wrong in the
@@ -115,6 +117,7 @@ def status():
     # of the saving process
 
     global saved_flag
+
     if saved_flag == 200:
         return jsonify(dict(status=('saving')))
         # Returs that data is being saved
@@ -165,7 +168,7 @@ def login_DB():
             # Since error occured in saved data during fetching of info
             # We have already saved user details thus we need to delete
             # user details from users collections
-            print('dont go'+str(session['error']))
+
             display_error = session['error']
             del session['error']
             global delete_username

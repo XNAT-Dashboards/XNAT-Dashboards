@@ -2,13 +2,13 @@ from pymongo import MongoClient
 import sys
 import json
 from os.path import dirname, abspath
-sys.path.insert(0, dirname(dirname(abspath(__file__))))    
+sys.path.insert(0, dirname(dirname(abspath(__file__))))
 
 
 def test_end_testing():
 
     with open('utils/db_config.json') as json_file:
-            db_json = json.load(json_file)
+        db_json = json.load(json_file)
 
     client = MongoClient(db_json['url'])
     db = client['xnat_dashboards']
