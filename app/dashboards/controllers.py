@@ -35,10 +35,6 @@ def stats():
         graph_data_stats = plotting_object.graph_generator()
         project_lists = plotting_object.project_list_generator()
 
-        # Disconnecting the api session
-        del plotting_object
-        return 'correct'
-    else:
         if graph_data_stats == [] or type(graph_data_stats) == int:
             session['error'] = graph_data_stats
             return redirect(url_for('auth.login'))
