@@ -164,12 +164,18 @@
                 <div class="row">
                     {% for j in i%}
                         <div class="col-lg-3">
-                            <div class="card project">
-                                <div class="card-body" >
-                                    {{j}}
+                            {% if db is sameas true%}
+                            <a href="/dashboards/db/project/{{j}}" target="_blank"> 
+                            {% endif %}
+                            {% if db is sameas false%}
+                            <a href="/dashboards/project/{{j}}" target="_blank"> 
+                            {% endif %}
+                                <div class="card project">
+                                    <div class="card-body" >
+                                        {{j}}
+                                    </div>
                                 </div>
-                                
-                            </div>
+                            </a>
                         </div>
                     {% endfor %}
                 </div>
@@ -182,12 +188,18 @@
                 <div class="row">
                     {% for j in i%}
                         <div class="col-lg-3">
-                            <div class="card project">
-                                <div class="card-body" >
-                                    {{j}}
+                            {% if db is sameas true%}
+                            <a href="/dashboards/db/project/{{j}}" target="_blank"> 
+                            {% endif %}
+                            {% if db is sameas false%}
+                            <a href="/dashboards/project/{{j}}" target="_blank"> 
+                            {% endif %}
+                                <div class="card project">
+                                    <div class="card-body" >
+                                        {{j}}
+                                    </div>
                                 </div>
-                                
-                            </div>
+                            </a>
                         </div>
                     {% endfor %}
                 </div>
