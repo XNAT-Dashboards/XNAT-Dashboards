@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- STOP user from back key start-->
+    <script>
+        window.history.forward(); 
+    </script>
+    <!-- STOP user from back key end-->
+    <title>XNAT Dashboards</title>
+    <!-- CSS import Start -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/common/images/Logo.png">
+    <link href="/static/dashboards/css/custom.css" rel="stylesheet">
+    <link href="/static/dashboards/css/custom_bootstrap_overite.css" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="icon" href="data:;base64,=">
+    <!-- CSS import End -->
+</head>
+<div class="preloader">
+</div>
+<body class="skin-default-dark fixed-layout">
+    <div id="main-wrapper" >
+        <!-- Preloader Start -->
+        <div class="preloader">
+            <div class="loader">
+                <div class="loader__figure"></div>
+                <p class="loader__label">Plotting Data</p>
+            </div>
+        </div>
+        <!-- Preloader End -->
+        <!-- Top nav bar start-->
+        <header class="topbar">
+            <nav class="navbar top-navbar navbar-expand-md navbar-dark">
+                <div class="navbar-header">
+                    <a class="navbar-brand" id="logo" href="#">
+                        <img src="/static/common/images/Logo.png" class="logo">
+                        XNAT Dashboards
+                    </a>
+                </div>
+                <div class="navbar-collapse">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item hidden-sm-up"> <a class="nav-link nav-toggler waves-effect waves-light" href="javascript:void(0)"><i class="fa fa-bars"></i></a></li>
+                    </ul>
+                    <ul class="navbar-nav my-lg-0">
+                        <li>
+                            <i class="fa fa-user username" aria-hidden="true"></i>
+                        </li>
+                        <li>
+                            &nbsp&nbsp&nbsp
+                        </li>
+                        <li class="nav-item dropdown username">
+                            {{username}}   
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <!-- Top nav bar end-->
+        <!-- Left sidebar start-->
+        <aside class="left-sidebar">
+            <div class="d-flex no-block nav-text-box align-items-center left_pane">
+                Dashboards
+                <a class="waves-effect waves-dark ml-auto hidden-sm-down" href="javascript:void(0)"><i class="fa fa-bars"></i></a>
+                <a class="nav-toggler waves-effect waves-dark ml-auto hidden-sm-up" href="javascript:void(0)"><i class="fa fa-bars"></i></a>
+            </div>
+            <div class="scroll-sidebar">
+                <nav class="sidebar-nav">
+                    <ul id="sidebarnav">
+                        <li id="overview"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-eye"></i><span class="hide-menu">Overview</span></a></li>                  
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+        <!-- Left sidebar end-->
+        <!-- Plotly graphs container start -->
+        <div class="page-wrapper ">
+            <div class="container-fluid ">
+                <div class="row page-titles">
+                    <div class="col-md-5 align-self-center">
+                        <h4 class="text-themecolor overview_part">Project {{id}} Dashboard</h4>
+                    </div>
+                    <div class="col-md-7 align-self-center text-right">
+                        <div class="d-flex justify-content-end align-items-center">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="javascript:void(0)">Connected</a></li>
+                                <li class="breadcrumb-item active">{{server}}</li>
+                            </ol>
+                            {% if db is sameas true%}
+                            <button type="button" class="btn btn-outline-info d-lg-block m-l-15"> Database </button>
+                            {% endif %}
+                            {% if db is sameas false %}
+                            <button type="button" class="btn btn-outline-info d-lg-block m-l-15"> API </button>
+                            {% endif %}
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class = "overview_part">
+                    <!-- Counter Start -->
+                    <div class = "card">
+                        <div class="card-body">
+                                <div class="row">
+                                    {% for key in stats_data %}
+                                    <div class="col">
+                                        <div class="counter">
+                                            <h2 class="timer count-title count-number" data-to="{{stats_data[key]}}" data-speed="1000"></h2>
+                                            <p class="count-text ">{{key}}</p>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                        </div>
+                    </div>
+                    <!-- Counter End -->
+                    <div class="row">
+                        <!-- column -->
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex">
+                                        <div>
+                                            <h5 class="card-title">Project Overview</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <tbody>
+                                            <tr>
+                                                <td ><b>Project Name</b></td>
+                                                <td class="text-center">{{name}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td ><b>Project ID</td>
+                                                <td class="text-center">{{id}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Project Owner(s)</b></td>
+                                                <td class="text-center">
+                                                    {% for user in owners%}
+                                                    {{user}},&nbsp
+                                                    {%endfor%}END
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Inserted on </b></td>
+                                                <td class="text-center">{{insert_date}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Inserted By</b></td>
+                                                <td class="text-center">{{insert_users}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Last Workflow</b></td>
+                                                <td class="text-center">{{last_workflow}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Project Collaborators</b></td><td class="text-center">
+                                                {% for user in collaborators%}
+                                                {{user}},&nbsp
+                                                {%endfor%}END</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Project Members</b></td><td class="text-center">
+                                                {% for user in members%}
+                                                {{user}},&nbsp
+                                                {% endfor%}END
+                                            </td>
+                                                
+                                            </tr>
+                                            <tr>
+                                                <td ><b>Project Users</b></td>
+                                                <td class="text-center">
+                                                    {% for user in users%}
+                                                    {{user}},&nbsp
+                                                    {%endfor%}
+                                                    END
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td ><b>Last Accessed By</b></td>
+                                                <td class="text-center">
+                                                {% for user in last_accessed%}
+                                                {{user}},&nbsp
+                                                {% endfor %}
+                                                END
+                                            </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Graph plotting Start -->
+                    {% for i in graph_data %}
+                    <div class="row">
+                        {% for j in i %}
+                        {% for key in j %}
+                            <div class="col-lg-6" id="myBig{{j['id']}}">
+                                <div class="card">
+                                    <div class="card-body" id="graph_id{{j[key]['id']}}">
+                                        <div id="graph_body{{j[key]['id']}}"><!-- Plotly chart will be drawn inside this DIV --></div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                    <!-- Graph plotting End -->
+                </div>
+            </div>
+        </div>
+        <!-- Plotly graphs container end-->
+        <!-- Footer start-->
+        <footer class="footer">
+            © 2020 XNAT Dashboards
+        </footer>
+        <!-- Footer end-->
+    </div>    
+    <!-- Js include Start -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="/static/common/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/dashboards/js/custom.js"></script>
+    <script src="/static/dashboards/js/sidebarmenu.js"></script>
+    <script src="/static/dashboards/js/jquery.sparkline.min.js"></script>
+    <script src="/static/dashboards/js/popper.min.js"></script>
+    <script src="/static/common/css/perfect-scrollbar.css"></script>
+    <script src="/static/dashboards/js/sticky-kit.min.js"></script>
+
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="/static/dashboards/js/plotly_chart_generator.js"></script>
+    {% for i in graph_data%}
+        {% for j in i%}
+            <script>         
+                chart_generator({{ j | tojson}});
+            </script>
+        {%endfor%}
+    {%endfor%}
+    <script src="/static/dashboards/js/per_project.js"></script>
+    <!-- Js include End -->
+</body>
+
+</html>
