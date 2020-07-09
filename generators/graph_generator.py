@@ -199,15 +199,6 @@ class GraphGenerator:
         '''
         return [array_2d, array_2d_ow_co_me]
 
-    def process_db(self, data, projects_data):
-        self.data = data
-        self.project_list = projects_data['project_list']
-        self.project_list_ow_co_me = projects_data['project_list_ow_co_me']
-        graph_generator = self.graph_generator()
-        project_list_generator = self.project_list_generator()
-
-        return [graph_generator, project_list_generator]
-
 
 if __name__ == "__main__":
     '''
