@@ -1,16 +1,17 @@
-from pyxnat_api import data_fetcher
+from pyxnat_api import data_formatter
 
 
 class GetInfo:
 
-    fetcher_object = None
+    formatter_object = None
 
     def __init__(self, user, password, server, ssl):
 
-        self.fetcher_object = data_fetcher.Fetcher(user,
-                                                   password,
-                                                   server,
-                                                   ssl)
+        self.formatter_object = data_formatter.Formatter(
+            user,
+            password,
+            server,
+            ssl)
 
     def __preprocessor(self):
 
@@ -34,7 +35,7 @@ class GetInfo:
         final_json_dict = {}
 
         # Preprocessing required in project data for number of projects
-        projects_details = self.fetcher_object.get_projects_details()
+        projects_details = self.formatter_object.get_projects_details()
         # If some error in connection 1 will be returned and we will
         # not go further
         if type(projects_details) != int:
@@ -46,13 +47,13 @@ class GetInfo:
             return projects_details
 
         # Pre processing for subject details required
-        subjects_details = self.fetcher_object.get_subjects_details()
+        subjects_details = self.formatter_object.get_subjects_details()
         if subjects_details != 1:
             stats['Subjects'] = subjects_details['Number of Subjects']
             del subjects_details['Number of Subjects']
 
         # Pre processing experiment details
-        experiments_details = self.fetcher_object.get_experiments_details()
+        experiments_details = self.formatter_object.get_experiments_details()
         if experiments_details != 1:
             stats['Experiments'] = experiments_details['Number of Experiments']
             del experiments_details['Number of Experiments']
@@ -60,7 +61,7 @@ class GetInfo:
         stats['Sessions'] = sessionDetails
 
         # Pre processing scans details
-        scans_details = self.fetcher_object.get_scans_details()
+        scans_details = self.formatter_object.get_scans_details()
         if scans_details != 1:
             stats['Scans'] = scans_details['Number of Scans']
             del scans_details['Number of Scans']
@@ -87,7 +88,7 @@ class GetInfo:
 
     def get_project_list(self):
 
-        return self.fetcher_object.get_projects_details_specific()
+        return self.formatter_object.get_projects_details_specific()
 
     def get_info(self):
 
