@@ -84,10 +84,24 @@
             <div class="container-fluid ">
                 <div class="row page-titles">
                     <div class="col-md-5 align-self-center">
-                        <h4 class="text-themecolor overview_part">Project {{id}} Dashboard</h4>
+                        <h4 class="text-themecolor overview_part">Project {{id}} Dashboard &nbsp&nbsp
+                        </h4>
                     </div>
                     <div class="col-md-7 align-self-center text-right">
                         <div class="d-flex justify-content-end align-items-center">
+                            <h4>
+                                {% if access == 'private'%}
+                                <span class="badge badge-danger">Private Project</span>
+                                {% endif %}
+                                {% if access == 'protected'%}
+                                <span class="badge badge-warning">Protected Project</span>
+                                {% endif %}
+                                {% if access == 'public'%}
+                                <span class="badge badge-success">Public Project</span>
+                                {% endif %}
+
+                                &nbsp&nbsp
+                            </h4>
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="javascript:void(0)">Connected</a></li>
                                 <li class="breadcrumb-item active">{{server}}</li>
