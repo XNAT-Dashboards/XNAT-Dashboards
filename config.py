@@ -23,4 +23,4 @@ JSON_SORT_KEYS = False
 
 # Configuring database
 MONGO_DB = 'xnat_dashboards'
-MONGO_URI = environ.get('MONGO_URI')
+MONGO_URI = 'mongodb://localhost:27017/xnat_dashoards'
