@@ -1,7 +1,8 @@
 # Import flask dependencies
 from flask import Blueprint, render_template, session, request,\
     redirect, url_for
-from generators import graph_generator
+from generators import graph_generator, graph_generator_DB,\
+    graph_generator_pp_DB, graph_generator_pp
 from app.init_database import mongo
 
 
@@ -11,7 +12,9 @@ dashboards = Blueprint('dashboards', __name__, url_prefix='/dashboards')
 graph_data_stats = []
 project_lists = []
 username = ''
+password = ''
 server = ''
+ssl = ''
 db = False
 
 
@@ -20,7 +23,7 @@ db = False
 def stats():
 
     if request.method == "POST":
-        global username, server
+        global username, server, password, ssl
         user_details = request.form
         username = user_details['username']
         password = user_details['password']
@@ -117,14 +120,11 @@ def stats_db():
                 if users_data is not None:
 
                     session['username'] = username
-                    plotting_array = graph_generator.GraphGenerator(
+                    plotting_object = graph_generator_DB.GraphGenerator(
                         username,
-                        password,
-                        None,
-                        db=db).process_db(users_data['info'],
-                                          users_data['project_list'])
-                    graph_data_stats = plotting_array[0]
-                    project_lists = plotting_array[1]
+                        users_data['info'])
+                    graph_data_stats = plotting_object.graph_generator()
+                    project_lists = plotting_object.project_list_generator()
 
                 else:
                     session['error'] = "User Registered: Fetching incomplete"
@@ -173,3 +173,91 @@ def stats_db():
                                    username=username.capitalize(),
                                    server=server,
                                    db=db)
+
+
+# this route give the details of the movie
+@dashboards.route('db/project/<id>', methods=['GET'])
+def project_db(id):
+
+    global username
+    users_data_tb = mongo.db.users_data
+    users_data = users_data_tb.find_one({'username': username})
+
+    data_array = graph_generator_pp_DB.GraphGenerator(
+        username, users_data['info'], id
+    ).graph_generator()
+
+    graph_data = data_array[0]
+    stats_data = data_array[1]
+    members = data_array[2]['member(s)']
+    users = data_array[2]['user(s)']
+    collaborators = data_array[2]['Collaborator(s)']
+    owners = data_array[2]['Owner(s)']
+    last_accessed = data_array[2]['last_accessed(s)']
+    insert_users = data_array[2]['insert_user(s)']
+    insert_date = data_array[2]['insert_date']
+    access = data_array[2]['access']
+    name = data_array[2]['name']
+    last_workflow = data_array[2]['last_workflow']
+
+    return render_template(
+        'dashboards/stats_dashboards_pp.html',
+        graph_data=graph_data,
+        stats_data=stats_data,
+        username=username.capitalize(),
+        server=server,
+        db=db,
+        members=members,
+        users=users,
+        collaborators=collaborators,
+        owners=owners,
+        last_accessed=last_accessed,
+        insert_date=insert_date,
+        insert_users=insert_users,
+        access=access,
+        name=name,
+        last_workflow=last_workflow,
+        id=id)
+
+
+# this route give the details of the movie
+@dashboards.route('project/<id>', methods=['GET'])
+def project(id):
+
+    global username, password, server, ssl
+
+    data_array = graph_generator_pp.GraphGenerator(
+        username, password, server, ssl, id
+    ).graph_generator()
+
+    graph_data = data_array[0]
+    stats_data = data_array[1]
+    members = data_array[2]['member(s)']
+    users = data_array[2]['user(s)']
+    collaborators = data_array[2]['Collaborator(s)']
+    owners = data_array[2]['Owner(s)']
+    last_accessed = data_array[2]['last_accessed(s)']
+    insert_users = data_array[2]['insert_user(s)']
+    insert_date = data_array[2]['insert_date']
+    access = data_array[2]['access']
+    name = data_array[2]['name']
+    last_workflow = data_array[2]['last_workflow']
+
+    return render_template(
+        'dashboards/stats_dashboards_pp.html',
+        graph_data=graph_data,
+        stats_data=stats_data,
+        username=username.capitalize(),
+        server=server,
+        db=db,
+        members=members,
+        users=users,
+        collaborators=collaborators,
+        owners=owners,
+        last_accessed=last_accessed,
+        insert_date=insert_date,
+        insert_users=insert_users,
+        access=access,
+        name=name,
+        last_workflow=last_workflow,
+        id=id)
