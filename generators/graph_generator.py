@@ -42,7 +42,10 @@ class GraphGenerator:
                 input(
                     "Enter the graph type for graph name " + json_dict + ": ")
 
-        graph_type = json.dumps(dict_output)
+        graph_type = json.dumps(
+            dict_output,
+            default=lambda o: o.__dict__, indent=2)
+
         f = open("utils/graph_type.json", "w")
         f.write(graph_type)
         f.close()

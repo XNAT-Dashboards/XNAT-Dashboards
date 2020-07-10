@@ -24,7 +24,7 @@ class GraphGenerator:
         '''
 
         try:
-            with open('utils/graph_type_pp.json') as json_file:
+            with open('utils/graph_type.json') as json_file:
                 graph_type = json.load(json_file)
         except OSError:
             print("graph_type.json file not found run graph_generator")
@@ -39,7 +39,7 @@ class GraphGenerator:
         for final_json in final_json_dict:
             if final_json == 'Stats' or final_json == 'Project details':
                 continue
-            print(str(final_json_dict[final_json]) + "At center")
+
             final_json_dict[final_json]['id'] = counter_id
             counter_id = counter_id + 1
             final_json_dict[final_json]['graph_type'] = graph_type[final_json]
@@ -53,7 +53,7 @@ class GraphGenerator:
             Graph4_name : { x_axis_values, y_axis_values, id, graph_type},
         }
         '''
-        print(final_json_dict)
+
         return final_json_dict
 
     def graph_generator(self):
@@ -67,7 +67,7 @@ class GraphGenerator:
         array_2d = []
         array_1d = []
         counter = 0
-        print()
+
         graph_data = self.graph_pre_processor()
 
         if type(graph_data) == int:
