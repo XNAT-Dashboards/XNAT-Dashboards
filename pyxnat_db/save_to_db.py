@@ -27,7 +27,7 @@ class SaveToDb:
             client = MongoClient(db_json['test_url'])
             db = client[db_json['test_db']]
         else:
-            client = MongoClient('mongodb://localhost:27017/xnat_dashboards')
+            client = MongoClient([db_json['url']])
             db = client[db_json['db']]
 
         self.coll_users_data = db['users_data']

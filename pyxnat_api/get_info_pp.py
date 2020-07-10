@@ -35,7 +35,7 @@ class GetInfo:
 
         # Preprocessing required in project data for number of projects
         projects_details = self.formatter_object_pp.get_projects_details()
-        print(projects_details)
+
         # If some error in connection 1 will be returned and we will
         # not go further
         if type(projects_details) != int:
@@ -93,6 +93,6 @@ class GetInfo:
         return final_json_dict
 
     def get_pp_view(self, project_id):
+
         pp = self.__preprocessor_pp(project_id)
-        print(pp)
         return pp

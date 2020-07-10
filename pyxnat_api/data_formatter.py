@@ -265,7 +265,7 @@ class Formatter:
 
         try:
             projects = self.projects
-            if projects is None:
+            if projects is None or type(projects) == int:
                 raise socket.error
         except socket.error:
             return 1
