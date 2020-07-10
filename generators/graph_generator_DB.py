@@ -2,7 +2,7 @@ import sys
 from os.path import dirname, abspath
 import json
 sys.path.insert(0, dirname(dirname(abspath(__file__))))
-from pyxnat_api import get_info
+from pyxnat_db import get_info_DB
 
 
 class GraphGenerator:
@@ -11,20 +11,15 @@ class GraphGenerator:
     project_list = []
     project_list_ow_co_me = []
 
-    def __init__(self, user, password, server, ssl=True, db=False):
-        if not db:
-            data_object = get_info.GetInfo(user,
-                                           password,
-                                           server,
-                                           ssl)
-            self.data = data_object.get_info()
-            projects_data = data_object.get_project_list()
+    def __init__(self, username, info):
 
-            # Checking for error
-            if type(projects_data) != int:
-                self.project_list = projects_data['project_list']
-                self.project_list_ow_co_me = projects_data[
-                    'project_list_ow_co_me']
+        self.info = get_info_DB.GetInfo(username, info)
+        projects_data_dict = self.info.get_project_list()
+
+        self.data = self.info.get_info()
+        self.project_list = projects_data_dict['project_list']
+        self.project_list_ow_co_me =\
+            projects_data_dict['project_list_ow_co_me']
 
     def graph_type_generator(self):
 
@@ -157,6 +152,7 @@ class GraphGenerator:
         counter_ow_co_me = 0
 
         list_data = self.project_list
+
         list_data_ow_co_me = self.project_list_ow_co_me
 
         if type(list_data) == int:
@@ -200,15 +196,5 @@ class GraphGenerator:
                 ]
             ]
         '''
+
         return [array_2d, array_2d_ow_co_me]
-
-
-if __name__ == "__main__":
-    '''
-    This will run and create the graph_type.json file
-    '''
-    graph_object = GraphGenerator('testUser',
-                                  'testPassword',
-                                  'https://central.xnat.org',
-                                  ssl=False)
-    graph_object.graph_type_generator()

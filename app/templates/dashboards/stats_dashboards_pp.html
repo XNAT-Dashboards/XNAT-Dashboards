@@ -58,18 +58,6 @@
                         <li class="nav-item dropdown username">
                             {{username}}   
                         </li>
-                        <li>
-                            &nbsp&nbsp&nbsp
-                        </li>
-                        <li>
-                            <i class="fa fa-sign-out logout" aria-hidden="true"></i>
-                        </li>
-                        <li>
-                            &nbsp&nbsp
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a href="{{url_for('dashboards.logout')}}" class="logout" > Logout</a>
-                        </li>
                     </ul>
                 </div>
             </nav>
@@ -85,12 +73,7 @@
             <div class="scroll-sidebar">
                 <nav class="sidebar-nav">
                     <ul id="sidebarnav">
-                        <li id="overview"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-eye"></i><span class="hide-menu">Overview</span></a></li>
-                        <li id="projects"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-list"></i><span class="hide-menu">Projects</span></a></li>     
-                        <li id="projects_ow_co_me"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-list"></i><span class="hide-menu">Projects Owned, Collaborated or Member </span></a></li>                   
-                        <div class="text-center m-t-30">
-                            <a href="{{url_for('dashboards.logout')}}" class="waves-effect waves-light btn btn-outline-danger"> Logout </a>
-                        </div>
+                        <li id="overview"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-eye"></i><span class="hide-menu">Overview</span></a></li>                  
                     </ul>
                 </nav>
             </div>
@@ -101,12 +84,24 @@
             <div class="container-fluid ">
                 <div class="row page-titles">
                     <div class="col-md-5 align-self-center">
-                        <h4 class="text-themecolor overview_part">Overview Dashboard</h4>
-                        <h4 class="text-themecolor project_part">All Visible Projects Dashboard</h4>
-                        <h4 class="text-themecolor project_part_ow_co_me">Projects Owned, Collaborated or Member Dashboard</h4>
+                        <h4 class="text-themecolor overview_part">Project {{id}} Dashboard &nbsp&nbsp
+                        </h4>
                     </div>
                     <div class="col-md-7 align-self-center text-right">
                         <div class="d-flex justify-content-end align-items-center">
+                            <h4>
+                                {% if access == 'private'%}
+                                <span class="badge badge-danger">Private Project</span>
+                                {% endif %}
+                                {% if access == 'protected'%}
+                                <span class="badge badge-warning">Protected Project</span>
+                                {% endif %}
+                                {% if access == 'public'%}
+                                <span class="badge badge-success">Public Project</span>
+                                {% endif %}
+
+                                &nbsp&nbsp
+                            </h4>
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="javascript:void(0)">Connected</a></li>
                                 <li class="breadcrumb-item active">{{server}}</li>
@@ -138,6 +133,86 @@
                         </div>
                     </div>
                     <!-- Counter End -->
+                    <div class="row">
+                        <!-- column -->
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex">
+                                        <div>
+                                            <h5 class="card-title">Project Overview</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <tbody>
+                                            <tr>
+                                                <td ><b>Project Name</b></td>
+                                                <td class="text-center">{{name}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td ><b>Project ID</td>
+                                                <td class="text-center">{{id}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Project Owner(s)</b></td>
+                                                <td class="text-center">
+                                                    {% for user in owners%}
+                                                    {{user}},&nbsp
+                                                    {%endfor%}END
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Inserted on </b></td>
+                                                <td class="text-center">{{insert_date}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Inserted By</b></td>
+                                                <td class="text-center">{{insert_users}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Last Workflow</b></td>
+                                                <td class="text-center">{{last_workflow}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Project Collaborators</b></td><td class="text-center">
+                                                {% for user in collaborators%}
+                                                {{user}},&nbsp
+                                                {%endfor%}END</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Project Members</b></td><td class="text-center">
+                                                {% for user in members%}
+                                                {{user}},&nbsp
+                                                {% endfor%}END
+                                            </td>
+                                                
+                                            </tr>
+                                            <tr>
+                                                <td ><b>Project Users</b></td>
+                                                <td class="text-center">
+                                                    {% for user in users%}
+                                                    {{user}},&nbsp
+                                                    {%endfor%}
+                                                    END
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td ><b>Last Accessed By</b></td>
+                                                <td class="text-center">
+                                                {% for user in last_accessed%}
+                                                {{user}},&nbsp
+                                                {% endfor %}
+                                                END
+                                            </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <!-- Graph plotting Start -->
                     {% for i in graph_data %}
                     <div class="row">
@@ -157,56 +232,6 @@
                     <!-- Graph plotting End -->
                 </div>
             </div>
-            <!-- Project List Start -->
-            <!-- Project list for all visible projects Start -->
-            <div class="project_part">
-                {% for i in project_list%}
-                <div class="row">
-                    {% for j in i%}
-                        <div class="col-lg-3">
-                            {% if db is sameas true%}
-                            <a href="/dashboards/db/project/{{j}}" target="_blank"> 
-                            {% endif %}
-                            {% if db is sameas false%}
-                            <a href="/dashboards/project/{{j}}" target="_blank"> 
-                            {% endif %}
-                                <div class="card project">
-                                    <div class="card-body" >
-                                        {{j}}
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    {% endfor %}
-                </div>
-                {% endfor %}
-            </div>
-            <!-- Project list for all visible projects End -->
-            <!-- Project list for owned, collab or member projects Start -->
-            <div class="project_part_ow_co_me">
-                {% for i in project_list_ow_co_me%}
-                <div class="row">
-                    {% for j in i%}
-                        <div class="col-lg-3">
-                            {% if db is sameas true%}
-                            <a href="/dashboards/db/project/{{j}}" target="_blank"> 
-                            {% endif %}
-                            {% if db is sameas false%}
-                            <a href="/dashboards/project/{{j}}" target="_blank"> 
-                            {% endif %}
-                                <div class="card project">
-                                    <div class="card-body" >
-                                        {{j}}
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    {% endfor %}
-                </div>
-                {% endfor %}
-            </div>
-            <!-- Project list for owned, collab or member projects End -->
-            <!-- Project List End -->
         </div>
         <!-- Plotly graphs container end-->
         <!-- Footer start-->
@@ -230,7 +255,6 @@
     {% for i in graph_data%}
         {% for j in i%}
             <script>         
-            console.log("{{project_list_ow_co_me}}");
                 chart_generator({{ j | tojson}});
             </script>
         {%endfor%}

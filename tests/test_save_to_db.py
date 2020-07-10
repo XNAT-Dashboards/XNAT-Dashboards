@@ -28,19 +28,17 @@ def test_save_data_and_user():
     client = MongoClient(db_json['test_url'])
     db = client[db_json['test_db']]
 
-    ex_user = db.users_data.find_one({'username': 'testUser'})
+    existing_user = db.users_data.find_one({'username': 'testUser'})
 
-    assert type(ex_user['info']) == dict
-    assert type(ex_user['project_list']['project_list']) == list
-    assert type(ex_user['project_list']['project_list_ow_co_me']) == list
+    assert type(existing_user['info']) == dict
 
     # Save user
 
     saving_object.save_user(username, password, server, ssl)
 
-    ex_user = db.users.find_one({'username': 'testUser'})
+    existing_user = db.users.find_one({'username': 'testUser'})
 
-    assert ex_user['username'] == 'testUser'
-    assert ex_user['password'] == 'testPassword'
-    assert ex_user['server'] == 'https://central.xnat.org'
-    assert ex_user['ssl'] is False
+    assert existing_user['username'] == 'testUser'
+    assert existing_user['password'] == 'testPassword'
+    assert existing_user['server'] == 'https://central.xnat.org'
+    assert existing_user['ssl'] is False

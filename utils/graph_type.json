@@ -1,1 +1,18 @@
-{"Stats": "bar","Sessions types/Project":"bar", "Imaging Sessions": "pie", "Projects Visibility": "pie", "Subjects/Project": "bar", "Age Range": "bar", "Gender": "pie", "Handedness": "bar", "Experiments/Subject": "scatter", "Experiment Types": "line", "Experiments/Project": "line", "Scans Quality": "pie", "Scan Types": "bar", "XSI Scan Types": "bar", "Scans/Project": "bar", "Scans/Subject": "line"}
+{
+  "Imaging Sessions": "bar",
+  "Projects Visibility": "bar",
+  "Sessions types/Project": "bar",
+  "Subjects/Project": "bar",
+  "Age Range": "bar",
+  "Gender": "bar",
+  "Handedness": "bar",
+  "Experiments/Subject": "bar",
+  "Experiment Types": "bar",
+  "Experiments/Project": "bar",
+  "Scans Quality": "bar",
+  "Scan Types": "bar",
+  "XSI Scan Types": "bar",
+  "Scans/Project": "bar",
+  "Scans/Subject": "bar",
+  "Stats": "bar"
+}

@@ -2,6 +2,8 @@ from pyxnat import Interface
 import pyxnat.core.errors as pyxnat_errors
 import socket
 import json
+import warnings
+warnings.filterwarnings("ignore")
 
 
 class Fetcher:
@@ -15,6 +17,7 @@ class Fetcher:
                              user=name,
                              password=password,
                              verify=(not ssl))
+        self.name = name
         self.SELECTOR = SELECTOR
 
     # Disconnect with the instance
@@ -22,42 +25,21 @@ class Fetcher:
         print("Disconnected")
         self.SELECTOR.disconnect()
 
-    def get_projects_details(self):
+    def get_subjects_details(self, project_id):
 
         try:
-            projects = self.SELECTOR.select('xnat:projectData').all().data
-
-        except pyxnat_errors.DatabaseError as dbe:
-            if str(dbe).find('500') != -1:
-                # 500 represent error in url or uri
-                return 500
-            elif str(dbe).find('401') != -1:
-                # 401 represent error in login details
-                return 401
-        except socket.error as se:
-            if str(se).find('SSL') != -1:
-                # If verification enable and host unable to verify
-                return 191912
-            else:
-                # Wrong URL Connection can't be established
-                return 1
-
-        return projects
-
-    def get_subjects_details(self):
-
-        try:
-            subjects = self.SELECTOR.get('/data/subjects',
-                                              params={'columns': 'ID,'
-                                                      'project,handedness,'
-                                                      'age,gender'})
-            subjects_data = subjects.json()['ResultSet']['Result']
+            self.subjects = self.SELECTOR.get(
+                    '/data/projects/'+project_id+'/subjects',
+                    params={'columns': 'ID,'
+                            'project,handedness,'
+                            'age,gender'})
+            subjects_data = self.subjects.json()['ResultSet']['Result']
 
         except json.JSONDecodeError:
-            if str(subjects).find('500') != -1:
+            if str(self.subjects).find('500') != -1:
                 # 500 represent error in url or uri
                 return 500
-            elif str(subjects).find('401') != -1:
+            elif str(self.subjects).find('401') != -1:
                 # 401 represent error in login details
                 return 401
         except socket.error as se:
@@ -70,7 +52,7 @@ class Fetcher:
 
         return subjects_data
 
-    def get_experiments_details(self):
+    def get_experiments_details(self, project_id):
 
         '''
         Using array method to get the experiment information present on XNAT.
@@ -81,8 +63,10 @@ class Fetcher:
         '''
         try:
             experiments = self.SELECTOR.array.experiments(
+                project_id=project_id,
                 experiment_type='',
                 columns=['subject_ID']).data
+
         except pyxnat_errors.DatabaseError as dbe:
             if str(dbe).find('500') != -1:
                 # 500 represent error in url or uri
@@ -100,7 +84,7 @@ class Fetcher:
 
         return experiments
 
-    def get_scans_details(self):
+    def get_scans_details(self, project_id):
 
         '''
         Using array method to get the scans information present on XNAT.
@@ -112,6 +96,7 @@ class Fetcher:
         '''
         try:
             scans = self.SELECTOR.array.scans(
+                project_id=project_id,
                 columns=['xnat:imageScanData/quality',
                          'xnat:imageScanData/type']).data
 
@@ -132,15 +117,24 @@ class Fetcher:
 
         return scans
 
-    def fetch_all(self):
+    def get_project_details(self, project_id):
 
-        all_data = {}
+        try:
+            project = self.SELECTOR.select('xnat:projectData').where(
+                [('xnat:projectData/id', '=', project_id)]).data
+        except pyxnat_errors.DatabaseError as dbe:
+            if str(dbe).find('500') != -1:
+                # 500 represent error in url or uri
+                return 500
+            elif str(dbe).find('401') != -1:
+                # 401 represent error in login details
+                return 401
+        except socket.error as se:
+            if str(se).find('SSL') != -1:
+                # If verification enable and host unable to verify
+                return 191912
+            else:
+                # Wrong URL Connection can't be established
+                return 1
 
-        all_data['projects'] = self.get_projects_details()
-        if type(all_data['projects']) == int:
-            return all_data['projects']
-        all_data['subjects'] = self.get_subjects_details()
-        all_data['experiments'] = self.get_experiments_details()
-        all_data['scans'] = self.get_scans_details()
-
-        return all_data
+        return project
