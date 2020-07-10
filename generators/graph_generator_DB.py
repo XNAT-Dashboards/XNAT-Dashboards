@@ -37,7 +37,10 @@ class GraphGenerator:
                 input(
                     "Enter the graph type for graph name " + json_dict + ": ")
 
-        graph_type = json.dumps(dict_output)
+        graph_type = json.dumps(
+            dict_output,
+            default=lambda o: o.__dict__, indent=2)
+
         f = open("utils/graph_type.json", "w")
         f.write(graph_type)
         f.close()
@@ -151,7 +154,7 @@ class GraphGenerator:
         list_data = self.project_list
 
         list_data_ow_co_me = self.project_list_ow_co_me
-        print(list_data, '\n\n')
+
         if type(list_data) == int:
             return list_data
 
@@ -193,5 +196,5 @@ class GraphGenerator:
                 ]
             ]
         '''
-        print(array_2d)
+
         return [array_2d, array_2d_ow_co_me]
