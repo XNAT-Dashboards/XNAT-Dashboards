@@ -1,4 +1,4 @@
-from generators import graph_generator_DB
+from generators import graph_generator_pp_DB
 import json
 import pathlib
 from utils import input_processor
@@ -18,8 +18,8 @@ db = client[db_json['db']]
 
 existing_user = db.users_data.find_one({'username': 'testUser'})
 
-graph_object = graph_generator_DB.GraphGenerator(
-        'testUser', existing_user['info'])
+graph_object = graph_generator_pp_DB.GraphGenerator(
+        'testUser', existing_user['info'], 'CENTRAL_OASIS_CS')
 
 
 def test_graph_preprocessor():
