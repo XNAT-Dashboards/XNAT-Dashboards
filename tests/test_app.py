@@ -42,6 +42,9 @@ def test_dashboard():
         'dashboards/stats/',
         data=data_correct).status_code
 
+    reponse_get_pp = app.test_client().\
+        get('dashboards/project/CENTRAL_OASIS_CS').status_code
+
     response_get = app.test_client().get('dashboards/stats/').status_code
 
     # Checks if we are redirecting if wrong password
@@ -66,6 +69,7 @@ def test_dashboard():
     logout = app.test_client().get('dashboards/logout/',
                                    follow_redirects=True).status_code
 
+    assert reponse_get_pp == 200
     assert response_post_correct == 200
     assert response_get == 200
     assert response_post_incorrect_1 == 200
@@ -105,8 +109,14 @@ def test_dashboard_db():
                                            data=data_post_login_dash_present,
                                            ).status_code
 
+    response_get_pp = app.test_client().\
+        get('dashboards/db/project/CENTRAL_OASIS_CS').status_code
+
+    assert response_get_pp == 200
+
     assert response_post == 200
 
     response_get = app.test_client().get('dashboards/db/stats/').status_code
 
     assert response_get == 200
+
