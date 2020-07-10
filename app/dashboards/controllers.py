@@ -23,6 +23,7 @@ db = False
 def stats():
 
     if request.method == "POST":
+
         global username, server, password, ssl
         user_details = request.form
         username = user_details['username']
@@ -62,6 +63,8 @@ def stats():
         if graph_data_stats == [] or type(graph_data_stats) == int:
             session['error'] = graph_data_stats
             return redirect(url_for('auth.login'))
+        elif db:
+            return redirect(url_for('dashboards.stats_db'))
         else:
             project_list = project_lists[0]
             project_list_ow_co_me = project_lists[1]
@@ -80,8 +83,14 @@ def stats():
 # Logout route
 @dashboards.route('/logout/', methods=['GET'])
 def logout():
-    global graph_data_stats
+
+    global graph_data_stats, username, password, ssl
+    global server
     graph_data_stats = []
+    username = ''
+    password = ''
+    server = ''
+    ssl = ''
 
     if 'username' in session:
         del session['username']
@@ -89,6 +98,7 @@ def logout():
 
     global db
     if db:
+        db = False
         return redirect(url_for('auth.login_DB'))
     else:
         return redirect(url_for('auth.login'))
