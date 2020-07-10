@@ -16,7 +16,13 @@ class Formatter:
 
     def get_projects_details(self):
 
-        project_dict = self.fetcher.get_project_details(self.project_id)[0]
+        project_dict_list =\
+            self.fetcher.get_project_details(self.project_id)
+
+        if type(project_dict_list) == int:
+            return project_dict_list
+        else:
+            project_dict = project_dict_list[0]
 
         project_details = {}
 
@@ -99,6 +105,9 @@ class Formatter:
 
         subjects_data = self.fetcher.get_subjects_details(self.project_id)
 
+        if type(subjects_data) == int:
+            return subjects_data
+
         subjects_details = {}
 
         # Subject age information
@@ -155,6 +164,9 @@ class Formatter:
         experiments = self.fetcher.get_experiments_details(
             self.project_id)
 
+        if type(experiments) == int:
+            return experiments
+
         experiments_details = {}
 
         experiments_details['Number of Experiments'] = len(experiments)
@@ -183,6 +195,9 @@ class Formatter:
     def get_scans_details(self):
 
         scans = self.fetcher.get_scans_details(self.project_id)
+
+        if type(scans) == int:
+            return scans
 
         scans_details = {}
 
