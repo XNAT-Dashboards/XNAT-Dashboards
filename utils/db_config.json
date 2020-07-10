@@ -1,1 +1,6 @@
-{"url":"mongodb+srv://testUser:testPassword@cluster0.x38yt.gcp.mongodb.net/xnat_dashboards?retryWrites=true&w=majority", "db":"xnat_dashboards", "test_url":"mongodb+srv://testUser:testPassword@cluster0.x38yt.gcp.mongodb.net/test_xnat_dashboards?retryWrites=true&w=majority", "test_db":"test_xnat_dashboards"}
+{
+    "url":"mongodb+srv://testUser:testPassword@cluster0.x38yt.gcp.mongodb.net/xnat_dashboards?retryWrites=true&w=majority",
+    "db":"xnat_dashboards",
+    "test_url":"mongodb+srv://testUser:testPassword@cluster0.x38yt.gcp.mongodb.net/test_xnat_dashboards?retryWrites=true&w=majority",
+    "test_db":"test_xnat_dashboards"
+}
