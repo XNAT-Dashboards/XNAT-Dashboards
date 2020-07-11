@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 import sys
+import os
 import json
 from os.path import dirname, abspath
 sys.path.insert(0, dirname(dirname(abspath(__file__))))
@@ -16,4 +17,6 @@ def test_end_testing():
     db2.users.remove({'username': 'testUser'})
     db2.users_data.remove({'username': 'testUser'})
 
+    os.remove('pickles/users/testUser.pickle')
+    os.remove('pickles/users_data/testUser.pickle')
     assert True
