@@ -1,15 +1,18 @@
 # Import flask dependencies
 from flask import Blueprint, redirect, request, jsonify,\
     render_template, session, url_for
+import os
 from app.init_database import mongo
-from pyxnat_db import save_to_db
+from pyxnat_db import save_to_db, save_to_pickle
 import threading
 
 # Define the blueprint: 'auth', set its url prefix: app.url/auth
 auth = Blueprint('auth', __name__, url_prefix='/auth')
 
+pickle_saver = True
 saved_flag = -1         # Check whether the saving is done correctly
 delete_username = None  # Flag whether to delete username registered
+# If there is error in fetching
 
 
 # Set the route and accepted methods
@@ -49,8 +52,15 @@ def register_DB():
         return render_template('auth/register_DB.html', saved_flag=saved_flag)
     else:
 
-        users = mongo.db.users
-        existing_users = users.find_one({'username': request.form['username']})
+        if pickle_saver:
+            exists = os.path.exists(
+                'pickles/users/'+request.form['username']+'.pickle')
+
+            existing_users = None if exists is False else True
+        else:
+            users = mongo.db.users
+            existing_users = users.find_one(
+                {'username': request.form['username']})
 
         # Checking if user exists in DB
         if existing_users is None:
@@ -59,8 +69,11 @@ def register_DB():
             password = request.form['password']
             server = request.form['server']
             ssl = False if request.form.get('ssl') is None else True
-            thread = threading.Thread(target=save_data,
-                                      args=(username, password, server, ssl))
+            db = False if request.form.get('DB') is None else True
+
+            thread = threading.Thread(
+                target=save_data,
+                args=(username, password, server, db, ssl))
 
             # Start a thread for saving the data on database from pyxnat_api
             thread.start()
@@ -80,11 +93,17 @@ def register_DB():
 
 
 # Run on the thread created during registration of user
-def save_data(username, password, server, ssl, test=False):
+def save_data(username, password, server, ssl, db, test=False):
 
-    db = save_to_db.SaveToDb(username, password, server, ssl, test)
-    db.save_user(username, password, server, ssl)
-    save_flag = db.save_data()
+    if db:
+        pk = save_to_pickle.SaveToPk(username, password, server, ssl)
+        pk.save_user(username, password, server, ssl)
+        save_flag = pk.save_data()
+    else:
+        db = save_to_db.SaveToDb(username, password, server, ssl, test)
+        db.save_user(username, password, server, ssl)
+        save_flag = db.save_data()
+
     # If everything went correct then it will take more time to save data
     # If some problem arises then user need to save flag status from 0
     # will be changed as per response from the save_to_db
@@ -101,6 +120,8 @@ def save_data(username, password, server, ssl, test=False):
             saved_flag = 1      # Wrong URL
         elif save_flag == 191912:
             saved_flag = 191912     # SSL error
+        elif save_flag == 1000:
+            saved_flag = 1000       # Database error
         else:
             saved_flag = 300     # Unknown error
 
