@@ -21,13 +21,26 @@ def test_register_db():
     data_post_register_present = dict(username='testUser',
                                       password='testPassword',
                                       server='https://central.xnat.org',
-                                      ssl=False)
+                                      ssl=False,
+                                      DB=True)
 
     resposne_post = app.test_client().post('auth/db/register/',
                                            follow_redirects=True,
                                            data=data_post_register_present
                                            )
 
+    data_post_register_present_pickle = dict(username='testUser',
+                                             password='testPassword',
+                                             server='https://central.xnat.org',
+                                             ssl=False,
+                                             DB=False)
+
+    resposne_post_pickle = app.test_client().post(
+        'auth/db/register/',
+        follow_redirects=True,
+        data=data_post_register_present_pickle).status_code
+
+    assert resposne_post_pickle == 200
     assert resposne_post.status_code == 200
 
 
@@ -90,24 +103,49 @@ def test_register_userexist():
     data_post_register_present = dict(username='testUser',
                                       password='testPassword',
                                       server='https://central.xnat.org',
-                                      ssl=False)
+                                      ssl=False,
+                                      DB=True)
 
     response_post_register = app.test_client().post(
         'auth/db/register/',
         follow_redirects=True,
         data=data_post_register_present)
 
+    data_post_register_present_pk = dict(
+        username='testUser',
+        password='testPassword',
+        server='https://central.xnat.org',
+        ssl=False,
+        DB=False)
+
+    response_post_register_pk = app.test_client().post(
+        'auth/db/register/',
+        follow_redirects=True,
+        data=data_post_register_present_pk)
+
+    assert response_post_register_pk.status_code == 200
     assert response_post_register.status_code == 200
 
 
 def test_dashboard_db():
 
     data_post_login_dash_present = dict(username='testUser',
-                                        password='testPassword')
+                                        password='testPassword',
+                                        DB=True)
 
     response_post = app.test_client().post('dashboards/db/stats/',
                                            data=data_post_login_dash_present,
                                            ).status_code
+
+    data_post_login_dash_present_pk = dict(username='testUser',
+                                           password='testPassword',
+                                           DB=False)
+
+    response_post_pk = app.test_client().post(
+        'dashboards/db/stats/',
+        data=data_post_login_dash_present_pk).status_code
+
+    assert response_post_pk == 200
 
     response_get_pp = app.test_client().\
         get('dashboards/db/project/CENTRAL_OASIS_CS').status_code
@@ -119,4 +157,3 @@ def test_dashboard_db():
     response_get = app.test_client().get('dashboards/db/stats/').status_code
 
     assert response_get == 200
-
