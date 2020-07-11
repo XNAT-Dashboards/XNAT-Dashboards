@@ -87,7 +87,8 @@ def stats():
 def logout():
 
     global graph_data_stats, username, password, ssl
-    global server
+    global server, pickle_saver
+    pickle_saver = True
     graph_data_stats = []
     username = ''
     password = ''
@@ -148,6 +149,9 @@ def stats_db():
                 except Exception:
                     session['error'] = "Username doesn't exist please register"
         else:
+            global pickle_saver
+            pickle_saver = False
+
             users = mongo.db.users
             existing_users = users.find_one(
                 {'username': request.form['username']})
