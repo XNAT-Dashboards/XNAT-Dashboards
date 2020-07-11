@@ -95,7 +95,7 @@ def register_DB():
 # Run on the thread created during registration of user
 def save_data(username, password, server, ssl, db, test=False):
     print(str(ssl)+"saving")
-    if db:
+    if not db:
         print(str(ssl)+"pk")
         pk = save_to_pickle.SaveToPk(username, password, server, ssl)
         pk.save_user(username, password, server, ssl)
