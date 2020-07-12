@@ -2,6 +2,8 @@ from pyxnat import Interface
 import pyxnat.core.errors as pyxnat_errors
 import socket
 import json
+import warnings
+warnings.filterwarnings("ignore")
 
 
 class Fetcher:
@@ -11,6 +13,7 @@ class Fetcher:
     # Initializing the central interface object in the constructor
     def __init__(self, name, password, server, ssl):
 
+        print('SSL'+str(ssl))
         SELECTOR = Interface(server=server,
                              user=name,
                              password=password,

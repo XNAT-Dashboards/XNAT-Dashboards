@@ -1,17 +1,16 @@
-from pyxnat_db import data_formatter_pp_DB
+from saved_data_processing import data_formatter_DB
 
 
 class GetInfo:
 
-    project_id = ''
+    formatter_object = None
 
-    def __init__(self, username, info, project_id):
+    def __init__(self, username, info):
 
-        self.formatter_object_per_project = data_formatter_pp_DB.Formatter(
-            username, info, project_id
-        )
+        self.formatter_object = data_formatter_DB.Formatter(
+            username, info)
 
-    def __preprocessor_per_project(self):
+    def __preprocessor(self):
 
         '''
         This preprocessor makes the final dictionary with each key representing
@@ -33,29 +32,25 @@ class GetInfo:
         final_json_dict = {}
 
         # Preprocessing required in project data for number of projects
-        projects_details = self.formatter_object_per_project.\
-            get_projects_details()
-
+        projects_details = self.formatter_object.get_projects_details()
         # If some error in connection 1 will be returned and we will
         # not go further
         if type(projects_details) != int:
+            stats['Projects'] = projects_details['Number of Projects']
             sessionDetails = projects_details['Total Sessions']
+            del projects_details['Number of Projects']
             del projects_details['Total Sessions']
         else:
             return projects_details
 
         # Pre processing for subject details required
-        subjects_details = self.formatter_object_per_project.\
-            get_subjects_details()
-
+        subjects_details = self.formatter_object.get_subjects_details()
         if subjects_details != 1:
             stats['Subjects'] = subjects_details['Number of Subjects']
             del subjects_details['Number of Subjects']
 
         # Pre processing experiment details
-        experiments_details = self.formatter_object_per_project.\
-            get_experiments_details()
-
+        experiments_details = self.formatter_object.get_experiments_details()
         if experiments_details != 1:
             stats['Experiments'] = experiments_details['Number of Experiments']
             del experiments_details['Number of Experiments']
@@ -63,19 +58,14 @@ class GetInfo:
         stats['Sessions'] = sessionDetails
 
         # Pre processing scans details
-        scans_details = self.formatter_object_per_project.\
-            get_scans_details()
-
+        scans_details = self.formatter_object.get_scans_details()
         if scans_details != 1:
             stats['Scans'] = scans_details['Number of Scans']
             del scans_details['Number of Scans']
 
         stat_final = {'Stats': stats}
 
-        final_json_dict.update({
-            'Imaging Sessions': projects_details['Imaging Sessions']})
-        del projects_details['Imaging Sessions']
-        final_json_dict.update({'Project details': projects_details})
+        final_json_dict.update(projects_details)
         final_json_dict.update(subjects_details)
         final_json_dict.update(experiments_details)
         final_json_dict.update(scans_details)
@@ -93,6 +83,10 @@ class GetInfo:
 
         return final_json_dict
 
-    def get_per_project_view(self):
+    def get_project_list(self):
 
-        return self.__preprocessor_per_project()
+        return self.formatter_object.get_projects_details_specific()
+
+    def get_info(self):
+
+        return self.__preprocessor()

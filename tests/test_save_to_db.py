@@ -1,4 +1,4 @@
-from pyxnat_db import save_to_db
+from save_endpoint import save_to_db
 import json
 from pymongo import MongoClient
 

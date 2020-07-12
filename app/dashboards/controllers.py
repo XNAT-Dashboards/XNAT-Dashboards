@@ -1,8 +1,8 @@
 # Import flask dependencies
 from flask import Blueprint, render_template, session, request,\
     redirect, url_for
-from generators import graph_generator, graph_generator_DB,\
-    graph_generator_pp_DB, graph_generator_pp
+from saved_data_processing import graph_generator_DB, graph_generator_pp_DB
+from realtime_data_processing import graph_generator_pp, graph_generator
 from app.init_database import mongo
 import pickle
 

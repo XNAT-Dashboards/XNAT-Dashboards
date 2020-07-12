@@ -2,7 +2,7 @@ import sys
 from os.path import dirname, abspath
 import json
 sys.path.insert(0, dirname(dirname(abspath(__file__))))
-from pyxnat_db import get_info_pp_DB
+from saved_data_processing import get_info_pp_DB
 
 
 class GraphGenerator:

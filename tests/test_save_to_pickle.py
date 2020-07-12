@@ -1,4 +1,4 @@
-from pyxnat_db import save_to_pickle
+from save_endpoint import save_to_pickle
 import os
 import pickle
 from pymongo import MongoClient

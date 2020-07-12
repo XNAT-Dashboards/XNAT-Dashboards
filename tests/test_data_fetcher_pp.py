@@ -1,4 +1,4 @@
-from pyxnat_api import data_fetcher_pp
+from pyxnat_interface import data_fetcher_pp
 
 fetch_object_connected = data_fetcher_pp.Fetcher(
     name='testUser',

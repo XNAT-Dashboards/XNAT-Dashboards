@@ -1,4 +1,4 @@
-from pyxnat_api import data_fetcher
+from pyxnat_interface import data_fetcher
 from collections import Counter, OrderedDict
 import socket
 import numpy as np

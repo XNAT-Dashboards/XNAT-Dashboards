@@ -4,7 +4,7 @@ import json
 from os.path import dirname, abspath
 from datetime import datetime
 sys.path.insert(0, dirname(dirname(abspath(__file__))))
-from pyxnat_api import data_fetcher
+from pyxnat_interface import data_fetcher
 
 
 class SaveToDb:

@@ -3,7 +3,7 @@ from flask import Blueprint, redirect, request, jsonify,\
     render_template, session, url_for
 import os
 from app.init_database import mongo
-from pyxnat_db import save_to_db, save_to_pickle
+from save_endpoint import save_to_db, save_to_pickle
 import threading
 
 # Define the blueprint: 'auth', set its url prefix: app.url/auth
