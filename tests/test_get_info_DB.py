@@ -1,4 +1,4 @@
-from pyxnat_db import get_info_DB
+from saved_data_processing import get_info_DB
 import json
 from pymongo import MongoClient
 

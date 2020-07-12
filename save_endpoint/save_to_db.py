@@ -4,7 +4,7 @@ import json
 from os.path import dirname, abspath
 from datetime import datetime
 sys.path.insert(0, dirname(dirname(abspath(__file__))))
-from pyxnat_api import data_fetcher
+from pyxnat_interface import data_fetcher
 
 
 class SaveToDb:
@@ -14,7 +14,7 @@ class SaveToDb:
     coll_users = None
 
     def __init__(self, username, password, server, ssl, test):
-        # Connecting to MySQL server at localhost using PyMySQL DBAPI
+        # Connecting to MongoDB using PyMongo
 
         try:
             with open('utils/db_config.json') as json_file:
@@ -42,7 +42,7 @@ class SaveToDb:
             self.coll_users_data.insert({'username': self.username,
                                          'date:time': date_time,
                                          'info': info},
-                                         check_keys=False)
+                                        check_keys=False)
             print("Saved")
         except Exception:
             print(Exception.with_traceback())

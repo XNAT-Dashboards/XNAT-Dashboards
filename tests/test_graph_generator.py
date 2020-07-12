@@ -1,4 +1,4 @@
-from generators import graph_generator
+from realtime_data_processing import graph_generator
 from utils import input_processor
 import pathlib
 

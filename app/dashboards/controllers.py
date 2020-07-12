@@ -1,14 +1,16 @@
 # Import flask dependencies
 from flask import Blueprint, render_template, session, request,\
     redirect, url_for
-from generators import graph_generator, graph_generator_DB,\
-    graph_generator_pp_DB, graph_generator_pp
+from saved_data_processing import graph_generator_DB, graph_generator_pp_DB
+from realtime_data_processing import graph_generator_pp, graph_generator
 from app.init_database import mongo
+import pickle
 
 
 # Define the blueprint: 'dashboards', set its url prefix: app.url/dashboards
 dashboards = Blueprint('dashboards', __name__, url_prefix='/dashboards')
 
+pickle_saver = True
 graph_data_stats = []
 project_lists = []
 username = ''
@@ -85,7 +87,8 @@ def stats():
 def logout():
 
     global graph_data_stats, username, password, ssl
-    global server
+    global server, pickle_saver
+    pickle_saver = True
     graph_data_stats = []
     username = ''
     password = ''
@@ -113,37 +116,72 @@ def stats_db():
         user_details = request.form
         username = user_details['username']
         password = user_details['password']
-
+        save_to_DB = False if request.form.get('DB') is None else True
         global graph_data_stats
         global project_lists
-        users = mongo.db.users
-        existing_users = users.find_one({'username': request.form['username']})
 
-        if 'username' in session and graph_data_stats != []:
-            session['error'] = "Already logged in"
-        elif existing_users is not None:
-            if existing_users['password'] == password:
+        if not save_to_DB:
+            if 'username' in session and graph_data_stats != []:
+                session['error'] = "Already logged in"
+            else:
+                try:
+                    with open(
+                            'pickles/users/'+username+'.pickle',
+                            'rb') as handle:
+                        user = pickle.load(handle)
+                    if user['password'] == password:
+                        try:
+                            with open(
+                                    'pickles/users_data/'+username+'.pickle',
+                                    'rb') as handle:
 
-                users_data_tb = mongo.db.users_data
-                users_data = users_data_tb.find_one({'username': username})
+                                user_data = pickle.load(handle)
+                        except Exception:
+                            session['error'] = "User Registered: Fetching data"
+                        plotting_object = graph_generator_DB.GraphGenerator(
+                            username,
+                            user_data['info'])
+                        graph_data_stats = plotting_object.graph_generator()
+                        project_lists = plotting_object.\
+                            project_list_generator()
+                    else:
+                        session['error'] = "Wrong Password"
+                except Exception:
+                    session['error'] = "Username doesn't exist please register"
+        else:
+            global pickle_saver
+            pickle_saver = False
 
-                if users_data is not None:
+            users = mongo.db.users
+            existing_users = users.find_one(
+                {'username': request.form['username']})
 
-                    session['username'] = username
-                    plotting_object = graph_generator_DB.GraphGenerator(
-                        username,
-                        users_data['info'])
-                    graph_data_stats = plotting_object.graph_generator()
-                    project_lists = plotting_object.project_list_generator()
+            if 'username' in session and graph_data_stats != []:
+                session['error'] = "Already logged in"
+            elif existing_users is not None:
+                if existing_users['password'] == password:
+
+                    users_data_tb = mongo.db.users_data
+                    users_data = users_data_tb.find_one({'username': username})
+
+                    if users_data is not None:
+
+                        session['username'] = username
+                        plotting_object = graph_generator_DB.GraphGenerator(
+                            username,
+                            users_data['info'])
+                        graph_data_stats = plotting_object.graph_generator()
+                        project_lists = plotting_object.\
+                            project_list_generator()
+
+                    else:
+                        session['error'] = "User Registered: Fetching data"
 
                 else:
-                    session['error'] = "User Registered: Fetching incomplete"
+                    session['error'] = "Wrong Password"
 
             else:
-                session['error'] = "Wrong Password"
-
-        else:
-            session['error'] = "Username doesn't exist please register"
+                session['error'] = "Username doesn't exist please register"
 
         if 'error' in session:
 
@@ -190,8 +228,13 @@ def stats_db():
 def project_db(id):
 
     global username
-    users_data_tb = mongo.db.users_data
-    users_data = users_data_tb.find_one({'username': username})
+
+    if pickle_saver:
+        with open('pickles/users_data/'+username+'.pickle', 'rb') as handle:
+            users_data = pickle.load(handle)
+    else:
+        users_data_tb = mongo.db.users_data
+        users_data = users_data_tb.find_one({'username': username})
 
     data_array = graph_generator_pp_DB.GraphGenerator(
         username, users_data['info'], id

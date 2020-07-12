@@ -1,14 +1,17 @@
-from pyxnat_db import data_formatter_DB
+from realtime_data_processing import data_formatter
 
 
 class GetInfo:
 
     formatter_object = None
 
-    def __init__(self, username, info):
+    def __init__(self, user, password, server, ssl):
 
-        self.formatter_object = data_formatter_DB.Formatter(
-            username, info)
+        self.formatter_object = data_formatter.Formatter(
+            user,
+            password,
+            server,
+            ssl)
 
     def __preprocessor(self):
 

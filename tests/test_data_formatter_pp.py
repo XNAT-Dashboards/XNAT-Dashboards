@@ -1,4 +1,4 @@
-from pyxnat_api import data_formatter_pp
+from realtime_data_processing import data_formatter_pp
 
 
 formatter_object_connected = data_formatter_pp.Formatter(

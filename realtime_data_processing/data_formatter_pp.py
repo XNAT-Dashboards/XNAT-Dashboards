@@ -1,5 +1,5 @@
 from collections import Counter, OrderedDict
-from pyxnat_api import data_fetcher_pp
+from pyxnat_interface import data_fetcher_pp
 import numpy as np
 
 

@@ -1,4 +1,4 @@
-from pyxnat_api import get_info
+from realtime_data_processing import get_info
 
 info_object = get_info.GetInfo(user='testUser',
                                password='testPassword',
