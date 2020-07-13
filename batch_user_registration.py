@@ -30,9 +30,6 @@ class BatchUserRegistration:
                             user['server'],
                             bool(user['ssl']))
             else:
-                print(user['ssl'])
-                print(type(user['ssl']))
-                print(bool(user['ssl']))
                 status = self.__save_to_PK(
                             user['username'],
                             user['password'],
@@ -62,18 +59,18 @@ class BatchUserRegistration:
             server,
             ssl,
             False)
-
+        db_saver.save_user(username, password, server, ssl)
         return db_saver.save_data()
 
     def __save_to_PK(self, username, password, server, ssl):
-        print('pk', str(ssl))
-        print('type', type(ssl))
+
         pk_saver = save_to_pickle.SaveToPk(
             username,
             password,
             server,
             ssl)
 
+        pk_saver.save_user(username, password, server, ssl)
         return pk_saver.save_data()
 
     def __report_saver(self, status_report_dict):

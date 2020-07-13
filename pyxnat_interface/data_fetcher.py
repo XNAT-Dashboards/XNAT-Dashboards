@@ -13,7 +13,6 @@ class Fetcher:
     # Initializing the central interface object in the constructor
     def __init__(self, name, password, server, ssl):
 
-        print('SSL'+str(ssl))
         SELECTOR = Interface(server=server,
                              user=name,
                              password=password,
