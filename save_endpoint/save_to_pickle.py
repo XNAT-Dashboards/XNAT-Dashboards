@@ -57,3 +57,19 @@ class SaveToPk:
                  'ssl': ssl},
                 handle,
                 protocol=pickle.HIGHEST_PROTOCOL)
+
+    def save_resources(self, username, password, server, ssl):
+
+        fetcher_long = data_fetcher.FetcherLong(
+            username,
+            password,
+            server,
+            ssl)
+
+        resources_details = fetcher_long.get_resources()
+
+        with open('pickles/resources/'+username+'.pickle', 'wb') as handle:
+
+            pickle.dump(
+                {'username': username, 'resources': resources_details},
+                handle, protocol=pickle.HIGHEST_PROTOCOL)
