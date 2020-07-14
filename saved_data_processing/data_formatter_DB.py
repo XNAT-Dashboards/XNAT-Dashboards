@@ -1,6 +1,7 @@
 from collections import Counter, OrderedDict
 import socket
 import numpy as np
+import pandas as pd
 
 
 class Formatter:
@@ -9,16 +10,18 @@ class Formatter:
     subjects = None
     experiments = None
     name = None
+    resources = None
     scans = None
 
     # Initializing the central interface object in the constructor
-    def __init__(self, username, info):
+    def __init__(self, username, info, resources=None):
 
         self.name = username
         self.projects = info['projects']
         self.subjects = info['subjects']
         self.experiments = info['experiments']
         self.scans = info['scans']
+        self.resources = resources
 
     def get_projects_details(self):
 
@@ -287,3 +290,38 @@ class Formatter:
         list_data['project_list_ow_co_me'] = project_list_owned_collab_member
 
         return list_data
+
+    def get_resources_details(self):
+
+        resources = self.resources
+
+        if resources is None:
+            return None
+
+        df = pd.DataFrame(
+            resources['resources'],
+            columns=['project', 'session', 'resource', 'label'])
+
+        resources_pp_df = df[
+            df['resource'] != 'No Data'].groupby('project').count()
+
+        resources_pp = resources_pp_df['resource'].to_dict()
+
+        res_pp_no_data = df[
+            df['resource'] == 'No Data'].groupby('project').count()
+
+        no_data_rpp = res_pp_no_data.index.difference(
+            resources_pp_df.index).to_list()
+
+        if len(no_data_rpp) != 0:
+            no_data_update = {}
+
+            for item in no_data_rpp:
+                no_data_update[item] = 0
+
+            resources_pp.update(no_data_update)
+
+        resources_types = df.groupby('label').count()['project'].to_dict()
+
+        return {'Resources/Project': resources_pp,
+                'Resources Types': resources_types}
