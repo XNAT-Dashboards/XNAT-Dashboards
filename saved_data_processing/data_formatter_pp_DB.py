@@ -1,5 +1,6 @@
 from collections import Counter, OrderedDict
 import numpy as np
+import pandas as pd
 
 
 class Formatter:
@@ -12,13 +13,14 @@ class Formatter:
     project_id = None
 
     # Initializing the central interface object in the constructor
-    def __init__(self, username, info, project_id):
+    def __init__(self, username, info, project_id, resources=None):
 
         self.name = username
         self.projects = info['projects']
         self.subjects = info['subjects']
         self.experiments = info['experiments']
         self.scans = info['scans']
+        self.resources = resources
         self.project_id = project_id
 
     def get_projects_details(self):
@@ -248,3 +250,46 @@ class Formatter:
         scans_details['Number of Scans'] = len(scans)
 
         return scans_details
+
+    def get_resources_details(self):
+
+        resources = self.resources
+
+        if resources is None:
+            return None
+
+        df = pd.DataFrame(
+            resources['resources'],
+            columns=['project', 'session', 'resource', 'label'])
+
+        try:
+
+            resources_pp = df.groupby(['project']).get_group(self.project_id)
+            del resources_pp['project']
+
+        except KeyError:
+
+            return -1
+
+        resources_ps_df = resources_pp[[
+            'session', 'resource']][resources_pp[
+                'resource'] != 'No Data'].groupby('session').count()
+
+        resource_ps = resources_ps_df.to_dict()['resource']
+
+        no_data = resources_pp[resources_pp[
+            'label'] == 'No Data']['session'].to_list()
+
+        if len(no_data) != 0:
+
+            no_data_dict = {}
+            for item in no_data:
+                no_data_dict[item] = 0
+
+            resource_ps.update(no_data_dict)
+
+        resources_types = resources_pp.groupby(
+            'label').count()['resource'].to_dict()
+
+        return {'Resources/Session': resource_ps,
+                'Resource_types': resources_types}
