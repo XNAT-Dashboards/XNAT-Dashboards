@@ -3,6 +3,7 @@ import pyxnat.core.errors as pyxnat_errors
 import socket
 import json
 import warnings
+from tqdm import tqdm
 warnings.filterwarnings("ignore")
 
 
@@ -146,3 +147,42 @@ class Fetcher:
         all_data['scans'] = self.get_scans_details()
 
         return all_data
+
+
+class FetcherLong:
+
+    SELECTOR = None
+    fetcher = None
+
+    # Initializing the central interface object in the constructor
+    def __init__(self, name, password, server, ssl):
+
+        SELECTOR = Interface(server=server,
+                             user=name,
+                             password=password,
+                             verify=(not ssl))
+        self.SELECTOR = SELECTOR
+        self.fetcher = Fetcher(name, password, server, ssl)
+
+    def get_resources(self):
+
+        experiments = self.fetcher.get_experiments_details()
+
+        resources = []
+
+        for exp in tqdm(experiments):
+            res = self.SELECTOR.select.experiments(exp['ID']).resources()
+            res_Arr = []
+
+            for r in res:
+                res_Arr.append(r)
+
+            if res_Arr == []:
+                resources.append(
+                    [exp['project'], exp['ID'], 'No Data', 'No Data'])
+            else:
+                for r in res_Arr:
+                    resources.append(
+                        [exp['project'], exp['ID'], r, r.label()])
+
+        return resources
