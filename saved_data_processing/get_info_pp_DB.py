@@ -5,10 +5,13 @@ class GetInfo:
 
     project_id = ''
 
-    def __init__(self, username, info, project_id, resources):
+    def __init__(
+                self,
+                username,
+                info, project_id, resources=None, resources_bbrc=None):
 
         self.formatter_object_per_project = data_formatter_pp_DB.Formatter(
-            username, info, project_id, resources
+            username, info, project_id, resources, resources_bbrc
         )
 
     def __preprocessor_per_project(self):
@@ -83,7 +86,8 @@ class GetInfo:
 
         resources = self.formatter_object_per_project.get_resources_details()
 
-        if resources != -1 or resources is not None:
+        if type(resources) != int and resources is not None:
+
             final_json_dict.update(resources)
 
         '''

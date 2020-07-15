@@ -5,10 +5,10 @@ class GetInfo:
 
     formatter_object = None
 
-    def __init__(self, username, info, resources):
+    def __init__(self, username, info, resources=None, resources_bbrc=None):
 
         self.formatter_object = data_formatter_DB.Formatter(
-            username, info, resources)
+            username, info, resources, resources_bbrc)
 
     def __preprocessor(self):
 
@@ -73,7 +73,7 @@ class GetInfo:
 
         resources = self.formatter_object.get_resources_details()
 
-        if resources is not None:
+        if resources is not None and type(resources) != int:
 
             final_json_dict.update(resources)
 
