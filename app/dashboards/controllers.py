@@ -140,12 +140,18 @@ def stats_db():
                                     'pickles/resources/'+username+'.pickle',
                                     'rb') as handle:
                                 resources = pickle.load(handle)
+                            with open(
+                                 'pickles/resources/'+username+'bbrc.pickle',
+                                 'rb') as handle:
+
+                                resources_bbrc = pickle.load(handle)
                                 print('inside')
                         except Exception:
                             session['error'] = "User Registered: Fetching data"
                         plotting_object = graph_generator_DB.GraphGenerator(
                             username,
-                            user_data['info'], resources)
+                            user_data['info'], resources, resources_bbrc)
+
                         graph_data_stats = plotting_object.graph_generator()
                         project_lists = plotting_object.\
                             project_list_generator()
@@ -244,15 +250,22 @@ def project_db(id):
         try:
             with open('pickles/resources/'+username+'.pickle', 'rb') as handle:
                 resources = pickle.load(handle)
+            with open(
+                      'pickles/resources/'+username+'bbrc.pickle',
+                      'rb') as handle:
+                resources_bbrc = pickle.load(handle)
+
         except FileNotFoundError:
             resources = None
     else:
         users_data_tb = mongo.db.users_data
         users_data = users_data_tb.find_one({'username': username})
         resources = mongo.db.resources.find_one({'username': username})
+        resources_bbrc = mongo.db.resources_bbrc.find_one(
+            {'username': username})
 
     data_array = graph_generator_pp_DB.GraphGenerator(
-        username, users_data['info'], id, resources
+        username, users_data['info'], id, resources, resources_bbrc
     ).graph_generator()
 
     graph_data = data_array[0]
