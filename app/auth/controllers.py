@@ -70,7 +70,7 @@ def register_DB():
             server = request.form['server']
             ssl = False if request.form.get('ssl') is None else True
             db = False if request.form.get('DB') is None else True
-            print(str(ssl)+" "+str(request.form.get('ssl')))
+
             thread = threading.Thread(
                 target=save_data,
                 args=(username, password, server, ssl, db))
@@ -94,14 +94,14 @@ def register_DB():
 
 # Run on the thread created during registration of user
 def save_data(username, password, server, ssl, db, test=False):
-    print(str(ssl)+"saving")
+
     if not db:
-        print(str(ssl)+"pk")
+
         pk = save_to_pickle.SaveToPk(username, password, server, ssl)
         pk.save_user(username, password, server, ssl)
         save_flag = pk.save_data()
     else:
-        print(str(ssl)+"db")
+
         db = save_to_db.SaveToDb(username, password, server, ssl, test)
         db.save_user(username, password, server, ssl)
         save_flag = db.save_data()
