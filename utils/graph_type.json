@@ -17,5 +17,9 @@
   "Stats": "bar",
   "Resources/Project": "bar",
   "Resource Types": "bar",
-  "Resources/Session":"bar"
+  "Resources/Session":"bar",
+  "UsableT1": "pie",
+  "Archiving Validator": "pie",
+  "Version Distribution": "bar",
+  "BBRC validator": "pie"
 }
