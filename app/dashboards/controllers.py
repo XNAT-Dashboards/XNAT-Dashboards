@@ -134,19 +134,25 @@ def stats_db():
                             with open(
                                     'pickles/users_data/'+username+'.pickle',
                                     'rb') as handle:
-
+                                print('inside')
                                 user_data = pickle.load(handle)
+                            with open(
+                                    'pickles/resources/'+username+'.pickle',
+                                    'rb') as handle:
+                                resources = pickle.load(handle)
+                                print('inside')
                         except Exception:
                             session['error'] = "User Registered: Fetching data"
                         plotting_object = graph_generator_DB.GraphGenerator(
                             username,
-                            user_data['info'])
+                            user_data['info'], resources)
                         graph_data_stats = plotting_object.graph_generator()
                         project_lists = plotting_object.\
                             project_list_generator()
                     else:
                         session['error'] = "Wrong Password"
                 except Exception:
+                    print(Exception.with_traceback())
                     session['error'] = "Username doesn't exist please register"
         else:
             global pickle_saver
@@ -163,13 +169,16 @@ def stats_db():
 
                     users_data_tb = mongo.db.users_data
                     users_data = users_data_tb.find_one({'username': username})
+                    resources = mongo.db.resources.find_one(
+                        {'username': username})
 
                     if users_data is not None:
 
                         session['username'] = username
                         plotting_object = graph_generator_DB.GraphGenerator(
                             username,
-                            users_data['info'])
+                            users_data['info'],
+                            resources)
                         graph_data_stats = plotting_object.graph_generator()
                         project_lists = plotting_object.\
                             project_list_generator()
@@ -232,12 +241,18 @@ def project_db(id):
     if pickle_saver:
         with open('pickles/users_data/'+username+'.pickle', 'rb') as handle:
             users_data = pickle.load(handle)
+        try:
+            with open('pickles/resources/'+username+'.pickle', 'rb') as handle:
+                resources = pickle.load(handle)
+        except FileNotFoundError:
+            resources = None
     else:
         users_data_tb = mongo.db.users_data
         users_data = users_data_tb.find_one({'username': username})
+        resources = mongo.db.resources.find_one({'username': username})
 
     data_array = graph_generator_pp_DB.GraphGenerator(
-        username, users_data['info'], id
+        username, users_data['info'], id, resources
     ).graph_generator()
 
     graph_data = data_array[0]
