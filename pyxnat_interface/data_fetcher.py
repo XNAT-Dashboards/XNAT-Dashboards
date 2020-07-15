@@ -1,4 +1,4 @@
-from pyxnat import Interface
+import pyxnat
 import pyxnat.core.errors as pyxnat_errors
 import socket
 import json
@@ -14,10 +14,11 @@ class Fetcher:
     # Initializing the central interface object in the constructor
     def __init__(self, name, password, server, ssl):
 
-        SELECTOR = Interface(server=server,
-                             user=name,
-                             password=password,
-                             verify=(not ssl))
+        SELECTOR = pyxnat.Interface(
+            server=server,
+            user=name,
+            password=password,
+            verify=(not ssl))
         self.SELECTOR = SELECTOR
 
     # Disconnect with the instance
@@ -157,10 +158,11 @@ class FetcherLong:
     # Initializing the central interface object in the constructor
     def __init__(self, name, password, server, ssl):
 
-        SELECTOR = Interface(server=server,
-                             user=name,
-                             password=password,
-                             verify=(not ssl))
+        SELECTOR = pyxnat.Interface(
+            server=server,
+            user=name,
+            password=password,
+            verify=(not ssl))
         self.SELECTOR = SELECTOR
         self.fetcher = Fetcher(name, password, server, ssl)
 
@@ -186,3 +188,40 @@ class FetcherLong:
                         [exp['project'], exp['ID'], r, r.label()])
 
         return resources
+
+    def get_experiment_resources(self):
+
+        resource_bbrc_validator = []
+        experiments = self.fetcher.get_experiments_details()
+
+        for exp in tqdm(experiments):
+
+            BBRC_VALIDATOR = self.SELECTOR.select.experiment(
+                exp['ID']).resource('BBRC_VALIDATOR')
+            exists = 'Exists' if BBRC_VALIDATOR.exists() else 'No Exists'
+
+            if exists:
+                try:
+                    resource_bbrc_validator.append([
+                        exp['project'],
+                        exp['ID'],
+                        exists,
+                        self.tests_resource(
+                            BBRC_VALIDATOR, 'ArchivingValidator')])
+                except IndexError:
+                    resource_bbrc_validator.append(
+                        [exp['project'], exp['ID'], True, 0])
+            else:
+                resource_bbrc_validator.append([
+                    exp['project'], exp['ID'], False, 0])
+
+        return resource_bbrc_validator
+
+    def tests_resource(self, res, name, key=None):
+
+        j = [e for e in list(res.files('{}*.json'.format(name)))][0]
+        j = json.loads(res._intf.get(j._uri).text)
+        if key is None:
+            return j
+        else:
+            return j[key]
