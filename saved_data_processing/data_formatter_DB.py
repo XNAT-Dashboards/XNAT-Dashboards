@@ -10,11 +10,12 @@ class Formatter:
     subjects = None
     experiments = None
     name = None
+    resources_bbrc = None
     resources = None
     scans = None
 
     # Initializing the central interface object in the constructor
-    def __init__(self, username, info, resources=None):
+    def __init__(self, username, info, resources=None, resources_bbrc=None):
 
         self.name = username
         self.projects = info['projects']
@@ -22,6 +23,7 @@ class Formatter:
         self.experiments = info['experiments']
         self.scans = info['scans']
         self.resources = resources
+        self.resources_bbrc = resources_bbrc
 
     def get_projects_details(self):
 
@@ -294,6 +296,7 @@ class Formatter:
     def get_resources_details(self):
 
         resources = self.resources
+        resources_bbrc = self.resources_bbrc
 
         if resources is None:
             return None
@@ -323,5 +326,55 @@ class Formatter:
 
         resources_types = df.groupby('label').count()['project'].to_dict()
 
+        resource_processing = []
+
+        for resource in resources_bbrc['resources_bbrc']:
+
+            if resource[3] != 0:
+                if 'HasUsableT1' in resource[3]:
+                    resource_processing.append([
+                        resource[0],
+                        resource[1],
+                        resource[2],
+                        'Exists',
+                        resource[3]['HasUsableT1']['has_passed'],
+                        resource[3]['version']])
+                else:
+                    resource_processing.append([
+                        resource[0],
+                        resource[1],
+                        resource[2],
+                        'Not Exists',
+                        'No Data',
+                        resource[3]['version']])
+            else:
+                resource_processing.append([
+                    resource[0],
+                    resource[1],
+                    resource[2],
+                    'Not Exists',
+                    'No Data',
+                    'No Data'])
+
+        df = pd.DataFrame(
+            resource_processing,
+            columns=[
+                'Project',
+                'Session',
+                'bbrc exists',
+                'Archiving Valid',
+                'Has Usable T1',
+                'version'])
+
+        HasUsableT1 = df.groupby('Has Usable T1').count()['Session'].to_dict()
+        HasArchivingValidator = df.groupby(
+            'Archiving Valid').count()['Session'].to_dict()
+        version_dist = df.groupby('version').count()['Session'].to_dict()
+        bbrc_exists = df.groupby('bbrc exists').count()['Session'].to_dict()
+
         return {'Resources/Project': resources_pp,
-                'Resource Types': resources_types}
+                'Resource Types': resources_types,
+                'UsableT1': HasUsableT1,
+                'Archiving Validator': HasArchivingValidator,
+                'Version Distribution': version_dist,
+                'BBRC validator': bbrc_exists}
