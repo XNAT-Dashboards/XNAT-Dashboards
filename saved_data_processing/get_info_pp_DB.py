@@ -5,10 +5,10 @@ class GetInfo:
 
     project_id = ''
 
-    def __init__(self, username, info, project_id):
+    def __init__(self, username, info, project_id, resources):
 
         self.formatter_object_per_project = data_formatter_pp_DB.Formatter(
-            username, info, project_id
+            username, info, project_id, resources
         )
 
     def __preprocessor_per_project(self):
@@ -80,6 +80,11 @@ class GetInfo:
         final_json_dict.update(experiments_details)
         final_json_dict.update(scans_details)
         final_json_dict.update(stat_final)
+
+        resources = self.formatter_object_per_project.get_resources_details()
+
+        if resources != -1 or resources is not None:
+            final_json_dict.update(resources)
 
         '''
         returns a nested dict
