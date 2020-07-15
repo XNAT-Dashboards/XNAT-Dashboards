@@ -66,10 +66,11 @@ class SaveToPk:
             server,
             ssl)
 
-        resources_details = fetcher_long.get_resources()
+        resources_bbrc_validator = fetcher_long.get_experiment_resources()
 
-        with open('pickles/resources/'+username+'.pickle', 'wb') as handle:
+        with open('pickles/resources/'+username+'bbrc.pickle', 'wb') as handle:
 
-            pickle.dump(
-                {'username': username, 'resources': resources_details},
+            pickle.dump({
+                'username': username,
+                'resources_bbrc': resources_bbrc_validator},
                 handle, protocol=pickle.HIGHEST_PROTOCOL)
