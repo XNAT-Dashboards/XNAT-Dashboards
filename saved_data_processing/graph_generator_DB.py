@@ -10,16 +10,18 @@ class GraphGenerator:
     data = {}
     project_list = []
     project_list_ow_co_me = []
+    resources = None
 
-    def __init__(self, username, info):
+    def __init__(self, username, info, resources):
 
-        self.info = get_info_DB.GetInfo(username, info)
+        self.info = get_info_DB.GetInfo(username, info, resources)
         projects_data_dict = self.info.get_project_list()
 
         self.data = self.info.get_info()
         self.project_list = projects_data_dict['project_list']
         self.project_list_ow_co_me =\
             projects_data_dict['project_list_ow_co_me']
+        self.resources = resources
 
     def graph_type_generator(self):
 
@@ -108,7 +110,7 @@ class GraphGenerator:
                 continue
             array_1d.append({final_json: graph_data[final_json]})
             counter = counter + 1
-            if counter == 2 or length_check == len(graph_data) - 1:
+            if counter == 2 or length_check == len(graph_data) - 2:
                 counter = 0
                 array_2d.append(array_1d)
                 array_1d = []

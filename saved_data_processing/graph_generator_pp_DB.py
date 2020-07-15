@@ -10,9 +10,9 @@ class GraphGenerator:
     data = None
     project_id = ''
 
-    def __init__(self, username, info, project_id):
+    def __init__(self, username, info, project_id, resources):
 
-        info = get_info_pp_DB.GetInfo(username, info, project_id)
+        info = get_info_pp_DB.GetInfo(username, info, project_id, resources)
         self.data = info.get_per_project_view()
 
     def graph_pre_processor(self):
