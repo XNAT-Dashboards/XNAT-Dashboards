@@ -4,7 +4,7 @@ from flask import Blueprint, render_template, session, request,\
 from saved_data_processing import graph_generator_DB, graph_generator_pp_DB
 from realtime_data_processing import graph_generator_pp, graph_generator
 from app.init_database import mongo
-import pickle
+from app.dashboards import model
 
 
 # Define the blueprint: 'dashboards', set its url prefix: app.url/dashboards
@@ -124,41 +124,32 @@ def stats_db():
             if 'username' in session and graph_data_stats != []:
                 session['error'] = "Already logged in"
             else:
-                try:
-                    with open(
-                            'pickles/users/'+username+'.pickle',
-                            'rb') as handle:
-                        user = pickle.load(handle)
+                user = model.load_user_pk(username)
+                if user is not None:
                     if user['password'] == password:
-                        try:
-                            with open(
-                                    'pickles/users_data/'+username+'.pickle',
-                                    'rb') as handle:
-                                print('inside')
-                                user_data = pickle.load(handle)
-                            with open(
-                                    'pickles/resources/'+username+'.pickle',
-                                    'rb') as handle:
-                                resources = pickle.load(handle)
-                            with open(
-                                 'pickles/resources/'+username+'bbrc.pickle',
-                                 'rb') as handle:
+                        user_data = model.load_users_data_pk(username)
+                        resources = model.load_resources_pk(username)
+                        resources_bbrc = model.load_resources_bbrc_pk(username)
 
-                                resources_bbrc = pickle.load(handle)
-                                print('inside')
-                        except Exception:
+                        if user_data is not None:
+                            plotting_object = graph_generator_DB.\
+                                GraphGenerator(
+                                    username,
+                                    user_data['info'],
+                                    resources,
+                                    resources_bbrc)
+
+                            graph_data_stats = plotting_object.\
+                                graph_generator()
+
+                            project_lists = plotting_object.\
+                                project_list_generator()
+                        else:
                             session['error'] = "User Registered: Fetching data"
-                        plotting_object = graph_generator_DB.GraphGenerator(
-                            username,
-                            user_data['info'], resources, resources_bbrc)
 
-                        graph_data_stats = plotting_object.graph_generator()
-                        project_lists = plotting_object.\
-                            project_list_generator()
                     else:
                         session['error'] = "Wrong Password"
-                except Exception:
-                    print(Exception.with_traceback())
+                else:
                     session['error'] = "Username doesn't exist please register"
         else:
             global pickle_saver
@@ -245,18 +236,9 @@ def project_db(id):
     global username
 
     if pickle_saver:
-        with open('pickles/users_data/'+username+'.pickle', 'rb') as handle:
-            users_data = pickle.load(handle)
-        try:
-            with open('pickles/resources/'+username+'.pickle', 'rb') as handle:
-                resources = pickle.load(handle)
-            with open(
-                      'pickles/resources/'+username+'bbrc.pickle',
-                      'rb') as handle:
-                resources_bbrc = pickle.load(handle)
-
-        except FileNotFoundError:
-            resources = None
+        users_data = model.load_users_data_pk(username)
+        resources = model.load_resources_pk(username)
+        resources_bbrc = model.load_resources_bbrc_pk(username)
     else:
         users_data_tb = mongo.db.users_data
         users_data = users_data_tb.find_one({'username': username})
