@@ -13,7 +13,8 @@ class Formatter:
     project_id = None
 
     # Initializing the central interface object in the constructor
-    def __init__(self, username, info, project_id, resources=None):
+    def __init__(self, username, info,
+                 project_id, resources=None, resources_bbrc=None):
 
         self.name = username
         self.projects = info['projects']
@@ -22,6 +23,7 @@ class Formatter:
         self.scans = info['scans']
         self.resources = resources
         self.project_id = project_id
+        self.resources_bbrc = resources_bbrc
 
     def get_projects_details(self):
 
@@ -291,5 +293,59 @@ class Formatter:
         resources_types = resources_pp.groupby(
             'label').count()['resource'].to_dict()
 
+        # Code for bbrc validator
+
+        resource_processing = []
+
+        for resource in self.resources_bbrc['resources_bbrc']:
+
+            if resource[3] != 0:
+                if 'HasUsableT1' in resource[3]:
+                    resource_processing.append([
+                        resource[0],
+                        resource[1],
+                        resource[2],
+                        True,
+                        resource[3]['HasUsableT1']['has_passed'],
+                        resource[3]['version']])
+                else:
+                    resource_processing.append([
+                        resource[0],
+                        resource[1],
+                        resource[2],
+                        True,
+                        'No Data',
+                        resource[3]['version']])
+            else:
+                resource_processing.append([
+                    resource[0],
+                    resource[1],
+                    resource[2],
+                    'No Data',
+                    'No Data',
+                    'No Data'])
+
+        df = pd.DataFrame(
+            resource_processing,
+            columns=[
+                'Project',
+                'Session',
+                'bbrc exists',
+                'Archiving Valid',
+                'Has Usable T1',
+                'version'])
+
+        df = df.groupby('Project').get_group(self.project_id)
+
+        HasUsableT1 = df.groupby('Has Usable T1').count()['Session'].to_dict()
+        HasArchivingValidator = df.groupby(
+            'Archiving Valid').count()['Session'].to_dict()
+        version_dist = df.groupby('version').count()['Session'].to_dict()
+        bbrc_exists = df.groupby('bbrc exists').count()['Session'].to_dict()
+
         return {'Resources/Session': resource_ps,
-                'Resource Types': resources_types}
+                'Resource Types': resources_types,
+                'UsableT1': HasUsableT1,
+                'Archiving Validator': HasArchivingValidator,
+                'Version Distribution': version_dist,
+                'BBRC validator': bbrc_exists}
