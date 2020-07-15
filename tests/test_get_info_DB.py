@@ -16,7 +16,7 @@ db = client[db_json['db']]
 existing_user = db.users_data.find_one({'username': 'testUser'})
 
 info_object = get_info_DB.GetInfo(
-        'testUser', existing_user['info'])
+        'testUser', existing_user['info'], None)
 
 
 def test_info():
