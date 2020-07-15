@@ -292,4 +292,4 @@ class Formatter:
             'label').count()['resource'].to_dict()
 
         return {'Resources/Session': resource_ps,
-                'Resource_types': resources_types}
+                'Resource Types': resources_types}

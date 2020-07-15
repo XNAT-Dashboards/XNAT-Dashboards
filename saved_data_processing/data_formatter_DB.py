@@ -324,4 +324,4 @@ class Formatter:
         resources_types = df.groupby('label').count()['project'].to_dict()
 
         return {'Resources/Project': resources_pp,
-                'Resources Types': resources_types}
+                'Resource Types': resources_types}
