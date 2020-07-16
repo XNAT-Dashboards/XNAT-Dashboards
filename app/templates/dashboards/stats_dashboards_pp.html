@@ -221,6 +221,9 @@
                             <div class="col-lg-6" id="myBig{{j['id']}}">
                                 <div class="card">
                                     <div class="card-body" id="graph_id{{j[key]['id']}}">
+                                        <i id="info_id{{j[key]['id']}}" class="fa fa-info wrapper_tooltip" aria-hidden="true" >
+                                            <div id="info_text_id{{j[key]['id']}}" class="tooltip"></div>
+                                        </i>
                                         <div id="graph_body{{j[key]['id']}}"><!-- Plotly chart will be drawn inside this DIV --></div>
                                     </div>
                                 </div>
@@ -252,10 +255,12 @@
 
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="/static/dashboards/js/plotly_chart_generator.js"></script>
+    <script src="/static/dashboards/js/graph_descriptor.js"></script>
     {% for i in graph_data%}
         {% for j in i%}
             <script>         
                 chart_generator({{ j | tojson}});
+                descriptor({{ j | tojson}});
             </script>
         {%endfor%}
     {%endfor%}
