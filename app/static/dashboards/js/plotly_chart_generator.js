@@ -14,7 +14,14 @@ stack_count = {"Stats": false,
                "Scan Types":false,
                "XSI Scan Types": false,
                "Scans/Project": false, 
-               "Scans/Subject": false};
+               "Scans/Subject": false, 
+               "Resources/Project": false,
+               "Resource Types": false,
+               "Resources/Session":false,
+               "UsableT1": false,
+               "Archiving Validator": false,
+               "Version Distribution": false,
+               "BBRC validator": false};
 
 function chart_generator(json){
 
@@ -43,13 +50,25 @@ function chart_generator(json){
 
     // Checks the type of chart to be prepared
     if(graph_type == "pie"){
-        piechart_generator(graph_name, graph_info);
+        delete graph_info['graph_type'];
+        id = graph_info['id'];
+        delete graph_info['id'];
+        piechart_generator(graph_name, graph_info, id);
     }else if(graph_type == 'scatter'){
-        scatterchart_generator(graph_name, graph_info);
+        delete graph_info['graph_type']
+        id = graph_info['id'];
+        delete graph_info['id'];
+        scatterchart_generator(graph_name, graph_info, id);
     }else if(graph_type == 'bar'){
-        barchart_generator(graph_name, graph_info);
+        id = graph_info['id'];
+        delete graph_info['graph_type'];
+        delete graph_info['id'];
+        barchart_generator(graph_name, graph_info, id);
     }else if(graph_type == 'line'){
-        linechart_generator(graph_name, graph_info);
+        id = graph_info['id'];
+        delete graph_info['graph_type'];
+        delete graph_info['id'];
+        linechart_generator(graph_name, graph_info, id);
     }
     
 }  
@@ -62,24 +81,17 @@ function getRandomIntInclusive(min, max) {
 }
 
 // Code for barchart
-function barchart_generator(graph_name, graph_info){
+function barchart_generator(graph_name, graph_info, id){
 
     if(stack_count[graph_name]){
         
         data = [];
         for (gi in graph_info){
-            var x_axis = [];
-            var y_axis = [];
-            for( x in graph_info[gi]){
-                if(gi == 'graph_type' || gi == 'id' ){
-                    continue;
-                }else{
-                    console.log(x);
-                    console.log(graph_info[gi][x]);
-                    x_axis.push(x);
-                    y_axis.push(graph_info[gi][x]);
-                }
-            }
+
+            xy_axis = generate_x_y_axis(graph_info[gi]);
+            x_axis = xy_axis[0];
+            y_axis = xy_axis[1];
+
             trace = {};
             r = getRandomIntInclusive(0,254);
             g = getRandomIntInclusive(0,254);
@@ -94,19 +106,15 @@ function barchart_generator(graph_name, graph_info){
                 }
               };
               data.push(trace);
+              
         }
 
     }else{
-        x_axis = [];
-        y_axis = [];
-        for (x in graph_info){
-            if(x == 'graph_type' || x == 'id' ){
-                continue;
-            }else{
-                x_axis.push(x);
-                y_axis.push(graph_info[x]);
-            }
-        }
+
+        xy_axis = generate_x_y_axis(graph_info);
+        x_axis = xy_axis[0];
+        y_axis = xy_axis[1];
+
         // Generating color values
         r = getRandomIntInclusive(0,254);
         g = getRandomIntInclusive(0,254);
@@ -148,23 +156,18 @@ function barchart_generator(graph_name, graph_info){
 
     var config = {responsive: true}
     
-    Plotly.newPlot('graph_body'+graph_info['id'], data, layout, config);
+    Plotly.newPlot('graph_body'+id, data, layout, config);
 
 }
 
 
 // Code for scatterchart
 function scatterchart_generator(graph_name, graph_info){
-    x_axis = [];
-    y_axis = [];
-    for (x in graph_info){
-        if(x == 'graph_type' || x == 'id'){
-            continue;
-        }else{
-            x_axis.push(x);
-            y_axis.push(graph_info[x]);
-        }
-    }
+
+    xy_axis = generate_x_y_axis(graph_info);
+    x_axis = xy_axis[0];
+    y_axis = xy_axis[1];
+
     //Generating color values
     r = getRandomIntInclusive(0,254);
     g = getRandomIntInclusive(0,254);
@@ -187,7 +190,7 @@ function scatterchart_generator(graph_name, graph_info){
 
     var config = {responsive: true}
     
-    Plotly.newPlot('graph_body'+graph_info['id'], data, layout, config);
+    Plotly.newPlot('graph_body'+id, data, layout, config);
 
 }
 
@@ -197,12 +200,10 @@ function piechart_generator(graph_name, graph_info){
     y_axis = [];
 
     for (x in graph_info){
-        if(x == 'graph_type' || x == 'id'){
-            continue;
-        }else{
+
             x_axis.push(x);
             y_axis.push(graph_info[x]);
-        }
+        
     }
     colors_num = x_axis.length;
     colors_list = []
@@ -232,22 +233,17 @@ function piechart_generator(graph_name, graph_info){
 
     var config = {responsive: true}
     
-    Plotly.newPlot('graph_body'+graph_info['id'], data, layout, config);
+    Plotly.newPlot('graph_body'+id, data, layout, config);
 
 }
 
 // Code for linechart
 function linechart_generator(graph_name, graph_info){
-    x_axis = [];
-    y_axis = [];
-    for (x in graph_info){
-        if(x == 'graph_type' || x == 'id'){
-            continue;
-        }else{
-            x_axis.push(x);
-            y_axis.push(graph_info[x]);
-        }
-    }
+
+    xy_axis = generate_x_y_axis(graph_info);
+    x_axis = xy_axis[0];
+    y_axis = xy_axis[1];
+
     // Generating color values
     r = getRandomIntInclusive(0,254);
     g = getRandomIntInclusive(0,254);
@@ -269,6 +265,35 @@ function linechart_generator(graph_name, graph_info){
 
     var config = {responsive: true}
     
-    Plotly.newPlot('graph_body'+graph_info['id'], data, layout, config);
+    Plotly.newPlot('graph_body'+id, data, layout, config);
 
+}
+
+// Generate x and y axis
+function generate_x_y_axis(graph_info){
+
+    x_axis = [];
+    y_axis = [];
+
+    var sortable = [];
+    for (var x in graph_info) {
+        sortable.push([x, graph_info[x]]);
+    }
+
+    sortable.sort(function(a, b) {
+        return a[1] - b[1];
+    });
+
+    var objSorted = {}
+    sortable.forEach(function(item){
+        objSorted[item[0]]=item[1]
+    });
+
+    for (x in objSorted){
+        
+            x_axis.push(x);
+            y_axis.push(objSorted[x]);
+    }
+
+    return [x_axis, y_axis];
 }
