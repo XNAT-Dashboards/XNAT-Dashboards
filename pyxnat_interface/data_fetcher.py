@@ -53,7 +53,7 @@ class Fetcher:
         try:
             subjects = self.SELECTOR.get(
                 '/data/subjects',
-                params={'columns': 'ID, project, handedness,'
+                params={'columns': 'ID,project,handedness,'
                         'age,gender'})
             subjects_data = subjects.json()['ResultSet']['Result']
 
