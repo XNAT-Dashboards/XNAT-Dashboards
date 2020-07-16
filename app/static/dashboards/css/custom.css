@@ -313,7 +313,7 @@ a.logout:hover{
     width: 100%;
     }
     
-    /* CSS Triangles - see Trevor's post */
+    /* CSS Triangles */
     .wrapper_tooltip .tooltip:after {
     border-left: solid transparent 10px;
     border-right: solid transparent 10px;
