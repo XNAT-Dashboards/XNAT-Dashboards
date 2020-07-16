@@ -1,6 +1,5 @@
 # Define the application directory
 import os
-from os import environ
 
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -22,5 +21,6 @@ SECRET_KEY = "secret"
 JSON_SORT_KEYS = False
 
 # Configuring database
-MONGO_URI = 'mongodb+srv://testUser:testPassword@cluster0.x38yt.gcp.mongodb.net/xnat_dashboards?retryWrites=true&w=majority'
+MONGO_URI = 'mongodb+srv://testUser:testPassword@cluster0.x38yt'\
+            '.gcp.mongodb.net/xnat_dashboards?retryWrites=true&w=majority'
 MONGO_DB = 'xnat_dashboards'

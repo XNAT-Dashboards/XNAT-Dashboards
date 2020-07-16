@@ -155,7 +155,7 @@ function barchart_generator(graph_name, graph_info, id){
     };
 
     var config = {responsive: true}
-    
+
     Plotly.newPlot('graph_body'+id, data, layout, config);
 
 }
@@ -264,7 +264,7 @@ function linechart_generator(graph_name, graph_info){
     };
 
     var config = {responsive: true}
-    
+
     Plotly.newPlot('graph_body'+id, data, layout, config);
 
 }

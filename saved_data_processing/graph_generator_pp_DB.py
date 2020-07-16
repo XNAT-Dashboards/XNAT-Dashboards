@@ -11,9 +11,9 @@ class GraphGenerator:
     project_id = ''
 
     def __init__(
-                self,
-                username,
-                info, project_id, resources=None, resources_bbrc=None):
+            self,
+            username,
+            info, project_id, resources=None, resources_bbrc=None):
 
         info = get_info_pp_DB.GetInfo(
             username, info, project_id, resources, resources_bbrc)

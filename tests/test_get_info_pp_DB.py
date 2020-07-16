@@ -16,7 +16,7 @@ db = client[db_json['db']]
 existing_user = db.users_data.find_one({'username': 'testUser'})
 
 info_object = get_info_pp_DB.GetInfo(
-        'testUser', existing_user['info'], 'CENTRAL_OASIS_CS', None)
+    'testUser', existing_user['info'], 'CENTRAL_OASIS_CS', None)
 
 
 def test_info():

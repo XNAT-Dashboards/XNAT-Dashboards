@@ -54,7 +54,7 @@ def register_DB():
 
         if pickle_saver:
             exists = os.path.exists(
-                'pickles/users/'+request.form['username']+'.pickle')
+                'pickles/users/' + request.form['username'] + '.pickle')
 
             existing_users = None if exists is False else True
         else:

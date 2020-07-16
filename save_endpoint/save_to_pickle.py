@@ -22,7 +22,7 @@ class SaveToPk:
         try:
             date_time = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
             with open(
-                'pickles/users_data/'+self.username+'.pickle',
+                'pickles/users_data/' + self.username + '.pickle',
                     'wb') as handle:
 
                 pickle.dump(
@@ -49,7 +49,7 @@ class SaveToPk:
 
     def save_user(self, username, password, server, ssl):
 
-        with open('pickles/users/'+username+'.pickle', 'wb') as handle:
+        with open('pickles/users/' + username + '.pickle', 'wb') as handle:
             pickle.dump(
                 {'username': username,
                  'password': password,
@@ -68,7 +68,9 @@ class SaveToPk:
 
         resources_bbrc_validator = fetcher_long.get_experiment_resources()
 
-        with open('pickles/resources/'+username+'bbrc.pickle', 'wb') as handle:
+        with open(
+                'pickles/resources/' + username + 'bbrc.pickle',
+                'wb') as handle:
 
             pickle.dump({
                 'username': username,

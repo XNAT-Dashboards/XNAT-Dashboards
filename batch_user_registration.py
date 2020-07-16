@@ -25,16 +25,16 @@ class BatchUserRegistration:
 
             if self.db:
                 status = self.__save_to_DB(
-                            user['username'],
-                            user['password'],
-                            user['server'],
-                            bool(user['ssl']))
+                    user['username'],
+                    user['password'],
+                    user['server'],
+                    bool(user['ssl']))
             else:
                 status = self.__save_to_PK(
-                            user['username'],
-                            user['password'],
-                            user['server'],
-                            bool(user['ssl']))
+                    user['username'],
+                    user['password'],
+                    user['server'],
+                    bool(user['ssl']))
 
             if status == 401:
                 sr = 'Error in username or password'

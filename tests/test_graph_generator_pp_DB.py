@@ -1,7 +1,5 @@
 from saved_data_processing import graph_generator_pp_DB
 import json
-import pathlib
-from utils import input_processor
 from pymongo import MongoClient
 
 
@@ -19,7 +17,7 @@ db = client[db_json['db']]
 existing_user = db.users_data.find_one({'username': 'testUser'})
 
 graph_object = graph_generator_pp_DB.GraphGenerator(
-        'testUser', existing_user['info'], 'CENTRAL_OASIS_CS')
+    'testUser', existing_user['info'], 'CENTRAL_OASIS_CS')
 
 
 def test_graph_preprocessor():

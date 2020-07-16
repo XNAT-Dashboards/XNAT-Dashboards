@@ -6,9 +6,9 @@ class GetInfo:
     project_id = ''
 
     def __init__(
-                self,
-                username,
-                info, project_id, resources=None, resources_bbrc=None):
+            self,
+            username,
+            info, project_id, resources=None, resources_bbrc=None):
 
         self.formatter_object_per_project = data_formatter_pp_DB.Formatter(
             username, info, project_id, resources, resources_bbrc
