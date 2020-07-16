@@ -10,14 +10,14 @@ from app.dashboards import model
 # Define the blueprint: 'dashboards', set its url prefix: app.url/dashboards
 dashboards = Blueprint('dashboards', __name__, url_prefix='/dashboards')
 
-pickle_saver = True
-graph_data_stats = []
-project_lists = []
-username = ''
-password = ''
-server = ''
-ssl = ''
-db = False
+pickle_saver = True  # Initially True as pickle saving is default
+graph_data_stats = []  # Contains graph Data loaded globally for get request
+project_lists = []  # Contains project list globally for get request
+username = ''  # For saving username globally
+password = ''  # For saving password globally
+server = ''  # For saving server url globally
+ssl = ''  # For saving username globally
+db = False  # For specifying that connected to DB or pickle
 
 
 # Set the route and accepted methods
@@ -62,6 +62,8 @@ def stats():
                                    server=server,
                                    db=db)
     else:
+        # If user reloads page without logging out then should again show data
+
         if graph_data_stats == [] or type(graph_data_stats) == int:
             session['error'] = graph_data_stats
             return redirect(url_for('auth.login'))
@@ -111,6 +113,7 @@ def logout():
 def stats_db():
     global db
     db = True
+
     if request.method == 'POST':
         global username, server
         user_details = request.form
@@ -120,7 +123,7 @@ def stats_db():
         global graph_data_stats
         global project_lists
 
-        if not save_to_DB:
+        if not save_to_DB:  # If save_to_DB is false then use pickle
             if 'username' in session and graph_data_stats != []:
                 session['error'] = "Already logged in"
             else:
@@ -151,7 +154,7 @@ def stats_db():
                         session['error'] = "Wrong Password"
                 else:
                     session['error'] = "Username doesn't exist please register"
-        else:
+        else:  # Use Database and pickle saver value to False over dashboard
             global pickle_saver
             pickle_saver = False
 
@@ -194,7 +197,6 @@ def stats_db():
             return redirect(url_for('auth.login_DB'))
 
         else:
-
             project_list = project_lists[0]
             project_list_ow_co_me = project_lists[1]
             graph_data = graph_data_stats[0]
@@ -209,7 +211,7 @@ def stats_db():
                                    db=db)
 
     else:
-
+        # If user reloads page
         if graph_data_stats == [] or type(graph_data_stats) == int:
             session['error'] = graph_data_stats
             return redirect(url_for('auth.login_DB'))
@@ -229,7 +231,7 @@ def stats_db():
                                    db=db)
 
 
-# this route give the details of the movie
+# this route give the details of the project
 @dashboards.route('db/project/<id>', methods=['GET'])
 def project_db(id):
 
@@ -283,7 +285,7 @@ def project_db(id):
         id=id)
 
 
-# this route give the details of the movie
+# this route give the details of the project
 @dashboards.route('project/<id>', methods=['GET'])
 def project(id):
 
