@@ -1,7 +1,5 @@
 from save_endpoint import save_to_pickle
-import os
 import pickle
-from pymongo import MongoClient
 
 
 def test_save_data_and_user():

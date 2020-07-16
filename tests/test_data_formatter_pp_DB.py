@@ -15,7 +15,7 @@ db = client[db_json['db']]
 existing_user = db.users_data.find_one({'username': 'testUser'})
 
 formatter_object_connected = data_formatter_pp_DB.Formatter(
-        'testUser', existing_user['info'], 'CENTRAL_OASIS_CS')
+    'testUser', existing_user['info'], 'CENTRAL_OASIS_CS')
 
 
 def test_get_projects_details():

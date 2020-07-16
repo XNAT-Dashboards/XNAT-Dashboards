@@ -17,7 +17,7 @@ db = client[db_json['db']]
 existing_user = db.users_data.find_one({'username': 'testUser'})
 
 formatter_object_connected = data_formatter_DB.Formatter(
-        'testUser', existing_user['info'])
+    'testUser', existing_user['info'])
 
 
 def test_get_projects_details():

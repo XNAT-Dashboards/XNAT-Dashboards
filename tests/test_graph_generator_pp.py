@@ -1,6 +1,4 @@
 from realtime_data_processing import graph_generator_pp
-from utils import input_processor
-import pathlib
 
 graph_object = graph_generator_pp.GraphGenerator(
     "testUser",

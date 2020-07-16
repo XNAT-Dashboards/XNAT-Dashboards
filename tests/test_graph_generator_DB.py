@@ -19,7 +19,7 @@ db = client[db_json['db']]
 existing_user = db.users_data.find_one({'username': 'testUser'})
 
 graph_object = graph_generator_DB.GraphGenerator(
-        'testUser', existing_user['info'])
+    'testUser', existing_user['info'])
 
 
 def test_graph_type_generator():

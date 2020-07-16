@@ -29,10 +29,10 @@ class Fetcher:
 
         try:
             self.subjects = self.SELECTOR.get(
-                    '/data/projects/'+project_id+'/subjects',
-                    params={'columns': 'ID,'
-                            'project,handedness,'
-                            'age,gender'})
+                '/data/projects/' + project_id + '/subjects',
+                params={'columns': 'ID,'
+                        'project,handedness,'
+                        'age,gender'})
             subjects_data = self.subjects.json()['ResultSet']['Result']
 
         except json.JSONDecodeError:
