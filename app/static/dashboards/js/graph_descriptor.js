@@ -1,5 +1,5 @@
 function descriptor(json, descriptor_values){
-    alert(descriptor_values);
+
     var graph_name = "";
     var graph_id = "";
 
