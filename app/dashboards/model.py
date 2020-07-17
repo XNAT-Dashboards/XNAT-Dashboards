@@ -1,4 +1,5 @@
 import pickle
+import json
 
 
 def load_user_pk(username):
@@ -49,3 +50,15 @@ def load_resources_bbrc_pk(username):
         return None
 
     return resources_bbrc
+
+
+def graph_descriptor():
+
+    try:
+        with open('utils/graph_descriptor.json') as json_file:
+            descriptor = json.load(json_file)
+    except OSError:
+        print("graph_type.json file not found run graph_generator")
+        exit(1)
+
+    return descriptor
