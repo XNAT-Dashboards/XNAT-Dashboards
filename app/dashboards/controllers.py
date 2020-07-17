@@ -20,6 +20,9 @@ ssl = ''  # For saving username globally
 db = False  # For specifying that connected to DB or pickle
 
 
+descriptor = model.graph_descriptor()  # Graph Descriptor
+
+
 # Set the route and accepted methods
 @dashboards.route('/stats/', methods=['POST', 'GET'])
 def stats():
@@ -60,7 +63,8 @@ def stats():
                                    project_list_ow_co_me=project_list_ow_co_me,
                                    username=username.capitalize(),
                                    server=server,
-                                   db=db)
+                                   db=db,
+                                   descriptor=descriptor)
     else:
         # If user reloads page without logging out then should again show data
 
@@ -81,7 +85,8 @@ def stats():
                                    project_list_ow_co_me=project_list_ow_co_me,
                                    username=username.capitalize(),
                                    server=server,
-                                   db=db)
+                                   db=db,
+                                   descriptor=descriptor)
 
 
 # Logout route
@@ -197,6 +202,7 @@ def stats_db():
             return redirect(url_for('auth.login_DB'))
 
         else:
+
             project_list = project_lists[0]
             project_list_ow_co_me = project_lists[1]
             graph_data = graph_data_stats[0]
@@ -208,7 +214,8 @@ def stats_db():
                                    project_list_ow_co_me=project_list_ow_co_me,
                                    username=username.capitalize(),
                                    server=server,
-                                   db=db)
+                                   db=db,
+                                   descriptor=descriptor)
 
     else:
         # If user reloads page
@@ -228,7 +235,8 @@ def stats_db():
                                    project_list_ow_co_me=project_list_ow_co_me,
                                    username=username.capitalize(),
                                    server=server,
-                                   db=db)
+                                   db=db,
+                                   descriptor=descriptor)
 
 
 # this route give the details of the project
@@ -282,7 +290,8 @@ def project_db(id):
         access=access,
         name=name,
         last_workflow=last_workflow,
-        id=id)
+        id=id,
+        descriptor=descriptor)
 
 
 # this route give the details of the project
@@ -325,4 +334,5 @@ def project(id):
         access=access,
         name=name,
         last_workflow=last_workflow,
-        id=id)
+        id=id,
+        descriptor=descriptor)
