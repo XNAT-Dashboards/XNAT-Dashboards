@@ -254,7 +254,7 @@
         {% for j in i%}
             <script>         
                 chart_generator({{ j | tojson}});
-                descriptor({{ j | tojson}});
+                descriptor({{ j | tojson}},{{ descriptor | tojson}});
             </script>
         {%endfor%}
     {%endfor%}
