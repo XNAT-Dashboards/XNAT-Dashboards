@@ -76,3 +76,14 @@ class SaveToPk:
                 'username': username,
                 'resources': resources},
                 handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+        exp_resources = fetcher_long.get_experiment_resources()
+
+        with open(
+                'pickles/resources/' + username + 'bbrc.pickle',
+                'wb') as handle:
+
+            pickle.dump({
+                'username': username,
+                'resources': exp_resources},
+                handle, protocol=pickle.HIGHEST_PROTOCOL)
