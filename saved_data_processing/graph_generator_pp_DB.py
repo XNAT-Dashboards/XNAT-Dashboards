@@ -2,7 +2,7 @@ import sys
 from os.path import dirname, abspath
 import json
 sys.path.insert(0, dirname(dirname(abspath(__file__))))
-from saved_data_processing import get_info_pp_DB
+from saved_data_processing import get_info_DB
 
 
 class GraphGenerator:
@@ -15,7 +15,7 @@ class GraphGenerator:
             username,
             info, project_id, resources=None, resources_bbrc=None):
 
-        info = get_info_pp_DB.GetInfo(
+        info = get_info_DB.GetInfoPP(
             username, info, project_id, resources, resources_bbrc)
         self.data = info.get_per_project_view()
 
@@ -57,7 +57,6 @@ class GraphGenerator:
             Graph4_name : { x_axis_values, y_axis_values, id, graph_type},
         }
         '''
-        print(final_json_dict)
         return final_json_dict
 
     def graph_generator(self):
