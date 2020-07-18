@@ -360,7 +360,7 @@ class Formatter:
                 'Resource Types': resource_types, 'UsableT1': usable_t1,
                 'Archiving Validator': archiving_valid,
                 'Version Distribution': version, 'BBRC validator': bbrc_exists,
-                'Resource Types per session': resource_type_ps}
+                'Sessions/Resource type': resource_type_ps}
 
     def dict_generator_resources(self, df, x_name, y_name):
 

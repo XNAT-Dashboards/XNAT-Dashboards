@@ -22,5 +22,5 @@
   "Archiving Validator": "pie",
   "Version Distribution": "bar",
   "BBRC validator": "pie",
-  "Resource Types per session":"pie"
+  "Sessions/Resource type":"pie"
 }
