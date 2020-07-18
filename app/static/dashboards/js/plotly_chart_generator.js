@@ -314,7 +314,7 @@ function drill_down(myDiv, graph_info, graph_name){
 
     myDiv.on('plotly_click', function(data){
         if('list' in graph_info){
-
+            
             $('#drillDown').modal('toggle');
             lists_output = graph_info['list'][data['points'][0]['x']];
             html_output = '';

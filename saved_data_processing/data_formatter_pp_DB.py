@@ -1,4 +1,5 @@
 import pandas as pd
+import re
 
 
 class Formatter:
@@ -355,20 +356,23 @@ class Formatter:
 
         try:
 
-            resources_pp = df.groupby(['project']).get_group(self.project_id)
-            del resources_pp['project']
+            df = df.groupby(['project']).get_group(self.project_id)
+            del df['project']
 
         except KeyError:
 
             return -1
+        df['resource'] = df['resource'].map(
+            lambda x: re.sub('<Resource Object>', 'Resource Object', str(x)))
 
-        resources_ps_df = resources_pp[[
-            'session', 'resource']][resources_pp[
-                'resource'] != 'No Data'].groupby('session').count()
+        resource_ps = df[df['resource'] != 'No Data'][['session', 'resource']]
+        resource_ps = resource_ps.rename(columns={'resource': 'count'})
+        resources_ps_df = resource_ps.groupby('session')['count'].apply(list)
+        resource_ps = resource_ps.groupby('session').count()
+        resource_ps['list'] = resources_ps_df
+        resource_ps = resource_ps.to_dict()
 
-        resource_ps = resources_ps_df.to_dict()['resource']
-
-        no_data = resources_pp[resources_pp[
+        no_data = df[df[
             'label'] == 'No Data']['session'].to_list()
 
         if len(no_data) != 0:
@@ -377,10 +381,17 @@ class Formatter:
             for item in no_data:
                 no_data_dict[item] = 0
 
-            resource_ps.update(no_data_dict)
+            resource_ps['count'].update(no_data_dict)
 
-        resources_types = resources_pp.groupby(
-            'label').count()['resource'].to_dict()
+        resource_types = df[df['resource'] != 'No Data'][['label', 'resource']]
+        session = df[df['resource'] != 'No Data']['session']
+        resource_types['resource'] = session + ' ' + resource_types['resource']
+        resource_types = resource_types.rename(columns={'resource': 'count'})
+        resources_types_df = resource_types.groupby(
+            'label')['count'].apply(list)
+        resource_types = resource_types.groupby('label').count()
+        resource_types['list'] = resources_types_df
+        resource_types = resource_types.to_dict()
 
         # Code for bbrc validator
 
@@ -426,15 +437,44 @@ class Formatter:
 
         df = df.groupby('Project').get_group(self.project_id)
 
-        HasUsableT1 = df.groupby('Has Usable T1').count()['Session'].to_dict()
-        HasArchivingValidator = df.groupby(
-            'Archiving Valid').count()['Session'].to_dict()
-        version_dist = df.groupby('version').count()['Session'].to_dict()
-        bbrc_exists = df.groupby('bbrc exists').count()['Session'].to_dict()
+        usable_t1 = df[df['Session'] != 'No Data'][[
+            'Has Usable T1', 'Session']]
+        usable_t1 = usable_t1.rename(columns={'Session': 'count'})
+        usable_t1_df = usable_t1.groupby('Has Usable T1')['count'].apply(list)
+        usable_t1 = usable_t1.groupby('Has Usable T1').count()
+        usable_t1['list'] = usable_t1_df
+        usable_t1 = usable_t1.to_dict()
+
+        archiving_valid = df[df['Session'] != 'No Data'][[
+            'Archiving Valid', 'Session']]
+        archiving_valid = archiving_valid.rename(columns={'Session': 'count'})
+        archiving_valid_df = archiving_valid.groupby(
+            'Archiving Valid')['count'].apply(list)
+        archiving_valid = archiving_valid.groupby('Archiving Valid').count()
+        archiving_valid['list'] = archiving_valid_df
+        archiving_valid = archiving_valid.to_dict()
+
+        version = df[df['Session'] != 'No Data'][[
+            'version', 'Session']]
+        version = version.rename(columns={'Session': 'count'})
+        archiving_valid_df = version.groupby(
+            'version')['count'].apply(list)
+        version = version.groupby('version').count()
+        version['list'] = archiving_valid_df
+        version = version.to_dict()
+
+        bbrc_exists = df[df['Session'] != 'No Data'][[
+            'bbrc exists', 'Session']]
+        bbrc_exists = bbrc_exists.rename(columns={'Session': 'count'})
+        archiving_valid_df = bbrc_exists.groupby(
+            'bbrc exists')['count'].apply(list)
+        bbrc_exists = bbrc_exists.groupby('bbrc exists').count()
+        bbrc_exists['list'] = archiving_valid_df
+        bbrc_exists = bbrc_exists.to_dict()
 
         return {'Resources/Session': resource_ps,
-                'Resource Types': resources_types,
-                'UsableT1': HasUsableT1,
-                'Archiving Validator': HasArchivingValidator,
-                'Version Distribution': version_dist,
+                'Resource Types': resource_types,
+                'UsableT1': usable_t1,
+                'Archiving Validator': archiving_valid,
+                'Version Distribution': version,
                 'BBRC validator': bbrc_exists}

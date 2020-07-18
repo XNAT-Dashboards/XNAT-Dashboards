@@ -453,6 +453,7 @@ class Formatter:
 
             resource_pp['count'].update(no_data_update)
 
+        # Resource types
         resource_types = df[df['resource'] != 'No Data'][['label', 'resource']]
         session = df[df['resource'] != 'No Data']['session']
         resource_types['resource'] = session + ' ' + resource_types['resource']
@@ -463,6 +464,7 @@ class Formatter:
         resource_types['list'] = resources_types_df
         resource_types = resource_types.to_dict()
 
+        # Generating specifc resource type
         resource_processing = []
 
         for resource in resources_bbrc['resources_bbrc']:
@@ -503,6 +505,7 @@ class Formatter:
                 'Has Usable T1',
                 'version'])
 
+        # Usable t1
         usable_t1 = df[df['Session'] != 'No Data'][[
             'Has Usable T1', 'Session']]
         usable_t1 = usable_t1.rename(columns={'Session': 'count'})
@@ -511,6 +514,7 @@ class Formatter:
         usable_t1['list'] = usable_t1_df
         usable_t1 = usable_t1.to_dict()
 
+        # Archiving validator
         archiving_valid = df[df['Session'] != 'No Data'][[
             'Archiving Valid', 'Session']]
         archiving_valid = archiving_valid.rename(columns={'Session': 'count'})
@@ -520,6 +524,7 @@ class Formatter:
         archiving_valid['list'] = archiving_valid_df
         archiving_valid = archiving_valid.to_dict()
 
+        # Version Distribution
         version = df[df['Session'] != 'No Data'][[
             'version', 'Session']]
         version = version.rename(columns={'Session': 'count'})
@@ -529,6 +534,7 @@ class Formatter:
         version['list'] = archiving_valid_df
         version = version.to_dict()
 
+        # BBRC resource exist
         bbrc_exists = df[df['Session'] != 'No Data'][[
             'bbrc exists', 'Session']]
         bbrc_exists = bbrc_exists.rename(columns={'Session': 'count'})
