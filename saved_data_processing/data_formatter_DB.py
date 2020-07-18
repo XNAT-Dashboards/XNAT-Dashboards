@@ -199,17 +199,19 @@ class Formatter:
             return scans
 
         scan_quality = self.dict_generator_overview(
-            scans, 'xnat:imagescandata/quality', 'ID', 'quality')
+            scans, 'xnat:imagescandata/quality', 'ID',
+            'quality', 'xnat:imagescandata/id')
 
         # Scans type information
 
         type_dict = self.dict_generator_overview(
-            scans, 'xnat:imagescandata/type', 'ID', 'type')
+            scans, 'xnat:imagescandata/type',
+            'ID', 'type', 'xnat:imagescandata/id')
 
         # Scans xsi type information
 
         xsi_type_dict = self.dict_generator_overview(
-            scans, 'xsiType', 'ID', 'xsiType')
+            scans, 'xsiType', 'ID', 'xsiType', 'xnat:imagescandata/id')
 
         # Scans per project information
 
@@ -370,19 +372,27 @@ class Formatter:
         return data_dict
 
     def dict_generator_overview(
-            self, data, property_x, property_y, x_new):
+            self, data, property_x, property_y, x_new, extra=None):
 
         property_list = []
         property_none = []
 
         for item in data:
             if item[property_x] != '':
-                property_list.append([item[property_x], item[property_y]])
+                if extra is None:
+                    property_list.append([item[property_x], item[property_y]])
+                else:
+                    property_list.append(
+                        [item[property_x], item[property_y]+'  '+item[extra]])
             else:
-                property_none.append(item[property_y])
+                if extra is None:
+                    property_none.append(item[property_y])
+                else:
+                    property_none.append(item[property_y]+'  '+item[extra])
 
         property_df = pd.DataFrame(
             property_list, columns=[x_new, 'count'])
+
         property_df_series = property_df.groupby(
             x_new)['count'].apply(list)
         property_final_df = property_df.groupby(x_new).count()
