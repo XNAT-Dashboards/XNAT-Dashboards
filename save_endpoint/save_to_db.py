@@ -32,6 +32,7 @@ class SaveToDb:
 
         self.coll_users_data = db['users_data']
         self.coll_users = db['users']
+        self.coll_resources = db['resources']
         self.username = username
         self.fetcher = data_fetcher.Fetcher(username, password, server, ssl)
 
@@ -64,3 +65,20 @@ class SaveToDb:
                       'password': password,
                       'server': server,
                       'ssl': ssl})
+
+    def save_resources(self, username, password, server, ssl):
+
+        fetcher_long = data_fetcher.FetcherLong(
+            username,
+            password,
+            server,
+            ssl)
+
+        resources = fetcher_long.get_resources()
+        self.coll_resources.insert(
+            {'username': username, 'resources': resources})
+
+        exp_resources = fetcher_long.get_experiment_resources()
+
+        self.coll_resources.insert(
+            {'username': username + 'bbrc', 'resources': exp_resources})
