@@ -86,9 +86,9 @@ function barchart_generator(graph_name, graph_info, id){
     if(stack_count[graph_name]){
         
         data = [];
-        for (gi in graph_info){
+        for (gi in graph_info['count']){
 
-            xy_axis = generate_x_y_axis(graph_info[gi]);
+            xy_axis = generate_x_y_axis(graph_info['count'][gi]);
             x_axis = xy_axis[0];
             y_axis = xy_axis[1];
 
@@ -111,7 +111,7 @@ function barchart_generator(graph_name, graph_info, id){
 
     }else{
 
-        xy_axis = generate_x_y_axis(graph_info);
+        xy_axis = generate_x_y_axis(graph_info['count']);
         x_axis = xy_axis[0];
         y_axis = xy_axis[1];
 
@@ -157,14 +157,16 @@ function barchart_generator(graph_name, graph_info, id){
     var config = {responsive: true}
 
     Plotly.newPlot('graph_body'+id, data, layout, config);
+    myDiv = document.getElementById('graph_body'+id);
 
+    drill_down(myDiv, graph_info, graph_name);
 }
 
 
 // Code for scatterchart
 function scatterchart_generator(graph_name, graph_info){
 
-    xy_axis = generate_x_y_axis(graph_info);
+    xy_axis = generate_x_y_axis(graph_info['count']);
     x_axis = xy_axis[0];
     y_axis = xy_axis[1];
 
@@ -191,7 +193,9 @@ function scatterchart_generator(graph_name, graph_info){
     var config = {responsive: true}
     
     Plotly.newPlot('graph_body'+id, data, layout, config);
+    myDiv = document.getElementById('graph_body'+id);
 
+    drill_down(myDiv, graph_info, graph_name);
 }
 
 // Code for piechart
@@ -199,12 +203,13 @@ function piechart_generator(graph_name, graph_info){
     x_axis = [];
     y_axis = [];
 
-    for (x in graph_info){
+    for (x in graph_info['count']){
 
             x_axis.push(x);
-            y_axis.push(graph_info[x]);
+            y_axis.push(graph_info['count'][x]);
         
     }
+    
     colors_num = x_axis.length;
     colors_list = []
 
@@ -216,6 +221,8 @@ function piechart_generator(graph_name, graph_info){
         colors_list.push('rgb('+r+','+g+','+b+')');
     }
 
+    console.log(x_axis);
+    console.log(y_axis);
     var data = [
         {
           values: y_axis,
@@ -234,13 +241,15 @@ function piechart_generator(graph_name, graph_info){
     var config = {responsive: true}
     
     Plotly.newPlot('graph_body'+id, data, layout, config);
+    myDiv = document.getElementById('graph_body'+id);
 
+    drill_down_pie(myDiv, graph_info, graph_name);
 }
 
 // Code for linechart
 function linechart_generator(graph_name, graph_info){
 
-    xy_axis = generate_x_y_axis(graph_info);
+    xy_axis = generate_x_y_axis(graph_info['count']);
     x_axis = xy_axis[0];
     y_axis = xy_axis[1];
 
@@ -266,7 +275,9 @@ function linechart_generator(graph_name, graph_info){
     var config = {responsive: true}
 
     Plotly.newPlot('graph_body'+id, data, layout, config);
+    myDiv = document.getElementById('graph_body'+id);
 
+    drill_down(myDiv, graph_info, graph_name);
 }
 
 // Generate x and y axis
@@ -296,4 +307,43 @@ function generate_x_y_axis(graph_info){
     }
 
     return [x_axis, y_axis];
+}
+
+
+function drill_down(myDiv, graph_info, graph_name){
+
+    myDiv.on('plotly_click', function(data){
+        if('list' in graph_info){
+
+            $('#drillDown').modal('toggle');
+            lists_output = graph_info['list'][data['points'][0]['x']];
+            html_output = '';
+            for (output in lists_output){
+                html_output = html_output + '<center>'+lists_output[output]+'</center><br/>';
+            }
+            $('#drillDownTitle').append(graph_name+': '+data['points'][0]['x']);
+            $('#modalBodyDrillDown').append(html_output);
+            html_output='';
+
+        }
+    });
+}
+
+function drill_down_pie(myDiv, graph_info, graph_name){
+
+    myDiv.on('plotly_click', function(data){
+        if('list' in graph_info){
+
+            $('#drillDown').modal('toggle');
+            lists_output = graph_info['list'][data['points'][0]['label']];
+            html_output = '';
+            for (output in lists_output){
+                html_output = html_output + '<center>'+lists_output[output]+'</center><br/>';
+            }
+            $('#drillDownTitle').append(graph_name+': '+data['points'][0]['label']);
+            $('#modalBodyDrillDown').append(html_output);
+            html_output='';
+
+        }
+    });
 }
