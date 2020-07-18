@@ -21,5 +21,6 @@
   "UsableT1": "pie",
   "Archiving Validator": "pie",
   "Version Distribution": "bar",
-  "BBRC validator": "pie"
+  "BBRC validator": "pie",
+  "Resource Types per session":"pie"
 }

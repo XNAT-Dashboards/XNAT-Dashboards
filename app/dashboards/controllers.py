@@ -20,9 +20,6 @@ ssl = ''  # For saving username globally
 db = False  # For specifying that connected to DB or pickle
 
 
-descriptor = model.graph_descriptor()  # Graph Descriptor
-
-
 # Set the route and accepted methods
 @dashboards.route('/stats/', methods=['POST', 'GET'])
 def stats():
@@ -202,7 +199,7 @@ def stats_db():
             return redirect(url_for('auth.login_DB'))
 
         else:
-
+            descriptor = model.graph_descriptor()  # Graph Descriptor
             project_list = project_lists[0]
             project_list_ow_co_me = project_lists[1]
             graph_data = graph_data_stats[0]
@@ -223,7 +220,7 @@ def stats_db():
             session['error'] = graph_data_stats
             return redirect(url_for('auth.login_DB'))
         else:
-
+            descriptor = model.graph_descriptor()  # Graph Descriptor
             project_list = project_lists[0]
             project_list_ow_co_me = project_lists[1]
             graph_data = graph_data_stats[0]
@@ -272,7 +269,7 @@ def project_db(id):
     access = data_array[2]['access']
     name = data_array[2]['name']
     last_workflow = data_array[2]['last_workflow']
-
+    descriptor = model.graph_descriptor()  # Graph Descriptor
     return render_template(
         'dashboards/stats_dashboards_pp.html',
         graph_data=graph_data,
@@ -316,7 +313,7 @@ def project(id):
     access = data_array[2]['access']
     name = data_array[2]['name']
     last_workflow = data_array[2]['last_workflow']
-
+    descriptor = model.graph_descriptor()  # Graph Descriptor
     return render_template(
         'dashboards/stats_dashboards_pp.html',
         graph_data=graph_data,

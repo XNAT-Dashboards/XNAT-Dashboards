@@ -10,10 +10,11 @@ function descriptor(json, descriptor_values){
     }
 
     value = descriptor_values[graph_name];
-
+    console.log(descriptor_values);
     generate_text( graph_id, value);
 }
 
 function generate_text(g_id, g_value){
     $('#info_text_id'+g_id).text(g_value);
+    console.log(g_value);
 }

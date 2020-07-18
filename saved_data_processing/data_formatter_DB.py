@@ -312,6 +312,9 @@ class Formatter:
         # Resource types
         resource_types = self.dict_generator_resources(df, 'label', 'resource')
 
+        resource_type_ps = self.dict_generator_resources(
+            df, 'label', 'session')
+
         # Generating specifc resource type
         resource_processing = []
 
@@ -356,7 +359,8 @@ class Formatter:
         return {'Resources/Project': resource_pp,
                 'Resource Types': resource_types, 'UsableT1': usable_t1,
                 'Archiving Validator': archiving_valid,
-                'Version Distribution': version, 'BBRC validator': bbrc_exists}
+                'Version Distribution': version, 'BBRC validator': bbrc_exists,
+                'Resource Types per session': resource_type_ps}
 
     def dict_generator_resources(self, df, x_name, y_name):
 
