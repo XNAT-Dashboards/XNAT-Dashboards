@@ -111,7 +111,13 @@
                                 <li class="breadcrumb-item"><a href="javascript:void(0)">Connected</a></li>
                                 <li class="breadcrumb-item active">{{server}}</li>
                             </ol>
+                            {% if db is sameas true%}
+                            <button type="button" class="btn btn-outline-info d-lg-block m-l-15"> Database </button>
+                            {% endif %}
+                            {% if db is sameas false %}
                             <button type="button" class="btn btn-outline-info d-lg-block m-l-15"> API </button>
+                            {% endif %}
+                            
                         </div>
                     </div>
                 </div>
@@ -140,6 +146,9 @@
                             <div class="col-lg-6" id="myBig{{j['id']}}">
                                 <div class="card">
                                     <div class="card-body" id="graph_id{{j[key]['id']}}">
+                                        <i id="info_id{{j[key]['id']}}" class="fa fa-info wrapper_tooltip" aria-hidden="true" >
+                                                <div id="info_text_id{{j[key]['id']}}" class="tooltip"></div>
+                                        </i>
                                         <div id="graph_body{{j[key]['id']}}"><!-- Plotly chart will be drawn inside this DIV --></div>
                                     </div>
                                 </div>
@@ -149,6 +158,23 @@
                     </div>
                     {% endfor %}
                     <!-- Graph plotting End -->
+                <!-- Modal start for drill down data-->
+                    <div class="modal fade" id="drillDown" tabindex="-1" role="dialog" aria-labelledby="drillDownTile" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="drillDownTitle"></h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                        </button>
+                                </div>
+                                <div class="modal-body" id="modalBodyDrillDown">
+                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <!-- Modal end for drill down data -->
                 </div>
             </div>
             <!-- Project List Start -->
@@ -158,12 +184,18 @@
                 <div class="row">
                     {% for j in i%}
                         <div class="col-lg-3">
-                            <div class="card project">
-                                <div class="card-body" >
-                                    {{j}}
+                            {% if db is sameas true%}
+                            <a href="/dashboards/db/project/{{j}}" target="_blank"> 
+                            {% endif %}
+                            {% if db is sameas false%}
+                            <a href="/dashboards/project/{{j}}" target="_blank"> 
+                            {% endif %}
+                                <div class="card project">
+                                    <div class="card-body" >
+                                        {{j}}
+                                    </div>
                                 </div>
-                                
-                            </div>
+                            </a>
                         </div>
                     {% endfor %}
                 </div>
@@ -176,12 +208,18 @@
                 <div class="row">
                     {% for j in i%}
                         <div class="col-lg-3">
-                            <div class="card project">
-                                <div class="card-body" >
-                                    {{j}}
+                            {% if db is sameas true%}
+                            <a href="/dashboards/db/project/{{j}}" target="_blank"> 
+                            {% endif %}
+                            {% if db is sameas false%}
+                            <a href="/dashboards/project/{{j}}" target="_blank"> 
+                            {% endif %}
+                                <div class="card project">
+                                    <div class="card-body" >
+                                        {{j}}
+                                    </div>
                                 </div>
-                                
-                            </div>
+                            </a>
                         </div>
                     {% endfor %}
                 </div>
@@ -198,22 +236,18 @@
         <!-- Footer end-->
     </div>    
     <!-- Js include Start -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-    <script src="/static/common/js/jquery-3.2.1.min.js"></script>
     <script src="/static/dashboards/js/custom.js"></script>
-    <script src="/static/dashboards/js/sidebarmenu.js"></script>
-    <script src="/static/dashboards/js/jquery.sparkline.min.js"></script>
-    <script src="/static/dashboards/js/popper.min.js"></script>
-    <script src="/static/common/css/perfect-scrollbar.css"></script>
-    <script src="/static/dashboards/js/sticky-kit.min.js"></script>
-
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="/static/dashboards/js/plotly_chart_generator.js"></script>
+    <script src="/static/dashboards/js/graph_descriptor.js"></script>
     {% for i in graph_data%}
         {% for j in i%}
             <script>         
             console.log("{{project_list_ow_co_me}}");
                 chart_generator({{ j | tojson}});
+                descriptor({{ j | tojson}},{{ descriptor | tojson}});
             </script>
         {%endfor%}
     {%endfor%}

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Dashboards login</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- STOP user from back key start-->
+	<script>
+		window.history.forward(); 
+	</script>
+	<!-- STOP user from back key end-->
+	<!-- CSS import Start -->
+	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="icon" type="image/png" sizes="16x16" href="/static/common/images/Logo.png">
+	<link rel="stylesheet" type="text/css" href="/static/auth/css/util.css">
+	<link rel="stylesheet" type="text/css" href="/static/auth/css/main.css">
+	<link rel="icon" href="data:;base64,=">
+	<!-- CSS import End -->
+</head>
+
+<body>
+	<div class="limiter">
+		<!-- Preloader Start -->
+		<div class="preloader">
+			<div class="loader">
+				<div class="loader__figure"></div>
+				<p class="loader__label"></p>
+			</div>
+		</div>
+		<!-- Preloader End -->
+		<!-- Bootstarp container Start-->
+		<div class="container-login100">
+			<div class="wrap-login100">
+				<!-- Login form start -->
+				<form method="POST" action="{{ url_for('dashboards.stats_db') }}" class="login100-form validate-form">
+					<span class="login100-form-title p-b-43">
+						Login to XNAT Dashboards
+                    </span>
+                    {% if error is defined %}
+					<div class="alert alert-danger" role="alert" id = "success-alert">
+                        {{error}}
+                      </div>
+					{% endif %}
+					<div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
+						<input class="input100" type="text" name="username">
+						<span class="focus-input100"></span>
+						<span class="label-input100">User Name</span>
+					</div>
+					
+					<div class="wrap-input100 validate-input" data-validate="Password is required">
+						<input class="input100" type="password" name="password">
+						<span class="focus-input100"></span>
+						<span class="label-input100">Password</span>
+					</div>
+
+					<div class="flex-sb-m w-full p-t-3 p-b-20">
+						<div class="contact100-form-checkbox">
+							<input class="input-checkbox100" id="ckb2" type="checkbox" name="DB">
+							<label class="label-checkbox100 ssl" for="ckb2">
+								Login using DB
+							</label>
+						</div>
+					</div>
+
+					<div class="container-login100-form-btn">
+						<button class="login100-form-btn">
+							Login
+						</button>
+					</div>
+					<div class="text-center p-t-30 p-b-10">
+						<a href="{{url_for('auth.register_DB')}}" class="txt2">
+							New to XNAT Dashboards? Register
+						</a>
+					</div>
+					<div class="text-center">
+						<a href="{{url_for('auth.login')}}" class="txt2">
+							Want realtime data?
+						</a>
+					</div>
+					</div>
+				</form>
+				<!-- Login form End -->
+				</div>
+			</div>
+		</div>
+		<!-- Bootstarp container Start-->
+	</div>
+</body>
+    <!-- Js include Start -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+<script src="/static/auth/js/main.js"></script>
+
+{% if saved_flag != -1 %}
+	<script>
+		// Script check whether the thread is done fetching the data from XNAT instance
+		$(document).ready(function() {
+			var refresh_id = setInterval(function() {
+				$.get(
+				"{{ url_for('auth.status') }}",
+				function(data) {
+					console.log(data);
+						if (data.status == 'completed') {
+
+						window.location.replace("{{ url_for('auth.login_DB') }}");
+						}
+				}
+				)}
+			, 1000);
+		});
+	</script>
+{% endif %}
+
+    <!-- Js include End -->
+</html>

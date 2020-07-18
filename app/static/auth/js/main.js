@@ -1,23 +1,12 @@
 
 $(function() {
 $('.loader__label').text("Loading");
-$('button').click(function(e) {
+
 $('.loader__label').text("Fetching Data");
 $(".loading").hide();   // Text loading
 $(".preloader").show();
-e.preventDefault()
-$.ajax({
-    url: url_send,
-    data: $('form').serialize(),
-    type: 'POST',
-    success: function(response) {
-        window.location.href = url_send;
-    },
-    error: function(error) {
-        console.log(error);
-    }
-});
-});
+
+
 });
 
 $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){

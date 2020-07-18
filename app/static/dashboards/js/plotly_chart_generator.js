@@ -1,4 +1,27 @@
 // Generate Charts using the json provided from html jinja
+stack_count = {"Stats": false,
+               "Sessions types/Project":true,
+               "Imaging Sessions": false,
+               "Projects Visibility": false,
+               "Subjects/Project": false,
+               "Age Range":false,
+               "Gender": false,
+               "Handedness": false,
+               "Experiments/Subject": false,
+               "Experiment Types": false,
+               "Experiments/Project": false,
+               "Scans Quality": false,
+               "Scan Types":false,
+               "XSI Scan Types": false,
+               "Scans/Project": false, 
+               "Scans/Subject": false, 
+               "Resources/Project": false,
+               "Resource Types": false,
+               "Resources/Session":false,
+               "UsableT1": false,
+               "Archiving Validator": false,
+               "Version Distribution": false,
+               "BBRC validator": false};
 
 function chart_generator(json){
 
@@ -27,13 +50,25 @@ function chart_generator(json){
 
     // Checks the type of chart to be prepared
     if(graph_type == "pie"){
-        piechart_generator(graph_name, graph_info);
+        delete graph_info['graph_type'];
+        id = graph_info['id'];
+        delete graph_info['id'];
+        piechart_generator(graph_name, graph_info, id);
     }else if(graph_type == 'scatter'){
-        scatterchart_generator(graph_name, graph_info);
+        delete graph_info['graph_type']
+        id = graph_info['id'];
+        delete graph_info['id'];
+        scatterchart_generator(graph_name, graph_info, id);
     }else if(graph_type == 'bar'){
-        barchart_generator(graph_name, graph_info);
+        id = graph_info['id'];
+        delete graph_info['graph_type'];
+        delete graph_info['id'];
+        barchart_generator(graph_name, graph_info, id);
     }else if(graph_type == 'line'){
-        linechart_generator(graph_name, graph_info);
+        id = graph_info['id'];
+        delete graph_info['graph_type'];
+        delete graph_info['id'];
+        linechart_generator(graph_name, graph_info, id);
     }
     
 }  
@@ -46,31 +81,55 @@ function getRandomIntInclusive(min, max) {
 }
 
 // Code for barchart
-function barchart_generator(graph_name, graph_info){
-    x_axis = [];
-    y_axis = [];
-    for (x in graph_info){
-        if(x == 'graph_type' || x == 'id' ){
-            continue;
-        }else{
-            x_axis.push(x);
-            y_axis.push(graph_info[x]);
+function barchart_generator(graph_name, graph_info, id){
+
+    if(stack_count[graph_name]){
+        
+        data = [];
+        for (gi in graph_info['count']){
+
+            xy_axis = generate_x_y_axis(graph_info['count'][gi]);
+            x_axis = xy_axis[0];
+            y_axis = xy_axis[1];
+
+            trace = {};
+            r = getRandomIntInclusive(0,254);
+            g = getRandomIntInclusive(0,254);
+            b = getRandomIntInclusive(0,254);
+            trace = {
+                x: x_axis,
+                y: y_axis,
+                name: gi,
+                type: 'bar',
+                marker: {
+                  color: 'rgb('+r+','+g+','+b+')' // Adding color values
+                }
+              };
+              data.push(trace);
+              
         }
+
+    }else{
+
+        xy_axis = generate_x_y_axis(graph_info['count']);
+        x_axis = xy_axis[0];
+        y_axis = xy_axis[1];
+
+        // Generating color values
+        r = getRandomIntInclusive(0,254);
+        g = getRandomIntInclusive(0,254);
+        b = getRandomIntInclusive(0,254);
+        var data = [
+            {
+              x: x_axis,
+              y: y_axis,
+              type: 'bar',
+              marker: {
+                color: 'rgb('+r+','+g+','+b+')' // Adding color values
+              }
+            }
+          ];
     }
-    // Generating color values
-    r = getRandomIntInclusive(0,254);
-    g = getRandomIntInclusive(0,254);
-    b = getRandomIntInclusive(0,254);
-    var data = [
-        {
-          x: x_axis,
-          y: y_axis,
-          type: 'bar',
-          marker: {
-            color: 'rgb('+r+','+g+','+b+')' // Adding color values
-          }
-        }
-      ];
 
     updatemenus= [{
             y: 1.3,
@@ -91,27 +150,26 @@ function barchart_generator(graph_name, graph_info){
 
     var layout = {
             title: graph_name,
-            updatemenus:updatemenus
+            updatemenus:updatemenus,
+            barmode:'stack'
     };
 
     var config = {responsive: true}
-    
-    Plotly.newPlot('graph_body'+graph_info['id'], data, layout, config);
 
+    Plotly.newPlot('graph_body'+id, data, layout, config);
+    myDiv = document.getElementById('graph_body'+id);
+
+    drill_down(myDiv, graph_info, graph_name);
 }
+
 
 // Code for scatterchart
 function scatterchart_generator(graph_name, graph_info){
-    x_axis = [];
-    y_axis = [];
-    for (x in graph_info){
-        if(x == 'graph_type' || x == 'id'){
-            continue;
-        }else{
-            x_axis.push(x);
-            y_axis.push(graph_info[x]);
-        }
-    }
+
+    xy_axis = generate_x_y_axis(graph_info['count']);
+    x_axis = xy_axis[0];
+    y_axis = xy_axis[1];
+
     //Generating color values
     r = getRandomIntInclusive(0,254);
     g = getRandomIntInclusive(0,254);
@@ -134,8 +192,10 @@ function scatterchart_generator(graph_name, graph_info){
 
     var config = {responsive: true}
     
-    Plotly.newPlot('graph_body'+graph_info['id'], data, layout, config);
+    Plotly.newPlot('graph_body'+id, data, layout, config);
+    myDiv = document.getElementById('graph_body'+id);
 
+    drill_down(myDiv, graph_info, graph_name);
 }
 
 // Code for piechart
@@ -143,14 +203,13 @@ function piechart_generator(graph_name, graph_info){
     x_axis = [];
     y_axis = [];
 
-    for (x in graph_info){
-        if(x == 'graph_type' || x == 'id'){
-            continue;
-        }else{
+    for (x in graph_info['count']){
+
             x_axis.push(x);
-            y_axis.push(graph_info[x]);
-        }
+            y_axis.push(graph_info['count'][x]);
+        
     }
+    
     colors_num = x_axis.length;
     colors_list = []
 
@@ -162,6 +221,8 @@ function piechart_generator(graph_name, graph_info){
         colors_list.push('rgb('+r+','+g+','+b+')');
     }
 
+    console.log(x_axis);
+    console.log(y_axis);
     var data = [
         {
           values: y_axis,
@@ -179,22 +240,19 @@ function piechart_generator(graph_name, graph_info){
 
     var config = {responsive: true}
     
-    Plotly.newPlot('graph_body'+graph_info['id'], data, layout, config);
+    Plotly.newPlot('graph_body'+id, data, layout, config);
+    myDiv = document.getElementById('graph_body'+id);
 
+    drill_down_pie(myDiv, graph_info, graph_name);
 }
 
 // Code for linechart
 function linechart_generator(graph_name, graph_info){
-    x_axis = [];
-    y_axis = [];
-    for (x in graph_info){
-        if(x == 'graph_type' || x == 'id'){
-            continue;
-        }else{
-            x_axis.push(x);
-            y_axis.push(graph_info[x]);
-        }
-    }
+
+    xy_axis = generate_x_y_axis(graph_info['count']);
+    x_axis = xy_axis[0];
+    y_axis = xy_axis[1];
+
     // Generating color values
     r = getRandomIntInclusive(0,254);
     g = getRandomIntInclusive(0,254);
@@ -215,7 +273,77 @@ function linechart_generator(graph_name, graph_info){
     };
 
     var config = {responsive: true}
-    
-    Plotly.newPlot('graph_body'+graph_info['id'], data, layout, config);
 
+    Plotly.newPlot('graph_body'+id, data, layout, config);
+    myDiv = document.getElementById('graph_body'+id);
+
+    drill_down(myDiv, graph_info, graph_name);
+}
+
+// Generate x and y axis
+function generate_x_y_axis(graph_info){
+
+    x_axis = [];
+    y_axis = [];
+
+    var sortable = [];
+    for (var x in graph_info) {
+        sortable.push([x, graph_info[x]]);
+    }
+
+    sortable.sort(function(a, b) {
+        return a[1] - b[1];
+    });
+
+    var objSorted = {}
+    sortable.forEach(function(item){
+        objSorted[item[0]]=item[1]
+    });
+
+    for (x in objSorted){
+        
+            x_axis.push(x);
+            y_axis.push(objSorted[x]);
+    }
+
+    return [x_axis, y_axis];
+}
+
+
+function drill_down(myDiv, graph_info, graph_name){
+
+    myDiv.on('plotly_click', function(data){
+        if('list' in graph_info){
+            
+            $('#drillDown').modal('toggle');
+            lists_output = graph_info['list'][data['points'][0]['x']];
+            html_output = '';
+            for (output in lists_output){
+                html_output = html_output + '<center>'+lists_output[output]+'</center><br/>';
+            }
+            $('#drillDownTitle').append(graph_name+': '+data['points'][0]['x']);
+            $('#modalBodyDrillDown').append(html_output);
+            html_output='';
+
+        }
+    });
+}
+
+function drill_down_pie(myDiv, graph_info, graph_name){
+
+    myDiv.on('plotly_click', function(data){
+        if('list' in graph_info){
+
+            $('#drillDown').modal('toggle');
+            lists_output = graph_info['list'][data['points'][0]['label']];
+            html_output = '';
+            for (output in lists_output){
+                html_output = html_output + '<center>'+lists_output[output]+'</center><br/>';
+            }
+            $('#drillDownTitle').append(graph_name+': '+data['points'][0]['label']);
+            $('#modalBodyDrillDown').append(html_output);
+            html_output='';
+
+        }
+    });
 }

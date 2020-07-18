@@ -12,10 +12,7 @@
 	<!-- CSS import Start -->
 	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-	<link rel="stylesheet" type="text/css" href="/static/auth/css/animate.css">
 	<link rel="icon" type="image/png" sizes="16x16" href="/static/common/images/Logo.png">
-	<link rel="stylesheet" type="text/css" href="/static/auth/css/hamburgers.min.css">
-	<link rel="stylesheet" type="text/css" href="/static/auth/css/select2.min.css">
 	<link rel="stylesheet" type="text/css" href="/static/auth/css/util.css">
 	<link rel="stylesheet" type="text/css" href="/static/auth/css/main.css">
 	<link rel="icon" href="data:;base64,=">
@@ -63,11 +60,11 @@
 						<span class="focus-input100"></span>
 						<span class="label-input100">Server</span>
 					</div>
-					<div class="flex-sb-m w-full p-t-3 p-b-32">
+					<div class="flex-sb-m w-full p-t-3 p-b-20">
 						<div class="contact100-form-checkbox">
 							<input class="input-checkbox100" id="ckb1" type="checkbox" name="ssl">
-							<label class="label-checkbox100" for="ckb1">
-								Connect to host without verifying
+							<label class="label-checkbox100 ssl" for="ckb1">
+								Disable host verification
 							</label>
 						</div>
 					</div>
@@ -76,7 +73,11 @@
 							Login
 						</button>
 					</div>
-
+					<div class="text-center p-t-26 p-b-10">
+						<a href="{{url_for('auth.login_DB')}}" class="txt2">
+							Login using Database?
+						</a>
+					</div>
 					</div>
 				</form>
 				<!-- Login form End -->
@@ -87,15 +88,27 @@
 	</div>
 </body>
     <!-- Js include Start -->
-    <script src="/static/common/js/jquery-3.2.1.min.js"></script>
-    <script src="/static/common/js/bootstrap.min.js"></script>
-    <script src="/static/auth/js/select2.min.js"></script>
-    <script src="/static/auth/js/moment.min.js"></script>
-    <script src="/static/auth/js/daterangepicker.js"></script>
-    <script src="/static/auth/js/countdowntime.js"></script>
-<script>
-var url_send = "{{ url_for('dashboards.stats') }}";
-</script>
-<script src="/static/auth/js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+	<script src="/static/auth/js/main.js"></script>
+{% if saved_flag != -1 %}
+	<script>
+		// Script check whether the thread is done fetching the data from XNAT instance
+		$(document).ready(function() {
+			var refresh_id = setInterval(function() {
+				$.get(
+				"{{ url_for('auth.status') }}",
+				function(data) {
+					console.log(data);
+						if (data.status == 'completed') {
+
+						window.location.replace("{{ url_for('auth.login_DB') }}");
+						}
+				}
+				)}
+			, 1000);
+		});
+	</script>
+{% endif %}
     <!-- Js include End -->
 </html>
