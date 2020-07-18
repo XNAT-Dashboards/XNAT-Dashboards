@@ -185,7 +185,7 @@ class FetcherLong:
             else:
                 for r in res_Arr:
                     resources.append(
-                        [exp['project'], exp['ID'], r, r.label()])
+                        [exp['project'], exp['ID'], r.id(), r.label()])
 
         return resources
 

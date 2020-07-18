@@ -1,4 +1,4 @@
-from saved_data_processing import data_formatter_pp_DB
+from saved_data_processing import data_formatter_DB
 from pymongo import MongoClient
 import json
 
@@ -14,13 +14,14 @@ client = MongoClient(db_json['url'])
 db = client[db_json['db']]
 existing_user = db.users_data.find_one({'username': 'testUser'})
 
-formatter_object_connected = data_formatter_pp_DB.Formatter(
-    'testUser', existing_user['info'], 'CENTRAL_OASIS_CS')
+formatter_object_connected = data_formatter_DB.FormatterPP(
+    'testUser', 'CENTRAL_OASIS_CS')
 
 
 def test_get_projects_details():
 
-    project_details = formatter_object_connected.get_projects_details()
+    project_details = formatter_object_connected.get_projects_details(
+        existing_user['info']['projects'])
 
     assert type(project_details['Imaging Sessions']) == dict
     assert type(project_details['Total Sessions']) == int
@@ -38,7 +39,8 @@ def test_get_projects_details():
 
 def test_get_subjects_details():
 
-    subject_details = formatter_object_connected.get_subjects_details()
+    subject_details = formatter_object_connected.get_subjects_details(
+        existing_user['info']['subjects'])
 
     assert type(subject_details['Number of Subjects']) == int
     assert type(subject_details['Age Range']) == dict
@@ -48,7 +50,8 @@ def test_get_subjects_details():
 
 def test_get_experiments_details():
 
-    experiment_details = formatter_object_connected.get_experiments_details()
+    experiment_details = formatter_object_connected.get_experiments_details(
+        existing_user['info']['experiments'])
 
     assert type(experiment_details['Number of Experiments']) == int
     assert type(experiment_details['Experiments/Subject']) == dict
@@ -57,7 +60,8 @@ def test_get_experiments_details():
 
 def test_get_scans_details():
 
-    experiment_details = formatter_object_connected.get_scans_details()
+    experiment_details = formatter_object_connected.get_scans_details(
+        existing_user['info']['scans'])
 
     assert type(experiment_details['Number of Scans']) == int
     assert type(experiment_details['Scans/Subject']) == dict

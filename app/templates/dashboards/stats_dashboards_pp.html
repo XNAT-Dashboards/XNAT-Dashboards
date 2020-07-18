@@ -233,6 +233,23 @@
                     </div>
                     {% endfor %}
                     <!-- Graph plotting End -->
+                    <!-- Modal -->
+                    <div class="modal fade" id="drillDown" tabindex="-1" role="dialog" aria-labelledby="drillDownTile" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="drillDownTitle"></h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                        </button>
+                                </div>
+                                <div class="modal-body" id="modalBodyDrillDown">
+                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal -->
                 </div>
             </div>
         </div>
@@ -244,8 +261,8 @@
         <!-- Footer end-->
     </div>    
     <!-- Js include Start -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <script src="/static/dashboards/js/custom.js"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="/static/dashboards/js/plotly_chart_generator.js"></script>
