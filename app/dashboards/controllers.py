@@ -49,6 +49,7 @@ def stats():
             session['error'] = graph_data_stats
             return redirect(url_for('auth.login'))
         else:
+            descriptor = model.graph_descriptor()  # Graph Descriptor
             project_list = project_lists[0]
             project_list_ow_co_me = project_lists[1]
             graph_data = graph_data_stats[0]
@@ -71,6 +72,7 @@ def stats():
         elif db:
             return redirect(url_for('dashboards.stats_db'))
         else:
+            descriptor = model.graph_descriptor()  # Graph Descriptor
             project_list = project_lists[0]
             project_list_ow_co_me = project_lists[1]
             graph_data = graph_data_stats[0]
