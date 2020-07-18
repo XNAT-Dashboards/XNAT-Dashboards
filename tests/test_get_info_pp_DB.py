@@ -1,4 +1,4 @@
-from saved_data_processing import get_info_pp_DB
+from saved_data_processing import get_info_DB
 import json
 from pymongo import MongoClient
 
@@ -15,7 +15,7 @@ client = MongoClient(db_json['url'])
 db = client[db_json['db']]
 existing_user = db.users_data.find_one({'username': 'testUser'})
 
-info_object = get_info_pp_DB.GetInfo(
+info_object = get_info_DB.GetInfoPP(
     'testUser', existing_user['info'], 'CENTRAL_OASIS_CS', None)
 
 
