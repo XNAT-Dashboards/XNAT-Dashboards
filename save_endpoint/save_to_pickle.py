@@ -11,11 +11,15 @@ class SaveToPk:
     username = ''
     coll_users_data = None
     coll_users = None
+    fetcher_long = None
+    fetcher = None
 
     def __init__(self, username, password, server, ssl):
 
         self.username = username
         self.fetcher = data_fetcher.Fetcher(username, password, server, ssl)
+        self.fetcher_long = data_fetcher.FetcherLong(
+            username, password, server, ssl)
 
     def __save_to_db(self, info):
 
@@ -58,32 +62,26 @@ class SaveToPk:
                 handle,
                 protocol=pickle.HIGHEST_PROTOCOL)
 
-    def save_resources(self, username, password, server, ssl):
+    def save_resources(self):
 
-        fetcher_long = data_fetcher.FetcherLong(
-            username,
-            password,
-            server,
-            ssl)
-
-        resources = fetcher_long.get_resources()
+        resources = self.fetcher_long.get_resources()
 
         with open(
-                'pickles/resources/' + username + '.pickle',
+                'pickles/resources/' + self.username + '.pickle',
                 'wb') as handle:
 
             pickle.dump({
-                'username': username,
+                'username': self.username,
                 'resources': resources},
                 handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-        exp_resources = fetcher_long.get_experiment_resources()
+        exp_resources = self.fetcher_long.get_experiment_resources()
 
         with open(
-                'pickles/resources/' + username + 'bbrc.pickle',
+                'pickles/resources/' + self.username + 'bbrc.pickle',
                 'wb') as handle:
 
             pickle.dump({
-                'username': username,
+                'username': self.username,
                 'resources': exp_resources},
                 handle, protocol=pickle.HIGHEST_PROTOCOL)

@@ -44,7 +44,7 @@ class DownloadResources:
             server,
             ssl)
 
-        pk_saver.save_resources(username, password, server, ssl)
+        pk_saver.save_resources()
 
 
 ap = argparse.ArgumentParser()
