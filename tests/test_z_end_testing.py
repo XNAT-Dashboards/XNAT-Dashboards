@@ -19,4 +19,7 @@ def test_end_testing():
 
     os.remove('pickles/users/testUser.pickle')
     os.remove('pickles/users_data/testUser.pickle')
+    os.remove('pickles/resources/testUser.pickle')
+    os.remove('pickles/resources/testUserbbrc.pickle')
+
     assert True
