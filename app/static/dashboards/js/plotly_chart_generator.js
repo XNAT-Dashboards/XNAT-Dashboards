@@ -23,6 +23,7 @@ stack_count = {"Stats": false,
                "Version Distribution": false,
                "BBRC validator": false};
 
+
 function chart_generator(json){
 
     /* 
@@ -74,10 +75,17 @@ function chart_generator(json){
 }  
 
 // Code for generating random values for RGB
-function getRandomIntInclusive(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+function getRandomColor() {
+
+    min = Math.ceil(0);
+    max = Math.floor(255);
+
+    r = Math.floor(Math.random() * (max - min + 1)) + min;
+    g = Math.floor(Math.random() * (max - min + 1)) + min;
+    b = Math.floor(Math.random() * (max - min + 1)) + min;
+
+    color = 'rgb('+r+','+g+','+b+')';
+    return color;
 }
 
 // Code for barchart
@@ -93,16 +101,14 @@ function barchart_generator(graph_name, graph_info, id){
             y_axis = xy_axis[1];
 
             trace = {};
-            r = getRandomIntInclusive(0,254);
-            g = getRandomIntInclusive(0,254);
-            b = getRandomIntInclusive(0,254);
+            color = getRandomColor();
             trace = {
                 x: x_axis,
                 y: y_axis,
                 name: gi,
                 type: 'bar',
                 marker: {
-                  color: 'rgb('+r+','+g+','+b+')' // Adding color values
+                  color: color // Adding color values
                 }
               };
               data.push(trace);
@@ -116,16 +122,14 @@ function barchart_generator(graph_name, graph_info, id){
         y_axis = xy_axis[1];
 
         // Generating color values
-        r = getRandomIntInclusive(0,254);
-        g = getRandomIntInclusive(0,254);
-        b = getRandomIntInclusive(0,254);
+        color = getRandomColor();
         var data = [
             {
               x: x_axis,
               y: y_axis,
               type: 'bar',
               marker: {
-                color: 'rgb('+r+','+g+','+b+')' // Adding color values
+                color: color // Adding color values
               }
             }
           ];
@@ -171,9 +175,8 @@ function scatterchart_generator(graph_name, graph_info){
     y_axis = xy_axis[1];
 
     //Generating color values
-    r = getRandomIntInclusive(0,254);
-    g = getRandomIntInclusive(0,254);
-    b = getRandomIntInclusive(0,254);
+    color = getRandomColor()
+
     var data = [
         {
           x: x_axis,
@@ -181,7 +184,7 @@ function scatterchart_generator(graph_name, graph_info){
           mode: 'markers',
           type: 'scatter',
           marker: {
-            color: 'rgb('+r+','+g+','+b+')' // Adding color values
+            color: color // Adding color values
           }
         }
       ];
@@ -215,14 +218,14 @@ function piechart_generator(graph_name, graph_info){
 
     // Generating color values
     for( i=0; i<colors_num; i++ ){
-        r = getRandomIntInclusive(0,255);
-        g = getRandomIntInclusive(0,255);
-        b = getRandomIntInclusive(0,255);
-        colors_list.push('rgb('+r+','+g+','+b+')');
+        
+        color = getRandomColor();
+        while(colors_list.indexOf(color) != -1){
+            color = getRandomColor();
+        }
+        colors_list.push(color);
     }
 
-    console.log(x_axis);
-    console.log(y_axis);
     var data = [
         {
           values: y_axis,
@@ -254,16 +257,14 @@ function linechart_generator(graph_name, graph_info){
     y_axis = xy_axis[1];
 
     // Generating color values
-    r = getRandomIntInclusive(0,254);
-    g = getRandomIntInclusive(0,254);
-    b = getRandomIntInclusive(0,254);
+    color = getRandomColor();
     var data = [
         {
           x: x_axis,
           y: y_axis,
           type: 'scatter',
           marker: {
-            color: 'rgb('+r+','+g+','+b+')' // Adding random color values
+            color: color // Adding random color values
           }
         }
       ];
