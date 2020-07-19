@@ -1,4 +1,5 @@
 from save_endpoint import save_to_pickle
+from app.dashboards import model
 import pickle
 
 
@@ -55,3 +56,30 @@ def test_save_data_and_user(mocker):
     assert existing_user['password'] == 'testPassword'
     assert existing_user['server'] == 'https://central.xnat.org'
     assert existing_user['ssl'] is False
+
+
+def test_model():
+
+    res_bbrc = model.load_resources_bbrc_pk('testUser')
+    assert type(res_bbrc) == dict
+
+    res = model.load_resources_pk('testUser')
+    assert type(res) == dict
+
+    user = model.load_user_pk('testUser')
+    assert type(user) == dict
+
+    user_data = model.load_users_data_pk('testUser')
+    assert type(user_data)
+
+    res_bbrc = model.load_resources_bbrc_pk('testser')
+    assert res_bbrc is None
+
+    res = model.load_resources_pk('tesUser')
+    assert res is None
+
+    user = model.load_user_pk('tesUser')
+    assert user is None
+
+    user_data = model.load_users_data_pk('testser')
+    assert user_data is None
