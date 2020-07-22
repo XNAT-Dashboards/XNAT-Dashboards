@@ -22,5 +22,7 @@
   "Archiving Validator": "pie",
   "Version Distribution": "bar",
   "BBRC validator": "pie",
-  "Sessions/Resource type":"pie"
+  "Sessions/Resource type":"pie",
+  "Consistent Acquisition Date":"pie",
+  "Dates Diff": "line"
 }
