@@ -1,16 +1,43 @@
 import pickle
 import json
+import socket
+from pyxnat_interface import data_fetcher
+import pyxnat.core.errors as pyxnat_errors
 
 
-def load_user_pk(username):
+def user_exists(username, password, server, ssl):
 
     try:
-        with open('pickles/users/' + username + '.pickle', 'rb') as handle:
-            user = pickle.load(handle)
-    except FileNotFoundError:
-        return None
+        exists = len(list(data_fetcher.Fetcher(
+            username, password, server, ssl).SELECTOR.select.projects()))
 
-    return user
+        return exists
+
+    except pyxnat_errors.DatabaseError as dbe:
+        if str(dbe).find('500') != -1:
+            # 500 represent error in url or uri
+            return [500]
+        elif str(dbe).find('401') != -1:
+            # 401 represent error in login details
+            return [401]
+    except socket.error as se:
+        if str(se).find('SSL') != -1:
+            # If verification enable and host unable to verify
+            return [191912]
+        else:
+            # Wrong URL Connection can't be established
+            return [1]
+
+
+def user_role_exist(username):
+
+    with open('utils/user_roles.json') as json_file:
+        user = json.load(json_file)
+
+    if username in user:
+        return user[username]
+    else:
+        return False
 
 
 def load_users_data_pk(username):
@@ -44,6 +71,7 @@ def load_resources_bbrc_pk(username):
         with open(
                 'pickles/resources/' + username + 'bbrc.pickle',
                 'rb') as handle:
+
             resources_bbrc = pickle.load(handle)
 
     except FileNotFoundError:

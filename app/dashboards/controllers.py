@@ -17,6 +17,7 @@ username = ''  # For saving username globally
 password = ''  # For saving password globally
 server = ''  # For saving server url globally
 ssl = ''  # For saving username globally
+role_exist = ''
 db = False  # For specifying that connected to DB or pickle
 
 
@@ -93,13 +94,14 @@ def stats():
 def logout():
 
     global graph_data_stats, username, password, ssl
-    global server, pickle_saver
+    global server, pickle_saver, role_exist
     pickle_saver = True
     graph_data_stats = []
     username = ''
     password = ''
     server = ''
     ssl = ''
+    role_exist = ''
 
     if 'username' in session:
         del session['username']
@@ -123,6 +125,8 @@ def stats_db():
         user_details = request.form
         username = user_details['username']
         password = user_details['password']
+        server = user_details['server']
+        ssl = False if user_details.get('ssl') is None else True
         save_to_DB = False if request.form.get('DB') is None else True
         global graph_data_stats
         global project_lists
@@ -131,12 +135,18 @@ def stats_db():
             if 'username' in session and graph_data_stats != []:
                 session['error'] = "Already logged in"
             else:
-                user = model.load_user_pk(username)
-                if user is not None:
-                    if user['password'] == password:
-                        user_data = model.load_users_data_pk(username)
-                        resources = model.load_resources_pk(username)
-                        resources_bbrc = model.load_resources_bbrc_pk(username)
+                exist = model.user_exists(username, password, server, ssl)
+
+                global role_exist
+                if type(exist) == int:
+                    role_exist = model.user_role_exist(username)
+
+                    if role_exist:
+
+                        user_data = model.load_users_data_pk(role_exist)
+                        resources = model.load_resources_pk(role_exist)
+                        resources_bbrc = model.load_resources_bbrc_pk(
+                            role_exist)
 
                         if user_data is not None:
                             plotting_object = graph_generator_DB.\
@@ -156,45 +166,42 @@ def stats_db():
 
                     else:
                         session['error'] = "Wrong Password"
+                        role_exist = ''
                 else:
-                    session['error'] = "Username doesn't exist please register"
+                    session['error'] = exist[0]
         else:  # Use Database and pickle saver value to False over dashboard
             global pickle_saver
             pickle_saver = False
 
-            users = mongo.db.users
-            existing_users = users.find_one(
-                {'username': request.form['username']})
+            exist = model.user_exists(username, password, server, ssl)
 
             if 'username' in session and graph_data_stats != []:
                 session['error'] = "Already logged in"
-            elif existing_users is not None:
-                if existing_users['password'] == password:
+            elif type(exist) == int:
+                role_exist = model.user_role_exist(username)
+
+                if role_exist:
 
                     users_data_tb = mongo.db.users_data
-                    users_data = users_data_tb.find_one({'username': username})
+                    users_data = users_data_tb.find_one(
+                        {'username': role_exist})
                     resources = mongo.db.resources.find_one(
-                        {'username': username})
+                        {'username': role_exist})
 
-                    if users_data is not None:
-
-                        session['username'] = username
-                        plotting_object = graph_generator_DB.GraphGenerator(
-                            username,
-                            users_data['info'],
-                            resources)
-                        graph_data_stats = plotting_object.graph_generator()
-                        project_lists = plotting_object.\
-                            project_list_generator()
-
-                    else:
-                        session['error'] = "User Registered: Fetching data"
+                    session['username'] = username
+                    plotting_object = graph_generator_DB.GraphGenerator(
+                        username,
+                        users_data['info'],
+                        resources)
+                    graph_data_stats = plotting_object.graph_generator()
+                    project_lists = plotting_object.\
+                        project_list_generator()
 
                 else:
-                    session['error'] = "Wrong Password"
+                    session['error'] = "User role doesn't exist"
 
             else:
-                session['error'] = "Username doesn't exist please register"
+                session['error'] = exist[0]
 
         if 'error' in session:
 
@@ -243,17 +250,21 @@ def stats_db():
 def project_db(id):
 
     global username
+    global role_exist
+
+    if role_exist == '':
+        return redirect(url_for('auth.login_DB'))
 
     if pickle_saver:
-        users_data = model.load_users_data_pk(username)
-        resources = model.load_resources_pk(username)
-        resources_bbrc = model.load_resources_bbrc_pk(username)
+        users_data = model.load_users_data_pk(role_exist)
+        resources = model.load_resources_pk(role_exist)
+        resources_bbrc = model.load_resources_bbrc_pk(role_exist)
     else:
         users_data_tb = mongo.db.users_data
-        users_data = users_data_tb.find_one({'username': username})
-        resources = mongo.db.resources.find_one({'username': username})
+        users_data = users_data_tb.find_one({'username': role_exist})
+        resources = mongo.db.resources.find_one({'username': role_exist})
         resources_bbrc = mongo.db.resources_bbrc.find_one(
-            {'username': username})
+            {'username': role_exist})
 
     data_array = graph_generator_pp_DB.GraphGenerator(
         username, users_data['info'], id, resources, resources_bbrc
@@ -316,6 +327,7 @@ def project(id):
     name = data_array[2]['name']
     last_workflow = data_array[2]['last_workflow']
     descriptor = model.graph_descriptor()  # Graph Descriptor
+
     return render_template(
         'dashboards/stats_dashboards_pp.html',
         graph_data=graph_data,
