@@ -3,6 +3,7 @@
         "username":"testUser",
         "password":"testPassword",
         "server":"https://central.xnat.org",
-        "ssl":""
+        "ssl":"",
+        "role":"superuser"
     }
 ]
