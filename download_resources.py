@@ -38,12 +38,13 @@ class DownloadResources:
 
     def __save_to_DB(self, username, password, server, ssl, role):
 
-        db_saver = save_to_pickle.SaveToPk(
+        db_saver = save_to_db.SaveToDb(
             username,
             password,
             server,
             ssl,
-            role)
+            role,
+            True)
 
         db_saver.save_data()
         db_saver.save_resources()
