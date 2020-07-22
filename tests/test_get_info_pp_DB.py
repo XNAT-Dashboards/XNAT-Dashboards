@@ -13,7 +13,7 @@ except OSError:
 
 client = MongoClient(db_json['url'])
 db = client[db_json['db']]
-existing_user = db.users_data.find_one({'role': 'superuser'})
+existing_user = db.users_data.find_one({'role': 'guest'})
 
 info_object = get_info_DB.GetInfoPP(
     'testUser', existing_user['info'], 'CENTRAL_OASIS_CS', None)

@@ -14,7 +14,7 @@ except OSError:
 client = MongoClient(db_json['url'])
 db = client[db_json['db']]
 
-existing_user = db.users_data.find_one({'role': 'superuser'})
+existing_user = db.users_data.find_one({'role': 'guest'})
 
 formatter_object_connected = data_formatter_DB.Formatter(
     'testUser')

@@ -23,20 +23,20 @@ def test_user_exists(mocker):
 def test_user_role_exists(mocker):
 
     exists = model.user_role_exist('testUser')
-    assert exists == 'superuser'
+    assert exists == 'guest'
     exists = model.user_role_exist('testUer')
     assert exists is False
 
 
 def test_model():
 
-    res_bbrc = model.load_resources_bbrc_pk('superuser')
+    res_bbrc = model.load_resources_bbrc_pk('guest')
     assert type(res_bbrc) == dict
 
-    res = model.load_resources_pk('superuser')
+    res = model.load_resources_pk('guest')
     assert type(res) == dict
 
-    user_data = model.load_users_data_pk('superuser')
+    user_data = model.load_users_data_pk('guest')
     assert type(user_data)
 
     res_bbrc = model.load_resources_bbrc_pk('superusr')
