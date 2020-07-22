@@ -86,7 +86,7 @@ class Fetcher:
         try:
             experiments = self.SELECTOR.array.experiments(
                 experiment_type='',
-                columns=['subject_ID']).data
+                columns=['subject_ID', 'date']).data
         except pyxnat_errors.DatabaseError as dbe:
             if str(dbe).find('500') != -1:
                 # 500 represent error in url or uri
