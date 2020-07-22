@@ -182,11 +182,10 @@ def stats_db():
 
                 if role_exist:
 
-                    users_data_tb = mongo.db.users_data
-                    users_data = users_data_tb.find_one(
-                        {'username': role_exist})
+                    users_data = mongo.db.users_data.find_one(
+                        {'role': role_exist})
                     resources = mongo.db.resources.find_one(
-                        {'username': role_exist})
+                        {'role': role_exist})
 
                     session['username'] = username
                     plotting_object = graph_generator_DB.GraphGenerator(
@@ -261,10 +260,10 @@ def project_db(id):
         resources_bbrc = model.load_resources_bbrc_pk(role_exist)
     else:
         users_data_tb = mongo.db.users_data
-        users_data = users_data_tb.find_one({'username': role_exist})
-        resources = mongo.db.resources.find_one({'username': role_exist})
+        users_data = users_data_tb.find_one({'role': role_exist})
+        resources = mongo.db.resources.find_one({'role': role_exist})
         resources_bbrc = mongo.db.resources_bbrc.find_one(
-            {'username': role_exist})
+            {'role': role_exist})
 
     data_array = graph_generator_pp_DB.GraphGenerator(
         username, users_data['info'], id, resources, resources_bbrc
@@ -283,6 +282,7 @@ def project_db(id):
     name = data_array[2]['name']
     last_workflow = data_array[2]['last_workflow']
     descriptor = model.graph_descriptor()  # Graph Descriptor
+
     return render_template(
         'dashboards/stats_dashboards_pp.html',
         graph_data=graph_data,
