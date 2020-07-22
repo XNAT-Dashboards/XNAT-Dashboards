@@ -1,6 +1,7 @@
 import socket
 import pandas as pd
 import re
+from datetime import date
 
 
 class Formatter:
@@ -16,12 +17,7 @@ class Formatter:
             return projects
 
         projects_details = {}
-        projects_ims = {}
         project_acccess = {}
-        mr_sessions_per_project = {}
-        ct_sessions_per_project = {}
-        pet_sessions_per_project = {}
-        ut_sessions_per_project = {}
 
         access_list = []
         access_none = []
@@ -40,62 +36,8 @@ class Formatter:
         project_acccess['count'].update({'No Data': len(access_none)})
         project_acccess['list'].update({'No Data': access_none})
 
-        projects_ims['CT Sessions'] = sum([int(project['proj_ct_count'])
-                                           for project in projects
-                                           if project['proj_ct_count'] != ''])
-        projects_ims['PET Sessions'] = sum([int(project['proj_pet_count'])
-                                            for project in projects
-                                            if project['proj_pet_count'] != ''
-                                            ])
-        projects_ims['MR Sessions'] = sum([int(project['proj_mr_count'])
-                                           for project in projects
-                                           if project['proj_mr_count'] != ''])
-        projects_ims['UT Sessions'] = sum([int(project['proj_ut_count'])
-                                           for project in projects
-                                           if project['proj_ut_count'] != ''])
-
-        for item in projects:
-
-            if item['proj_mr_count'] != '':
-                mr_sessions_per_project[item['id']] =\
-                    int(item['proj_mr_count'])
-            else:
-                mr_sessions_per_project[item['id']] = 0
-
-            if item['proj_pet_count'] != '':
-                pet_sessions_per_project[item['id']] =\
-                    int(item['proj_pet_count'])
-            else:
-                pet_sessions_per_project[item['id']] = 0
-
-            if item['proj_ct_count'] != '':
-                ct_sessions_per_project[item['id']] =\
-                    int(item['proj_ct_count'])
-            else:
-                ct_sessions_per_project[item['id']] = 0
-
-            if item['proj_ut_count'] != '':
-                ut_sessions_per_project[item['id']] =\
-                    int(item['proj_ut_count'])
-            else:
-                ut_sessions_per_project[item['id']] = 0
-
-        projects_sessions = {}
-
-        projects_sessions['MR Sessions/Project'] = mr_sessions_per_project
-        projects_sessions['PET Sessions/Project'] = pet_sessions_per_project
-        projects_sessions['CT Sessions/Project'] = ct_sessions_per_project
-        projects_sessions['UT Sessions/Project'] = ut_sessions_per_project
-
         projects_details['Number of Projects'] = len(projects)
-        projects_details['Imaging Sessions'] = {'count': projects_ims}
         projects_details['Projects Visibility'] = project_acccess
-        projects_details['Sessions types/Project'] =\
-            {'count': projects_sessions}
-
-        projects_details['Total Sessions'] = projects_ims['PET Sessions']\
-            + projects_ims['MR Sessions'] + projects_ims['UT Sessions']\
-            + projects_ims['CT Sessions']
 
         return projects_details
 
@@ -187,6 +129,11 @@ class Formatter:
         experiments_per_subject = self.dict_generator_per_view(
             experiments, 'subject_ID', 'ID', 'eps')
 
+        experiments_types_per_project = self.dict_generator_per_view_stacked(
+            experiments, 'project', 'xsiType', 'ID')
+
+        experiments_details['Sessions types/Project'] =\
+            experiments_types_per_project
         experiments_details['Experiments/Subject'] = experiments_per_subject
         experiments_details['Experiment Types'] = experiment_type
         experiments_details['Experiments/Project'] = experiments_per_project
@@ -316,20 +263,66 @@ class Formatter:
             df, 'label', 'session')
 
         # Generating specifc resource type
+        df_usable_t1 = self.generate_resource_df(
+            resources_bbrc, 'HasUsableT1', 'has_passed')
+        df_con_acq_date = self.generate_resource_df(
+            resources_bbrc, 'IsAcquisitionDateConsistent', 'has_passed')
+
+        if project_id is not None:
+
+            try:
+
+                df_usable_t1 = df_usable_t1.groupby(
+                    'Project').get_group(project_id)
+                df_con_acq_date = df_con_acq_date.groupby(
+                    'Project').get_group(project_id)
+
+            except KeyError:
+
+                return -1
+
+        # Usable t1
+        usable_t1 = self.dict_generator_resources(
+            df_usable_t1, 'HasUsableT1', 'Session')
+
+        # consisten_acq_date
+        consistent_acq_date = self.dict_generator_resources(
+            df_con_acq_date, 'IsAcquisitionDateConsistent', 'Session')
+
+        # Archiving validator
+        archiving_valid = self.dict_generator_resources(
+            df_usable_t1, 'Archiving Valid', 'Session')
+
+        # Version Distribution
+        version = self.dict_generator_resources(
+            df_usable_t1, 'version', 'Session')
+
+        # BBRC resource exist
+        bbrc_exists = self.dict_generator_resources(
+            df_usable_t1, 'bbrc exists', 'Session')
+
+        return {'Resources/Project': resource_pp,
+                'Resource Types': resource_types, 'UsableT1': usable_t1,
+                'Archiving Validator': archiving_valid,
+                'Version Distribution': version, 'BBRC validator': bbrc_exists,
+                'Sessions/Resource type': resource_type_ps,
+                'Consistent Acquisition Date': consistent_acq_date}
+
+    def generate_resource_df(self, resources_bbrc, test, value):
+
         resource_processing = []
 
-        for resource in resources_bbrc['resources_bbrc']:
+        for resource in resources_bbrc['resources']:
 
             if resource[3] != 0:
-                if 'HasUsableT1' in resource[3]:
+                if test in resource[3]:
                     resource_processing.append([
                         resource[0], resource[1], resource[2], 'Exists',
-                        resource[3]['HasUsableT1']['has_passed'],
-                        resource[3]['version']])
+                        resource[3]['version'], resource[3][test][value]])
                 else:
                     resource_processing.append([
                         resource[0], resource[1], resource[2], 'Not Exists',
-                        'No Data', resource[3]['version']])
+                        resource[3]['version'], 'No Data'])
             else:
                 resource_processing.append([
                     resource[0], resource[1], resource[2], 'Not Exists',
@@ -338,29 +331,10 @@ class Formatter:
         df = pd.DataFrame(
             resource_processing,
             columns=[
-                'Project', 'Session', 'bbrc exists', 'Archiving Valid',
-                'Has Usable T1', 'version'])
+                'Project', 'Session', 'bbrc exists',
+                'Archiving Valid', 'version', test])
 
-        # Usable t1
-        usable_t1 = self.dict_generator_resources(
-            df, 'Has Usable T1', 'Session')
-
-        # Archiving validator
-        archiving_valid = self.dict_generator_resources(
-            df, 'Archiving Valid', 'Session')
-
-        # Version Distribution
-        version = self.dict_generator_resources(df, 'version', 'Session')
-
-        # BBRC resource exist
-        bbrc_exists = self.dict_generator_resources(
-            df, 'bbrc exists', 'Session')
-
-        return {'Resources/Project': resource_pp,
-                'Resource Types': resource_types, 'UsableT1': usable_t1,
-                'Archiving Validator': archiving_valid,
-                'Version Distribution': version, 'BBRC validator': bbrc_exists,
-                'Sessions/Resource type': resource_type_ps}
+        return df
 
     def dict_generator_resources(self, df, x_name, y_name):
 
@@ -424,6 +398,45 @@ class Formatter:
 
         return per_view
 
+    def dict_generator_per_view_stacked(
+            self, data, property_x, property_y, property_z):
+
+        per_list = []
+
+        for item in data:
+            per_list.append(
+                [item[property_x], item[property_y], item[property_z]])
+
+        per_df = pd.DataFrame(
+            per_list, columns=[property_x, property_y, property_z])
+
+        per_df_series = per_df.groupby(
+            [property_x, property_y])[property_z].apply(list)
+
+        per_df = per_df.groupby([property_x, property_y]).count()
+        per_df['list'] = per_df_series
+
+        dict_tupled = per_df.to_dict()
+
+        dict_output_list = {}
+        for item in dict_tupled['list']:
+            dict_output_list[item[0]] = {}
+
+        for item in dict_tupled['list']:
+            dict_output_list[
+                item[0]].update({item[1]: dict_tupled['list'][item]})
+
+        dict_output_count = {}
+
+        for item in dict_tupled[property_z]:
+            dict_output_count[item[0]] = {}
+
+        for item in dict_tupled[property_z]:
+            dict_output_count[
+                item[0]].update({item[1]: dict_tupled[property_z][item]})
+
+        return {'count': dict_output_count, 'list': dict_output_list}
+
 
 class FormatterPP(Formatter):
 
@@ -443,46 +456,6 @@ class FormatterPP(Formatter):
                 project_dict = project
 
         project_details = {}
-
-        project_details['Total Sessions'] = 0
-        project_details['Imaging Sessions'] = {}
-        counter_session = {'count': {}}
-
-        if project_dict['proj_mr_count'] != '':
-            counter_session['count'].update({
-                'MR Sessions': int(project_dict['proj_mr_count'])})
-        else:
-            counter_session['count'].update({
-                'MR Sessions': 0})
-
-        if project_dict['proj_pet_count'] != '':
-            counter_session['count'].update({
-                'PET Sessions': int(project_dict['proj_mr_count'])})
-        else:
-            counter_session['count'].update({
-                'PET Sessions': 0})
-
-        if project_dict['proj_ct_count'] != '':
-            counter_session['count'].update({
-                'CT Sessions': int(project_dict['proj_mr_count'])})
-        else:
-            counter_session['count'].update({
-                'CT Sessions': 0})
-
-        if project_dict['proj_ut_count'] != '':
-            counter_session['count'].update({
-                'UT Sessions': int(project_dict['proj_mr_count'])})
-        else:
-            counter_session['count'].update({
-                'UT Sessions': 0})
-
-        project_details['Total Sessions'] =\
-            counter_session['count']['UT Sessions'] +\
-            counter_session['count']['PET Sessions'] +\
-            counter_session['count']['CT Sessions'] +\
-            counter_session['count']['MR Sessions']
-
-        project_details['Imaging Sessions'].update(counter_session)
 
         project_details['Owner(s)'] = project_dict['project_owners']\
             .split('<br/>')
@@ -566,3 +539,60 @@ class FormatterPP(Formatter):
         del resources_out['Resources/Project']
 
         return resources_out
+
+    def diff_dates(self, resources_bbrc, experiments_data):
+
+        experiments = []
+
+        for experiment in experiments_data:
+            if experiment['project'] == self.project_id:
+                experiments.append(experiment)
+
+        df = super().generate_resource_df(
+            resources_bbrc, 'IsAcquisitionDateConsistent', 'data')
+
+        df = df.groupby(['Project']).get_group(self.project_id)
+        df_exp = pd.DataFrame(experiments)
+
+        merged_inner = pd.merge(
+            left=df, right=df_exp, left_on='Session', right_on='ID')
+
+        dates_acq_list = []
+        dates_acq_dict = merged_inner[
+            ['IsAcquisitionDateConsistent']].to_dict()[
+                'IsAcquisitionDateConsistent']
+
+        for dates in dates_acq_dict:
+            if 'session_date' in dates_acq_dict[dates]:
+                dates_acq_list.append(dates_acq_dict[dates]['session_date'])
+            else:
+                dates_acq_list.append(dates_acq_dict[dates])
+
+        merged_inner['acq_date'] = dates_acq_list
+
+        df_acq_insert_date = merged_inner[['ID', 'acq_date', 'date']]
+
+        df_acq_insert_date['diff'] = df_acq_insert_date.apply(
+            lambda x: self.dates_diff_calc(x['acq_date'], x['date']), axis=1)
+
+        df_diff = df_acq_insert_date[
+            df_acq_insert_date['diff'] != 'No Data']
+
+        diff = df_diff[['ID', 'diff']].rename(
+            columns={'diff': 'count'}).set_index('ID').to_dict()
+
+        return diff
+
+    def dates_diff_calc(self, date_1, date_2):
+
+        if date_1 == 'No Data':
+            return 'No Data'
+        else:
+            date_1_l = list(map(int, date_1.split('-')))
+            date_2_l = list(map(int, date_2.split('-')))
+
+            diff = date(
+                date_1_l[0], date_1_l[1], date_1_l[2])\
+                - date(date_2_l[0], date_2_l[1], date_2_l[2])
+
+            return diff.days
