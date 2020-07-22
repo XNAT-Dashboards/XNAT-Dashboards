@@ -26,30 +26,6 @@ class GraphGenerator:
                 self.project_list_ow_co_me = projects_data[
                     'project_list_ow_co_me']
 
-    def graph_type_generator(self):
-
-        '''
-        This method create the graph type that will be needed by plotly
-        This method creates a json file which have the graphy type with
-        corresponding graph title
-        '''
-
-        data = self.data
-        dict_output = {}
-
-        for json_dict in data:
-            dict_output[json_dict] =\
-                input(
-                    "Enter the graph type for graph name " + json_dict + ": ")
-
-        graph_type = json.dumps(
-            dict_output,
-            default=lambda o: o.__dict__, indent=2)
-
-        f = open("utils/graph_type.json", "w")
-        f.write(graph_type)
-        f.close()
-
     def graph_pre_processor(self):
 
         '''
@@ -201,14 +177,3 @@ class GraphGenerator:
             ]
         '''
         return [array_2d, array_2d_ow_co_me]
-
-
-if __name__ == "__main__":
-    '''
-    This will run and create the graph_type.json file
-    '''
-    graph_object = GraphGenerator('testUser',
-                                  'testPassword',
-                                  'https://central.xnat.org',
-                                  ssl=False)
-    graph_object.graph_type_generator()
