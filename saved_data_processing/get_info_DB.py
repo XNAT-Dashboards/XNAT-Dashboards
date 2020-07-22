@@ -38,9 +38,7 @@ class GetInfo:
         # not go further
         if type(projects_details) != int:
             stats['Projects'] = projects_details['Number of Projects']
-            sessionDetails = projects_details['Total Sessions']
             del projects_details['Number of Projects']
-            del projects_details['Total Sessions']
         else:
             return projects_details
 
@@ -58,8 +56,6 @@ class GetInfo:
         if experiments_details != 1:
             stats['Experiments'] = experiments_details['Number of Experiments']
             del experiments_details['Number of Experiments']
-
-        stats['Sessions'] = sessionDetails
 
         # Pre processing scans details
         scans_details = self.formatter_object.get_scans_details(
@@ -145,14 +141,6 @@ class GetInfoPP(GetInfo):
         projects_details = self.formatter_object_per_project.\
             get_projects_details(self.info['projects'])
 
-        # If some error in connection 1 will be returned and we will
-        # not go further
-        if type(projects_details) != int:
-            sessionDetails = projects_details['Total Sessions']
-            del projects_details['Total Sessions']
-        else:
-            return projects_details
-
         # Pre processing for subject details required
         subjects_details = self.formatter_object_per_project.\
             get_subjects_details(self.info['subjects'])
@@ -167,9 +155,8 @@ class GetInfoPP(GetInfo):
 
         if experiments_details != 1:
             stats['Experiments'] = experiments_details['Number of Experiments']
+            del experiments_details['Sessions types/Project']
             del experiments_details['Number of Experiments']
-
-        stats['Sessions'] = sessionDetails
 
         # Pre processing scans details
         scans_details = self.formatter_object_per_project.\
@@ -181,9 +168,6 @@ class GetInfoPP(GetInfo):
 
         stat_final = {'Stats': stats}
 
-        final_json_dict.update({
-            'Imaging Sessions': projects_details['Imaging Sessions']})
-        del projects_details['Imaging Sessions']
         final_json_dict.update({'Project details': projects_details})
         final_json_dict.update(subjects_details)
         final_json_dict.update(experiments_details)
@@ -196,6 +180,13 @@ class GetInfoPP(GetInfo):
         if type(resources) != int and resources is not None:
 
             final_json_dict.update(resources)
+
+        diff_dates = self.formatter_object_per_project.diff_dates(
+            self.resources_bbrc, self.info['experiments'])
+
+        if diff_dates['count'] != {}:
+
+            final_json_dict.update({'Dates Diff': diff_dates})
 
         '''
         returns a nested dict
