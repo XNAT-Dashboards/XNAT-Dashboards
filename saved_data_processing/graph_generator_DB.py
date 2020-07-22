@@ -106,10 +106,11 @@ class GraphGenerator:
 
         for final_json in graph_data:
             if(final_json == 'Stats'):
+                length_check = length_check + 1
                 continue
             array_1d.append({final_json: graph_data[final_json]})
             counter = counter + 1
-            if counter == 2 or length_check == len(graph_data) - 2:
+            if counter == 2 or length_check == len(graph_data) - 1:
                 counter = 0
                 array_2d.append(array_1d)
                 array_1d = []
