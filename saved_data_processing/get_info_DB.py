@@ -184,7 +184,7 @@ class GetInfoPP(GetInfo):
         diff_dates = self.formatter_object_per_project.diff_dates(
             self.resources_bbrc, self.info['experiments'])
 
-        if diff_dates['count'] != {}:
+        if diff_dates is not None and diff_dates['count'] != {}:
 
             final_json_dict.update({'Dates Diff': diff_dates})
 

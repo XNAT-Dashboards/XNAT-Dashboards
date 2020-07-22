@@ -262,6 +262,12 @@ class Formatter:
         resource_type_ps = self.dict_generator_resources(
             df, 'label', 'session')
 
+        if resources_bbrc is None:
+
+            return {
+                'Resources/Project': resource_pp,
+                'Resource Types': resource_types}
+
         # Generating specifc resource type
         df_usable_t1 = self.generate_resource_df(
             resources_bbrc, 'HasUsableT1', 'has_passed')
@@ -536,7 +542,8 @@ class FormatterPP(Formatter):
         resources_out = super().get_resources_details(
             resources, resources_bbrc, self.project_id)
 
-        del resources_out['Resources/Project']
+        if type(resources_out) != int and 'Resources/Project' in resources_out:
+            del resources_out['Resources/Project']
 
         return resources_out
 
@@ -547,6 +554,9 @@ class FormatterPP(Formatter):
         for experiment in experiments_data:
             if experiment['project'] == self.project_id:
                 experiments.append(experiment)
+
+        if resources_bbrc is None:
+            return None
 
         df = super().generate_resource_df(
             resources_bbrc, 'IsAcquisitionDateConsistent', 'data')
