@@ -1,6 +1,5 @@
 from save_endpoint import save_to_pickle, save_to_db
 import json
-import pickle
 from tqdm import tqdm
 import argparse
 
@@ -9,42 +8,45 @@ class DownloadResources:
 
     def __init__(self, path):
 
-        self.user_name = path
-
-    def load_user_pk(self, username):
-
-        try:
-            with open('pickles/users/' + username + '.pickle', 'rb') as handle:
-                user = pickle.load(handle)
-        except FileNotFoundError:
-            return None
-
-        return user
+        self.role = path
 
     def iter_users(self):
 
-        with open(self.user_name) as json_file:
+        with open(self.role) as json_file:
             users = json.load(json_file)
 
+        print(users)
         for user in tqdm(users):
 
-            user = self.load_user_pk(user)
-            if user is not None:
-                self.__save_to_PK(
-                    user['username'], user['password'],
-                    user['server'], user['ssl'])
+            self.__save_to_PK(
+                user['username'], user['password'],
+                user['server'], user['ssl'], user['role'])
 
         print("saved")
 
-    def __save_to_PK(self, username, password, server, ssl):
+    def __save_to_PK(self, username, password, server, ssl, role):
 
         pk_saver = save_to_pickle.SaveToPk(
             username,
             password,
             server,
-            ssl)
+            ssl,
+            role)
 
+        pk_saver.save_data()
         pk_saver.save_resources()
+
+    def __save_to_DB(self, username, password, server, ssl, role):
+
+        db_saver = save_to_pickle.SaveToPk(
+            username,
+            password,
+            server,
+            ssl,
+            role)
+
+        db_saver.save_data()
+        db_saver.save_resources()
 
 
 ap = argparse.ArgumentParser()
