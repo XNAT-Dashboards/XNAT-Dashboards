@@ -8,15 +8,15 @@ from pyxnat_interface import data_fetcher
 
 class SaveToPk:
 
-    username = ''
+    role = ''
     coll_users_data = None
     coll_users = None
     fetcher_long = None
     fetcher = None
 
-    def __init__(self, username, password, server, ssl):
+    def __init__(self, username, password, server, ssl, role):
 
-        self.username = username
+        self.role = role
         self.fetcher = data_fetcher.Fetcher(username, password, server, ssl)
         self.fetcher_long = data_fetcher.FetcherLong(
             username, password, server, ssl)
@@ -26,11 +26,11 @@ class SaveToPk:
         try:
             date_time = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
             with open(
-                'pickles/users_data/' + self.username + '.pickle',
+                'pickles/users_data/' + self.role + '.pickle',
                     'wb') as handle:
 
                 pickle.dump(
-                    {'username': self.username,
+                    {'role': self.role,
                      'time_date': date_time,
                      'info': info},
                     handle,
@@ -51,37 +51,26 @@ class SaveToPk:
         else:
             return info
 
-    def save_user(self, username, password, server, ssl):
-
-        with open('pickles/users/' + username + '.pickle', 'wb') as handle:
-            pickle.dump(
-                {'username': username,
-                 'password': password,
-                 'server': server,
-                 'ssl': ssl},
-                handle,
-                protocol=pickle.HIGHEST_PROTOCOL)
-
     def save_resources(self):
 
         resources = self.fetcher_long.get_resources()
 
         with open(
-                'pickles/resources/' + self.username + '.pickle',
+                'pickles/resources/' + self.role + '.pickle',
                 'wb') as handle:
 
             pickle.dump({
-                'username': self.username,
+                'role': self.role,
                 'resources': resources},
                 handle, protocol=pickle.HIGHEST_PROTOCOL)
 
         exp_resources = self.fetcher_long.get_experiment_resources()
 
         with open(
-                'pickles/resources/' + self.username + 'bbrc.pickle',
+                'pickles/resources/' + self.role + 'bbrc.pickle',
                 'wb') as handle:
 
             pickle.dump({
-                'username': self.username,
+                'role': self.role,
                 'resources': exp_resources},
                 handle, protocol=pickle.HIGHEST_PROTOCOL)
