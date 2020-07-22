@@ -9,11 +9,11 @@ from pyxnat_interface import data_fetcher
 
 class SaveToDb:
 
-    username = ''
+    role = ''
     coll_users_data = None
     coll_users = None
 
-    def __init__(self, username, password, server, ssl, test):
+    def __init__(self, username, password, server, ssl, role, test):
         # Connecting to MongoDB using PyMongo
 
         try:
@@ -33,14 +33,16 @@ class SaveToDb:
         self.coll_users_data = db['users_data']
         self.coll_users = db['users']
         self.coll_resources = db['resources']
-        self.username = username
+        self.role = role
         self.fetcher = data_fetcher.Fetcher(username, password, server, ssl)
+        self.fetcher_long = data_fetcher.FetcherLong(
+            username, password, server, ssl)
 
     def __save_to_db(self, info):
 
         try:
             date_time = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
-            self.coll_users_data.insert({'username': self.username,
+            self.coll_users_data.insert({'role': self.role,
                                          'date:time': date_time,
                                          'info': info},
                                         check_keys=False)
@@ -58,27 +60,14 @@ class SaveToDb:
         else:
             return info
 
-    def save_user(self, username, password, server, ssl):
+    def save_resources(self):
 
-        users = self.coll_users
-        users.insert({'username': username,
-                      'password': password,
-                      'server': server,
-                      'ssl': ssl})
-
-    def save_resources(self, username, password, server, ssl):
-
-        fetcher_long = data_fetcher.FetcherLong(
-            username,
-            password,
-            server,
-            ssl)
-
-        resources = fetcher_long.get_resources()
-        self.coll_resources.insert(
-            {'username': username, 'resources': resources})
-
-        exp_resources = fetcher_long.get_experiment_resources()
+        resources = self.fetcher_long.get_resources()
 
         self.coll_resources.insert(
-            {'username': username + 'bbrc', 'resources': exp_resources})
+            {'role': self.role, 'resources': resources})
+
+        exp_resources = self.fetcher_long.get_experiment_resources()
+
+        self.coll_resources.insert(
+            {'role': self.role + 'bbrc', 'resources': exp_resources})
