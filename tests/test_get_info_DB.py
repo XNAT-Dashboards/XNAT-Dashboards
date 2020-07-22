@@ -13,7 +13,7 @@ except OSError:
 
 client = MongoClient(db_json['url'])
 db = client[db_json['db']]
-existing_user = db.users_data.find_one({'username': 'testUser'})
+existing_user = db.users_data.find_one({'role': 'superuser'})
 
 info_object = get_info_DB.GetInfo(
     'testUser', existing_user['info'], None)
@@ -24,4 +24,4 @@ def test_info():
     info = info_object.get_info()
 
     assert type(info) == dict   # Return type should be a dict
-    assert len(info) == 16      # Currently 16 dicts to be returned
+    assert len(info) == 15     # Currently 15 dicts to be returned

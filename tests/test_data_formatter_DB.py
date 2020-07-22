@@ -14,7 +14,7 @@ except OSError:
 client = MongoClient(db_json['url'])
 db = client[db_json['db']]
 
-existing_user = db.users_data.find_one({'username': 'testUser'})
+existing_user = db.users_data.find_one({'role': 'superuser'})
 
 formatter_object_connected = data_formatter_DB.Formatter(
     'testUser')
@@ -26,9 +26,7 @@ def test_get_projects_details():
         existing_user['info']['projects'])
 
     assert type(project_details['Number of Projects']) == int
-    assert type(project_details['Imaging Sessions']) == dict
     assert type(project_details['Projects Visibility']) == dict
-    assert type(project_details['Sessions types/Project']) == dict
 
 
 def test_get_subjects_details():

@@ -30,9 +30,7 @@ def test_get_projects_details():
     project_details = formatter_object_connected.get_projects_details()
 
     assert type(project_details['Number of Projects']) == int
-    assert type(project_details['Imaging Sessions']) == dict
     assert type(project_details['Projects Visibility']) == dict
-    assert type(project_details['Sessions types/Project']) == dict
     assert formatter_object_conn_pwd_incorrect.get_projects_details() == 401
     assert formatter_object_conn_uri_incorrect.get_projects_details() == 500
     assert formatter_object_conn_url_incorrect.get_projects_details() == 1

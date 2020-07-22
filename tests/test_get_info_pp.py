@@ -13,4 +13,4 @@ def test_info():
     info = info_object.get_pp_view('CENTRAL_OASIS_CS')
 
     assert type(info) == dict   # Return type should be a dict
-    assert len(info) == 12     # Currently 12 dicts to be returned
+    assert len(info) == 12    # Currently 12 dicts to be returned
