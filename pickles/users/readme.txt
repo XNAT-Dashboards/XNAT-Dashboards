@@ -1,1 +1,0 @@
-Pickle containing username, password, Instance URL and SSL
