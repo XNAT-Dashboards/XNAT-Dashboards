@@ -4,6 +4,6 @@
         "password":"testPassword",
         "server":"https://central.xnat.org",
         "ssl":"",
-        "role":"superuser"
+        "role":"guest"
     }
 ]

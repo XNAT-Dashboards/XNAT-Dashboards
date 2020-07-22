@@ -8,7 +8,7 @@ def test_save_data_and_user(mocker):
     password = 'testPassword'
     server = 'https://central.xnat.org'
     ssl = False
-    role = 'superuser'
+    role = 'guest'
 
     saving_object = save_to_pickle.SaveToPk(
         username, password, server, ssl, role)
@@ -33,14 +33,14 @@ def test_save_data_and_user(mocker):
 
     saving_object.save_resources()
 
-    with open('pickles/resources/testUser.pickle', 'rb') as handle:
+    with open('pickles/resources/guest.pickle', 'rb') as handle:
         res = pickle.load(handle)
 
     assert type(res) == dict
 
     saving_object.save_data()
 
-    with open('pickles/users_data/testUser.pickle', 'rb') as handle:
+    with open('pickles/users_data/guest.pickle', 'rb') as handle:
         user_data = pickle.load(handle)
 
     assert type(user_data) == dict
