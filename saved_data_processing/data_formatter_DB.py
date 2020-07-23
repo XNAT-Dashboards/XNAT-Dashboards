@@ -17,24 +17,9 @@ class Formatter:
             return projects
 
         projects_details = {}
-        project_acccess = {}
 
-        access_list = []
-        access_none = []
-
-        for project in projects:
-            if project['project_access'] != '':
-                access_list.append([project['project_access'], project['id']])
-            else:
-                access_none.append(project['id'])
-
-        access_df = pd.DataFrame(access_list, columns=['access', 'count'])
-        access_df_series = access_df.groupby('access')['count'].apply(list)
-        access_final_df = access_df.groupby('access').count()
-        access_final_df['list'] = access_df_series
-        project_acccess = access_final_df.to_dict()
-        project_acccess['count'].update({'No Data': len(access_none)})
-        project_acccess['list'].update({'No Data': access_none})
+        project_acccess = self.dict_generator_overview(
+            projects, 'project_access', 'id', 'access')
 
         projects_details['Number of Projects'] = len(projects)
         projects_details['Projects Visibility'] = project_acccess
