@@ -12,7 +12,7 @@ This project is about creating a responsive dashboard framework for extensive ex
 - Username and Password for that xnat instance.
 - If no local instance available you can register at [CENTRAL](https://central.xnat.org)
 - Graph type assignment file present in util/graph_type.json
-- [MongoDB Instance](https://www.mongodb.com/)
+- [MongoDB Instance](https://www.mongodb.com/) or save data using pickle
 
 ## Getting Started
 
@@ -26,14 +26,9 @@ To run this project locally for testing or development
 
 - ```source env/bin/activate```
 - ```pip3 install -r requirements.txt```
-- ```Create a mongodb acccount online```
-- ```Create a database xnat_dashboards```
-- ```Create 2 collections users and users data```
-- ```Click on connect to get the url details for shell or python```
-- ```Add the following code in config.py```
-- ```MONGO_URI=<mongodb+srv://urldetails>```
-- ```MONGO_DB=<dbname>```
-- ```Change username, password and dbname as per instance```
+- create a json file with format similar to user_details_bp.json, this json file should contain acount details of each role.
+- ```python download_resources.py -p <Relative path to the above JSON file>``` to download data for each role.
+- ``` edit user_roles.json file for assigning roles to new users```
 
 ### Starting the server
 
