@@ -47,28 +47,24 @@ function chart_generator(json){
         graph_name = g_name;
         graph_info = json[g_name];
         graph_type = graph_info['graph_type'];
+        id = graph_info['id'];
+        description = graph_info['graph descriptor'];
+
+        delete graph_info['graph_descriptor'];
+        delete graph_info['graph_type'];
+        delete graph_info['id'];
     }
+
+    generate_text(id, description);
 
     // Checks the type of chart to be prepared
     if(graph_type == "pie"){
-        delete graph_info['graph_type'];
-        id = graph_info['id'];
-        delete graph_info['id'];
         piechart_generator(graph_name, graph_info, id);
     }else if(graph_type == 'scatter'){
-        delete graph_info['graph_type']
-        id = graph_info['id'];
-        delete graph_info['id'];
         scatterchart_generator(graph_name, graph_info, id);
     }else if(graph_type == 'bar'){
-        id = graph_info['id'];
-        delete graph_info['graph_type'];
-        delete graph_info['id'];
         barchart_generator(graph_name, graph_info, id);
     }else if(graph_type == 'line'){
-        id = graph_info['id'];
-        delete graph_info['graph_type'];
-        delete graph_info['id'];
         linechart_generator(graph_name, graph_info, id);
     }
     
@@ -403,4 +399,8 @@ function drill_down_pie(myDiv, graph_info, graph_name){
 
         }
     });
+}
+
+function generate_text(g_id, g_value){
+    $('#info_text_id'+g_id).text(g_value);
 }
