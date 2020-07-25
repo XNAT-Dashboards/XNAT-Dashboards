@@ -33,7 +33,7 @@ def load_users_data_pk(server):
         with open(
                 'pickles/users_data/general.pickle', 'rb') as handle:
             user_data = pickle.load(handle)
-        print(user_data['server'])
+
         if user_data['server'] != server:
             return None
     except FileNotFoundError:
