@@ -15,35 +15,32 @@ class DownloadResources:
         with open(self.role) as json_file:
             users = json.load(json_file)
 
-        print(users)
         for user in tqdm(users):
 
             self.__save_to_PK(
                 user['username'], user['password'],
-                user['server'], user['ssl'], user['role'])
+                user['server'], user['ssl'])
 
         print("saved")
 
-    def __save_to_PK(self, username, password, server, ssl, role):
+    def __save_to_PK(self, username, password, server, ssl):
 
         pk_saver = save_to_pickle.SaveToPk(
             username,
             password,
             server,
-            ssl,
-            role)
+            ssl)
 
         pk_saver.save_data()
         pk_saver.save_resources()
 
-    def __save_to_DB(self, username, password, server, ssl, role):
+    def __save_to_DB(self, username, password, server, ssl, test):
 
         db_saver = save_to_db.SaveToDb(
             username,
             password,
             server,
             ssl,
-            role,
             True)
 
         db_saver.save_data()
