@@ -13,11 +13,15 @@ class GraphGenerator:
     def __init__(
             self,
             username,
-            info, project_id, resources=None, resources_bbrc=None):
+            info, project_id, role, graph_visibility=None, skip_project=None,
+            resources=None, resources_bbrc=None):
 
         info = get_info_DB.GetInfoPP(
-            username, info, project_id, resources, resources_bbrc)
+            username, info, project_id, skip_project[role],
+            resources, resources_bbrc)
+        self.role = role
         self.data = info.get_per_project_view()
+        self.graph_visibility = graph_visibility[role]
 
     def graph_pre_processor(self):
 
@@ -28,25 +32,32 @@ class GraphGenerator:
         '''
 
         try:
-            with open('utils/graph_type.json') as json_file:
-                graph_type = json.load(json_file)
+            with open('utils/graph_config.json') as json_file:
+                graph_config = json.load(json_file)
+                graph_type = graph_config['graph type']
+                graph_descriptor = graph_config['graph descriptor']
         except OSError:
+            print(OSError.with_traceback())
             print("graph_type.json file not found run graph_generator")
-            exit(1)
 
         counter_id = 0
         final_json_dict = self.data
 
         if type(final_json_dict) != dict:
+
             return final_json_dict
 
         for final_json in final_json_dict:
-            if final_json == 'Stats' or final_json == 'Project details':
+            if final_json == 'Stats' or\
+                final_json == 'Project details' or\
+                    final_json not in self.graph_visibility:
                 continue
 
             final_json_dict[final_json]['id'] = counter_id
             counter_id = counter_id + 1
             final_json_dict[final_json]['graph_type'] = graph_type[final_json]
+            final_json_dict[final_json]['graph descriptor'] =\
+                graph_descriptor[final_json]
 
         '''
         Returns a nested dict with id and graph type added
@@ -73,11 +84,14 @@ class GraphGenerator:
 
         graph_data = self.graph_pre_processor()
 
-        if type(graph_data) == int:
+        if type(graph_data) == int or graph_data is None:
             return graph_data
 
         for final_json in graph_data:
-            if final_json == 'Stats' or final_json == 'Project details':
+            if final_json == 'Stats' or\
+                final_json == 'Project details' or\
+                    final_json not in self.graph_visibility:
+
                 length_check = length_check + 1
                 continue
 
