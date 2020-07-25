@@ -3,12 +3,68 @@ from saved_data_processing import data_formatter_DB
 
 class GetInfo:
 
-    def __init__(self, username, info, resources=None, resources_bbrc=None):
+    def __init__(
+            self, username, info, skip_project=None,
+            resources=None, resources_bbrc=None):
 
-        self.formatter_object = data_formatter_DB.Formatter(username)
-        self.info = info
-        self.resources = resources
-        self.resources_bbrc = resources_bbrc
+        self.formatter_object = data_formatter_DB.Formatter(
+            username)
+        self.skip_project = skip_project
+        self.info_preprocessor(info)
+        self.resources_preprocessor(resources, resources_bbrc)
+
+    def info_preprocessor(self, info_f):
+
+        projects_f = info_f['projects']
+        subjects_f = info_f['subjects']
+        experiments_f = info_f['experiments']
+        scans_f = info_f['scans']
+
+        scans = []
+        experiments = []
+        subjects = []
+        projects = []
+
+        for project in projects_f:
+            if project['id'] not in self.skip_project:
+                projects.append(project)
+
+        for experiment in experiments_f:
+            if experiment['project'] not in self.skip_project:
+                experiments.append(experiment)
+
+        for scan in scans_f:
+            if scan['project'] not in self.skip_project:
+                scans.append(scan)
+
+        for subject in subjects_f:
+            if subject['project'] not in self.skip_project:
+                subjects.append(subject)
+
+        self.info = {}
+
+        self.info['projects'] = projects
+        self.info['subjects'] = subjects
+        self.info['experiments'] = experiments
+        self.info['scans'] = scans
+
+    def resources_preprocessor(self, resources, resources_bbrc):
+
+        self.resources = {}
+        self.resources_bbrc = {}
+        resources_list = []
+        resources_bbrc_list = []
+
+        for resource in resources['resources']:
+            if resource[0] not in self.skip_project:
+                resources_list.append(resource)
+
+        for resource in resources_bbrc['resources']:
+            if resource[0] not in self.skip_project:
+                resources_bbrc_list.append(resource)
+
+        self.resources['resources'] = resources_list
+        self.resources_bbrc['resources'] = resources_bbrc_list
 
     def __preprocessor(self):
 
@@ -106,11 +162,13 @@ class GetInfoPP(GetInfo):
     def __init__(
             self,
             username,
-            info, project_id, resources=None, resources_bbrc=None):
+            info, project_id, skip_project=None,
+            resources=None, resources_bbrc=None):
 
         self.formatter_object_per_project = data_formatter_DB.FormatterPP(
             username, project_id)
         self.info = info
+        self.skip_project = skip_project
         self.resources = resources
         self.username = username
         self.project_id = project_id
@@ -191,10 +249,14 @@ class GetInfoPP(GetInfo):
         '''
         returns a nested dict
         {
-            Graph1_name : { x_axis_values, y_axis_values},
-            Graph2_name : { x_axis_values, y_axis_values},
-            Graph3_name : { x_axis_values, y_axis_values},
-            Graph4_name : { x_axis_values, y_axis_values},
+            Graph1_name : { count:{x_axis_values: y_axis_values},
+                            list:{x_axis_values: y_list} },
+            Graph2_name : { count:{x_axis_values: y_axis_values},
+                            list:{x_axis_values: y_list} },
+            Graph3_name : { count:{x_axis_values: y_axis_values},
+                            list:{x_axis_values: y_list} },
+            Graph4_name : { count:{x_axis_values: y_axis_values},
+                            list:{x_axis_values: y_list} },
         }
         '''
 
@@ -202,4 +264,7 @@ class GetInfoPP(GetInfo):
 
     def get_per_project_view(self):
 
-        return self.__preprocessor_per_project()
+        if self.project_id in self.skip_project:
+            return None
+        else:
+            return self.__preprocessor_per_project()
