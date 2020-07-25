@@ -9,14 +9,12 @@ def test_save_data_and_user(mocker):
     password = 'testPassword'
     server = 'https://central.xnat.org'
     ssl = False
-    role = 'guest'
     test = True
 
     saving_object = save_to_db.SaveToDb(username,
                                         password,
                                         server,
                                         ssl,
-                                        role,
                                         test)
 
     resource_return_value = {'date': '28', 'resources': 'test'}
@@ -46,16 +44,17 @@ def test_save_data_and_user(mocker):
     client = MongoClient(db_json['test_url'])
     db = client[db_json['test_db']]
 
-    existing_user = db.users_data.find_one({'role': 'guest'})
+    existing_user = db.users_data.find_one(
+        {'server': server})
 
     assert type(existing_user['info']) == dict
 
     saving_object.save_resources()
 
-    res = db.resources.find_one({'role': 'guest'})
+    res = db.resources.find_one({'server': server})
 
     assert type(res) == dict
 
-    res_bbrc = db.resources.find_one({'role': 'guest'})
+    res_bbrc = db.resources.find_one({'server': server})
 
     assert type(res_bbrc) == dict

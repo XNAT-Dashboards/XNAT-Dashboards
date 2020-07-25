@@ -8,10 +8,9 @@ def test_save_data_and_user(mocker):
     password = 'testPassword'
     server = 'https://central.xnat.org'
     ssl = False
-    role = 'guest'
 
     saving_object = save_to_pickle.SaveToPk(
-        username, password, server, ssl, role)
+        username, password, server, ssl)
 
     resource_return_value = {'date': '28', 'resources': 'test'}
     data_return_value = {'info': 'data'}
@@ -29,7 +28,7 @@ def test_save_data_and_user(mocker):
         return_value=data_return_value)
 
     saving_object = save_to_pickle.SaveToPk(
-        username, password, server, ssl, role)
+        username, password, server, ssl)
 
     saving_object.save_resources()
 
@@ -44,4 +43,3 @@ def test_save_data_and_user(mocker):
         user_data = pickle.load(handle)
 
     assert type(user_data) == dict
-

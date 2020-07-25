@@ -14,10 +14,10 @@ except OSError:
 client = MongoClient(db_json['url'])
 db = client[db_json['db']]
 
-existing_user = db.users_data.find_one({'role': 'guest'})
+existing_user = db.users_data.find_one({'server': 'https://central.xnat.org'})
 
 graph_object = graph_generator_pp_DB.GraphGenerator(
-    'testUser', existing_user['info'], 'CENTRAL_OASIS_CS')
+    'testUser', existing_user['info'], 'CENTRAL_OASIS_CS', 'guest')
 
 
 def test_graph_preprocessor():

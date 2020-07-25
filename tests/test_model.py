@@ -22,28 +22,28 @@ def test_user_exists(mocker):
 
 def test_user_role_exists(mocker):
 
-    exists = model.user_role_exist('testUser')
-    assert exists == 'guest'
-    exists = model.user_role_exist('testUer')
+    exists = model.user_role_config('testUser')
+    assert type(exists) == dict
+    exists = model.user_role_config('testUer')
     assert exists is False
 
 
 def test_model():
 
-    res_bbrc = model.load_resources_bbrc_pk('guest')
+    res_bbrc = model.load_resources_bbrc_pk('https://central.xnat.org')
     assert type(res_bbrc) == dict
 
-    res = model.load_resources_pk('guest')
+    res = model.load_resources_pk('https://central.xnat.org')
     assert type(res) == dict
 
-    user_data = model.load_users_data_pk('guest')
+    user_data = model.load_users_data_pk('https://central.xnat.org')
     assert type(user_data)
 
-    res_bbrc = model.load_resources_bbrc_pk('superusr')
+    res_bbrc = model.load_resources_bbrc_pk('https://central.org')
     assert res_bbrc is None
 
-    res = model.load_resources_pk('super')
+    res = model.load_resources_pk('ttps://central.org')
     assert res is None
 
-    user_data = model.load_users_data_pk('superyser')
+    user_data = model.load_users_data_pk('ttps://central.org')
     assert user_data is None

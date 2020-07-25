@@ -5,6 +5,7 @@ graph_object = graph_generator.GraphGenerator("testUser",
                                               "https://central.xnat.org",
                                               ssl=False)
 
+
 def test_graph_preprocessor():
 
     assert type(graph_object.graph_pre_processor()) == dict
