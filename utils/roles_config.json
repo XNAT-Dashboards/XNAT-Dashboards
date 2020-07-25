@@ -1,0 +1,67 @@
+
+{
+    "user roles":
+        {
+            "testUser":"superuser",
+            "asif":"admin"
+        },
+
+    "skip project":
+        {
+            "guest":["ALFA_PLUS", "testenv"],
+            "superuser":["ALFA_PLUS"],
+            "admin":[]
+        },
+
+    "graph visibility":
+        {
+            "guest":["Imaging Sessions",
+                "Projects Visibility",
+                "Subjects/Project",
+                "Age Range",
+                "Gender",
+                "Handedness"],
+            
+            "admin":[ "Imaging Sessions",
+                "Projects Visibility",
+                "Sessions types/Project",
+                "Subjects/Project",
+                "Age Range",
+                "Gender",
+                "Handedness",
+                "Experiments/Subject",
+                "Experiment Types",
+                "Experiments/Project",
+                "Scans Quality",
+                "Scan Types",
+                "XSI Scan Types",
+                "Scans/Project",
+                "Scans/Subject",
+                "Resources/Project",
+                "Resource Types",
+                "Resources/Session",
+                "UsableT1",
+                "Archiving Validator",
+                "Version Distribution",
+                "BBRC validator",
+                "Sessions/Resource type",
+                "Consistent Acquisition Date",
+                "Dates Diff"],
+
+            "superuser":["Imaging Sessions",
+                    "Projects Visibility",
+                    "Sessions types/Project",
+                    "Subjects/Project",
+                    "Age Range",
+                    "Gender",
+                    "Handedness",
+                    "Experiments/Subject",
+                    "Experiment Types",
+                    "Experiments/Project",
+                    "Scans Quality",
+                    "Scan Types",
+                    "XSI Scan Types",
+                    "Scans/Project",
+                    "Scans/Subject"]
+        }
+}

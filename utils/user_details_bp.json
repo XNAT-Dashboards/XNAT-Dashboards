@@ -1,9 +1,0 @@
-[
-    {
-        "username":"testUser",
-        "password":"testPassword",
-        "server":"https://central.xnat.org",
-        "ssl":"",
-        "role":"guest"
-    }
-]
