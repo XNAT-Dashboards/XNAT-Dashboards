@@ -55,8 +55,8 @@ def login_DB():
             display_error = "Saved user details"
             del session['error']
         else:
-            display_error = 'User role Not assigned'
-
+            display_error = session['error']
+            del session['error']
         return render_template('auth/login_DB.html',
                                error=display_error)
     else:
