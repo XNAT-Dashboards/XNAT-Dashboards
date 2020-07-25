@@ -16,64 +16,56 @@ def user_exists(username, password, server, ssl):
     return exists
 
 
-def user_role_exist(username):
+def user_role_config(username):
 
-    with open('utils/user_roles.json') as json_file:
-        user = json.load(json_file)
+    with open('utils/roles_config.json') as json_file:
+        config = json.load(json_file)
 
-    if username in user:
-        return user[username]
+    if username in config['user roles']:
+        return config
     else:
         return False
 
 
-def load_users_data_pk(username):
+def load_users_data_pk(server):
 
     try:
         with open(
-                'pickles/users_data/' + username + '.pickle', 'rb') as handle:
+                'pickles/users_data/general.pickle', 'rb') as handle:
             user_data = pickle.load(handle)
-
+        print(user_data['server'])
+        if user_data['server'] != server:
+            return None
     except FileNotFoundError:
         return None
 
     return user_data
 
 
-def load_resources_pk(username):
+def load_resources_pk(server):
 
     try:
-        with open('pickles/resources/' + username + '.pickle', 'rb') as handle:
+        with open('pickles/resources/general.pickle', 'rb') as handle:
             resources = pickle.load(handle)
-
+        if resources['server'] != server:
+            return None
     except FileNotFoundError:
         return None
 
     return resources
 
 
-def load_resources_bbrc_pk(username):
+def load_resources_bbrc_pk(server):
 
     try:
         with open(
-                'pickles/resources/' + username + 'bbrc.pickle',
+                'pickles/resources/generalbbrc.pickle',
                 'rb') as handle:
 
             resources_bbrc = pickle.load(handle)
-
+        if resources_bbrc['server'] != server:
+            return None
     except FileNotFoundError:
         return None
 
     return resources_bbrc
-
-
-def graph_descriptor():
-
-    try:
-        with open('utils/graph_descriptor.json') as json_file:
-            descriptor = json.load(json_file)
-    except OSError:
-        print("graph_type.json file not found run graph_generator")
-        exit(1)
-
-    return descriptor
