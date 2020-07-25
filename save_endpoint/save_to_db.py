@@ -2,18 +2,16 @@ from pymongo import MongoClient
 import sys
 import json
 from os.path import dirname, abspath
-from datetime import datetime
 sys.path.insert(0, dirname(dirname(abspath(__file__))))
 from pyxnat_interface import data_fetcher
 
 
 class SaveToDb:
 
-    role = ''
     coll_users_data = None
     coll_users = None
 
-    def __init__(self, username, password, server, ssl, role, test):
+    def __init__(self, username, password, server, ssl, test):
         # Connecting to MongoDB using PyMongo
 
         try:
@@ -33,7 +31,7 @@ class SaveToDb:
         self.coll_users_data = db['users_data']
         self.coll_users = db['users']
         self.coll_resources = db['resources']
-        self.role = role
+        self.server = server
         self.fetcher = data_fetcher.Fetcher(username, password, server, ssl)
         self.fetcher_long = data_fetcher.FetcherLong(
             username, password, server, ssl)
@@ -41,9 +39,7 @@ class SaveToDb:
     def __save_to_db(self, info):
 
         try:
-            date_time = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
-            self.coll_users_data.insert({'role': self.role,
-                                         'date:time': date_time,
+            self.coll_users_data.insert({'server': self.server,
                                          'info': info},
                                         check_keys=False)
             print("Saved")
@@ -65,9 +61,9 @@ class SaveToDb:
         resources = self.fetcher_long.get_resources()
 
         self.coll_resources.insert(
-            {'role': self.role, 'resources': resources})
+            {'server': self.server, 'resources': resources})
 
         exp_resources = self.fetcher_long.get_experiment_resources()
 
         self.coll_resources.insert(
-            {'role': self.role + 'bbrc', 'resources': exp_resources})
+            {'server': self.server + 'bbrc', 'resources': exp_resources})
