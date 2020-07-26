@@ -227,9 +227,9 @@ def stats_db():
                 if config:
                     role_exist = config['user roles'][username]
                     users_data = mongo.db.users_data.find_one(
-                        {'role': role_exist})
+                        {'server': server})
                     resources = mongo.db.resources.find_one(
-                        {'role': role_exist})
+                        {'server': server})
 
                     session['username'] = username
                     plotting_object = graph_generator_DB.GraphGenerator(
@@ -302,10 +302,10 @@ def project_db(id):
         resources_bbrc = model.load_resources_bbrc_pk(server)
     else:
         users_data_tb = mongo.db.users_data
-        users_data = users_data_tb.find_one({'role': role_exist})
-        resources = mongo.db.resources.find_one({'role': role_exist})
+        users_data = users_data_tb.find_one({'server': server})
+        resources = mongo.db.resources.find_one({'server': server})
         resources_bbrc = mongo.db.resources_bbrc.find_one(
-            {'role': role_exist})
+            {'server': server+'bbrc'})
 
     config = model.user_role_config(username)
 
