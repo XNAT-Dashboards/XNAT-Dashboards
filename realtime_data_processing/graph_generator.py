@@ -35,8 +35,8 @@ class GraphGenerator:
         '''
 
         try:
-            with open('utils/graph_type.json') as json_file:
-                graph_type = json.load(json_file)
+            with open('utils/graph_config.json') as json_file:
+                graph_type = json.load(json_file)['graph type']
         except OSError:
             print("graph_type.json file not found run graph_generator")
             exit(1)
