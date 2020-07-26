@@ -12,11 +12,11 @@ class GraphGenerator:
     project_list_ow_co_me = []
 
     def __init__(
-            self, username, info, role, graph_visibility=None,
+            self, username, info, role, graph_visibility,
             skip_project=None, resources=None, resources_bbrc=None):
 
         self.info = get_info_DB.GetInfo(
-            username, info, skip_project[role], resources, resources_bbrc)
+            username, info, role, skip_project, resources, resources_bbrc)
         projects_data_dict = self.info.get_project_list()
         self.role = role
         self.graph_visibility = graph_visibility[role]
@@ -33,19 +33,15 @@ class GraphGenerator:
         html file
         '''
 
-        try:
-            with open('utils/graph_config.json') as json_file:
-                graph_config = json.load(json_file)
-                graph_type = graph_config['graph type']
-                graph_descriptor = graph_config['graph descriptor']
-
-        except OSError:
-            print(OSError.with_traceback())
-            print("graph_type.json file not found run graph_generator")
+        with open('utils/graph_config.json') as json_file:
+            graph_config = json.load(json_file)
+            graph_type = graph_config['graph type']
+            graph_descriptor = graph_config['graph descriptor']
 
         counter_id = 0
 
         if type(self.data) != dict:
+            print(self.data)
             return self.data
 
         final_json_dict = self.data
@@ -118,7 +114,6 @@ class GraphGenerator:
                 }
             ]
         '''
-
         return [array_2d, graph_data['Stats']]
 
     def project_list_generator(self):
@@ -146,13 +141,16 @@ class GraphGenerator:
         if type(list_data) == int:
             return list_data
 
-        for data in list_data:
-            array_1d.append(data)
-            counter = counter + 1
-            if counter == 4 or length_check == len(list_data) - 1:
-                counter = 0
-                array_2d.append(array_1d)
-                array_1d = []
+        if len(list_data) == 0:
+            array_2d = [[]]
+        else:
+            for data in list_data:
+                array_1d.append(data)
+                counter = counter + 1
+                if counter == 4 or length_check == len(list_data) - 1:
+                    counter = 0
+                    array_2d.append(array_1d)
+                    array_1d = []
 
         if len(self.project_list_ow_co_me) == 0:
             array_2d_ow_co_me = [[]]

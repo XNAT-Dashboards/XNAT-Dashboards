@@ -17,7 +17,7 @@ class GraphGenerator:
             resources=None, resources_bbrc=None):
 
         info = get_info_DB.GetInfoPP(
-            username, info, project_id, skip_project[role],
+            username, info, project_id, role, skip_project,
             resources, resources_bbrc)
         self.role = role
         self.data = info.get_per_project_view()

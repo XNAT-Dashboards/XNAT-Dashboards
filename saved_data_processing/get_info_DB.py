@@ -4,12 +4,16 @@ from saved_data_processing import data_formatter_DB
 class GetInfo:
 
     def __init__(
-            self, username, info, skip_project=None,
+            self, username, info, role, skip_project=[],
             resources=None, resources_bbrc=None):
 
         self.formatter_object = data_formatter_DB.Formatter(
             username)
-        self.skip_project = skip_project
+        if skip_project != []:
+            self.skip_project = skip_project[role]
+        else:
+            self.skip_project = []
+
         self.info_preprocessor(info)
         self.resources_preprocessor(resources, resources_bbrc)
 
@@ -162,13 +166,17 @@ class GetInfoPP(GetInfo):
     def __init__(
             self,
             username,
-            info, project_id, skip_project=None,
+            info, project_id, role, skip_project=[],
             resources=None, resources_bbrc=None):
 
         self.formatter_object_per_project = data_formatter_DB.FormatterPP(
             username, project_id)
         self.info = info
-        self.skip_project = skip_project
+        if skip_project != []:
+            self.skip_project = skip_project[role]
+        else:
+            self.skip_project = []
+
         self.resources = resources
         self.username = username
         self.project_id = project_id
@@ -213,7 +221,6 @@ class GetInfoPP(GetInfo):
 
         if experiments_details != 1:
             stats['Experiments'] = experiments_details['Number of Experiments']
-            del experiments_details['Sessions types/Project']
             del experiments_details['Number of Experiments']
 
         # Pre processing scans details
