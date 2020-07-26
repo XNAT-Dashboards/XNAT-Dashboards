@@ -69,6 +69,30 @@ def test_home_redirect():
 
 def test_dashboard_db(mocker):
 
+    mocker.patch(
+        'saved_data_processing.graph_generator_DB.GraphGenerator.__init__',
+        return_value=None)
+
+    mocker.patch(
+        'saved_data_processing.graph_generator_DB.'
+        'GraphGenerator.graph_generator',
+        return_value=[[], []])
+
+    mocker.patch(
+        'saved_data_processing.graph_generator_DB.'
+        'GraphGenerator.project_list_generator',
+        return_value=[[], []])
+
+    mocker.patch(
+        'saved_data_processing.graph_generator_pp_DB.'
+        'GraphGenerator.__init__',
+        return_value=None)
+
+    mocker.patch(
+        'saved_data_processing.graph_generator_pp_DB.'
+        'GraphGenerator.graph_generator',
+        return_value=None)
+
     data_post_login_dash_present = dict(username='testUser',
                                         password='testPassword',
                                         server='https://central.xnat.org',
