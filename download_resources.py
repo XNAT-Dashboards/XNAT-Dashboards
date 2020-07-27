@@ -13,13 +13,11 @@ class DownloadResources:
     def iter_users(self):
 
         with open(self.role) as json_file:
-            users = json.load(json_file)
+            user = json.load(json_file)
 
-        for user in tqdm(users):
-
-            self.__save_to_PK(
-                user['username'], user['password'],
-                user['server'], user['ssl'])
+        self.__save_to_PK(
+            user['username'], user['password'],
+            user['server'], user['ssl'])
 
         print("saved")
 
