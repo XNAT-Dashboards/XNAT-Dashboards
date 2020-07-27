@@ -161,34 +161,34 @@ def test_get_resources_details():
             'version': 'v1',
             'HasUsableT1': {'has_passed': True},
             'IsAcquisitionDateConsistent':
-            {'has_passed': True, 'data': '19-12-2020'}}],
+            {'has_passed': True, 'data': '2020-12-19'}}],
         ['p2', 's1', 'r3', {
             'version': 'v1',
             'HasUsableT1': {'has_passed': True},
             'IsAcquisitionDateConsistent':
-            {'has_passed': True, 'data': '10-11-2020'}}],
+            {'has_passed': True, 'data': '2020-11-10'}}],
         ['p2', 's2', 'r3', {'version': 'v3'}],
         ['p2', 's2', 'r3', 0],
         ['p3', 's1', 'r6', {
             'version': 'v2',
             'HasUsableT1': {'has_passed': True},
             'IsAcquisitionDateConsistent':
-            {'has_passed': True, 'data': '21-9-2020'}}],
+            {'has_passed': True, 'data': '2020-9-20'}}],
         ['p1', 's2', 'r8', {
             'version': 'v1',
             'HasUsableT1': {'has_passed': True},
             'IsAcquisitionDateConsistent':
-            {'has_passed': True, 'data': '21-10-2020'}}],
+            {'has_passed': True, 'data': '2020-10-21'}}],
         ['p1', 's3', 'r9', {
             'version': 'v2',
             'HasUsableT1': {'has_passed': True},
             'IsAcquisitionDateConsistent':
-            {'has_passed': True, 'data': '22-08-2020'}}],
+            {'has_passed': True, 'data': '2020-08-22'}}],
         ['p1', 's4', 'r10', {
             'version': 'v3',
             'HasUsableT1': {'has_passed': True},
             'IsAcquisitionDateConsistent':
-            {'has_passed': True, 'data': '21-09-2020'}}]]}
+            {'has_passed': True, 'data': '2020-9-25'}}]]}
 
     resource_details = formatter_object_connected.get_resources_details(
         resources, resources_bbrc)
@@ -198,25 +198,25 @@ def test_get_resources_details():
 
     experiments = [
         {
-            'project': 'p1', 'ID': 's1', 'date': '21-03-2020',
+            'project': 'p1', 'ID': 's1', 'date': '2020-3-21',
             'xsiType': 't1', 'subject_ID': 'sb1'},
         {
-            'project': 'p1', 'ID': 's2', 'date': '19-03-2020',
+            'project': 'p1', 'ID': 's2', 'date': '2020-3-19',
             'xsiType': 't1', 'subject_ID': 'sb1'},
         {
-            'project': 'p1', 'ID': 's3', 'date': '24-02-2020',
+            'project': 'p1', 'ID': 's3', 'date': '2020-02-24',
             'xsiType': 't3', 'subject_ID': 'sb3'},
         {
-            'project': 'p2', 'ID': 's3', 'date': '2-03-2020',
+            'project': 'p2', 'ID': 's3', 'date': '2020-03-2',
             'xsiType': 't2', 'subject_ID': 'sb3'},
         {
-            'project': 'p2', 'ID': 's2', 'date': '21-20-2020',
+            'project': 'p2', 'ID': 's2', 'date': '2020-02-12',
             'xsiType': 't1', 'subject_ID': 'sb3'},
         {
-            'project': 'p3', 'ID': 's1', 'date': '11-05-2020',
+            'project': 'p3', 'ID': 's1', 'date': '2020-05-11',
             'xsiType': 't2', 'subject_ID': 'sb2'},
         {
-            'project': 'p4', 'ID': 's2', 'date': '20-03-2020',
+            'project': 'p4', 'ID': 's2', 'date': '2020-03-20',
             'xsiType': 't1', 'subject_ID': 'sb3'}]
 
     diff_dates = formatter_object_connected.diff_dates(
