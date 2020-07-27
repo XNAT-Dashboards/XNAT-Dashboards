@@ -363,8 +363,10 @@ class Formatter:
         property_final_df = property_df.groupby(x_new).count()
         property_final_df['list'] = property_df_series
         property_dict = property_final_df.to_dict()
-        property_dict['count'].update({'No Data': len(property_none)})
-        property_dict['list'].update({'No Data': property_none})
+
+        if len(property_none) != 0:
+            property_dict['count'].update({'No Data': len(property_none)})
+            property_dict['list'].update({'No Data': property_none})
 
         return property_dict
 
@@ -530,6 +532,7 @@ class FormatterPP(Formatter):
 
     def diff_dates(self, resources_bbrc, experiments_data):
 
+        # Create graph for difference in dates
         experiments = []
 
         for experiment in experiments_data:
@@ -575,7 +578,7 @@ class FormatterPP(Formatter):
         return diff
 
     def dates_diff_calc(self, date_1, date_2):
-
+        # Calculates difference between 2 dates
         if date_1 == 'No Data':
             return 'No Data'
         else:
