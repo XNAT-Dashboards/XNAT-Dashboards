@@ -581,9 +581,8 @@ class FormatterPP(Formatter):
         else:
             date_1_l = list(map(int, date_1.split('-')))
             date_2_l = list(map(int, date_2.split('-')))
-
             diff = date(
-                date_1_l[0], date_1_l[1], date_1_l[2])\
-                - date(date_2_l[0], date_2_l[1], date_2_l[2])
+                date_1_l[2], date_1_l[1], date_1_l[0])\
+                - date(date_2_l[2], date_2_l[1], date_2_l[0])
 
             return diff.days
