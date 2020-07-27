@@ -10,14 +10,30 @@ def test_get_projects_details():
 
     assert project_details == 1
 
+    projects = None
+    project_details_specific = formatter_object_connected.\
+        get_projects_details_specific(projects)
+
+    assert project_details_specific == 1
+
     projects = [
-        {'project_access': 'private', 'id': 'id1'},
-        {'project_access': 'private', 'id': 'id1'}]
+        {
+            'project_access': 'private', 'id': 'id1',
+            'project_owners': 'testUser',
+            'project_collabs': 'tester 1', 'project_members': 'tester 2'},
+        {'project_access': 'private', 'id': 'id2',
+            'project_owners': 'testUser2',
+            'project_collabs': 'tester 4', 'project_members': 'tester 5'}]
 
     project_details = formatter_object_connected.get_projects_details(projects)
 
     assert type(project_details['Number of Projects']) == int
     assert type(project_details['Projects Visibility']) == dict
+
+    project_details_specific = formatter_object_connected.\
+        get_projects_details_specific(projects)
+
+    assert type(project_details_specific) == dict
 
 
 def test_get_subjects_details():

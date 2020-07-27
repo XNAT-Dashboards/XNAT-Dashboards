@@ -71,25 +71,25 @@ def test_get_experiments_details():
 
     experiments = [
         {
-            'project': 'p1', 'ID': 'exp1',
+            'project': 'p1', 'ID': 'exp1', 'date': '21-03-2020',
             'xsiType': 't1', 'subject_ID': 'sb1'},
         {
-            'project': 'p1', 'ID': 'exp2',
+            'project': 'p1', 'ID': 'exp2', 'date': '19-03-2020',
             'xsiType': 't1', 'subject_ID': 'sb1'},
         {
-            'project': 'p1', 'ID': 'exp3',
+            'project': 'p1', 'ID': 'exp3', 'date': '24-02-2020',
             'xsiType': 't3', 'subject_ID': 'sb3'},
         {
-            'project': 'p2', 'ID': 'exp4',
+            'project': 'p2', 'ID': 'exp4', 'date': '2-03-2020',
             'xsiType': 't2', 'subject_ID': 'sb3'},
         {
-            'project': 'p2', 'ID': 'exp5',
+            'project': 'p2', 'ID': 'exp5', 'date': '21-20-2020',
             'xsiType': 't1', 'subject_ID': 'sb3'},
         {
-            'project': 'p3', 'ID': 'exp6',
+            'project': 'p3', 'ID': 'exp6', 'date': '11-05-2020',
             'xsiType': 't2', 'subject_ID': 'sb2'},
         {
-            'project': 'p4', 'ID': 'exp7',
+            'project': 'p4', 'ID': 'exp7', 'date': '20-03-2020',
             'xsiType': 't1', 'subject_ID': 'sb3'}]
 
     experiment_details = formatter_object_connected.get_experiments_details(
@@ -132,3 +132,94 @@ def test_get_scans_details():
     assert type(scans_details['Scans Quality']) == dict
     assert type(scans_details['Scan Types']) == dict
     assert type(scans_details['XSI Scan Types']) == dict
+
+
+def test_get_resources_details():
+
+    resource_details = formatter_object_connected.get_resources_details()
+
+    assert resource_details is None
+
+    resources = {'resources': [
+        ['p1', 's1', 'r1', 'l1'],
+        ['p1', 's2', 'r2', 'l2'],
+        ['p1', 's2', 'r3', 'l3'],
+        ['p1', 's3', 'r4', 'l4'],
+        ['p2', 's3', 'r5', 'l5'],
+        ['p2', 's3', 'r6', 'l6'],
+        ['p2', 's1', 'r7', 'l7'],
+        ['p1', 's1', 'r8', 'l8']]}
+
+    resource_details = formatter_object_connected.get_resources_details(
+        resources)
+
+    assert type(resource_details) == dict
+    assert len(resource_details) == 1
+
+    resources_bbrc = {'resources': [[
+        'p1', 's1', 'r1', {
+            'version': 'v1',
+            'HasUsableT1': {'has_passed': True},
+            'IsAcquisitionDateConsistent':
+            {'has_passed': True, 'data': '19-12-2020'}}],
+        ['p2', 's1', 'r3', {
+            'version': 'v1',
+            'HasUsableT1': {'has_passed': True},
+            'IsAcquisitionDateConsistent':
+            {'has_passed': True, 'data': '10-11-2020'}}],
+        ['p2', 's2', 'r3', {'version': 'v3'}],
+        ['p2', 's2', 'r3', 0],
+        ['p3', 's1', 'r6', {
+            'version': 'v2',
+            'HasUsableT1': {'has_passed': True},
+            'IsAcquisitionDateConsistent':
+            {'has_passed': True, 'data': '21-9-2020'}}],
+        ['p1', 's2', 'r8', {
+            'version': 'v1',
+            'HasUsableT1': {'has_passed': True},
+            'IsAcquisitionDateConsistent':
+            {'has_passed': True, 'data': '21-10-2020'}}],
+        ['p1', 's3', 'r9', {
+            'version': 'v2',
+            'HasUsableT1': {'has_passed': True},
+            'IsAcquisitionDateConsistent':
+            {'has_passed': True, 'data': '22-08-2020'}}],
+        ['p1', 's4', 'r10', {
+            'version': 'v3',
+            'HasUsableT1': {'has_passed': True},
+            'IsAcquisitionDateConsistent':
+            {'has_passed': True, 'data': '21-09-2020'}}]]}
+
+    resource_details = formatter_object_connected.get_resources_details(
+        resources, resources_bbrc)
+
+    assert type(resource_details) == dict
+    assert len(resource_details) == 7
+
+    experiments = [
+        {
+            'project': 'p1', 'ID': 's1', 'date': '21-03-2020',
+            'xsiType': 't1', 'subject_ID': 'sb1'},
+        {
+            'project': 'p1', 'ID': 's2', 'date': '19-03-2020',
+            'xsiType': 't1', 'subject_ID': 'sb1'},
+        {
+            'project': 'p1', 'ID': 's3', 'date': '24-02-2020',
+            'xsiType': 't3', 'subject_ID': 'sb3'},
+        {
+            'project': 'p2', 'ID': 's3', 'date': '2-03-2020',
+            'xsiType': 't2', 'subject_ID': 'sb3'},
+        {
+            'project': 'p2', 'ID': 's2', 'date': '21-20-2020',
+            'xsiType': 't1', 'subject_ID': 'sb3'},
+        {
+            'project': 'p3', 'ID': 's1', 'date': '11-05-2020',
+            'xsiType': 't2', 'subject_ID': 'sb2'},
+        {
+            'project': 'p4', 'ID': 's2', 'date': '20-03-2020',
+            'xsiType': 't1', 'subject_ID': 'sb3'}]
+
+    diff_dates = formatter_object_connected.diff_dates(
+        resources_bbrc, experiments)
+
+    assert type(diff_dates) == dict
