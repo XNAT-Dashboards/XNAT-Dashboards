@@ -1,4 +1,3 @@
-import socket
 import pandas as pd
 import re
 from datetime import date
@@ -168,10 +167,7 @@ class Formatter:
 
     def get_projects_details_specific(self, projects):
 
-        try:
-            if projects is None:
-                raise socket.error
-        except socket.error:
+        if projects is None:
             return 1
 
         project_list_owned_collab_member = []
