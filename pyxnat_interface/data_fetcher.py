@@ -12,7 +12,7 @@ class Fetcher:
     SELECTOR = None
 
     # Initializing the central interface object in the constructor
-    def __init__(self, name, password, server, ssl):
+    def __init__(self, name, password, server, ssl=False):
 
         SELECTOR = pyxnat.Interface(
             server=server,
