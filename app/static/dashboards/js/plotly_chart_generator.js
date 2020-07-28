@@ -49,7 +49,9 @@ function chart_generator(json){
         graph_type = graph_info['graph_type'];
         id = graph_info['id'];
         description = graph_info['graph descriptor'];
+        color = graph_info['color'];
 
+        delete graph_info['color'];
         delete graph_info['graph_descriptor'];
         delete graph_info['graph_type'];
         delete graph_info['id'];
@@ -61,11 +63,11 @@ function chart_generator(json){
     if(graph_type == "pie"){
         piechart_generator(graph_name, graph_info, id);
     }else if(graph_type == 'scatter'){
-        scatterchart_generator(graph_name, graph_info, id);
+        scatterchart_generator(graph_name, graph_info, id, color);
     }else if(graph_type == 'bar'){
-        barchart_generator(graph_name, graph_info, id);
+        barchart_generator(graph_name, graph_info, id, color);
     }else if(graph_type == 'line'){
-        linechart_generator(graph_name, graph_info, id);
+        linechart_generator(graph_name, graph_info, id, color);
     }
     
 }  
@@ -85,12 +87,11 @@ function getRandomColor() {
 }
 
 // Code for barchart
-function barchart_generator(graph_name, graph_info, id){
+function barchart_generator(graph_name, graph_info, id, color){
 
     if(stack_count[graph_name]){
         
         data = []
-        console.log(graph_info['count']);
 
         x_axis = []
         for(x in graph_info['count']){
@@ -108,7 +109,6 @@ function barchart_generator(graph_name, graph_info, id){
                 }
             }
         }
-        console.log("keys",differ_keys);
 
         for(i=0; i<differ_keys.length; i++){
             y_axis = []
@@ -141,8 +141,7 @@ function barchart_generator(graph_name, graph_info, id){
         xy_axis = generate_x_y_axis(graph_info['count']);
         x_axis = xy_axis[0];
         y_axis = xy_axis[1];
-        // Generating color values
-        color = getRandomColor();
+
         var data = [
             {
               x: x_axis,
@@ -192,14 +191,11 @@ function barchart_generator(graph_name, graph_info, id){
 
 
 // Code for scatterchart
-function scatterchart_generator(graph_name, graph_info){
+function scatterchart_generator(graph_name, graph_info, color){
 
     xy_axis = generate_x_y_axis(graph_info['count']);
     x_axis = xy_axis[0];
     y_axis = xy_axis[1];
-
-    //Generating color values
-    color = getRandomColor()
 
     var data = [
         {
@@ -273,14 +269,12 @@ function piechart_generator(graph_name, graph_info){
 }
 
 // Code for linechart
-function linechart_generator(graph_name, graph_info){
+function linechart_generator(graph_name, graph_info, color){
 
     xy_axis = generate_x_y_axis(graph_info['count']);
     x_axis = xy_axis[0];
     y_axis = xy_axis[1];
 
-    // Generating color values
-    color = getRandomColor();
     var data = [
         {
           x: x_axis,
