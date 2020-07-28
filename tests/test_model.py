@@ -25,6 +25,8 @@ def test_user_role_exists(mocker):
     exists = model.user_role_config('testUser')
     assert type(exists) == dict
     exists = model.user_role_config('testUer')
+    assert type(exists) is dict
+    exists = model.user_role_config('noUser')
     assert exists is False
 
 

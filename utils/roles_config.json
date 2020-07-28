@@ -2,7 +2,8 @@
 {
     "user roles":
         {
-            "testUser":"superuser"
+            "testUser":"superuser",
+            "noUser":"forbidden"
         },
 
     "project_visible":
