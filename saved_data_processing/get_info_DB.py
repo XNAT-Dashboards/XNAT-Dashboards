@@ -4,15 +4,15 @@ from saved_data_processing import data_formatter_DB
 class GetInfo:
 
     def __init__(
-            self, username, info, role, skip_project=[],
+            self, username, info, role, project_visible=[],
             resources=None, resources_bbrc=None):
 
         self.formatter_object = data_formatter_DB.Formatter(
             username)
-        if skip_project != []:
-            self.skip_project = skip_project[role]
+        if project_visible != []:
+            self.project_visible = project_visible[role]
         else:
-            self.skip_project = []
+            self.project_visible = []
 
         self.info_preprocessor(info)
         self.resources_preprocessor(resources, resources_bbrc)
@@ -30,19 +30,23 @@ class GetInfo:
         projects = []
 
         for project in projects_f:
-            if project['id'] not in self.skip_project:
+            if project['id'] in self.project_visible\
+                    or "*" in self.project_visible:
                 projects.append(project)
 
         for experiment in experiments_f:
-            if experiment['project'] not in self.skip_project:
+            if experiment['project'] in self.project_visible\
+                    or "*" in self.project_visible:
                 experiments.append(experiment)
 
         for scan in scans_f:
-            if scan['project'] not in self.skip_project:
+            if scan['project'] in self.project_visible\
+                    or "*" in self.project_visible:
                 scans.append(scan)
 
         for subject in subjects_f:
-            if subject['project'] not in self.skip_project:
+            if subject['project'] in self.project_visible\
+                    or "*" in self.project_visible:
                 subjects.append(subject)
 
         self.info = {}
@@ -60,11 +64,13 @@ class GetInfo:
         resources_bbrc_list = []
 
         for resource in resources['resources']:
-            if resource[0] not in self.skip_project:
+            if resource[0] not in self.project_visible\
+                    or "*" in self.project_visible:
                 resources_list.append(resource)
 
         for resource in resources_bbrc['resources']:
-            if resource[0] not in self.skip_project:
+            if resource[0] not in self.project_visible\
+                    or "*" in self.project_visible:
                 resources_bbrc_list.append(resource)
 
         self.resources['resources'] = resources_list
@@ -166,16 +172,16 @@ class GetInfoPP(GetInfo):
     def __init__(
             self,
             username,
-            info, project_id, role, skip_project=[],
+            info, project_id, role, project_visible=[],
             resources=None, resources_bbrc=None):
 
         self.formatter_object_per_project = data_formatter_DB.FormatterPP(
             username, project_id)
         self.info = info
-        if skip_project != []:
-            self.skip_project = skip_project[role]
+        if project_visible != []:
+            self.project_visible = project_visible[role]
         else:
-            self.skip_project = []
+            self.project_visible = []
 
         self.resources = resources
         self.username = username
@@ -222,6 +228,8 @@ class GetInfoPP(GetInfo):
         if experiments_details != 1:
             stats['Experiments'] = experiments_details['Number of Experiments']
             del experiments_details['Number of Experiments']
+            if 'Sessions types/Project' in experiments_details:
+                del experiments_details['Sessions types/Project']
 
         # Pre processing scans details
         scans_details = self.formatter_object_per_project.\
@@ -271,7 +279,10 @@ class GetInfoPP(GetInfo):
 
     def get_per_project_view(self):
 
-        if self.project_id in self.skip_project:
-            return None
-        else:
+        # Checks if the project should be visible to user with the role
+
+        if self.project_id in self.project_visible\
+                or "*" in self.project_visible:
             return self.__preprocessor_per_project()
+        else:
+            return None
