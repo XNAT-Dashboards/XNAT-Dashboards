@@ -569,13 +569,18 @@ class FormatterPP(Formatter):
         df_acq_insert_date['diff'] = df_acq_insert_date.apply(
             lambda x: self.dates_diff_calc(x['acq_date'], x['date']), axis=1)
 
-        df_diff = df_acq_insert_date[
-            df_acq_insert_date['diff'] != 'No Data']
+        df_diff = df_acq_insert_date
 
-        diff = df_diff[['ID', 'diff']].rename(
-            columns={'diff': 'count'}).set_index('ID').to_dict()
+        diff_test = df_diff[['ID', 'diff']].rename(
+           columns={'ID': 'count'})
+        per_df_series = diff_test.groupby('diff')['count'].apply(list)
+        per_df = diff_test.groupby('diff').count()
+        per_df['list'] = per_df_series
 
-        return diff
+        per_df = per_df.rename(columns={'diff': 'Difference in dates'})
+        per_df.index = per_df.index.astype(str) + ' days'
+
+        return per_df.to_dict()
 
     def dates_diff_calc(self, date_1, date_2):
         # Calculates difference between 2 dates
