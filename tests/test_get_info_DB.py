@@ -3,7 +3,7 @@ from saved_data_processing import get_info_DB
 
 def create_mocker(
     mocker, username, info, role,
-        skip_project=[], resources=None, resources_bbrc=None):
+        project_visible=[], resources=None, resources_bbrc=None):
 
     mocker.patch(
         'saved_data_processing.data_formatter_DB.Formatter.__init__',

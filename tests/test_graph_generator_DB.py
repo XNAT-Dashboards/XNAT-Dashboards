@@ -3,7 +3,7 @@ from saved_data_processing import graph_generator_DB
 
 def create_mocker(
     mocker, username, info, role,  graph_visibility, return_get_project_list,
-        skip_project=None, resources=None, resources_bbrc=None):
+        project_visible=None, resources=None, resources_bbrc=None):
 
     mocker.patch(
         'saved_data_processing.get_info_DB.GetInfo.__init__',
@@ -24,24 +24,24 @@ def create_mocker(
 def test_graph_preprocessor(mocker):
 
     info = {
-        "projects_graph": {"x1": "y1", "x2": "y2"},
-        "subjects_graph": {"x1": "y1", "x2": "y2"},
-        "experiments_graph": {"x1": "y1", "x2": "y2"},
-        "scans_graph": {"x1": "y1", "x2": "y2"}, "Stats": {}}
+        "Age Range": {"x1": "y1", "x2": "y2"},
+        "Gender": {"x1": "y1", "x2": "y2"},
+        "Handedness": {"x1": "y1", "x2": "y2"},
+        "Experiments/Project": {"x1": "y1", "x2": "y2"}, "Stats": {}}
 
     graph_object = create_mocker(
-        mocker, 'testUser', info, 'guest', ['p1'],
+        mocker, 'testUser', info, 'guest', ['*'],
         {'project_list': ['p1', 'p2'], 'project_list_ow_co_me': ['p3', 'p4']})
     assert type(graph_object.graph_pre_processor()) == dict
 
     graph_object = create_mocker(
-        mocker, 'testUser', info, 'guest', [],
+        mocker, 'testUser', info, 'guest', ["*"],
         {'project_list': [], 'project_list_ow_co_me': []})
 
     assert type(graph_object.graph_pre_processor()) == dict
 
     graph_object = create_mocker(
-        mocker, 'testUser', 1, 'guest', [],
+        mocker, 'testUser', 1, 'guest', ["*"],
         {'project_list': [], 'project_list_ow_co_me': []})
 
     assert graph_object.graph_pre_processor() == 1
@@ -50,13 +50,13 @@ def test_graph_preprocessor(mocker):
 def test_graph_generator(mocker):
 
     info = {
-        "projects_graph": {"x1": "y1", "x2": "y2"},
-        "subjects_graph": {"x1": "y1", "x2": "y2"},
-        "experiments_graph": {"x1": "y1", "x2": "y2"},
-        "scans_graph": {"x1": "y1", "x2": "y2"}, "Stats": {}}
+        "Age Range": {"x1": "y1", "x2": "y2"},
+        "Gender": {"x1": "y1", "x2": "y2"},
+        "Handedness": {"x1": "y1", "x2": "y2"},
+        "Experiments/Project": {"x1": "y1", "x2": "y2"}, "Stats": {}}
 
     graph_object = create_mocker(
-        mocker, 'testUser', info, 'guest', ['p1'],
+        mocker, 'testUser', info, 'guest', ["*"],
         {'project_list': ['p1', 'p2'], 'project_list_ow_co_me': ['p3', 'p4']})
 
     assert type(graph_object.graph_generator()) == list
@@ -64,7 +64,7 @@ def test_graph_generator(mocker):
     assert type(graph_object.graph_generator()[1]) == dict
 
     graph_object = create_mocker(
-        mocker, 'testUser', 1, 'guest', [],
+        mocker, 'testUser', 1, 'guest', ["*"],
         {'project_list': [], 'project_list_ow_co_me': []})
 
     assert graph_object.graph_generator() == 1
@@ -73,10 +73,10 @@ def test_graph_generator(mocker):
 def test_project_list_generator(mocker):
 
     info = {
-        "projects_graph": {"x1": "y1", "x2": "y2"},
-        "subjects_graph": {"x1": "y1", "x2": "y2"},
-        "experiments_graph": {"x1": "y1", "x2": "y2"},
-        "scans_graph": {"x1": "y1", "x2": "y2"}, "Stats": {}}
+        "Age Range": {"x1": "y1", "x2": "y2"},
+        "Gender": {"x1": "y1", "x2": "y2"},
+        "Handedness": {"x1": "y1", "x2": "y2"},
+        "Experiments/Project": {"x1": "y1", "x2": "y2"}, "Stats": {}}
 
     graph_object = create_mocker(
         mocker, 'testUser', info, 'guest', ['p1'],
@@ -88,12 +88,12 @@ def test_project_list_generator(mocker):
     assert type(project_list[1]) == list
 
     graph_object = create_mocker(
-        mocker, 'testUser', info, 'guest', [],
+        mocker, 'testUser', info, 'guest', ["*"],
         {'project_list': [], 'project_list_ow_co_me': []})
 
     assert graph_object.project_list_generator() == [[[]], [[]]]
 
     graph_object = create_mocker(
-        mocker, 'testUser', info, 'guest', [],
+        mocker, 'testUser', info, 'guest', ["*"],
         {'project_list': 1, 'project_list_ow_co_me': 1})
     assert graph_object.project_list_generator() == 1

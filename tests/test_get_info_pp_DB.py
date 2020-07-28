@@ -3,14 +3,15 @@ from saved_data_processing import get_info_DB
 
 def create_mocker(
     mocker, username, info, role,
-        skip_project=[], resources=None, resources_bbrc=None):
+        project_visible=['p1', 'p2', 'p3', 'p4'],
+        resources=None, resources_bbrc=None):
 
     mocker.patch(
         'saved_data_processing.data_formatter_DB.FormatterPP.__init__',
         return_value=None)
 
     info_object = get_info_DB.GetInfoPP(
-        username, info, 'p2', role, [], resources, resources_bbrc)
+        username, info, 'p2', role, project_visible, resources, resources_bbrc)
 
     return info_object
 
@@ -51,7 +52,7 @@ def test_info(mocker):
         return_value={"count": {}})
 
     info_object = create_mocker(
-        mocker, 'testUser', info, 'guest', [],
+        mocker, 'testUser', info, 'guest', {'guest': ['p1', 'p2', 'p3', 'p4']},
         resources={'resources': ['p1', 'res']},
         resources_bbrc={'resources': ['p3', 'res']})
 

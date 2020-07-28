@@ -4,7 +4,7 @@ from saved_data_processing import graph_generator_pp_DB
 def create_mocker(
         mocker, username, info, project_id, role,
         graph_visibility,
-        skip_project=None, resources=None, resources_bbrc=None):
+        project_visible=None, resources=None, resources_bbrc=None):
 
     mocker.patch(
         'saved_data_processing.get_info_DB.GetInfoPP.__init__',
@@ -22,10 +22,10 @@ def create_mocker(
 def test_graph_preprocessor(mocker):
 
     info = {
-        "projects_graph": {"x1": "y1", "x2": "y2"},
-        "subjects_graph": {"x1": "y1", "x2": "y2"},
-        "experiments_graph": {"x1": "y1", "x2": "y2"},
-        "scans_graph": {"x1": "y1", "x2": "y2"}, "Project details": {},
+        "Age Range": {"x1": "y1", "x2": "y2"},
+        "Gender": {"x1": "y1", "x2": "y2"},
+        "Handedness": {"x1": "y1", "x2": "y2"},
+        "Experiments/Project": {"x1": "y1", "x2": "y2"}, "Project details": {},
         "Stats": {}}
 
     graph_object = create_mocker(
@@ -42,10 +42,10 @@ def test_graph_preprocessor(mocker):
 def test_graph_generator(mocker):
 
     info = {
-        "projects_graph": {"x1": "y1", "x2": "y2"},
-        "subjects_graph": {"x1": "y1", "x2": "y2"},
-        "experiments_graph": {"x1": "y1", "x2": "y2"},
-        "scans_graph": {"x1": "y1", "x2": "y2"}, "Stats": {},
+        "Age Range": {"x1": "y1", "x2": "y2"},
+        "Gender": {"x1": "y1", "x2": "y2"},
+        "Handedness": {"x1": "y1", "x2": "y2"},
+        "Experiments/Project": {"x1": "y1", "x2": "y2"}, "Stats": {},
         "Project details": {}}
 
     graph_object = create_mocker(
