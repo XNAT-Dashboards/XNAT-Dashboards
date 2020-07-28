@@ -22,9 +22,12 @@ def user_role_config(username):
         config = json.load(json_file)
 
     if username in config['user roles']:
-        return config
+        if config['user roles'][username] == 'forbidden':
+            return False
+        else:
+            return config
     else:
-        return False
+        return config
 
 
 def load_users_data_pk(server):
