@@ -48,7 +48,7 @@ Create a json file with following format:
 - roles_config.json
     This file can be used to change roles configurations.
         Users can be added or removed.
-        Users roles can be changes.
+        Users roles can be changed.
         Adding projects for users which they will be able to access.
 ```
 
