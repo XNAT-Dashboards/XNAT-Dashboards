@@ -23,12 +23,8 @@ class GraphGenerator:
         html file
         '''
 
-        try:
-            with open('utils/graph_config.json') as json_file:
-                graph_type = json.load(json_file)['graph type']
-        except OSError:
-            print("graph_type.json file not found run graph_generator")
-            exit(1)
+        with open('utils/graph_config.json') as json_file:
+            self.graph_config = json.load(json_file)
 
         counter_id = 0
         final_json_dict = self.data
@@ -42,7 +38,12 @@ class GraphGenerator:
 
             final_json_dict[final_json]['id'] = counter_id
             counter_id = counter_id + 1
-            final_json_dict[final_json]['graph_type'] = graph_type[final_json]
+            final_json_dict[final_json]['graph_type'] =\
+                self.graph_config[final_json]['type']
+            final_json_dict[final_json]['graph descriptor'] =\
+                self.graph_config[final_json]['description']
+            final_json_dict[final_json]['color'] =\
+                self.graph_config[final_json]['color']
 
         '''
         Returns a nested dict with id and graph type added
