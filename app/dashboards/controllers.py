@@ -182,7 +182,11 @@ def stats_db():
                     config = model.user_role_config(username)
 
                     if config:
-                        role_exist = config['user roles'][username]
+                        if username in config['user roles']:
+                            role_exist = config['user roles'][username]
+                        else:
+                            role_exist = 'guest'
+
                         user_data = model.load_users_data_pk(server)
                         resources = model.load_resources_pk(server)
                         resources_bbrc = model.load_resources_bbrc_pk(
@@ -194,8 +198,7 @@ def stats_db():
                                     username,
                                     user_data['info'],
                                     role_exist,
-                                    config['graph visibility'],
-                                    config['skip project'],
+                                    config['project_visible'],
                                     resources,
                                     resources_bbrc)
 
@@ -235,7 +238,7 @@ def stats_db():
                     plotting_object = graph_generator_DB.GraphGenerator(
                         username,
                         users_data['info'],
-                        config['skip project'],
+                        config['project_visible'],
                         role_exist,
                         resources)
                     graph_data_stats = plotting_object.graph_generator()
@@ -311,8 +314,7 @@ def project_db(id):
 
     data_array = graph_generator_pp_DB.GraphGenerator(
         username, users_data['info'], id, role_exist,
-        config['graph visibility'], config['skip project'],
-        resources, resources_bbrc
+        config['project_visible'], resources, resources_bbrc
     ).graph_generator()
 
     if data_array is None:
