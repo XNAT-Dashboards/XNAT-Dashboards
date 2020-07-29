@@ -66,14 +66,3 @@ Pytest is used as a testing framework to run test
 
 - ``` pytest tests ```          (Without coverage)
 - ``` pytest --cov tests ```    (With coverage)
-
-To access the Central XNAT server a type.json file is already provided.
-
-## Access other XNAT server
-
-- Open graph_generator.py
-- In the last line add the credentials of your different server.
-- Use the following command to run graph generator if graph_type.json gets deleted ``` python generators/graph_generator.py ```
-- for each required input field type ```bar```,```pie```,```scatter```,```line```.
-- This will generate a graph_type.json file in utils directory.
-- Start the server using ```python3 run.py``
