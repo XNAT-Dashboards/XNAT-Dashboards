@@ -1,0 +1,16 @@
+
+{
+    "user roles":
+        {
+            "testUser":"superuser",
+            "noUser":"forbidden",
+            "asif":"admin"
+        },
+
+    "project_visible":
+        {
+            "guest":["testenv"],
+            "superuser":["ALFA_PLUS", "testenv"],
+            "admin":["*"]
+        }
+}

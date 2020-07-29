@@ -1,6 +1,6 @@
-import socket
 import pandas as pd
 import re
+from datetime import date
 
 
 class Formatter:
@@ -16,86 +16,12 @@ class Formatter:
             return projects
 
         projects_details = {}
-        projects_ims = {}
-        project_acccess = {}
-        mr_sessions_per_project = {}
-        ct_sessions_per_project = {}
-        pet_sessions_per_project = {}
-        ut_sessions_per_project = {}
 
-        access_list = []
-        access_none = []
-
-        for project in projects:
-            if project['project_access'] != '':
-                access_list.append([project['project_access'], project['id']])
-            else:
-                access_none.append(project['id'])
-
-        access_df = pd.DataFrame(access_list, columns=['access', 'count'])
-        access_df_series = access_df.groupby('access')['count'].apply(list)
-        access_final_df = access_df.groupby('access').count()
-        access_final_df['list'] = access_df_series
-        project_acccess = access_final_df.to_dict()
-        project_acccess['count'].update({'No Data': len(access_none)})
-        project_acccess['list'].update({'No Data': access_none})
-
-        projects_ims['CT Sessions'] = sum([int(project['proj_ct_count'])
-                                           for project in projects
-                                           if project['proj_ct_count'] != ''])
-        projects_ims['PET Sessions'] = sum([int(project['proj_pet_count'])
-                                            for project in projects
-                                            if project['proj_pet_count'] != ''
-                                            ])
-        projects_ims['MR Sessions'] = sum([int(project['proj_mr_count'])
-                                           for project in projects
-                                           if project['proj_mr_count'] != ''])
-        projects_ims['UT Sessions'] = sum([int(project['proj_ut_count'])
-                                           for project in projects
-                                           if project['proj_ut_count'] != ''])
-
-        for item in projects:
-
-            if item['proj_mr_count'] != '':
-                mr_sessions_per_project[item['id']] =\
-                    int(item['proj_mr_count'])
-            else:
-                mr_sessions_per_project[item['id']] = 0
-
-            if item['proj_pet_count'] != '':
-                pet_sessions_per_project[item['id']] =\
-                    int(item['proj_pet_count'])
-            else:
-                pet_sessions_per_project[item['id']] = 0
-
-            if item['proj_ct_count'] != '':
-                ct_sessions_per_project[item['id']] =\
-                    int(item['proj_ct_count'])
-            else:
-                ct_sessions_per_project[item['id']] = 0
-
-            if item['proj_ut_count'] != '':
-                ut_sessions_per_project[item['id']] =\
-                    int(item['proj_ut_count'])
-            else:
-                ut_sessions_per_project[item['id']] = 0
-
-        projects_sessions = {}
-
-        projects_sessions['MR Sessions/Project'] = mr_sessions_per_project
-        projects_sessions['PET Sessions/Project'] = pet_sessions_per_project
-        projects_sessions['CT Sessions/Project'] = ct_sessions_per_project
-        projects_sessions['UT Sessions/Project'] = ut_sessions_per_project
+        project_acccess = self.dict_generator_overview(
+            projects, 'project_access', 'id', 'access')
 
         projects_details['Number of Projects'] = len(projects)
-        projects_details['Imaging Sessions'] = {'count': projects_ims}
         projects_details['Projects Visibility'] = project_acccess
-        projects_details['Sessions types/Project'] =\
-            {'count': projects_sessions}
-
-        projects_details['Total Sessions'] = projects_ims['PET Sessions']\
-            + projects_ims['MR Sessions'] + projects_ims['UT Sessions']\
-            + projects_ims['CT Sessions']
 
         return projects_details
 
@@ -187,6 +113,11 @@ class Formatter:
         experiments_per_subject = self.dict_generator_per_view(
             experiments, 'subject_ID', 'ID', 'eps')
 
+        experiments_types_per_project = self.dict_generator_per_view_stacked(
+            experiments, 'project', 'xsiType', 'ID')
+
+        experiments_details['Sessions types/Project'] =\
+            experiments_types_per_project
         experiments_details['Experiments/Subject'] = experiments_per_subject
         experiments_details['Experiment Types'] = experiment_type
         experiments_details['Experiments/Project'] = experiments_per_project
@@ -236,10 +167,13 @@ class Formatter:
 
     def get_projects_details_specific(self, projects):
 
-        try:
-            if projects is None:
-                raise socket.error
-        except socket.error:
+        '''
+        This method reuturn 2 list
+        List of projects visible
+        List of project where user is owner, collab or member
+        '''
+
+        if projects is None:
             return 1
 
         project_list_owned_collab_member = []
@@ -261,10 +195,19 @@ class Formatter:
         list_data['project_list'] = project_list_all
         list_data['project_list_ow_co_me'] = project_list_owned_collab_member
 
+        '''
+        Return type is dict
+        '''
+
         return list_data
 
     def get_resources_details(
             self, resources=None, resources_bbrc=None, project_id=None):
+
+        '''
+        Returns details about resource for each session as well as
+        if bbrc resources exist then that resources details as well
+        '''
 
         if resources is None:
             return None
@@ -315,21 +258,80 @@ class Formatter:
         resource_type_ps = self.dict_generator_resources(
             df, 'label', 'session')
 
+        if resources_bbrc is None:
+
+            return {
+                'Resources/Project': resource_pp,
+                'Resource Types': resource_types}
+
         # Generating specifc resource type
+        df_usable_t1 = self.generate_resource_df(
+            resources_bbrc, 'HasUsableT1', 'has_passed')
+        df_con_acq_date = self.generate_resource_df(
+            resources_bbrc, 'IsAcquisitionDateConsistent', 'has_passed')
+
+        if project_id is not None:
+
+            try:
+
+                df_usable_t1 = df_usable_t1.groupby(
+                    'Project').get_group(project_id)
+                df_con_acq_date = df_con_acq_date.groupby(
+                    'Project').get_group(project_id)
+
+            except KeyError:
+
+                return -1
+
+        # Usable t1
+        usable_t1 = self.dict_generator_resources(
+            df_usable_t1, 'HasUsableT1', 'Session')
+
+        # consisten_acq_date
+        consistent_acq_date = self.dict_generator_resources(
+            df_con_acq_date, 'IsAcquisitionDateConsistent', 'Session')
+
+        # Archiving validator
+        archiving_valid = self.dict_generator_resources(
+            df_usable_t1, 'Archiving Valid', 'Session')
+
+        # Version Distribution
+        version = self.dict_generator_resources(
+            df_usable_t1, 'version', 'Session')
+
+        # BBRC resource exist
+        bbrc_exists = self.dict_generator_resources(
+            df_usable_t1, 'bbrc exists', 'Session')
+
+        return {'Resources/Project': resource_pp,
+                'Resource Types': resource_types, 'UsableT1': usable_t1,
+                'Archiving Validator': archiving_valid,
+                'Version Distribution': version, 'BBRC validator': bbrc_exists,
+                'Sessions/Resource type': resource_type_ps,
+                'Consistent Acquisition Date': consistent_acq_date}
+
+    def generate_resource_df(self, resources_bbrc, test, value):
+
+        '''
+        A method that generates dataframe.
+        This first takes bbrc resources and run test method on those
+        reources, these test are specific to
+        bbrc (Barcelona beta) pyxnat branch
+        '''
+
         resource_processing = []
 
-        for resource in resources_bbrc['resources_bbrc']:
+        for resource in resources_bbrc['resources']:
 
             if resource[3] != 0:
-                if 'HasUsableT1' in resource[3]:
+                if test in resource[3]:
                     resource_processing.append([
                         resource[0], resource[1], resource[2], 'Exists',
-                        resource[3]['HasUsableT1']['has_passed'],
-                        resource[3]['version']])
+                        resource[3]['version'], resource[3][test][value]])
                 else:
                     resource_processing.append([
                         resource[0], resource[1], resource[2], 'Not Exists',
-                        'No Data', resource[3]['version']])
+                        resource[3]['version'], 'No Data'])
             else:
                 resource_processing.append([
                     resource[0], resource[1], resource[2], 'Not Exists',
@@ -338,31 +340,19 @@ class Formatter:
         df = pd.DataFrame(
             resource_processing,
             columns=[
-                'Project', 'Session', 'bbrc exists', 'Archiving Valid',
-                'Has Usable T1', 'version'])
+                'Project', 'Session', 'bbrc exists',
+                'Archiving Valid', 'version', test])
 
-        # Usable t1
-        usable_t1 = self.dict_generator_resources(
-            df, 'Has Usable T1', 'Session')
-
-        # Archiving validator
-        archiving_valid = self.dict_generator_resources(
-            df, 'Archiving Valid', 'Session')
-
-        # Version Distribution
-        version = self.dict_generator_resources(df, 'version', 'Session')
-
-        # BBRC resource exist
-        bbrc_exists = self.dict_generator_resources(
-            df, 'bbrc exists', 'Session')
-
-        return {'Resources/Project': resource_pp,
-                'Resource Types': resource_types, 'UsableT1': usable_t1,
-                'Archiving Validator': archiving_valid,
-                'Version Distribution': version, 'BBRC validator': bbrc_exists,
-                'Sessions/Resource type': resource_type_ps}
+        return df
 
     def dict_generator_resources(self, df, x_name, y_name):
+
+        '''
+        Generate dict format from dataframe that is used by plotly,
+        takes resources df as input and returns dict
+        x_name denotes the property that will be plotted on x axis
+        and y_name which will be plotted on y axis
+        '''
 
         data = df[df[y_name] != 'No Data'][[
             x_name, y_name]]
@@ -373,10 +363,24 @@ class Formatter:
         data['list'] = data_df
         data_dict = data.to_dict()
 
+        '''
+        {
+            count:{x:y},
+            list:{x:y_list}
+        }
+        '''
+
         return data_dict
 
     def dict_generator_overview(
             self, data, property_x, property_y, x_new, extra=None):
+
+        '''
+        Generate dict format that is used by plotly takes, data like
+        project details, scan, experiments, subject as field
+        property_x denotes the property that will be plotted on x axis
+        and property y which will be plotted on y axis
+        '''
 
         property_list = []
         property_none = []
@@ -402,13 +406,29 @@ class Formatter:
         property_final_df = property_df.groupby(x_new).count()
         property_final_df['list'] = property_df_series
         property_dict = property_final_df.to_dict()
-        property_dict['count'].update({'No Data': len(property_none)})
-        property_dict['list'].update({'No Data': property_none})
+
+        if len(property_none) != 0:
+            property_dict['count'].update({'No Data': len(property_none)})
+            property_dict['list'].update({'No Data': property_none})
+
+        '''
+        {
+            count:{x:y},
+            list:{x:y_list}
+        }
+        '''
 
         return property_dict
 
     def dict_generator_per_view(
             self, data, property_x, property_y, x_new):
+
+        '''
+        Generate dict format that is used by plotly for per project view,
+        data like project details, scan, experiments, subject as field
+        property_x denotes the property that will be plotted on x axis
+        and property y which will be plotted on y axis
+        '''
 
         per_list = []
 
@@ -422,7 +442,72 @@ class Formatter:
 
         per_view = per_df.to_dict()
 
+        '''
+        {
+            count:{x:y},
+            list:{x:y_list}
+        }
+        '''
+
         return per_view
+
+    def dict_generator_per_view_stacked(
+            self, data, property_x, property_y, property_z):
+
+        '''
+        Generate dict format that is used by plotly for stacked graphs view,
+        data like project details, scan, experiments, subject as field
+        example:
+        Graph Session types per project:
+        property_x = project
+        property_y = xsiType
+        property_z = ID
+
+        x_axis is project, y are the stacked count of property y based
+        on property_z
+        '''
+
+        per_list = []
+
+        for item in data:
+            per_list.append(
+                [item[property_x], item[property_y], item[property_z]])
+
+        per_df = pd.DataFrame(
+            per_list, columns=[property_x, property_y, property_z])
+
+        per_df_series = per_df.groupby(
+            [property_x, property_y])[property_z].apply(list)
+
+        per_df = per_df.groupby([property_x, property_y]).count()
+        per_df['list'] = per_df_series
+
+        dict_tupled = per_df.to_dict()
+
+        dict_output_list = {}
+        for item in dict_tupled['list']:
+            dict_output_list[item[0]] = {}
+
+        for item in dict_tupled['list']:
+            dict_output_list[
+                item[0]].update({item[1]: dict_tupled['list'][item]})
+
+        dict_output_count = {}
+
+        for item in dict_tupled[property_z]:
+            dict_output_count[item[0]] = {}
+
+        for item in dict_tupled[property_z]:
+            dict_output_count[
+                item[0]].update({item[1]: dict_tupled[property_z][item]})
+
+        '''
+        {
+            count:{prop_x:{prop_y:prop_z_count}},
+            list:{prop_x:{prop_y:prop_z_list}}
+        }
+        '''
+        return {'count': dict_output_count, 'list': dict_output_list}
 
 
 class FormatterPP(Formatter):
@@ -435,6 +520,8 @@ class FormatterPP(Formatter):
 
     def get_projects_details(self, projects):
 
+        # Returns data for per project view
+
         project_dict = {}
 
         for project in projects:
@@ -443,46 +530,6 @@ class FormatterPP(Formatter):
                 project_dict = project
 
         project_details = {}
-
-        project_details['Total Sessions'] = 0
-        project_details['Imaging Sessions'] = {}
-        counter_session = {'count': {}}
-
-        if project_dict['proj_mr_count'] != '':
-            counter_session['count'].update({
-                'MR Sessions': int(project_dict['proj_mr_count'])})
-        else:
-            counter_session['count'].update({
-                'MR Sessions': 0})
-
-        if project_dict['proj_pet_count'] != '':
-            counter_session['count'].update({
-                'PET Sessions': int(project_dict['proj_mr_count'])})
-        else:
-            counter_session['count'].update({
-                'PET Sessions': 0})
-
-        if project_dict['proj_ct_count'] != '':
-            counter_session['count'].update({
-                'CT Sessions': int(project_dict['proj_mr_count'])})
-        else:
-            counter_session['count'].update({
-                'CT Sessions': 0})
-
-        if project_dict['proj_ut_count'] != '':
-            counter_session['count'].update({
-                'UT Sessions': int(project_dict['proj_mr_count'])})
-        else:
-            counter_session['count'].update({
-                'UT Sessions': 0})
-
-        project_details['Total Sessions'] =\
-            counter_session['count']['UT Sessions'] +\
-            counter_session['count']['PET Sessions'] +\
-            counter_session['count']['CT Sessions'] +\
-            counter_session['count']['MR Sessions']
-
-        project_details['Imaging Sessions'].update(counter_session)
 
         project_details['Owner(s)'] = project_dict['project_owners']\
             .split('<br/>')
@@ -524,8 +571,10 @@ class FormatterPP(Formatter):
             if subject['project'] == self.project_id:
                 subjects_data.append(subject)
 
+        # Using code from the parent class for processing
         subjects_details = super().get_subjects_details(subjects_data)
         del subjects_details['Subjects/Project']
+        # Delete project information
 
         return subjects_details
 
@@ -537,8 +586,10 @@ class FormatterPP(Formatter):
             if experiment['project'] == self.project_id:
                 experiments.append(experiment)
 
+        # Using code from the parent class for processing
         experiments_details = super().get_experiments_details(experiments)
         del experiments_details['Experiments/Project']
+        # Delete project information
 
         return experiments_details
 
@@ -550,8 +601,10 @@ class FormatterPP(Formatter):
             if scan['project'] == self.project_id:
                 scans.append(scan)
 
+        # Using code from the parent class for processing
         scans_details = super().get_scans_details(scans)
         del scans_details['Scans/Project']
+        # Delete project information
 
         return scans_details
 
@@ -560,9 +613,78 @@ class FormatterPP(Formatter):
         if resources is None:
             return None
 
+        # Using code from the parent class for processing
         resources_out = super().get_resources_details(
             resources, resources_bbrc, self.project_id)
 
-        del resources_out['Resources/Project']
+        if type(resources_out) != int and 'Resources/Project' in resources_out:
+            del resources_out['Resources/Project']
 
         return resources_out
+
+    def diff_dates(self, resources_bbrc, experiments_data):
+
+        # Create dict format for graph of difference in dates
+        experiments = []
+
+        for experiment in experiments_data:
+            if experiment['project'] == self.project_id:
+                experiments.append(experiment)
+
+        if resources_bbrc is None:
+            return None
+
+        df = super().generate_resource_df(
+            resources_bbrc, 'IsAcquisitionDateConsistent', 'data')
+
+        df = df.groupby(['Project']).get_group(self.project_id)
+        df_exp = pd.DataFrame(experiments)
+
+        merged_inner = pd.merge(
+            left=df, right=df_exp, left_on='Session', right_on='ID')
+
+        dates_acq_list = []
+        dates_acq_dict = merged_inner[
+            ['IsAcquisitionDateConsistent']].to_dict()[
+                'IsAcquisitionDateConsistent']
+
+        for dates in dates_acq_dict:
+            if 'session_date' in dates_acq_dict[dates]:
+                dates_acq_list.append(dates_acq_dict[dates]['session_date'])
+            else:
+                dates_acq_list.append(dates_acq_dict[dates])
+
+        merged_inner['acq_date'] = dates_acq_list
+
+        df_acq_insert_date = merged_inner[['ID', 'acq_date', 'date']]
+
+        df_acq_insert_date['diff'] = df_acq_insert_date.apply(
+            lambda x: self.dates_diff_calc(x['acq_date'], x['date']), axis=1)
+
+        df_diff = df_acq_insert_date
+
+        diff_test = df_diff[['ID', 'diff']].rename(
+           columns={'ID': 'count'})
+        per_df_series = diff_test.groupby('diff')['count'].apply(list)
+        per_df = diff_test.groupby('diff').count()
+        per_df['list'] = per_df_series
+
+        per_df = per_df.rename(columns={'diff': 'Difference in dates'})
+        per_df.index = per_df.index.astype(str) + ' days'
+
+        return per_df.to_dict()
+
+    def dates_diff_calc(self, date_1, date_2):
+
+        # Calculates difference between 2 dates
+        if date_1 == 'No Data':
+            return 'No Data'
+        else:
+            date_1_l = list(map(int, date_1.split('-')))
+            date_2_l = list(map(int, date_2.split('-')))
+
+            diff = date(
+                date_1_l[0], date_1_l[1], date_1_l[2])\
+                - date(date_2_l[0], date_2_l[1], date_2_l[2])
+
+            return diff.days

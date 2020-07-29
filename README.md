@@ -12,7 +12,7 @@ This project is about creating a responsive dashboard framework for extensive ex
 - Username and Password for that xnat instance.
 - If no local instance available you can register at [CENTRAL](https://central.xnat.org)
 - Graph type assignment file present in util/graph_type.json
-- [MongoDB Instance](https://www.mongodb.com/)
+- [MongoDB Instance](https://www.mongodb.com/) or save data using pickle
 
 ## Getting Started
 
@@ -24,16 +24,33 @@ To run this project locally for testing or development
 
 ### Installing
 
+- ```Create a virtual environment```
 - ```source env/bin/activate```
 - ```pip3 install -r requirements.txt```
-- ```Create a mongodb acccount online```
-- ```Create a database xnat_dashboards```
-- ```Create 2 collections users and users data```
-- ```Click on connect to get the url details for shell or python```
-- ```Add the following code in config.py```
-- ```MONGO_URI=<mongodb+srv://urldetails>```
-- ```MONGO_DB=<dbname>```
-- ```Change username, password and dbname as per instance```
+```
+Create a json file with following format:
+{
+    'username': 'username',
+    'password': 'password',
+    'server': 'server url',
+    'ssl': 'Empty if you want to verify remote host'
+}
+```
+- ```python download_resources.py -p <Relative path to the above JSON file>``` to download data.
+- ``` 3 configuration files are provided with following functionalities: ```
+```
+- graph_config.json
+    This file can be used to change graphs configuration.
+        User can change graphs types.
+        What roles can view which graph can be changed.
+        Change the tooltip information for each graph.
+        Default color are assigned to each graph which can be changed as per need.
+- roles_config.json
+    This file can be used to change roles configurations.
+        Users can be added or removed.
+        Users roles can be changed.
+        Adding projects for users which they will be able to access.
+```
 
 ### Starting the server
 

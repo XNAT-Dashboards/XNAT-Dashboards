@@ -12,7 +12,7 @@ class Fetcher:
     SELECTOR = None
 
     # Initializing the central interface object in the constructor
-    def __init__(self, name, password, server, ssl):
+    def __init__(self, name, password, server, ssl=False):
 
         SELECTOR = pyxnat.Interface(
             server=server,
@@ -86,7 +86,7 @@ class Fetcher:
         try:
             experiments = self.SELECTOR.array.experiments(
                 experiment_type='',
-                columns=['subject_ID']).data
+                columns=['subject_ID', 'date']).data
         except pyxnat_errors.DatabaseError as dbe:
             if str(dbe).find('500') != -1:
                 # 500 represent error in url or uri

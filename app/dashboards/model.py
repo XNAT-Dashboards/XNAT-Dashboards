@@ -1,64 +1,78 @@
 import pickle
 import json
+from pyxnat_interface import data_fetcher
 
 
-def load_user_pk(username):
+# Function to check if user exist
+def user_exists(username, password, server, ssl):
 
-    try:
-        with open('pickles/users/' + username + '.pickle', 'rb') as handle:
-            user = pickle.load(handle)
-    except FileNotFoundError:
-        return None
+    exists = data_fetcher.Fetcher(
+        username, password, server, ssl).get_projects_details()
 
-    return user
+    # If user exists then no int will be returned
+    if type(exists) == int:
+        exists = []
+    else:
+        exists = 1
+
+    return exists
 
 
-def load_users_data_pk(username):
+# Get user role config file
+def user_role_config(username):
+
+    with open('utils/roles_config.json') as json_file:
+        config = json.load(json_file)
+
+    # If user role exist
+    if username in config['user roles']:
+        if config['user roles'][username] == 'forbidden':
+            return False
+        else:  # If user role is forbidden then return False
+            return config
+    else:  # Default user as guets will be returned
+        return config
+
+
+def load_users_data_pk(server):
 
     try:
         with open(
-                'pickles/users_data/' + username + '.pickle', 'rb') as handle:
+                'pickles/users_data/general.pickle', 'rb') as handle:
             user_data = pickle.load(handle)
 
+        if user_data['server'] != server:
+            return None
     except FileNotFoundError:
         return None
 
     return user_data
 
 
-def load_resources_pk(username):
+def load_resources_pk(server):
 
     try:
-        with open('pickles/resources/' + username + '.pickle', 'rb') as handle:
+        with open('pickles/resources/general.pickle', 'rb') as handle:
             resources = pickle.load(handle)
-
+        if resources['server'] != server:
+            return None
     except FileNotFoundError:
         return None
 
     return resources
 
 
-def load_resources_bbrc_pk(username):
+def load_resources_bbrc_pk(server):
 
     try:
         with open(
-                'pickles/resources/' + username + 'bbrc.pickle',
+                'pickles/resources/generalbbrc.pickle',
                 'rb') as handle:
-            resources_bbrc = pickle.load(handle)
 
+            resources_bbrc = pickle.load(handle)
+        if resources_bbrc['server'] != server:
+            return None
     except FileNotFoundError:
         return None
 
     return resources_bbrc
-
-
-def graph_descriptor():
-
-    try:
-        with open('utils/graph_descriptor.json') as json_file:
-            descriptor = json.load(json_file)
-    except OSError:
-        print("graph_type.json file not found run graph_generator")
-        exit(1)
-
-    return descriptor

@@ -3,12 +3,78 @@ from saved_data_processing import data_formatter_DB
 
 class GetInfo:
 
-    def __init__(self, username, info, resources=None, resources_bbrc=None):
+    def __init__(
+            self, username, info, role, project_visible=[],
+            resources=None, resources_bbrc=None):
 
-        self.formatter_object = data_formatter_DB.Formatter(username)
-        self.info = info
-        self.resources = resources
-        self.resources_bbrc = resources_bbrc
+        self.formatter_object = data_formatter_DB.Formatter(
+            username)
+        if project_visible != []:
+            self.project_visible = project_visible[role]
+        else:
+            self.project_visible = []
+
+        self.info_preprocessor(info)
+        self.resources_preprocessor(resources, resources_bbrc)
+
+    def info_preprocessor(self, info_f):
+
+        projects_f = info_f['projects']
+        subjects_f = info_f['subjects']
+        experiments_f = info_f['experiments']
+        scans_f = info_f['scans']
+
+        scans = []
+        experiments = []
+        subjects = []
+        projects = []
+
+        for project in projects_f:
+            if project['id'] in self.project_visible\
+                    or "*" in self.project_visible:
+                projects.append(project)
+
+        for experiment in experiments_f:
+            if experiment['project'] in self.project_visible\
+                    or "*" in self.project_visible:
+                experiments.append(experiment)
+
+        for scan in scans_f:
+            if scan['project'] in self.project_visible\
+                    or "*" in self.project_visible:
+                scans.append(scan)
+
+        for subject in subjects_f:
+            if subject['project'] in self.project_visible\
+                    or "*" in self.project_visible:
+                subjects.append(subject)
+
+        self.info = {}
+
+        self.info['projects'] = projects
+        self.info['subjects'] = subjects
+        self.info['experiments'] = experiments
+        self.info['scans'] = scans
+
+    def resources_preprocessor(self, resources, resources_bbrc):
+
+        self.resources = {}
+        self.resources_bbrc = {}
+        resources_list = []
+        resources_bbrc_list = []
+
+        for resource in resources['resources']:
+            if resource[0] not in self.project_visible\
+                    or "*" in self.project_visible:
+                resources_list.append(resource)
+
+        for resource in resources_bbrc['resources']:
+            if resource[0] not in self.project_visible\
+                    or "*" in self.project_visible:
+                resources_bbrc_list.append(resource)
+
+        self.resources['resources'] = resources_list
+        self.resources_bbrc['resources'] = resources_bbrc_list
 
     def __preprocessor(self):
 
@@ -38,9 +104,7 @@ class GetInfo:
         # not go further
         if type(projects_details) != int:
             stats['Projects'] = projects_details['Number of Projects']
-            sessionDetails = projects_details['Total Sessions']
             del projects_details['Number of Projects']
-            del projects_details['Total Sessions']
         else:
             return projects_details
 
@@ -58,8 +122,6 @@ class GetInfo:
         if experiments_details != 1:
             stats['Experiments'] = experiments_details['Number of Experiments']
             del experiments_details['Number of Experiments']
-
-        stats['Sessions'] = sessionDetails
 
         # Pre processing scans details
         scans_details = self.formatter_object.get_scans_details(
@@ -86,10 +148,14 @@ class GetInfo:
         '''
         returns a nested dict
         {
-            Graph1_name : { x_axis_values, y_axis_values},
-            Graph2_name : { x_axis_values, y_axis_values},
-            Graph3_name : { x_axis_values, y_axis_values},
-            Graph4_name : { x_axis_values, y_axis_values},
+            Graph1_name : { count:{x_axis_values, y_axis_values},
+                            list:{x_axis_values, y_axis_values}},
+            Graph2_name : { count:{x_axis_values, y_axis_values},
+                            list:{x_axis_values, y_axis_values}},
+            Graph3_name : { count:{x_axis_values, y_axis_values},
+                            list:{x_axis_values, y_axis_values}},
+            Graph4_name : { count:{x_axis_values, y_axis_values},
+                            list:{x_axis_values, y_axis_values}},
         }
         '''
 
@@ -110,11 +176,17 @@ class GetInfoPP(GetInfo):
     def __init__(
             self,
             username,
-            info, project_id, resources=None, resources_bbrc=None):
+            info, project_id, role, project_visible=[],
+            resources=None, resources_bbrc=None):
 
         self.formatter_object_per_project = data_formatter_DB.FormatterPP(
             username, project_id)
         self.info = info
+        if project_visible != []:
+            self.project_visible = project_visible[role]
+        else:
+            self.project_visible = []
+
         self.resources = resources
         self.username = username
         self.project_id = project_id
@@ -145,14 +217,6 @@ class GetInfoPP(GetInfo):
         projects_details = self.formatter_object_per_project.\
             get_projects_details(self.info['projects'])
 
-        # If some error in connection 1 will be returned and we will
-        # not go further
-        if type(projects_details) != int:
-            sessionDetails = projects_details['Total Sessions']
-            del projects_details['Total Sessions']
-        else:
-            return projects_details
-
         # Pre processing for subject details required
         subjects_details = self.formatter_object_per_project.\
             get_subjects_details(self.info['subjects'])
@@ -168,8 +232,8 @@ class GetInfoPP(GetInfo):
         if experiments_details != 1:
             stats['Experiments'] = experiments_details['Number of Experiments']
             del experiments_details['Number of Experiments']
-
-        stats['Sessions'] = sessionDetails
+            if 'Sessions types/Project' in experiments_details:
+                del experiments_details['Sessions types/Project']
 
         # Pre processing scans details
         scans_details = self.formatter_object_per_project.\
@@ -181,9 +245,6 @@ class GetInfoPP(GetInfo):
 
         stat_final = {'Stats': stats}
 
-        final_json_dict.update({
-            'Imaging Sessions': projects_details['Imaging Sessions']})
-        del projects_details['Imaging Sessions']
         final_json_dict.update({'Project details': projects_details})
         final_json_dict.update(subjects_details)
         final_json_dict.update(experiments_details)
@@ -197,13 +258,24 @@ class GetInfoPP(GetInfo):
 
             final_json_dict.update(resources)
 
+        diff_dates = self.formatter_object_per_project.diff_dates(
+            self.resources_bbrc, self.info['experiments'])
+
+        if diff_dates is not None and diff_dates['count'] != {}:
+
+            final_json_dict.update({'Dates Diff': diff_dates})
+
         '''
         returns a nested dict
         {
-            Graph1_name : { x_axis_values, y_axis_values},
-            Graph2_name : { x_axis_values, y_axis_values},
-            Graph3_name : { x_axis_values, y_axis_values},
-            Graph4_name : { x_axis_values, y_axis_values},
+            Graph1_name : { count:{x_axis_values: y_axis_values},
+                            list:{x_axis_values: y_list} },
+            Graph2_name : { count:{x_axis_values: y_axis_values},
+                            list:{x_axis_values: y_list} },
+            Graph3_name : { count:{x_axis_values: y_axis_values},
+                            list:{x_axis_values: y_list} },
+            Graph4_name : { count:{x_axis_values: y_axis_values},
+                            list:{x_axis_values: y_list} },
         }
         '''
 
@@ -211,4 +283,10 @@ class GetInfoPP(GetInfo):
 
     def get_per_project_view(self):
 
-        return self.__preprocessor_per_project()
+        # Checks if the project should be visible to user with the role
+
+        if self.project_id in self.project_visible\
+                or "*" in self.project_visible:
+            return self.__preprocessor_per_project()
+        else:
+            return None

@@ -13,37 +13,6 @@ def test_login_db():
     assert respone_get.status_code == 200
 
 
-def test_register_db():
-
-    response_get = app.test_client().get('auth/db/register/').status_code
-    assert response_get == 200
-
-    data_post_register_present = dict(username='testUser',
-                                      password='testPassword',
-                                      server='https://central.xnat.org',
-                                      ssl=False,
-                                      DB=True)
-
-    resposne_post = app.test_client().post('auth/db/register/',
-                                           follow_redirects=True,
-                                           data=data_post_register_present
-                                           )
-
-    data_post_register_present_pickle = dict(username='testUser',
-                                             password='testPassword',
-                                             server='https://central.xnat.org',
-                                             ssl=False,
-                                             DB=False)
-
-    resposne_post_pickle = app.test_client().post(
-        'auth/db/register/',
-        follow_redirects=True,
-        data=data_post_register_present_pickle).status_code
-
-    assert resposne_post_pickle == 200
-    assert resposne_post.status_code == 200
-
-
 def test_dashboard():
 
     data_correct = dict(username='testUser',
@@ -98,39 +67,36 @@ def test_home_redirect():
     response_post == 200
 
 
-def test_register_userexist():
+def test_dashboard_db(mocker):
 
-    data_post_register_present = dict(username='testUser',
-                                      password='testPassword',
-                                      server='https://central.xnat.org',
-                                      ssl=False,
-                                      DB=True)
+    mocker.patch(
+        'saved_data_processing.graph_generator_DB.GraphGenerator.__init__',
+        return_value=None)
 
-    response_post_register = app.test_client().post(
-        'auth/db/register/',
-        follow_redirects=True,
-        data=data_post_register_present)
+    mocker.patch(
+        'saved_data_processing.graph_generator_DB.'
+        'GraphGenerator.graph_generator',
+        return_value=[[], []])
 
-    data_post_register_present_pk = dict(
-        username='testUser',
-        password='testPassword',
-        server='https://central.xnat.org',
-        ssl=False,
-        DB=False)
+    mocker.patch(
+        'saved_data_processing.graph_generator_DB.'
+        'GraphGenerator.project_list_generator',
+        return_value=[[], []])
 
-    response_post_register_pk = app.test_client().post(
-        'auth/db/register/',
-        follow_redirects=True,
-        data=data_post_register_present_pk)
+    mocker.patch(
+        'saved_data_processing.graph_generator_pp_DB.'
+        'GraphGenerator.__init__',
+        return_value=None)
 
-    assert response_post_register_pk.status_code == 200
-    assert response_post_register.status_code == 200
-
-
-def test_dashboard_db():
+    mocker.patch(
+        'saved_data_processing.graph_generator_pp_DB.'
+        'GraphGenerator.graph_generator',
+        return_value=None)
 
     data_post_login_dash_present = dict(username='testUser',
                                         password='testPassword',
+                                        server='https://central.xnat.org',
+                                        ssl=False,
                                         DB=True)
 
     response_post = app.test_client().post('dashboards/db/stats/',
@@ -139,7 +105,9 @@ def test_dashboard_db():
 
     data_post_login_dash_present_pk = dict(username='testUser',
                                            password='testPassword',
-                                           DB=False)
+                                           server='https://central.xnat.org',
+                                           ssl=False,
+                                           DB=True)
 
     response_post_pk = app.test_client().post(
         'dashboards/db/stats/',

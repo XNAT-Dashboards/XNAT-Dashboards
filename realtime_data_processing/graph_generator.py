@@ -26,30 +26,6 @@ class GraphGenerator:
                 self.project_list_ow_co_me = projects_data[
                     'project_list_ow_co_me']
 
-    def graph_type_generator(self):
-
-        '''
-        This method create the graph type that will be needed by plotly
-        This method creates a json file which have the graphy type with
-        corresponding graph title
-        '''
-
-        data = self.data
-        dict_output = {}
-
-        for json_dict in data:
-            dict_output[json_dict] =\
-                input(
-                    "Enter the graph type for graph name " + json_dict + ": ")
-
-        graph_type = json.dumps(
-            dict_output,
-            default=lambda o: o.__dict__, indent=2)
-
-        f = open("utils/graph_type.json", "w")
-        f.write(graph_type)
-        f.close()
-
     def graph_pre_processor(self):
 
         '''
@@ -58,12 +34,8 @@ class GraphGenerator:
         html file
         '''
 
-        try:
-            with open('utils/graph_type.json') as json_file:
-                graph_type = json.load(json_file)
-        except OSError:
-            print("graph_type.json file not found run graph_generator")
-            exit(1)
+        with open('utils/graph_config.json') as json_file:
+            self.graph_config = json.load(json_file)
 
         counter_id = 0
 
@@ -77,7 +49,12 @@ class GraphGenerator:
                 continue
             final_json_dict[final_json]['id'] = counter_id
             counter_id = counter_id + 1
-            final_json_dict[final_json]['graph_type'] = graph_type[final_json]
+            final_json_dict[final_json]['graph_type'] =\
+                self.graph_config[final_json]['type']
+            final_json_dict[final_json]['graph descriptor'] =\
+                self.graph_config[final_json]['description']
+            final_json_dict[final_json]['color'] =\
+                self.graph_config[final_json]['color']
 
         '''
         Returns a nested dict with id and graph type added
@@ -201,14 +178,3 @@ class GraphGenerator:
             ]
         '''
         return [array_2d, array_2d_ow_co_me]
-
-
-if __name__ == "__main__":
-    '''
-    This will run and create the graph_type.json file
-    '''
-    graph_object = GraphGenerator('testUser',
-                                  'testPassword',
-                                  'https://central.xnat.org',
-                                  ssl=False)
-    graph_object.graph_type_generator()

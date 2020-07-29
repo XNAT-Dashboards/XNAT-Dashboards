@@ -47,29 +47,27 @@ function chart_generator(json){
         graph_name = g_name;
         graph_info = json[g_name];
         graph_type = graph_info['graph_type'];
+        id = graph_info['id'];
+        description = graph_info['graph descriptor'];
+        color = graph_info['color'];
+
+        delete graph_info['color'];
+        delete graph_info['graph_descriptor'];
+        delete graph_info['graph_type'];
+        delete graph_info['id'];
     }
+
+    generate_text(id, description);
 
     // Checks the type of chart to be prepared
     if(graph_type == "pie"){
-        delete graph_info['graph_type'];
-        id = graph_info['id'];
-        delete graph_info['id'];
         piechart_generator(graph_name, graph_info, id);
     }else if(graph_type == 'scatter'){
-        delete graph_info['graph_type']
-        id = graph_info['id'];
-        delete graph_info['id'];
-        scatterchart_generator(graph_name, graph_info, id);
+        scatterchart_generator(graph_name, graph_info, id, color);
     }else if(graph_type == 'bar'){
-        id = graph_info['id'];
-        delete graph_info['graph_type'];
-        delete graph_info['id'];
-        barchart_generator(graph_name, graph_info, id);
+        barchart_generator(graph_name, graph_info, id, color);
     }else if(graph_type == 'line'){
-        id = graph_info['id'];
-        delete graph_info['graph_type'];
-        delete graph_info['id'];
-        linechart_generator(graph_name, graph_info, id);
+        linechart_generator(graph_name, graph_info, id, color);
     }
     
 }  
@@ -89,31 +87,54 @@ function getRandomColor() {
 }
 
 // Code for barchart
-function barchart_generator(graph_name, graph_info, id){
+function barchart_generator(graph_name, graph_info, id, color){
 
     if(stack_count[graph_name]){
         
-        data = [];
-        for (gi in graph_info['count']){
+        data = []
 
-            xy_axis = generate_x_y_axis(graph_info['count'][gi]);
-            x_axis = xy_axis[0];
-            y_axis = xy_axis[1];
+        x_axis = []
+        for(x in graph_info['count']){
+            x_axis.push(x);
+        }
+
+        differ_keys = []
+
+        for(x in graph_info['count']){
+            for(y in graph_info['count'][x]){
+                if(differ_keys.includes(y)){
+                    continue;
+                }else{
+                    differ_keys.push(y);
+                }
+            }
+        }
+
+        for(i=0; i<differ_keys.length; i++){
+            y_axis = []
+            for(x in graph_info['count']){
+                if(differ_keys[i] in graph_info['count'][x]){
+                    y_axis.push(graph_info['count'][x][differ_keys[i]]);
+                }else{
+                    y_axis.push(0);
+                }
+            }
 
             trace = {};
             color = getRandomColor();
             trace = {
                 x: x_axis,
                 y: y_axis,
-                name: gi,
+                name: differ_keys[i],
                 type: 'bar',
                 marker: {
-                  color: color // Adding color values
+                color: color // Adding color values
                 }
-              };
-              data.push(trace);
-              
+            };
+            data.push(trace);
         }
+
+
 
     }else{
 
@@ -121,8 +142,6 @@ function barchart_generator(graph_name, graph_info, id){
         x_axis = xy_axis[0];
         y_axis = xy_axis[1];
 
-        // Generating color values
-        color = getRandomColor();
         var data = [
             {
               x: x_axis,
@@ -163,19 +182,20 @@ function barchart_generator(graph_name, graph_info, id){
     Plotly.newPlot('graph_body'+id, data, layout, config);
     myDiv = document.getElementById('graph_body'+id);
 
-    drill_down(myDiv, graph_info, graph_name);
+    if(stack_count[graph_name]){
+        drill_down_stacked(myDiv, graph_info, graph_name)
+    }else{
+        drill_down(myDiv, graph_info, graph_name);
+    }
 }
 
 
 // Code for scatterchart
-function scatterchart_generator(graph_name, graph_info){
+function scatterchart_generator(graph_name, graph_info, color){
 
     xy_axis = generate_x_y_axis(graph_info['count']);
     x_axis = xy_axis[0];
     y_axis = xy_axis[1];
-
-    //Generating color values
-    color = getRandomColor()
 
     var data = [
         {
@@ -205,7 +225,6 @@ function scatterchart_generator(graph_name, graph_info){
 function piechart_generator(graph_name, graph_info){
     x_axis = [];
     y_axis = [];
-
     for (x in graph_info['count']){
 
             x_axis.push(x);
@@ -250,14 +269,12 @@ function piechart_generator(graph_name, graph_info){
 }
 
 // Code for linechart
-function linechart_generator(graph_name, graph_info){
+function linechart_generator(graph_name, graph_info, color){
 
     xy_axis = generate_x_y_axis(graph_info['count']);
     x_axis = xy_axis[0];
     y_axis = xy_axis[1];
 
-    // Generating color values
-    color = getRandomColor();
     var data = [
         {
           x: x_axis,
@@ -330,6 +347,35 @@ function drill_down(myDiv, graph_info, graph_name){
     });
 }
 
+function drill_down_stacked(myDiv, graph_info, graph_name){
+
+    myDiv.on('plotly_click', function(data){
+        if('list' in graph_info){
+
+            html_output = '';
+            title = '';
+
+            lists_output = graph_info['list'][data['points'][0]['x']];
+
+            $('#drillDown').modal('toggle');
+
+            for(i in lists_output){
+                html_output = html_output + '<center><b>'+i+'</b></center><br/>'
+                for(x in lists_output[i]){
+                    html_output = html_output + '<center>'+lists_output[i][x]+'</center><br/>';
+                }
+                
+            }
+            
+            console.log(html_output);
+            $('#drillDownTitle').append(graph_name+': '+data['points'][0]['x']);
+            $('#modalBodyDrillDown').append(html_output);
+            html_output='';
+
+        }
+    });
+}
+
 function drill_down_pie(myDiv, graph_info, graph_name){
 
     myDiv.on('plotly_click', function(data){
@@ -347,4 +393,8 @@ function drill_down_pie(myDiv, graph_info, graph_name){
 
         }
     });
+}
+
+function generate_text(g_id, g_value){
+    $('#info_text_id'+g_id).text(g_value);
 }

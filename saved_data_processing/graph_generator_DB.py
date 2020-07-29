@@ -11,40 +11,18 @@ class GraphGenerator:
     project_list = []
     project_list_ow_co_me = []
 
-    def __init__(self, username, info, resources=None, resources_bbrc=None):
+    def __init__(
+            self, username, info, role,
+            project_visible=None, resources=None, resources_bbrc=None):
 
         self.info = get_info_DB.GetInfo(
-            username, info, resources, resources_bbrc)
+            username, info, role, project_visible, resources, resources_bbrc)
         projects_data_dict = self.info.get_project_list()
-
+        self.role = role
         self.data = self.info.get_info()
         self.project_list = projects_data_dict['project_list']
         self.project_list_ow_co_me =\
             projects_data_dict['project_list_ow_co_me']
-
-    def graph_type_generator(self):
-
-        '''
-        This method create the graph type that will be needed by plotly
-        This method creates a json file which have the graphy type with
-        corresponding graph title
-        '''
-
-        data = self.data
-        dict_output = {}
-
-        for json_dict in data:
-            dict_output[json_dict] =\
-                input(
-                    "Enter the graph type for graph name " + json_dict + ": ")
-
-        graph_type = json.dumps(
-            dict_output,
-            default=lambda o: o.__dict__, indent=2)
-
-        f = open("utils/graph_type.json", "w")
-        f.write(graph_type)
-        f.close()
 
     def graph_pre_processor(self):
 
@@ -54,12 +32,8 @@ class GraphGenerator:
         html file
         '''
 
-        try:
-            with open('utils/graph_type.json') as json_file:
-                graph_type = json.load(json_file)
-        except OSError:
-            print("graph_type.json file not found run graph_generator")
-            exit(1)
+        with open('utils/graph_config.json') as json_file:
+            self.graph_config = json.load(json_file)
 
         counter_id = 0
 
@@ -69,11 +43,18 @@ class GraphGenerator:
         final_json_dict = self.data
 
         for final_json in final_json_dict:
-            if final_json == 'Stats':
+            if final_json == 'Stats'\
+                    or self.role\
+                    not in self.graph_config[final_json]['visibility']:
                 continue
             final_json_dict[final_json]['id'] = counter_id
             counter_id = counter_id + 1
-            final_json_dict[final_json]['graph_type'] = graph_type[final_json]
+            final_json_dict[final_json]['graph_type'] =\
+                self.graph_config[final_json]['type']
+            final_json_dict[final_json]['graph descriptor'] =\
+                self.graph_config[final_json]['description']
+            final_json_dict[final_json]['color'] =\
+                self.graph_config[final_json]['color']
 
         '''
         Returns a nested dict with id and graph type added
@@ -105,11 +86,14 @@ class GraphGenerator:
             return graph_data
 
         for final_json in graph_data:
-            if(final_json == 'Stats'):
+            if final_json == 'Stats'\
+                    or self.role\
+                    not in self.graph_config[final_json]['visibility']:
+                length_check = length_check + 1
                 continue
             array_1d.append({final_json: graph_data[final_json]})
             counter = counter + 1
-            if counter == 2 or length_check == len(graph_data) - 2:
+            if counter == 2 or length_check == len(graph_data) - 1:
                 counter = 0
                 array_2d.append(array_1d)
                 array_1d = []
@@ -131,7 +115,6 @@ class GraphGenerator:
                 }
             ]
         '''
-
         return [array_2d, graph_data['Stats']]
 
     def project_list_generator(self):
@@ -159,13 +142,18 @@ class GraphGenerator:
         if type(list_data) == int:
             return list_data
 
-        for data in list_data:
-            array_1d.append(data)
-            counter = counter + 1
-            if counter == 4 or length_check == len(list_data) - 1:
-                counter = 0
-                array_2d.append(array_1d)
-                array_1d = []
+        if len(list_data) == 0:
+            array_2d = [[]]
+        else:
+            for data in list_data:
+                array_1d.append(data)
+                counter = counter + 1
+                if counter == 4 or length_check == len(list_data) - 1:
+                    counter = 0
+                    array_2d.append(array_1d)
+                    array_1d = []
+
+                length_check = length_check + 1
 
         if len(self.project_list_ow_co_me) == 0:
             array_2d_ow_co_me = [[]]
@@ -197,5 +185,5 @@ class GraphGenerator:
                 ]
             ]
         '''
-
+        print(array_2d)
         return [array_2d, array_2d_ow_co_me]
