@@ -1,6 +1,6 @@
-[![pipeline status](https://gitlab.com/Udolf47/xnat_dashboards/badges/master/pipeline.svg)](https://gitlab.com/Udolf47/xnat_dashboards/-/commits/development)
-[![coverage report](https://gitlab.com/Udolf47/xnat_dashboards/badges/master/coverage.svg)](https://gitlab.com/Udolf47/xnat_dashboards/-/commits/development)
-[![version](https://img.shields.io/badge/version-v0.2.0-brightgreen)](https://gitlab.com/Udolf47/xnat_dashboards/-/commits/release/0.2.0)
+[![pipeline status](https://gitlab.com/Udolf47/xnat_dashboards/badges/master/pipeline.svg)](https://gitlab.com/Udolf47/xnat_dashboards/-/commits/master)
+[![coverage report](https://gitlab.com/Udolf47/xnat_dashboards/badges/master/coverage.svg)](https://gitlab.com/Udolf47/xnat_dashboards/-/commits/master)
+[![version](https://img.shields.io/badge/version-v0.2.0-brightgreen)](https://gitlab.com/Udolf47/xnat_dashboards/-/commits/master)
 
 
 
@@ -18,7 +18,7 @@ This project is about creating a responsive dashboard framework for extensive ex
 
 ## Getting Started
 
-To run this project locally for testing or development
+To run this project locally
 
 - Install Python 3
 - Install virtual env
