@@ -1,5 +1,7 @@
-[![pipeline status](https://gitlab.com/Udolf47/xnat_dashboards/badges/development/pipeline.svg)](https://gitlab.com/Udolf47/xnat_dashboards/-/commits/development)
-[![coverage report](https://gitlab.com/Udolf47/xnat_dashboards/badges/development/coverage.svg)](https://gitlab.com/Udolf47/xnat_dashboards/-/commits/development)
+[![pipeline status](https://gitlab.com/Udolf47/xnat_dashboards/badges/master/pipeline.svg)](https://gitlab.com/Udolf47/xnat_dashboards/-/commits/development)
+[![coverage report](https://gitlab.com/Udolf47/xnat_dashboards/badges/master/coverage.svg)](https://gitlab.com/Udolf47/xnat_dashboards/-/commits/development)
+[![version](https://img.shields.io/badge/version-v0.2.0-brightgreen)](https://gitlab.com/Udolf47/xnat_dashboards/-/commits/release/0.2.0)
+
 
 
 # XNAT Dashboards
