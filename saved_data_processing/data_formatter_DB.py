@@ -167,6 +167,12 @@ class Formatter:
 
     def get_projects_details_specific(self, projects):
 
+        '''
+        This method reuturn 2 list
+        List of projects visible
+        List of project where user is owner, collab or member
+        '''
+
         if projects is None:
             return 1
 
@@ -189,10 +195,19 @@ class Formatter:
         list_data['project_list'] = project_list_all
         list_data['project_list_ow_co_me'] = project_list_owned_collab_member
 
+        '''
+        Return type is dict
+        '''
+
         return list_data
 
     def get_resources_details(
             self, resources=None, resources_bbrc=None, project_id=None):
+
+        '''
+        Returns details about resource for each session as well as
+        if bbrc resources exist then that resources details as well
+        '''
 
         if resources is None:
             return None
@@ -297,6 +312,13 @@ class Formatter:
 
     def generate_resource_df(self, resources_bbrc, test, value):
 
+        '''
+        A method that generates dataframe.
+        This first takes bbrc resources and run test method on those
+        reources, these test are specific to
+        bbrc (Barcelona beta) pyxnat branch
+        '''
+
         resource_processing = []
 
         for resource in resources_bbrc['resources']:
@@ -325,6 +347,13 @@ class Formatter:
 
     def dict_generator_resources(self, df, x_name, y_name):
 
+        '''
+        Generate dict format from dataframe that is used by plotly,
+        takes resources df as input and returns dict
+        x_name denotes the property that will be plotted on x axis
+        and y_name which will be plotted on y axis
+        '''
+
         data = df[df[y_name] != 'No Data'][[
             x_name, y_name]]
         data = data.rename(columns={y_name: 'count'})
@@ -334,10 +363,24 @@ class Formatter:
         data['list'] = data_df
         data_dict = data.to_dict()
 
+        '''
+        {
+            count:{x:y},
+            list:{x:y_list}
+        }
+        '''
+
         return data_dict
 
     def dict_generator_overview(
             self, data, property_x, property_y, x_new, extra=None):
+
+        '''
+        Generate dict format that is used by plotly takes, data like
+        project details, scan, experiments, subject as field
+        property_x denotes the property that will be plotted on x axis
+        and property y which will be plotted on y axis
+        '''
 
         property_list = []
         property_none = []
@@ -368,10 +411,24 @@ class Formatter:
             property_dict['count'].update({'No Data': len(property_none)})
             property_dict['list'].update({'No Data': property_none})
 
+        '''
+        {
+            count:{x:y},
+            list:{x:y_list}
+        }
+        '''
+
         return property_dict
 
     def dict_generator_per_view(
             self, data, property_x, property_y, x_new):
+
+        '''
+        Generate dict format that is used by plotly for per project view,
+        data like project details, scan, experiments, subject as field
+        property_x denotes the property that will be plotted on x axis
+        and property y which will be plotted on y axis
+        '''
 
         per_list = []
 
@@ -385,10 +442,30 @@ class Formatter:
 
         per_view = per_df.to_dict()
 
+        '''
+        {
+            count:{x:y},
+            list:{x:y_list}
+        }
+        '''
+
         return per_view
 
     def dict_generator_per_view_stacked(
             self, data, property_x, property_y, property_z):
+
+        '''
+        Generate dict format that is used by plotly for stacked graphs view,
+        data like project details, scan, experiments, subject as field
+        example:
+        Graph Session types per project:
+        property_x = project
+        property_y = xsiType
+        property_z = ID
+
+        x_axis is project, y are the stacked count of property y based
+        on property_z
+        '''
 
         per_list = []
 
@@ -424,6 +501,12 @@ class Formatter:
             dict_output_count[
                 item[0]].update({item[1]: dict_tupled[property_z][item]})
 
+        '''
+        {
+            count:{prop_x:{prop_y:prop_z_count}},
+            list:{prop_x:{prop_y:prop_z_list}}
+        }
+        '''
         return {'count': dict_output_count, 'list': dict_output_list}
 
 
@@ -436,6 +519,8 @@ class FormatterPP(Formatter):
         self.project_id = project_id
 
     def get_projects_details(self, projects):
+
+        # Returns data for per project view
 
         project_dict = {}
 
@@ -486,8 +571,10 @@ class FormatterPP(Formatter):
             if subject['project'] == self.project_id:
                 subjects_data.append(subject)
 
+        # Using code from the parent class for processing
         subjects_details = super().get_subjects_details(subjects_data)
         del subjects_details['Subjects/Project']
+        # Delete project information
 
         return subjects_details
 
@@ -499,8 +586,10 @@ class FormatterPP(Formatter):
             if experiment['project'] == self.project_id:
                 experiments.append(experiment)
 
+        # Using code from the parent class for processing
         experiments_details = super().get_experiments_details(experiments)
         del experiments_details['Experiments/Project']
+        # Delete project information
 
         return experiments_details
 
@@ -512,8 +601,10 @@ class FormatterPP(Formatter):
             if scan['project'] == self.project_id:
                 scans.append(scan)
 
+        # Using code from the parent class for processing
         scans_details = super().get_scans_details(scans)
         del scans_details['Scans/Project']
+        # Delete project information
 
         return scans_details
 
@@ -522,6 +613,7 @@ class FormatterPP(Formatter):
         if resources is None:
             return None
 
+        # Using code from the parent class for processing
         resources_out = super().get_resources_details(
             resources, resources_bbrc, self.project_id)
 
@@ -532,7 +624,7 @@ class FormatterPP(Formatter):
 
     def diff_dates(self, resources_bbrc, experiments_data):
 
-        # Create graph for difference in dates
+        # Create dict format for graph of difference in dates
         experiments = []
 
         for experiment in experiments_data:
@@ -583,6 +675,7 @@ class FormatterPP(Formatter):
         return per_df.to_dict()
 
     def dates_diff_calc(self, date_1, date_2):
+
         # Calculates difference between 2 dates
         if date_1 == 'No Data':
             return 'No Data'

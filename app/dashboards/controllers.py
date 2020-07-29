@@ -312,6 +312,7 @@ def project_db(id):
 
     config = model.user_role_config(username)
 
+    # Get the details for plotting
     data_array = graph_generator_pp_DB.GraphGenerator(
         username, users_data['info'], id, role_exist,
         config['project_visible'], resources, resources_bbrc

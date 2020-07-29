@@ -148,10 +148,14 @@ class GetInfo:
         '''
         returns a nested dict
         {
-            Graph1_name : { x_axis_values, y_axis_values},
-            Graph2_name : { x_axis_values, y_axis_values},
-            Graph3_name : { x_axis_values, y_axis_values},
-            Graph4_name : { x_axis_values, y_axis_values},
+            Graph1_name : { count:{x_axis_values, y_axis_values},
+                            list:{x_axis_values, y_axis_values}},
+            Graph2_name : { count:{x_axis_values, y_axis_values},
+                            list:{x_axis_values, y_axis_values}},
+            Graph3_name : { count:{x_axis_values, y_axis_values},
+                            list:{x_axis_values, y_axis_values}},
+            Graph4_name : { count:{x_axis_values, y_axis_values},
+                            list:{x_axis_values, y_axis_values}},
         }
         '''
 
