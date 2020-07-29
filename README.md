@@ -39,6 +39,8 @@ Create a json file with following format:
 - ```python download_resources.py -p <Relative path to the above JSON file>``` to download data.
 - ``` 3 configuration files are provided with following functionalities: ```
 ```
+- db_config.json
+    This file is used to change the url on which MongoDB is hosted
 - graph_config.json
     This file can be used to change graphs configuration.
         User can change graphs types.
