@@ -3,7 +3,8 @@
     "user roles":
         {
             "testUser":"superuser",
-            "noUser":"forbidden"
+            "noUser":"forbidden",
+            "asif":"admin"
         },
 
     "project_visible":
