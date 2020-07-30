@@ -1,6 +1,5 @@
-from save_endpoint import save_to_pickle, save_to_db
+from save_endpoint import save_to_pickle
 import json
-from tqdm import tqdm
 import argparse
 
 
@@ -31,18 +30,6 @@ class DownloadResources:
 
         pk_saver.save_data()
         pk_saver.save_resources()
-
-    def __save_to_DB(self, username, password, server, ssl, test):
-
-        db_saver = save_to_db.SaveToDb(
-            username,
-            password,
-            server,
-            ssl,
-            True)
-
-        db_saver.save_data()
-        db_saver.save_resources()
 
 
 ap = argparse.ArgumentParser()
