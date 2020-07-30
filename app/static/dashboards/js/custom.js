@@ -203,3 +203,11 @@ jQuery(function ($) {
 	$this.countTo(options);
   }
 });
+
+
+
+// Delete data added to modal after hiding the modal
+$('#drillDown').on('hidden.bs.modal', function (e) {
+    $('#modalBodyDrillDown').empty();
+    $('#drillDownTitle').empty();
+  });
