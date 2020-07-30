@@ -265,7 +265,12 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <script src="/static/dashboards/js/custom.js"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    {% if db is sameas true%}
     <script src="/static/dashboards/js/plotly_chart_generator.js"></script>
+    {% endif %}
+    {% if db is sameas false%}
+    <script src="/static/dashboards/js/plotly_chart_generator_r.js"></script>
+    {% endif %}
     <script src="/static/dashboards/js/graph_descriptor.js"></script>
     {% for i in graph_data%}
         {% for j in i%}
