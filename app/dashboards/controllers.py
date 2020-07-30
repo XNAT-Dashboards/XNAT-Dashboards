@@ -308,7 +308,7 @@ def project_db(id):
         users_data = users_data_tb.find_one({'server': server})
         resources = mongo.db.resources.find_one({'server': server})
         resources_bbrc = mongo.db.resources_bbrc.find_one(
-            {'server': server+'bbrc'})
+            {'server': server + 'bbrc'})
 
     config = model.user_role_config(username)
 

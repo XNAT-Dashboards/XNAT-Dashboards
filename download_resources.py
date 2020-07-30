@@ -1,6 +1,5 @@
 from save_endpoint import save_to_pickle, save_to_db
 import json
-from tqdm import tqdm
 import argparse
 
 
