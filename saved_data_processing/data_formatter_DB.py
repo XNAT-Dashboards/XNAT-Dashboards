@@ -19,6 +19,7 @@ class Formatter:
 
         project_acccess = self.dict_generator_overview(
             projects, 'project_access', 'id', 'access')
+        project_acccess['id_type'] = 'project'
 
         projects_details['Number of Projects'] = len(projects)
         projects_details['Projects Visibility'] = project_acccess
@@ -62,23 +63,26 @@ class Formatter:
 
         age_range['count'].update({'No Data': len(age_none)})
         age_range['list'].update({'No Data': age_none})
-
+        age_range['id_type'] = 'subject'
         # Age end
 
         # Subject handedness information
 
         handedness = self.dict_generator_overview(
             subjects_data, 'handedness', 'ID', 'handedness')
+        handedness['id_type'] = 'subject'
 
         # Subject gender information
 
         gender = self.dict_generator_overview(
             subjects_data, 'gender', 'ID', 'gender')
+        gender['id_type'] = 'subject'
 
         # Subjects per project information
 
         subjects_per_project = self.dict_generator_per_view(
             subjects_data, 'project', 'ID', 'spp')
+        subjects_per_project['id_type'] = 'subject'
 
         # Number of subjects information
         subjects_details['Number of Subjects'] = len(subjects_data)
@@ -103,21 +107,27 @@ class Formatter:
 
         experiments_per_project = self.dict_generator_per_view(
             experiments, 'project', 'ID', 'epp')
+        experiments_per_project['id_type'] = 'experiment'
 
         # Experiments type information
 
         experiment_type = self.dict_generator_overview(
             experiments, 'xsiType', 'ID', 'xsiType')
+        experiment_type['id_type'] = 'experiment'
+
         # Experiments per subject information
 
         experiments_per_subject = self.dict_generator_per_view(
             experiments, 'subject_ID', 'ID', 'eps')
+        experiments_per_subject['id_type'] = 'experiment'
 
         experiments_types_per_project = self.dict_generator_per_view_stacked(
             experiments, 'project', 'xsiType', 'ID')
+        experiments_types_per_project['id_type'] = 'experiment'
 
         experiments_details['Sessions types/Project'] =\
             experiments_types_per_project
+
         experiments_details['Experiments/Subject'] = experiments_per_subject
         experiments_details['Experiment Types'] = experiment_type
         experiments_details['Experiments/Project'] = experiments_per_project
@@ -132,27 +142,32 @@ class Formatter:
         scan_quality = self.dict_generator_overview(
             scans, 'xnat:imagescandata/quality', 'ID',
             'quality', 'xnat:imagescandata/id')
+        scan_quality['id_type'] = 'experiment'
 
         # Scans type information
 
         type_dict = self.dict_generator_overview(
             scans, 'xnat:imagescandata/type',
             'ID', 'type', 'xnat:imagescandata/id')
+        type_dict['id_type'] = 'experiment'
 
         # Scans xsi type information
 
         xsi_type_dict = self.dict_generator_overview(
             scans, 'xsiType', 'ID', 'xsiType', 'xnat:imagescandata/id')
+        xsi_type_dict['id_type'] = 'experiment'
 
         # Scans per project information
 
         scans_per_project = self.dict_generator_per_view(
             scans, 'project', 'ID', 'spp')
+        scans_per_project['id_type'] = 'experiment'
 
         # Scans per subject information
 
         scans_per_subject = self.dict_generator_per_view(
             scans, 'xnat:imagesessiondata/subject_id', 'ID', 'sps')
+        scans_per_project['id_type'] = 'experiment'
 
         scans_details = {}
 
@@ -231,13 +246,13 @@ class Formatter:
 
         resource_pp = df[df['resource'] != 'No Data'][['project', 'resource']]
         session = df[df['resource'] != 'No Data']['session']
-        resource_pp['resource'] = session + ' ' + resource_pp['resource']
+        resource_pp['resource'] = session + '/' + resource_pp['resource']
         resource_pp = resource_pp.rename(columns={'resource': 'count'})
         resources_pp_df = resource_pp.groupby('project')['count'].apply(list)
         resource_pp = resource_pp.groupby('project').count()
         resource_pp['list'] = resources_pp_df
         resource_pp = resource_pp.to_dict()
-
+        resource_pp['id_type'] = 'experiment'
         res_pp_no_data = df[
             df['resource'] == 'No Data'].groupby('project').count()
 
@@ -253,10 +268,12 @@ class Formatter:
             resource_pp['count'].update(no_data_update)
 
         # Resource types
-        resource_types = self.dict_generator_resources(df, 'label', 'resource')
+        resource_types = self.dict_generator_resources(df, 'label', 'session')
+        resource_types['id_type'] = 'experiment'
 
         resource_type_ps = self.dict_generator_resources(
             df, 'label', 'session')
+        resource_type_ps['id_type'] = 'experiment'
 
         if resources_bbrc is None:
 
@@ -286,22 +303,27 @@ class Formatter:
         # Usable t1
         usable_t1 = self.dict_generator_resources(
             df_usable_t1, 'HasUsableT1', 'Session')
+        usable_t1['id_type'] = 'experiment'
 
         # consisten_acq_date
         consistent_acq_date = self.dict_generator_resources(
             df_con_acq_date, 'IsAcquisitionDateConsistent', 'Session')
+        consistent_acq_date['id_type'] = 'experiment'
 
         # Archiving validator
         archiving_valid = self.dict_generator_resources(
             df_usable_t1, 'Archiving Valid', 'Session')
+        archiving_valid['id_type'] = 'experiment'
 
         # Version Distribution
         version = self.dict_generator_resources(
             df_usable_t1, 'version', 'Session')
+        version['id_type'] = 'experiment'
 
         # BBRC resource exist
         bbrc_exists = self.dict_generator_resources(
             df_usable_t1, 'bbrc exists', 'Session')
+        bbrc_exists['id_type'] = 'experiment'
 
         return {'Resources/Project': resource_pp,
                 'Resource Types': resource_types, 'UsableT1': usable_t1,
@@ -391,12 +413,12 @@ class Formatter:
                     property_list.append([item[property_x], item[property_y]])
                 else:
                     property_list.append(
-                        [item[property_x], item[property_y]+'  '+item[extra]])
+                        [item[property_x], item[property_y]+'/'+item[extra]])
             else:
                 if extra is None:
                     property_none.append(item[property_y])
                 else:
-                    property_none.append(item[property_y]+'  '+item[extra])
+                    property_none.append(item[property_y]+'/'+item[extra])
 
         property_df = pd.DataFrame(
             property_list, columns=[x_new, 'count'])

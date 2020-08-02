@@ -84,7 +84,12 @@
             <div class="container-fluid ">
                 <div class="row page-titles">
                     <div class="col-md-5 align-self-center">
-                        <h4 class="text-themecolor overview_part">Project {{id}} Dashboard &nbsp&nbsp
+                        <h4 class="text-themecolor overview_part">
+                            Project 
+                            <a href="{{server}}/app/action/DisplayItemAction/search_value/{{id}}//search_element/xnat:Data/search_field/xnat:projectData.ID" target="_blank">{
+                                {id}}
+                            </a> 
+                            Dashboard &nbsp&nbsp
                         </h4>
                     </div>
                     <div class="col-md-7 align-self-center text-right">
@@ -104,7 +109,7 @@
                             </h4>
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="javascript:void(0)">Connected</a></li>
-                                <li class="breadcrumb-item active">{{server}}</li>
+                                <li class="breadcrumb-item active"><a href="{{server}}" target="_blank">{{server}}</a></li>
                             </ol>
                             {% if db is sameas true%}
                             <button type="button" class="btn btn-outline-info d-lg-block m-l-15"> Database </button>
@@ -265,6 +270,9 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <script src="/static/dashboards/js/custom.js"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        server_o = '{{server}}';
+    </script>
     <script src="/static/dashboards/js/plotly_chart_generator.js"></script>
     <script src="/static/dashboards/js/graph_descriptor.js"></script>
     {% for i in graph_data%}
