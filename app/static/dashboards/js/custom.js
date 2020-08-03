@@ -204,10 +204,66 @@ jQuery(function ($) {
   }
 });
 
-
-
 // Delete data added to modal after hiding the modal
 $('#drillDown').on('hidden.bs.modal', function (e) {
     $('#modalBodyDrillDown').empty();
     $('#drillDownTitle').empty();
   });
+
+
+/*
+Code for hiding and displaying test grid in per project view
+*/
+
+
+$(".tests_grid_part").addClass("hide");
+$(".p_project_part").removeClass("hide");
+$("#project").addClass("highlight");
+
+$("#project").click(function(){
+    $(".tests_grid_part").addClass("hide");
+    $(".p_project_part").removeClass("hide");
+    $("#project").addClass("highlight");
+    $("#tests_grid").removeClass("highlight");
+});
+$("#tests_grid").click(function(){
+    $(".tests_grid_part").removeClass("hide");
+    $(".p_project_part").addClass("hide");
+    $("#project").removeClass("highlight");
+    $("#tests_grid").addClass("highlight");
+});
+
+// Delete data added to modal after hiding the modal tests
+$('#test').on('hidden.bs.modal', function (e) {
+    $('#modalTest').empty();
+    $('#testTitle').empty();
+  });
+
+
+// Code for showing information regarding failed test
+$('#tests_table tbody td').on('click', function(){
+    data_l = $(this).children().html();
+
+    html_output = '';
+    
+    if(data_l == '' || data_l == [] || data_l == 'undefined'){
+
+    }else{
+        data_l = JSON.parse(data_l);
+        if(typeof data_l == 'string' || data_l.length == 0){
+            html_output = data_l + '<br/>'
+        }else if(data_l.length == 1){
+            html_output = data_l[0] + '<br/>'
+        }else{
+            for(data in data_l){
+                html_output = html_output + data + ': ';
+                html_output = html_output + data_l[data] + '<br/>'
+                console.log(typeof data_l[data])
+            }
+        }
+        $('#test').modal('toggle');
+        $('#testTitle').append("Error");
+        $('#modalTest').append(html_output);
+        html_output = '';
+    }
+});
