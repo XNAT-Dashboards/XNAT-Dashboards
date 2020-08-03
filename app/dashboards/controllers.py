@@ -173,6 +173,9 @@ def project_db(id):
     name = data_array[2]['name']
     last_workflow = data_array[2]['last_workflow']
 
+    th = data_array[3][0]
+    td = data_array[3][1]
+
     return render_template(
         'dashboards/stats_dashboards_pp.html',
         graph_data=graph_data,
@@ -190,4 +193,6 @@ def project_db(id):
         access=access,
         name=name,
         last_workflow=last_workflow,
-        id=id)
+        id=id,
+        t_header_info=th,
+        t_data_info=td)
