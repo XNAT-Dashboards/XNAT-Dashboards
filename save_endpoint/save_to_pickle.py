@@ -1,27 +1,23 @@
-from pyxnat_interface import data_fetcher
-import json
+import sys
 import pickle
-import argparse
+from os.path import dirname, abspath
+sys.path.insert(0, dirname(dirname(abspath(__file__))))
+from pyxnat_interface import data_fetcher
 
 
-class DownloadData:
+class SaveToPk:
 
-    def __init__(self, path):
+    coll_users_data = None
+    coll_users = None
+    fetcher_long = None
+    fetcher = None
 
-        self.role = path
+    def __init__(self, username, password, server, ssl):
 
-    def iter_users(self):
+        self.server = server
+        self.save_to_PK(username, password, server, ssl)
 
-        with open(self.role) as json_file:
-            user = json.load(json_file)
-
-        self.__save_to_PK(
-            user['username'], user['password'],
-            user['server'], user['ssl'])
-
-        print("saved")
-
-    def __save_to_PK(self, username, password, server, ssl):
+    def save_to_PK(self, username, password, server, ssl):
 
         fetcher = data_fetcher.Fetcher(username, password, server, ssl)
         fetcher_long = data_fetcher.FetcherLong(
@@ -43,14 +39,3 @@ class DownloadData:
                     'resources_bbrc': data_res_bbrc
                 },
                 handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-
-ap = argparse.ArgumentParser()
-ap.add_argument("-p", "--path", type=str, help="Path to user name.json")
-
-args = vars(ap.parse_args())
-
-if __name__ == "__main__":
-
-    download_data_object = DownloadData(args['path'])
-    download_data_object.iter_users()

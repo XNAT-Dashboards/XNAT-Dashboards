@@ -32,20 +32,8 @@ def test_user_role_exists(mocker):
 
 def test_model():
 
-    res_bbrc = model.load_resources_bbrc_pk('https://central.xnat.org')
-    assert type(res_bbrc) == dict
-
-    res = model.load_resources_pk('https://central.xnat.org')
-    assert type(res) == dict
-
     user_data = model.load_users_data_pk('https://central.xnat.org')
     assert type(user_data)
-
-    res_bbrc = model.load_resources_bbrc_pk('https://central.org')
-    assert res_bbrc is None
-
-    res = model.load_resources_pk('ttps://central.org')
-    assert res is None
 
     user_data = model.load_users_data_pk('ttps://central.org')
     assert user_data is None

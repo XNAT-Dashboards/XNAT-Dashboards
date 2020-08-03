@@ -51,10 +51,15 @@ def test_info(mocker):
         'FormatterPP.diff_dates',
         return_value={"count": {}})
 
+    mocker.patch(
+        'saved_data_processing.data_formatter_DB.'
+        'FormatterPP.generate_test_grid_bbrc',
+        return_value=[])
+
     info_object = create_mocker(
         mocker, 'testUser', info, 'guest', {'guest': ['p1', 'p2', 'p3', 'p4']},
-        resources={'resources': ['p1', 'res']},
-        resources_bbrc={'resources': ['p3', 'res']})
+        resources=['p1', 'res'],
+        resources_bbrc=['p3', 'res'])
 
     info = info_object.get_per_project_view()
 

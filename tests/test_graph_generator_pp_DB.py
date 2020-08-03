@@ -26,7 +26,7 @@ def test_graph_preprocessor(mocker):
         "Gender": {"x1": "y1", "x2": "y2"},
         "Handedness": {"x1": "y1", "x2": "y2"},
         "Experiments/Project": {"x1": "y1", "x2": "y2"}, "Project details": {},
-        "Stats": {}}
+        "Stats": {}, 'test_grid': []}
 
     graph_object = create_mocker(
         mocker, 'testUser', info, 'p2', 'guest', ['p1'])
@@ -46,7 +46,7 @@ def test_graph_generator(mocker):
         "Gender": {"x1": "y1", "x2": "y2"},
         "Handedness": {"x1": "y1", "x2": "y2"},
         "Experiments/Project": {"x1": "y1", "x2": "y2"}, "Stats": {},
-        "Project details": {}}
+        "Project details": {}, 'test_grid': []}
 
     graph_object = create_mocker(
         mocker, 'testUser', info, 'p2', 'guest', ['p1'])
