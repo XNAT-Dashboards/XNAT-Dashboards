@@ -254,16 +254,19 @@ class GetInfoPP(GetInfo):
         resources = self.formatter_object_per_project.get_resources_details(
             self.resources, self.resources_bbrc)
 
-        if type(resources) != int and resources is not None:
+        test_grid = self.formatter_object_per_project.generate_test_grid_bbrc(
+            self.resources_bbrc)
 
+        if type(resources) != int and resources is not None:
             final_json_dict.update(resources)
 
         diff_dates = self.formatter_object_per_project.diff_dates(
             self.resources_bbrc, self.info['experiments'])
 
         if diff_dates is not None and diff_dates['count'] != {}:
-
             final_json_dict.update({'Dates Diff': diff_dates})
+
+        final_json_dict.update({'test_grid': test_grid})
 
         '''
         returns a nested dict

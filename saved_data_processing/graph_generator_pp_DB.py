@@ -46,6 +46,7 @@ class GraphGenerator:
 
         for final_json in final_json_dict:
             if final_json == 'Stats' or\
+                final_json == 'test_grid' or\
                 final_json == 'Project details' or\
                     self.role not in\
                     self.graph_config[final_json]['visibility']:
@@ -90,6 +91,7 @@ class GraphGenerator:
 
         for final_json in graph_data:
             if final_json == 'Stats' or\
+                final_json == 'test_grid' or\
                 final_json == 'Project details' or\
                     self.role not in\
                     self.graph_config[final_json]['visibility']:
@@ -121,5 +123,6 @@ class GraphGenerator:
                 }
             ]
         '''
-
-        return [array_2d, graph_data['Stats'], graph_data['Project details']]
+        return [
+            array_2d, graph_data['Stats'],
+            graph_data['Project details'], graph_data['test_grid']]
