@@ -47,8 +47,8 @@ def test_info(mocker):
 
     info_object = create_mocker(
         mocker, 'testUser', info, 'guest',
-        resources={'resources': ['p1', 'res']},
-        resources_bbrc={'resources': ['p3', 'res']})
+        resources=['p1', 'res'],
+        resources_bbrc=['p3', 'res'])
 
     assert type(info_object.get_info()) == dict  # Return type should be a dict
     assert len(info) == 5     # Currently 15 dicts to be returned
@@ -72,7 +72,7 @@ def test_get_project_list(mocker):
 
     info_object = create_mocker(
         mocker, 'testUser', info, 'guest',
-        resources={'resources': ['p1', 'res']},
-        resources_bbrc={'resources': ['p3', 'res']})
+        resources=['p1', 'res'],
+        resources_bbrc=['p3', 'res'])
 
     assert type(info_object.get_project_list()) == list

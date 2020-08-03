@@ -8,11 +8,8 @@ def test_save_data_and_user(mocker):
     password = 'testPassword'
     server = 'https://central.xnat.org'
     ssl = False
-
-    saving_object = save_to_pickle.SaveToPk(
-        username, password, server, ssl)
-
-    resource_return_value = {'date': '28', 'resources': 'test'}
+    resource_return_value = {
+        'date': '28', 'resources': [], 'resources_bbrc': []}
     data_return_value = {'info': 'data'}
 
     mocker.patch(
@@ -27,19 +24,15 @@ def test_save_data_and_user(mocker):
         'pyxnat_interface.data_fetcher.Fetcher.fetch_all',
         return_value=data_return_value)
 
-    saving_object = save_to_pickle.SaveToPk(
-        username, password, server, ssl)
+    save_to_pickle.SaveToPk(
+        username, password, server, ssl).save_to_PK(
+            username, password, server, ssl
+        )
 
-    saving_object.save_resources()
+    with open('pickles/data/general.pickle', 'rb') as handle:
+        data = pickle.load(handle)
 
-    with open('pickles/resources/general.pickle', 'rb') as handle:
-        res = pickle.load(handle)
-
-    assert type(res) == dict
-
-    saving_object.save_data()
-
-    with open('pickles/users_data/general.pickle', 'rb') as handle:
-        user_data = pickle.load(handle)
-
-    assert type(user_data) == dict
+    assert type(data) == dict
+    assert type(data['info']) == dict
+    assert type(data['resources']) == dict
+    assert type(data['resources_bbrc']) == dict

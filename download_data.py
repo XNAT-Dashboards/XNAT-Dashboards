@@ -3,7 +3,7 @@ import json
 import argparse
 
 
-class DownloadResources:
+class DownloadData:
 
     def __init__(self, path):
 
@@ -14,22 +14,15 @@ class DownloadResources:
         with open(self.role) as json_file:
             user = json.load(json_file)
 
-        self.__save_to_PK(
+        self.save(
             user['username'], user['password'],
             user['server'], user['ssl'])
 
         print("saved")
 
-    def __save_to_PK(self, username, password, server, ssl):
+    def save(self, username, password, server, ssl):
 
-        pk_saver = save_to_pickle.SaveToPk(
-            username,
-            password,
-            server,
-            ssl)
-
-        pk_saver.save_data()
-        pk_saver.save_resources()
+        save_to_pickle.SaveToPk(username, password, server, ssl)
 
 
 ap = argparse.ArgumentParser()
@@ -39,5 +32,5 @@ args = vars(ap.parse_args())
 
 if __name__ == "__main__":
 
-    download_resource_object = DownloadResources(args['path'])
-    download_resource_object.iter_users()
+    download_data_object = DownloadData(args['path'])
+    download_data_object.iter_users()

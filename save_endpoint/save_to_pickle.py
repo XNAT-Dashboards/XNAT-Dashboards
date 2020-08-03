@@ -15,58 +15,27 @@ class SaveToPk:
     def __init__(self, username, password, server, ssl):
 
         self.server = server
-        self.fetcher = data_fetcher.Fetcher(username, password, server, ssl)
-        self.fetcher_long = data_fetcher.FetcherLong(
+        self.save_to_PK(username, password, server, ssl)
+
+    def save_to_PK(self, username, password, server, ssl):
+
+        fetcher = data_fetcher.Fetcher(username, password, server, ssl)
+        fetcher_long = data_fetcher.FetcherLong(
             username, password, server, ssl)
 
-    def __save_to_db(self, info):
-
-        try:
-            with open(
-                'pickles/users_data/general.pickle',
-                    'wb') as handle:
-
-                pickle.dump(
-                    {'server': self.server,
-                     'info': info},
-                    handle,
-                    protocol=pickle.HIGHEST_PROTOCOL)
-
-            print("Saved")
-        except Exception:
-            print(Exception.with_traceback())
-            return 1000
-
-    def save_data(self):
-
-        info = self.fetcher.fetch_all()
-
-        if type(info) != int:
-            self.__save_to_db(info)
-            return 0
-        else:
-            return info
-
-    def save_resources(self):
-
-        resources = self.fetcher_long.get_resources()
+        data_pro_sub_exp_sc = fetcher.fetch_all()
+        data_res = fetcher_long.get_resources()
+        data_res_bbrc = fetcher_long.get_experiment_resources()
 
         with open(
-                'pickles/resources/general.pickle',
+                'pickles/data/general.pickle',
                 'wb') as handle:
 
-            pickle.dump({
-                'server': self.server,
-                'resources': resources},
-                handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-        exp_resources = self.fetcher_long.get_experiment_resources()
-
-        with open(
-                'pickles/resources/generalbbrc.pickle',
-                'wb') as handle:
-
-            pickle.dump({
-                'server': self.server,
-                'resources': exp_resources},
+            pickle.dump(
+                {
+                    'server': server,
+                    'info': data_pro_sub_exp_sc,
+                    'resources': data_res,
+                    'resources_bbrc': data_res_bbrc
+                },
                 handle, protocol=pickle.HIGHEST_PROTOCOL)

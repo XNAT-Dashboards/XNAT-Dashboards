@@ -38,7 +38,7 @@ def load_users_data_pk(server):
 
     try:
         with open(
-                'pickles/users_data/general.pickle', 'rb') as handle:
+                'pickles/data/general.pickle', 'rb') as handle:
             user_data = pickle.load(handle)
 
         if user_data['server'] != server:
@@ -47,32 +47,3 @@ def load_users_data_pk(server):
         return None
 
     return user_data
-
-
-def load_resources_pk(server):
-
-    try:
-        with open('pickles/resources/general.pickle', 'rb') as handle:
-            resources = pickle.load(handle)
-        if resources['server'] != server:
-            return None
-    except FileNotFoundError:
-        return None
-
-    return resources
-
-
-def load_resources_bbrc_pk(server):
-
-    try:
-        with open(
-                'pickles/resources/generalbbrc.pickle',
-                'rb') as handle:
-
-            resources_bbrc = pickle.load(handle)
-        if resources_bbrc['server'] != server:
-            return None
-    except FileNotFoundError:
-        return None
-
-    return resources_bbrc

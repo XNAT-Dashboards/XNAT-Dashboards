@@ -228,7 +228,7 @@ class Formatter:
             return None
 
         df = pd.DataFrame(
-            resources['resources'],
+            resources,
             columns=['project', 'session', 'resource', 'label'])
 
         if project_id is not None:   # Code for per project view
@@ -343,7 +343,7 @@ class Formatter:
 
         resource_processing = []
 
-        for resource in resources_bbrc['resources']:
+        for resource in resources_bbrc:
 
             if resource[3] != 0:
                 if test in resource[3]:
@@ -718,7 +718,7 @@ class FormatterPP(Formatter):
 
         test_list = []
 
-        for resource in resources_bbrc['resources']:
+        for resource in resources_bbrc:
 
             correct_seq_attr = ''
             uncompressed_pixel_data = ''
