@@ -64,4 +64,4 @@ def test_info(mocker):
     info = info_object.get_per_project_view()
 
     assert type(info) == dict   # Return type should be a dict
-    assert len(info) == 2     # Currently 11 dicts to be returned
+    assert len(info) == 3     # Currently 11 dicts to be returned
