@@ -73,21 +73,22 @@
             <div class="scroll-sidebar">
                 <nav class="sidebar-nav">
                     <ul id="sidebarnav">
-                        <li id="overview"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-eye"></i><span class="hide-menu">Overview</span></a></li>                  
+                        <li id="project"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-eye"></i><span class="hide-menu">Project</span></a></li>
+                        <li id="tests_grid"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-table"></i><span class="hide-menu">Tests Grid</span></a></li>                       
                     </ul>
                 </nav>
             </div>
         </aside>
         <!-- Left sidebar end-->
         <!-- Plotly graphs container start -->
-        <div class="page-wrapper ">
+        <div class="page-wrapper">
             <div class="container-fluid ">
                 <div class="row page-titles">
                     <div class="col-md-5 align-self-center">
                         <h4 class="text-themecolor overview_part">
                             Project 
-                            <a href="{{server}}/app/action/DisplayItemAction/search_value/{{id}}//search_element/xnat:Data/search_field/xnat:projectData.ID" target="_blank">{
-                                {id}}
+                            <a href="{{server}}/app/action/DisplayItemAction/search_value/{{id}}//search_element/xnat:Data/search_field/xnat:projectData.ID" target="_blank">
+                                {{id}}
                             </a> 
                             Dashboard &nbsp&nbsp
                         </h4>
@@ -109,7 +110,7 @@
                             </h4>
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="javascript:void(0)">Connected</a></li>
-                                <li class="breadcrumb-item active"><a href="{{server}}" target="_blank">{{server}}</a></li>
+                                <li class="breadcrumb-item active"><a href="{{server}}" target="_blank">{{server}}</a>&nbsp&nbsp&nbsp</li>
                             </ol>
                             {% if db is sameas true%}
                             <button type="button" class="btn btn-outline-info d-lg-block m-l-15"> Database </button>
@@ -121,7 +122,7 @@
                         </div>
                     </div>
                 </div>
-                <div class = "overview_part">
+                <div class="p_project_part">
                     <!-- Counter Start -->
                     <div class = "card">
                         <div class="card-body">
@@ -238,7 +239,7 @@
                     </div>
                     {% endfor %}
                     <!-- Graph plotting End -->
-                    <!-- Modal -->
+                    <!-- Modal Drill Down -->
                     <div class="modal fade" id="drillDown" tabindex="-1" role="dialog" aria-labelledby="drillDownTile" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
@@ -254,8 +255,71 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Modal -->
+                    <!-- Modal Drill Down-->
                 </div>
+                <!-- Start test grid addition -->
+                <div class="tests_grid_part">
+                    <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex">
+                                    <div>
+                                        <h5 class="card-title">Sessions with corresponding tests</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        <div class="table-responsive">
+                            <table id='tests_table' class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        {% for data in t_header_info%}
+                                        <td>{{data}}</td>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Every row per session details -->
+                                    {% for data_l in t_data_info %}
+                                        <tr>
+                                            {% for data in data_l %}
+                                                {% if data[0] == true %}
+                                                <td class="green_bg"></td>
+                                                {% elif data[0] == false %}
+                                                <td class="red_bg"><div style="display: none;">{{data[1] | tojson}}</div></td>
+                                                {% elif data == '' %}
+                                                <td class="black_bg"></td>
+                                                {% else %}
+                                                <td>
+                                                    <a href="{{server}}/app/action/DisplayItemAction/search_value/{{data}}/search_element/xnat:Data/search_field/xnat:imageSessionData.ID" target="_blank">
+                                                    {{data}}
+                                                    </a>
+                                                </td>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- End test grid addition -->
+                <!-- Modal test false-->
+                <div class="modal fade" id="test" tabindex="-1" role="dialog" aria-labelledby="testTitle" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="testTitle"></h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                    </button>
+                            </div>
+                            <div class="modal-body" id="modalTest">
+                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal test false -->
             </div>
         </div>
         <!-- Plotly graphs container end-->

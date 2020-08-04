@@ -1,1 +1,0 @@
-Resource that takes long time to fetch are saved here

@@ -272,7 +272,6 @@ a.logout:hover{
   color: red;
 }
 
-    
     .wrapper_tooltip .tooltip {
     background: #A1CAF2;
     bottom: 100%;
@@ -345,3 +344,52 @@ a.logout:hover{
     .lte8 .wrapper_tooltip:hover .tooltip {
     display: block;
     }
+
+/*
+Test grid color class
+*/
+
+.red_bg{
+  background-color: red;
+  border: 5px solid white;
+}
+.green_bg{
+  background-color: lightgreen;
+  border: 5px solid white;
+}
+.black_bg{
+  background-color: black;
+  border: 5px solid white;
+}
+
+/*
+Making the table scrollable in x and y
+*/
+
+thead td {
+  position: -webkit-sticky; /* for Safari */
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: white;
+}
+
+thead td:first-child {
+  left: 0;
+  z-index: 3;
+}
+
+.table-responsive{
+  overflow-y: auto;
+  height: 500px;
+}
+
+tbody td {
+  position: -webkit-sticky; /* for Safari */
+  position: sticky;
+  top: 0;
+  left: 0;
+  background: #FFF;
+  border-right: 5px solid #fff;
+}
+

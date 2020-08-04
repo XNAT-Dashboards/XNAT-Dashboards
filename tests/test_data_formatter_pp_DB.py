@@ -140,7 +140,7 @@ def test_get_resources_details():
 
     assert resource_details is None
 
-    resources = {'resources': [
+    resources = [
         ['p1', 's1', 'r1', 'l1'],
         ['p1', 's2', 'r2', 'l2'],
         ['p1', 's2', 'r3', 'l3'],
@@ -148,7 +148,7 @@ def test_get_resources_details():
         ['p2', 's3', 'r5', 'l5'],
         ['p2', 's3', 'r6', 'l6'],
         ['p2', 's1', 'r7', 'l7'],
-        ['p1', 's1', 'r8', 'l8']]}
+        ['p1', 's1', 'r8', 'l8']]
 
     resource_details = formatter_object_connected.get_resources_details(
         resources)
@@ -156,7 +156,7 @@ def test_get_resources_details():
     assert type(resource_details) == dict
     assert len(resource_details) == 1
 
-    resources_bbrc = {'resources': [[
+    resources_bbrc = [[
         'p1', 's1', 'r1', {
             'version': 'v1',
             'HasUsableT1': {'has_passed': True},
@@ -188,7 +188,7 @@ def test_get_resources_details():
             'version': 'v3',
             'HasUsableT1': {'has_passed': True},
             'IsAcquisitionDateConsistent':
-            {'has_passed': True, 'data': '2020-9-25'}}]]}
+            {'has_passed': True, 'data': '2020-9-25'}}]]
 
     resource_details = formatter_object_connected.get_resources_details(
         resources, resources_bbrc)

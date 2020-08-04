@@ -6,8 +6,6 @@ sys.path.insert(0, dirname(dirname(abspath(__file__))))
 
 def test_end_testing():
 
-    os.remove('pickles/users_data/general.pickle')
-    os.remove('pickles/resources/general.pickle')
-    os.remove('pickles/resources/generalbbrc.pickle')
+    os.remove('pickles/data/general.pickle')
 
     assert True

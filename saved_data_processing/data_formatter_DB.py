@@ -228,10 +228,10 @@ class Formatter:
             return None
 
         df = pd.DataFrame(
-            resources['resources'],
+            resources,
             columns=['project', 'session', 'resource', 'label'])
 
-        if project_id is not None:
+        if project_id is not None:   # Code for per project view
 
             try:
 
@@ -343,7 +343,7 @@ class Formatter:
 
         resource_processing = []
 
-        for resource in resources_bbrc['resources']:
+        for resource in resources_bbrc:
 
             if resource[3] != 0:
                 if test in resource[3]:
@@ -710,3 +710,66 @@ class FormatterPP(Formatter):
                 - date(date_2_l[0], date_2_l[1], date_2_l[2])
 
             return diff.days
+
+    def generate_test_grid_bbrc(self, resources_bbrc):
+
+        if resources_bbrc is None:
+            return [[], []]
+
+        test_list = []
+
+        for resource in resources_bbrc:
+
+            correct_seq_attr = ''
+            uncompressed_pixel_data = ''
+            has_ducplicated_seq = ''
+            usable_t1 = ''
+            consistent_date = ''
+            free_surfer_runnable = ''
+
+            if resource[2] == 'Exists':
+                if 'HasCorrectSequenceAttributes' in resource[3]:
+                    correct_seq_attr = [resource[
+                        3]['HasCorrectSequenceAttributes']['has_passed'],
+                        resource[
+                        3]['HasCorrectSequenceAttributes']['data']]
+                if 'HasUncompressedPixelData' in resource[3]:
+                    uncompressed_pixel_data = [resource[
+                        3]['HasUncompressedPixelData']['has_passed'],
+                        resource[
+                        3]['HasUncompressedPixelData']['data']]
+                if 'HasDuplicatedSequences' in resource[3]:
+                    has_ducplicated_seq = [resource[
+                        3]['HasDuplicatedSequences']['has_passed'],
+                        resource[
+                        3]['HasDuplicatedSequences']['data']]
+                if 'HasUsableT1' in resource[3]:
+                    usable_t1 = [resource[
+                        3]['HasUsableT1']['has_passed'],
+                        resource[
+                        3]['HasUsableT1']['data']]
+                if 'IsAcquisitionDateConsistent' in resource[3]:
+                    consistent_date = [resource[
+                        3]['IsAcquisitionDateConsistent']['has_passed'],
+                        resource[
+                        3]['IsAcquisitionDateConsistent']['data']]
+                if 'IsFreeSurferRunnable' in resource[3]:
+                    free_surfer_runnable = [resource[
+                        3]['IsFreeSurferRunnable']['has_passed'],
+                        resource[
+                        3]['IsFreeSurferRunnable']['data']]
+
+            if resource[0] == self.project_id:
+                test_list.append([
+                    resource[1],
+                    usable_t1, consistent_date, free_surfer_runnable,
+                    correct_seq_attr, uncompressed_pixel_data,
+                    has_ducplicated_seq])
+
+        tests = [
+            'Sessions/Tests',
+            'Usable T1', 'Consistent Date', 'FreeSurfer runnable',
+            'Correct Seq. Attribute', 'Uncompressed pixel data',
+            'Duplicated Sequence']
+
+        return [tests, test_list]

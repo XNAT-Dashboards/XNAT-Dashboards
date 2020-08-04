@@ -66,16 +66,16 @@ def stats_db():
                     else:
                         role_exist = 'guest'
 
-                    user_data = model.load_users_data_pk(server)
-                    resources = model.load_resources_pk(server)
-                    resources_bbrc = model.load_resources_bbrc_pk(
-                            server)
+                    data = model.load_users_data_pk(server)
+                    user_data = data['info']
+                    resources = data['resources']
+                    resources_bbrc = data['resources_bbrc']
 
                     if user_data is not None:
                         plotting_object = graph_generator_DB.\
                             GraphGenerator(
                                 username,
-                                user_data['info'],
+                                user_data,
                                 role_exist,
                                 config['project_visible'],
                                 resources,
@@ -144,15 +144,16 @@ def project_db(id):
     if role_exist == '':
         return redirect(url_for('auth.login_DB'))
 
-    users_data = model.load_users_data_pk(server)
-    resources = model.load_resources_pk(server)
-    resources_bbrc = model.load_resources_bbrc_pk(server)
+    data = model.load_users_data_pk(server)
+    users_data = data['info']
+    resources = data['resources']
+    resources_bbrc = data['resources_bbrc']
 
     config = model.user_role_config(username)
 
     # Get the details for plotting
     data_array = graph_generator_pp_DB.GraphGenerator(
-        username, users_data['info'], id, role_exist,
+        username, users_data, id, role_exist,
         config['project_visible'], resources, resources_bbrc
     ).graph_generator()
 
@@ -173,6 +174,9 @@ def project_db(id):
     name = data_array[2]['name']
     last_workflow = data_array[2]['last_workflow']
 
+    th = data_array[3][0]
+    td = data_array[3][1]
+
     return render_template(
         'dashboards/stats_dashboards_pp.html',
         graph_data=graph_data,
@@ -190,4 +194,6 @@ def project_db(id):
         access=access,
         name=name,
         last_workflow=last_workflow,
-        id=id)
+        id=id,
+        t_header_info=th,
+        t_data_info=td)
