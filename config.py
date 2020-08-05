@@ -1,6 +1,5 @@
 # Define the application directory
 import os
-import json
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
