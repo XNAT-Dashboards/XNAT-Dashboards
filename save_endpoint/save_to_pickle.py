@@ -38,19 +38,21 @@ class SaveToPk:
                 },
                 handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-        longitudnal_data = self.longitudnal_data_processing(
-            data_pro_sub_exp_sc, data_res
-        )
-
         user_data = {}
 
         with open(
                 'pickles/data/general_longitudnal.pickle', 'rb') as handle:
             user_data = pickle.load(handle)
 
-            if self.server != user_data['server']:
-                print("Wrong server")
-                return -1
+            if 'server' in user_data:
+
+                if self.server != user_data['server']:
+                    print("Wrong server")
+                    return -1
+
+        longitudnal_data = self.longitudnal_data_processing(
+            data_pro_sub_exp_sc, data_res, user_data
+        )
 
         with open(
                 'pickles/data/general_longitudnal.pickle',
@@ -58,22 +60,22 @@ class SaveToPk:
 
             if user_data == {}:
                 pickle.dump(
-                    user_data.update({
+                    {
                         'server': self.server,
                         'longitudnal_data': longitudnal_data
-                    }),
+                    },
                     handle, protocol=pickle.HIGHEST_PROTOCOL)
             else:
+
                 pickle.dump(
-                    user_data.update({
+                    {
+                        'server': self.server,
                         'longitudnal_data': longitudnal_data
-                    }),
+                    },
                     handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    def longitudnal_data_processing(self, data_pro_sub_exp_sc, data_res):
-
-        # Normal data processing
-        longitudnal_data = {}
+    def longitudnal_data_processing(
+            self, data_pro_sub_exp_sc, data_res, user_data):
 
         now = datetime.now()
         dt = now.strftime("%d/%m/%Y")
@@ -112,10 +114,34 @@ class SaveToPk:
 
         resource_number['count'] = {dt: len(resource_number['list'][dt])}
 
-        longitudnal_data['project'] = projects_number
-        longitudnal_data['subject'] = subjects_number
-        longitudnal_data['experiment'] = experiments_number
-        longitudnal_data['scan'] = scans_number
-        longitudnal_data['resource'] = resource_number
+        if user_data == {}:
 
-        return longitudnal_data
+            user_data['project']['list'] = projects_number['list']
+            user_data['subject']['list'] = subjects_number['list']
+            user_data['experiment']['list'] = experiments_number['list']
+            user_data['scan']['list'] = scans_number['list']
+            user_data['resource']['list'] = resource_number['list']
+
+            user_data['project']['count'] = projects_number['count']
+            user_data['subject']['count'] = subjects_number['count']
+            user_data['experiment']['count'] = experiments_number['count']
+            user_data['scan']['count'] = scans_number['count']
+            user_data['resource']['count'] = resource_number['count']
+
+        else:
+            user_data = user_data['longitudnal_data']
+
+            user_data['project']['list'].update(projects_number['list'])
+            user_data['subject']['list'].update(subjects_number['list'])
+            user_data['experiment']['list'].update(experiments_number['list'])
+            user_data['scan']['list'].update(scans_number['list'])
+            user_data['resource']['list'].update(resource_number['list'])
+
+            user_data['project']['count'].update(projects_number['count'])
+            user_data['subject']['count'].update(subjects_number['count'])
+            user_data['experiment']['count'].update(
+                experiments_number['count'])
+            user_data['scan']['count'].update(scans_number['count'])
+            user_data['resource']['count'].update(resource_number['count'])
+
+        return user_data
