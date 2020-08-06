@@ -13,11 +13,11 @@ def test_save_data_and_user(mocker):
     data_return_value = {'info': 'data'}
 
     mocker.patch(
-        'pyxnat_interface.data_fetcher.FetcherLong.get_resources',
+        'pyxnat_interface.data_fetcher.Fetcher.get_resources',
         return_value=resource_return_value)
 
     mocker.patch(
-        'pyxnat_interface.data_fetcher.FetcherLong.get_experiment_resources',
+        'pyxnat_interface.data_fetcher.Fetcher.get_experiment_resources',
         return_value=resource_return_value)
 
     mocker.patch(
@@ -25,9 +25,7 @@ def test_save_data_and_user(mocker):
         return_value=data_return_value)
 
     save_to_pickle.SaveToPk(
-        username, password, server, ssl).save_to_PK(
-            username, password, server, ssl
-        )
+        username, password, server, ssl).save_to_PK()
 
     with open('pickles/data/general.pickle', 'rb') as handle:
         data = pickle.load(handle)
