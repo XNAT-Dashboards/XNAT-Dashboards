@@ -41,7 +41,7 @@ class SaveToPk:
         user_data = {}
 
         with open(
-                'pickles/data/general_longitudnal.pickle', 'rb') as handle:
+                'pickles/data/general_longitudinal.pickle', 'rb') as handle:
             user_data = pickle.load(handle)
 
             if 'server' in user_data:
@@ -50,19 +50,19 @@ class SaveToPk:
                     print("Wrong server")
                     return -1
 
-        longitudnal_data = self.longitudnal_data_processing(
+        longitudinal_data = self.longitudinal_data_processing(
             data_pro_sub_exp_sc, data_res, user_data
         )
 
         with open(
-                'pickles/data/general_longitudnal.pickle',
+                'pickles/data/general_longitudinal.pickle',
                 'wb') as handle:
 
             if user_data == {}:
                 pickle.dump(
                     {
                         'server': self.server,
-                        'longitudnal_data': longitudnal_data
+                        'longitudinal_data': longitudinal_data
                     },
                     handle, protocol=pickle.HIGHEST_PROTOCOL)
             else:
@@ -70,11 +70,11 @@ class SaveToPk:
                 pickle.dump(
                     {
                         'server': self.server,
-                        'longitudnal_data': longitudnal_data
+                        'longitudinal_data': longitudinal_data
                     },
                     handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    def longitudnal_data_processing(
+    def longitudinal_data_processing(
             self, data_pro_sub_exp_sc, data_res, user_data):
 
         now = datetime.now()
@@ -129,7 +129,7 @@ class SaveToPk:
             user_data['resource']['count'] = resource_number['count']
 
         else:
-            user_data = user_data['longitudnal_data']
+            user_data = user_data['longitudinal_data']
 
             user_data['project']['list'].update(projects_number['list'])
             user_data['subject']['list'].update(subjects_number['list'])
