@@ -25,10 +25,6 @@ def test_save_data_and_user(mocker):
         'pyxnat_interface.data_fetcher.Fetcher.fetch_all',
         return_value=data_return_value)
 
-    mocker.patch(
-        'save_to_pickle.SaveToPk.longitudnal_data_processing',
-        return_value=[])
-
     save_to_pickle.SaveToPk(
         username, password, server, ssl).save_to_PK()
 
