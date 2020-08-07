@@ -86,6 +86,7 @@
                 <nav class="sidebar-nav">
                     <ul id="sidebarnav">
                         <li id="overview"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-eye"></i><span class="hide-menu">Overview</span></a></li>
+                        <li id="longitudinal"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-line-chart"></i><span class="hide-menu">Longitudinal Metrics</span></a></li>                        
                         <li id="projects"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-list"></i><span class="hide-menu">Projects</span></a></li>     
                         <li id="projects_ow_co_me"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-list"></i><span class="hide-menu">Projects Owned, Collaborated or Member </span></a></li>                   
                         <div class="text-center m-t-30">
@@ -98,7 +99,7 @@
         <!-- Left sidebar end-->
         <!-- Plotly graphs container start -->
         <div class="page-wrapper ">
-            <div class="container-fluid ">
+            <div class="container-fluid">
                 <div class="row page-titles">
                     <div class="col-md-5 align-self-center">
                         <h4 class="text-themecolor overview_part">Overview Dashboard</h4>
@@ -125,16 +126,16 @@
                     <!-- Counter Start -->
                     <div class = "card">
                         <div class="card-body">
-                                <div class="row">
-                                    {% for key in stats_data %}
-                                    <div class="col">
-                                        <div class="counter">
-                                            <h2 class="timer count-title count-number" data-to="{{stats_data[key]}}" data-speed="1000"></h2>
-                                            <p class="count-text ">{{key}}</p>
-                                        </div>
+                            <div class="row">
+                                {% for key in stats_data %}
+                                <div class="col">
+                                    <div class="counter">
+                                        <h2 class="timer count-title count-number" data-to="{{stats_data[key]}}" data-speed="1000"></h2>
+                                        <p class="count-text ">{{key}}</p>
                                     </div>
-                                    {% endfor %}
                                 </div>
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
                     <!-- Counter End -->
@@ -158,25 +159,50 @@
                     </div>
                     {% endfor %}
                     <!-- Graph plotting End -->
+                </div>
                 <!-- Modal start for drill down data-->
-                    <div class="modal fade" id="drillDown" tabindex="-1" role="dialog" aria-labelledby="drillDownTile" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="drillDownTitle"></h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                        </button>
-                                </div>
-                                <div class="modal-body" id="modalBodyDrillDown">
-                    
-                                </div>
+                <div class="modal fade" id="drillDown" tabindex="-1" role="dialog" aria-labelledby="drillDownTile" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="drillDownTitle"></h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                    </button>
+                            </div>
+                            <div class="modal-body" id="modalBodyDrillDown">
+                
                             </div>
                         </div>
                     </div>
-                <!-- Modal end for drill down data -->
                 </div>
+                <!-- Modal end for drill down data -->
             </div>
+
+            <!-- longitudinal Start -->
+
+            <div class="longitudinal_part">
+                {% for i in longitudinal_data %}
+                <div class="row">
+                    {% for j in i %}
+                    {% for key in j %}
+                        <div class="col-lg-6" id="myBig{{j['id']}}">
+                            <div class="card">
+                                <div class="card-body" id="graph_id{{j[key]['id']}}">
+                                    <i id="info_id{{j[key]['id']}}" class="fa fa-info wrapper_tooltip" aria-hidden="true" >
+                                            <div id="info_text_id{{j[key]['id']}}" class="tooltip"></div>
+                                    </i>
+                                    <div id="graph_body{{j[key]['id']}}"><!-- Plotly chart will be drawn inside this DIV --></div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- longitudinal End -->
             <!-- Project List Start -->
             <!-- Project list for all visible projects Start -->
             <div class="project_part">
@@ -238,14 +264,13 @@
     <!-- Js include Start -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-    <script src="/static/dashboards/js/custom.js"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script>
         server_o = '{{server}}';
     </script>
     <script src="/static/dashboards/js/plotly_chart_generator.js"></script>
     <script src="/static/dashboards/js/graph_descriptor.js"></script>
-
+    
     {% for i in graph_data%}
         {% for j in i%}
             <script>
@@ -253,7 +278,16 @@
             </script>
         {%endfor%}
     {%endfor%}
-    <script src="/static/dashboards/js/per_project.js"></script>
+
+    {% for i in longitudinal_data%}
+    {% for j in i%}
+        <script>
+            chart_generator({{ j | tojson}});
+        </script>
+    {%endfor%}
+    {%endfor%}
+
+    <script src="/static/dashboards/js/custom.js"></script>
     <!-- Js include End -->
 </body>
 
