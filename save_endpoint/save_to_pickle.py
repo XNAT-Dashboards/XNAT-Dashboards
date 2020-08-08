@@ -95,6 +95,7 @@ class SaveToPk:
         subjects_number['count'] = {dt: len(data_pro_sub_exp_sc['subjects'])}
         experiments_number['count'] =\
             {dt: len(data_pro_sub_exp_sc['experiments'])}
+
         scans_number['count'] = {dt: len(data_pro_sub_exp_sc['scans'])}
 
         for project in data_pro_sub_exp_sc['projects']:
@@ -122,32 +123,26 @@ class SaveToPk:
 
         if user_data == {}:
 
-            user_data['project']['list'] = projects_number['list']
-            user_data['subject']['list'] = subjects_number['list']
-            user_data['experiment']['list'] = experiments_number['list']
-            user_data['scan']['list'] = scans_number['list']
-            user_data['resource']['list'] = resource_number['list']
-
-            user_data['project']['count'] = projects_number['count']
-            user_data['subject']['count'] = subjects_number['count']
-            user_data['experiment']['count'] = experiments_number['count']
-            user_data['scan']['count'] = scans_number['count']
-            user_data['resource']['count'] = resource_number['count']
+            user_data['project'] = {'list': {}, 'count': {}}
+            user_data['subject'] = {'list': {}, 'count': {}}
+            user_data['experiment'] = {'list': {}, 'count': {}}
+            user_data['scan'] = {'list': {}, 'count': {}}
+            user_data['resource'] = {'list': {}, 'count': {}}
 
         else:
             user_data = user_data['longitudinal_data']
 
-            user_data['project']['list'].update(projects_number['list'])
-            user_data['subject']['list'].update(subjects_number['list'])
-            user_data['experiment']['list'].update(experiments_number['list'])
-            user_data['scan']['list'].update(scans_number['list'])
-            user_data['resource']['list'].update(resource_number['list'])
+        user_data['project']['list'].update(projects_number['list'])
+        user_data['subject']['list'].update(subjects_number['list'])
+        user_data['experiment']['list'].update(experiments_number['list'])
+        user_data['scan']['list'].update(scans_number['list'])
+        user_data['resource']['list'].update(resource_number['list'])
 
-            user_data['project']['count'].update(projects_number['count'])
-            user_data['subject']['count'].update(subjects_number['count'])
-            user_data['experiment']['count'].update(
-                experiments_number['count'])
-            user_data['scan']['count'].update(scans_number['count'])
-            user_data['resource']['count'].update(resource_number['count'])
+        user_data['project']['count'].update(projects_number['count'])
+        user_data['subject']['count'].update(subjects_number['count'])
+        user_data['experiment']['count'].update(
+            experiments_number['count'])
+        user_data['scan']['count'].update(scans_number['count'])
+        user_data['resource']['count'].update(resource_number['count'])
 
         return user_data
