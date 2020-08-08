@@ -200,6 +200,9 @@ class GraphGenerator:
         array_1d = []
         counter = 0
 
+        if self.l_data is None:
+            return [[], []]
+
         lg_data = self.graph_pre_processor(self.l_data['longitudinal_data'])
 
         for final_json in lg_data:
