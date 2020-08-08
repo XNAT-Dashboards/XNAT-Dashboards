@@ -193,14 +193,14 @@ class GraphGenerator:
 
         return [array_2d, array_2d_ow_co_me]
 
-    def graph_generator_longitudnal(self):
+    def graph_generator_longitudinal(self):
 
         length_check = 0
         array_2d = []
         array_1d = []
         counter = 0
 
-        lg_data = self.graph_pre_processor(self.l_data['longitudnal_data'])
+        lg_data = self.graph_pre_processor(self.l_data['longitudinal_data'])
 
         for final_json in lg_data:
             if self.role\

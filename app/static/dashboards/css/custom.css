@@ -361,6 +361,10 @@ Test grid color class
   background-color: black;
   border: 5px solid white;
 }
+.grey_bg{
+  background-color: grey;
+  border: 5px solid white;
+}
 
 /*
 Making the table scrollable in x and y
@@ -376,7 +380,7 @@ thead td {
 
 thead td:first-child {
   left: 0;
-  z-index: 3;
+  z-index: 4;
 }
 
 .table-responsive{
@@ -384,12 +388,13 @@ thead td:first-child {
   height: 500px;
 }
 
-tbody td {
+.stick {
   position: -webkit-sticky; /* for Safari */
   position: sticky;
   top: 0;
   left: 0;
   background: #FFF;
   border-right: 5px solid #fff;
+  left: 0;
+  z-index: 3;
 }
-

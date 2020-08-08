@@ -11,7 +11,10 @@ def test_save_data_and_user(mocker):
 
     resource_return_value = {
         'date': '28', 'resources': [], 'resources_bbrc': []}
-    data_return_value = {'info': 'data'}
+    data_return_value = {
+        'info': 'data',
+        'projects': [], 'subjects': [],
+        'experiments': [], 'scans': []}
 
     mocker.patch(
         'pyxnat_interface.data_fetcher.Fetcher.get_resources',
@@ -24,10 +27,6 @@ def test_save_data_and_user(mocker):
     mocker.patch(
         'pyxnat_interface.data_fetcher.Fetcher.fetch_all',
         return_value=data_return_value)
-
-    mocker.patch(
-        'save_to_pickle.SaveToPk.longitudnal_data_processing',
-        return_value=[])
 
     save_to_pickle.SaveToPk(
         username, password, server, ssl).save_to_PK()

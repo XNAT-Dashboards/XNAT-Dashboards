@@ -52,7 +52,7 @@ def test_dashboard_db(mocker):
 
     mocker.patch(
         'saved_data_processing.graph_generator_DB.'
-        'GraphGenerator.graph_generator_longitudnal',
+        'GraphGenerator.graph_generator_longitudinal',
         return_value=[])
 
     data_post_login_dash_present = dict(username='testUser',

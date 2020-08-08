@@ -8,7 +8,7 @@ from app.dashboards import model
 # Define the blueprint: 'dashboards', set its url prefix: app.url/dashboards
 dashboards = Blueprint('dashboards', __name__, url_prefix='/dashboards')
 
-longitudnal_data = []
+longitudinal_data = []
 graph_data_stats = []  # Contains graph Data loaded globally for get request
 project_lists = []  # Contains project list globally for get request
 username = ''  # For saving username globally
@@ -49,7 +49,7 @@ def stats_db():
         server = user_details['server']
         ssl = False if user_details.get('ssl') is None else True
 
-        global longitudnal_data
+        global longitudinal_data
         global graph_data_stats
         global project_lists
 
@@ -73,7 +73,7 @@ def stats_db():
                     user_data = data['info']
                     resources = data['resources']
                     resources_bbrc = data['resources_bbrc']
-                    l_data = model.load_longitudnal_data(server)
+                    l_data = model.load_longitudinal_data(server)
 
                     if user_data is not None:
                         plotting_object = graph_generator_DB.\
@@ -89,8 +89,8 @@ def stats_db():
                         graph_data_stats = plotting_object.\
                             graph_generator()
 
-                        longitudnal_data = plotting_object.\
-                            graph_generator_longitudnal()
+                        longitudinal_data = plotting_object.\
+                            graph_generator_longitudinal()
 
                         project_lists = plotting_object.\
                             project_list_generator()
@@ -109,7 +109,6 @@ def stats_db():
             return redirect(url_for('auth.login_DB'))
 
         else:
-            print(longitudnal_data)
             project_list = project_lists[0]
             project_list_ow_co_me = project_lists[1]
             graph_data = graph_data_stats[0]
@@ -118,7 +117,7 @@ def stats_db():
                                    graph_data=graph_data,
                                    project_list=project_list,
                                    stats_data=stats_data,
-                                   longitudnal_data=longitudnal_data,
+                                   longitudinal_data=longitudinal_data,
                                    project_list_ow_co_me=project_list_ow_co_me,
                                    username=username.capitalize(),
                                    server=server,
@@ -138,7 +137,7 @@ def stats_db():
                                    graph_data=graph_data,
                                    project_list=project_list,
                                    stats_data=stats_data,
-                                   longitudnal_data=longitudnal_data,
+                                   longitudinal_data=longitudinal_data,
                                    project_list_ow_co_me=project_list_ow_co_me,
                                    username=username.capitalize(),
                                    server=server,

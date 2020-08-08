@@ -716,60 +716,40 @@ class FormatterPP(Formatter):
         if resources_bbrc is None:
             return [[], []]
 
-        test_list = []
+        tests_list = []
+        extra = ['version', 'experiment_id', 'generated']
+        tests_union = []
 
         for resource in resources_bbrc:
 
-            correct_seq_attr = ''
-            uncompressed_pixel_data = ''
-            has_ducplicated_seq = ''
-            usable_t1 = ''
-            consistent_date = ''
-            free_surfer_runnable = ''
+            if resource[2] == 'Exists':
+
+                for test in resource[3]:
+                    if test not in tests_union\
+                        and\
+                            test not in extra:
+                        tests_union.append(test)
+
+        for resource in resources_bbrc:
 
             if resource[2] == 'Exists':
-                if 'HasCorrectSequenceAttributes' in resource[3]:
-                    correct_seq_attr = [resource[
-                        3]['HasCorrectSequenceAttributes']['has_passed'],
-                        resource[
-                        3]['HasCorrectSequenceAttributes']['data']]
-                if 'HasUncompressedPixelData' in resource[3]:
-                    uncompressed_pixel_data = [resource[
-                        3]['HasUncompressedPixelData']['has_passed'],
-                        resource[
-                        3]['HasUncompressedPixelData']['data']]
-                if 'HasDuplicatedSequences' in resource[3]:
-                    has_ducplicated_seq = [resource[
-                        3]['HasDuplicatedSequences']['has_passed'],
-                        resource[
-                        3]['HasDuplicatedSequences']['data']]
-                if 'HasUsableT1' in resource[3]:
-                    usable_t1 = [resource[
-                        3]['HasUsableT1']['has_passed'],
-                        resource[
-                        3]['HasUsableT1']['data']]
-                if 'IsAcquisitionDateConsistent' in resource[3]:
-                    consistent_date = [resource[
-                        3]['IsAcquisitionDateConsistent']['has_passed'],
-                        resource[
-                        3]['IsAcquisitionDateConsistent']['data']]
-                if 'IsFreeSurferRunnable' in resource[3]:
-                    free_surfer_runnable = [resource[
-                        3]['IsFreeSurferRunnable']['has_passed'],
-                        resource[
-                        3]['IsFreeSurferRunnable']['data']]
+                test_list = []
+                test_list = [resource[1]]
 
-            if resource[0] == self.project_id:
-                test_list.append([
-                    resource[1],
-                    usable_t1, consistent_date, free_surfer_runnable,
-                    correct_seq_attr, uncompressed_pixel_data,
-                    has_ducplicated_seq])
+                test_list.append(['version', resource[3]['version']])
 
-        tests = [
-            'Sessions/Tests',
-            'Usable T1', 'Consistent Date', 'FreeSurfer runnable',
-            'Correct Seq. Attribute', 'Uncompressed pixel data',
-            'Duplicated Sequence']
+                for test in tests_union:
+                    test_unit = ''
 
-        return [tests, test_list]
+                    if test in resource[3]:
+                        test_unit = [resource[
+                            3][test]['has_passed'],
+                            resource[
+                            3][test]['data']]
+
+                    test_list.append(test_unit)
+
+                if resource[0] == self.project_id:
+                    tests_list.append(test_list)
+
+        return [tests_union, tests_list]

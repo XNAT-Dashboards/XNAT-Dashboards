@@ -271,6 +271,8 @@
                             <table id='tests_table' class="table table-hover">
                                 <thead>
                                     <tr>
+                                        <td class="Stick">Sessions/Tests</td>
+                                        <td>Version</td>
                                         {% for data in t_header_info%}
                                         <td>{{data}}</td>
                                         {% endfor %}
@@ -282,13 +284,31 @@
                                         <tr>
                                             {% for data in data_l %}
                                                 {% if data[0] == true %}
-                                                <td class="green_bg"></td>
-                                                {% elif data[0] == false %}
-                                                <td class="red_bg"><div style="display: none;">{{data[1] | tojson}}</div></td>
+                                                <td class="green_bg">
+                                                    <div style="display: none;">
+                                                        {{data[1] | tojson}}
+                                                    </div>
+                                                </td>
+                                                {% elif data[0] == false%}
+                                                <td class="red_bg">
+                                                    <div style="display: none;">
+                                                        {{data[1] | tojson}}
+                                                    </div>
+                                                </td>
+                                                {% elif data[0] == None%}
+                                                <td class="grey_bg">
+                                                    <div style="display: none;">
+                                                        {{data[1] | tojson}}
+                                                    </div>
+                                                </td>
+                                                {% elif data[0] == 'version' %}
+                                                <td>
+                                                    {{data[1]}}
+                                                </td>
                                                 {% elif data == '' %}
                                                 <td class="black_bg"></td>
                                                 {% else %}
-                                                <td>
+                                                <td class="stick">
                                                     <a href="{{server}}/app/action/DisplayItemAction/search_value/{{data}}/search_element/xnat:Data/search_field/xnat:imageSessionData.ID" target="_blank">
                                                     {{data}}
                                                     </a>
