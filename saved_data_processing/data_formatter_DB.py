@@ -352,7 +352,7 @@ class Formatter:
                         resource[3]['version'], resource[3][test][value]])
                 else:
                     resource_processing.append([
-                        resource[0], resource[1], resource[2], 'Not Exists',
+                        resource[0], resource[1], resource[2], 'Exists',
                         resource[3]['version'], 'No Data'])
             else:
                 resource_processing.append([
@@ -722,7 +722,7 @@ class FormatterPP(Formatter):
 
         for resource in resources_bbrc:
 
-            if resource[2] == 'Exists':
+            if resource[2] == 'Exists' and type(resource[3]) != int:
 
                 for test in resource[3]:
                     if test not in tests_union\
@@ -732,7 +732,7 @@ class FormatterPP(Formatter):
 
         for resource in resources_bbrc:
 
-            if resource[2] == 'Exists':
+            if resource[2] == 'Exists' and type(resource[3]) != int:
                 test_list = []
                 test_list = [resource[1]]
 
@@ -751,5 +751,7 @@ class FormatterPP(Formatter):
 
                 if resource[0] == self.project_id:
                     tests_list.append(test_list)
+
+        print(test_list)
 
         return [tests_union, tests_list]

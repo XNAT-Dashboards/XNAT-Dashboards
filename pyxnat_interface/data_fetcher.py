@@ -156,6 +156,7 @@ class Fetcher:
         resources = []
 
         for exp in tqdm(experiments):
+
             res = self.SELECTOR.select.experiments(exp['ID']).resources()
             res_Arr = []
 
@@ -193,10 +194,10 @@ class Fetcher:
                             BBRC_VALIDATOR, 'ArchivingValidator')])
                 except IndexError:
                     resource_bbrc_validator.append(
-                        [exp['project'], exp['ID'], True, 0])
+                        [exp['project'], exp['ID'], exists, 0])
             else:
                 resource_bbrc_validator.append([
-                    exp['project'], exp['ID'], False, 0])
+                    exp['project'], exp['ID'], exists, 0])
 
         return resource_bbrc_validator
 
