@@ -200,7 +200,7 @@ class GraphGenerator:
         array_1d = []
         counter = 0
 
-        if self.l_data is None:
+        if self.l_data is None or self.role != 'admin':
             return [[], []]
 
         lg_data = self.graph_pre_processor(self.l_data)

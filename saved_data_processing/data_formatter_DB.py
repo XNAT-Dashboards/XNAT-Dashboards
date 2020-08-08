@@ -752,6 +752,4 @@ class FormatterPP(Formatter):
                 if resource[0] == self.project_id:
                     tests_list.append(test_list)
 
-        print(test_list)
-
         return [tests_union, tests_list]
