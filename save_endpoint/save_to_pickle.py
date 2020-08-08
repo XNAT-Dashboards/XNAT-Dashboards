@@ -1,5 +1,6 @@
 import sys
 import pickle
+import os.path
 from os.path import dirname, abspath
 from datetime import datetime
 sys.path.insert(0, dirname(dirname(abspath(__file__))))
@@ -40,15 +41,20 @@ class SaveToPk:
 
         user_data = {}
 
-        with open(
-                'pickles/data/general_longitudinal.pickle', 'rb') as handle:
-            user_data = pickle.load(handle)
+        file_exist = os.path.isfile('pickles/data/general_longitudinal.pickle')
 
-            if 'server' in user_data:
+        if file_exist:
 
-                if self.server != user_data['server']:
-                    print("Wrong server")
-                    return -1
+            with open(
+                    'pickles/data/general_longitudinal.pickle',
+                    'rb') as handle:
+                user_data = pickle.load(handle)
+
+                if 'server' in user_data:
+
+                    if self.server != user_data['server']:
+                        print("Wrong server")
+                        return -1
 
         longitudinal_data = self.longitudinal_data_processing(
             data_pro_sub_exp_sc, data_res, user_data
