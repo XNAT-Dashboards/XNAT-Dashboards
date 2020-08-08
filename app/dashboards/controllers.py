@@ -1,7 +1,7 @@
 # Import flask dependencies
 from flask import Blueprint, render_template, session, request,\
     redirect, url_for
-from saved_data_processing import graph_generator_DB, graph_generator_pp_DB
+from saved_data_processing import graph_generator_DB
 from app.dashboards import model
 
 
@@ -164,7 +164,7 @@ def project_db(id):
     config = model.user_role_config(username)
 
     # Get the details for plotting
-    data_array = graph_generator_pp_DB.GraphGenerator(
+    data_array = graph_generator_DB.GraphGeneratorPP(
         username, users_data, id, role_exist,
         config['project_visible'], resources, resources_bbrc
     ).graph_generator()
