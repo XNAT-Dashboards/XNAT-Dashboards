@@ -47,18 +47,3 @@ def load_users_data_pk(server):
         return None
 
     return user_data
-
-
-def load_longitudinal_data(server):
-
-    try:
-        with open(
-                'pickles/data/general_longitudinal.pickle', 'rb') as handle:
-            l_data = pickle.load(handle)
-
-        if l_data['server'] != server:
-            return None
-    except FileNotFoundError:
-        return None
-
-    return l_data

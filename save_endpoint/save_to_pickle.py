@@ -26,22 +26,8 @@ class SaveToPk:
         data_res = self.fetcher.get_resources()
         data_res_bbrc = self.fetcher.get_experiment_resources()
 
-        with open(
-                'pickles/data/general.pickle',
-                'wb') as handle:
-
-            pickle.dump(
-                {
-                    'server': self.server,
-                    'info': data_pro_sub_exp_sc,
-                    'resources': data_res,
-                    'resources_bbrc': data_res_bbrc
-                },
-                handle, protocol=pickle.HIGHEST_PROTOCOL)
-
+        file_exist = os.path.isfile('pickles/data/general.pickle')
         user_data = {}
-
-        file_exist = os.path.isfile('pickles/data/general_longitudinal.pickle')
 
         if file_exist:
 
@@ -61,24 +47,18 @@ class SaveToPk:
         )
 
         with open(
-                'pickles/data/general_longitudinal.pickle',
+                'pickles/data/general.pickle',
                 'wb') as handle:
 
-            if user_data == {}:
-                pickle.dump(
-                    {
-                        'server': self.server,
-                        'longitudinal_data': longitudinal_data
-                    },
-                    handle, protocol=pickle.HIGHEST_PROTOCOL)
-            else:
-
-                pickle.dump(
-                    {
-                        'server': self.server,
-                        'longitudinal_data': longitudinal_data
-                    },
-                    handle, protocol=pickle.HIGHEST_PROTOCOL)
+            pickle.dump(
+                {
+                    'server': self.server,
+                    'info': data_pro_sub_exp_sc,
+                    'resources': data_res,
+                    'resources_bbrc': data_res_bbrc,
+                    'longitudinal_data': longitudinal_data
+                },
+                handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     def longitudinal_data_processing(
             self, data_pro_sub_exp_sc, data_res, user_data):

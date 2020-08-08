@@ -70,12 +70,14 @@ def stats_db():
                         role_exist = 'guest'
 
                     data = model.load_users_data_pk(server)
-                    user_data = data['info']
-                    resources = data['resources']
-                    resources_bbrc = data['resources_bbrc']
-                    l_data = model.load_longitudinal_data(server)
 
-                    if user_data is not None:
+                    if data is not None:
+
+                        user_data = data['info']
+                        resources = data['resources']
+                        resources_bbrc = data['resources_bbrc']
+                        l_data = data['longitudinal_data']
+
                         plotting_object = graph_generator_DB.\
                             GraphGenerator(
                                 username,
