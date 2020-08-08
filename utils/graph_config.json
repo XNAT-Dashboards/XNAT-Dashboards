@@ -149,31 +149,31 @@
         "visibility": ["admin"],
         "color":"#16ffeb"
     },
-    "project":{
+    "Projects":{
         "type": "line",
         "description": "Test",
         "visibility": ["admin", "superuser", "guest"],
         "color": "#16ffec"
     },
-    "subject":{
+    "Subjects":{
         "type": "line",
         "description": "Test",
         "visibility": ["admin", "superuser", "guest"],
         "color": "#16ffec"
     },
-    "experiment":{
+    "Experiments":{
         "type": "line",
         "description": "Test",
         "visibility": ["admin", "superuser", "guest"],
         "color": "#16ffec"
     },
-    "scan":{
+    "Scans":{
         "type": "line",
         "description": "Test",
         "visibility": ["admin", "superuser", "guest"],
         "color": "#16ffec"
     },
-    "resource":{
+    "Resources":{
         "type": "line",
         "description": "Test",
         "visibility": ["admin", "superuser", "guest"],

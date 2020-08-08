@@ -103,26 +103,26 @@ class SaveToPk:
 
         if user_data == {}:
 
-            user_data['project'] = {'list': {}, 'count': {}}
-            user_data['subject'] = {'list': {}, 'count': {}}
-            user_data['experiment'] = {'list': {}, 'count': {}}
-            user_data['scan'] = {'list': {}, 'count': {}}
-            user_data['resource'] = {'list': {}, 'count': {}}
+            user_data['Projects'] = {'list': {}, 'count': {}}
+            user_data['Subjects'] = {'list': {}, 'count': {}}
+            user_data['Experiments'] = {'list': {}, 'count': {}}
+            user_data['Scans'] = {'list': {}, 'count': {}}
+            user_data['Resources'] = {'list': {}, 'count': {}}
 
         else:
             user_data = user_data['longitudinal_data']
 
-        user_data['project']['list'].update(projects_number['list'])
-        user_data['subject']['list'].update(subjects_number['list'])
-        user_data['experiment']['list'].update(experiments_number['list'])
-        user_data['scan']['list'].update(scans_number['list'])
-        user_data['resource']['list'].update(resource_number['list'])
+        user_data['Projects']['list'].update(projects_number['list'])
+        user_data['Subjects']['list'].update(subjects_number['list'])
+        user_data['Experiments']['list'].update(experiments_number['list'])
+        user_data['Scans']['list'].update(scans_number['list'])
+        user_data['Resources']['list'].update(resource_number['list'])
 
-        user_data['project']['count'].update(projects_number['count'])
-        user_data['subject']['count'].update(subjects_number['count'])
-        user_data['experiment']['count'].update(
+        user_data['Projects']['count'].update(projects_number['count'])
+        user_data['Subjects']['count'].update(subjects_number['count'])
+        user_data['Experiments']['count'].update(
             experiments_number['count'])
-        user_data['scan']['count'].update(scans_number['count'])
-        user_data['resource']['count'].update(resource_number['count'])
+        user_data['Scans']['count'].update(scans_number['count'])
+        user_data['Resources']['count'].update(resource_number['count'])
 
         return user_data
