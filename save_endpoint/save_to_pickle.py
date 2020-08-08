@@ -32,7 +32,7 @@ class SaveToPk:
         if file_exist:
 
             with open(
-                    'pickles/data/general_longitudinal.pickle',
+                    'pickles/data/general.pickle',
                     'rb') as handle:
                 user_data = pickle.load(handle)
 
