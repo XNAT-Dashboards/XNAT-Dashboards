@@ -41,13 +41,13 @@ def test_dashboard_db(mocker):
         return_value=[[], []])
 
     mocker.patch(
-        'saved_data_processing.graph_generator_pp_DB.'
-        'GraphGenerator.__init__',
+        'saved_data_processing.graph_generator_DB.'
+        'GraphGeneratorPP.__init__',
         return_value=None)
 
     mocker.patch(
-        'saved_data_processing.graph_generator_pp_DB.'
-        'GraphGenerator.graph_generator',
+        'saved_data_processing.graph_generator_DB.'
+        'GraphGeneratorPP.graph_generator',
         return_value=None)
 
     mocker.patch(
