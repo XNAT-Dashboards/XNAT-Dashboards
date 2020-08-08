@@ -649,6 +649,7 @@ class FormatterPP(Formatter):
         # Create dict format for graph of difference in dates
         experiments = []
 
+        # Get list of experiments
         for experiment in experiments_data:
             if experiment['project'] == self.project_id:
                 experiments.append(experiment)
@@ -656,14 +657,19 @@ class FormatterPP(Formatter):
         if resources_bbrc is None:
             return None
 
+        # Generate a dataframe of Test acq. date and its data (date)
         df = super().generate_resource_df(
             resources_bbrc, 'IsAcquisitionDateConsistent', 'data')
 
         df = df.groupby(['Project']).get_group(self.project_id)
         df_exp = pd.DataFrame(experiments)
 
+        # Perform a join operation on Experiment ID and Session(Experiment ID)
         merged_inner = pd.merge(
             left=df, right=df_exp, left_on='Session', right_on='ID')
+
+        # Dates acq dict {'IsAcquisitionDateConsistent':{'session_date': date}}
+        # below code get the date from the dictionary
 
         dates_acq_list = []
         dates_acq_dict = merged_inner[
@@ -676,13 +682,17 @@ class FormatterPP(Formatter):
             else:
                 dates_acq_list.append(dates_acq_dict[dates])
 
+        # Acquisition date extracted from dict and added to dataframe
+
         merged_inner['acq_date'] = dates_acq_list
 
+        # Creates a dataframe with columns as ID, Acq. date and insert date
         df_acq_insert_date = merged_inner[['ID', 'acq_date', 'date']]
 
         df_acq_insert_date['diff'] = df_acq_insert_date.apply(
             lambda x: self.dates_diff_calc(x['acq_date'], x['date']), axis=1)
 
+        # Code to formate the dataframe for frontend
         df_diff = df_acq_insert_date
 
         diff_test = df_diff[['ID', 'diff']].rename(
@@ -720,6 +730,8 @@ class FormatterPP(Formatter):
         extra = ['version', 'experiment_id', 'generated']
         tests_union = []
 
+        # Creates a tests_unions list which has all tests union
+        # except the values present in extra list
         for resource in resources_bbrc:
 
             if resource[2] == 'Exists' and type(resource[3]) != int:
@@ -730,6 +742,8 @@ class FormatterPP(Formatter):
                             test not in extra:
                         tests_union.append(test)
 
+        # If resource[2] ie BBRC_Validator exists then further proceed
+        # For resource[3] which is a dict of tests
         for resource in resources_bbrc:
 
             if resource[2] == 'Exists' and type(resource[3]) != int:
@@ -738,6 +752,8 @@ class FormatterPP(Formatter):
 
                 test_list.append(['version', resource[3]['version']])
 
+                # Loop through each test if exists then add the details
+                # in the tests_list or just add '' in the test_list
                 for test in tests_union:
                     test_unit = ''
 

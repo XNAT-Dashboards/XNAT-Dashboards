@@ -19,6 +19,9 @@ class GetInfo:
 
     def info_preprocessor(self, info_f):
 
+        # Method to restrict access to projects details
+        # based on role of the user
+
         projects_f = info_f['projects']
         subjects_f = info_f['subjects']
         experiments_f = info_f['experiments']
@@ -29,11 +32,15 @@ class GetInfo:
         subjects = []
         projects = []
 
+        # Loop through each project and check id with each
+        # id present for the role or role containting *
         for project in projects_f:
             if project['id'] in self.project_visible\
                     or "*" in self.project_visible:
                 projects.append(project)
 
+        # Loop through each subjects, experiments, scans and check it's project
+        # id present for the role or role containting *
         for experiment in experiments_f:
             if experiment['project'] in self.project_visible\
                     or "*" in self.project_visible:
@@ -62,6 +69,9 @@ class GetInfo:
         self.resources_bbrc = {}
         resources_list = []
         resources_bbrc_list = []
+
+        # Loop through each resources and resources bbrc and check it's project
+        # id present for the role or role containting *
 
         for resource in resources:
             if resource[0] not in self.project_visible\
