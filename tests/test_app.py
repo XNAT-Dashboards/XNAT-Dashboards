@@ -50,6 +50,11 @@ def test_dashboard_db(mocker):
         'GraphGenerator.graph_generator',
         return_value=None)
 
+    mocker.patch(
+        'saved_data_processing.graph_generator_DB.'
+        'GraphGenerator.graph_generator_longitudinal',
+        return_value=[])
+
     data_post_login_dash_present = dict(username='testUser',
                                         password='testPassword',
                                         server='https://central.xnat.org',

@@ -12,19 +12,24 @@ class GraphGenerator:
     project_list_ow_co_me = []
 
     def __init__(
-            self, username, info, role,
+            self, username, info, l_data, role,
             project_visible=None, resources=None, resources_bbrc=None):
 
         self.info = get_info_DB.GetInfo(
-            username, info, role, project_visible, resources, resources_bbrc)
+            username, info,
+            role, project_visible, resources, resources_bbrc)
+
         projects_data_dict = self.info.get_project_list()
+
+        self.counter_id = 0
         self.role = role
+        self.l_data = l_data
         self.data = self.info.get_info()
         self.project_list = projects_data_dict['project_list']
         self.project_list_ow_co_me =\
             projects_data_dict['project_list_ow_co_me']
 
-    def graph_pre_processor(self):
+    def graph_pre_processor(self, data):
 
         '''
         Add graph type and id for html using the graph_type.json file
@@ -35,20 +40,20 @@ class GraphGenerator:
         with open('utils/graph_config.json') as json_file:
             self.graph_config = json.load(json_file)
 
-        counter_id = 0
+        if type(data) != dict:
+            return data
 
-        if type(self.data) != dict:
-            return self.data
-
-        final_json_dict = self.data
+        final_json_dict = data
 
         for final_json in final_json_dict:
             if final_json == 'Stats'\
                     or self.role\
                     not in self.graph_config[final_json]['visibility']:
                 continue
-            final_json_dict[final_json]['id'] = counter_id
-            counter_id = counter_id + 1
+
+            final_json_dict[final_json]['id'] = self.counter_id
+            self.counter_id = self.counter_id + 1
+
             final_json_dict[final_json]['graph_type'] =\
                 self.graph_config[final_json]['type']
             final_json_dict[final_json]['graph descriptor'] =\
@@ -80,7 +85,7 @@ class GraphGenerator:
         array_1d = []
         counter = 0
 
-        graph_data = self.graph_pre_processor()
+        graph_data = self.graph_pre_processor(self.data)
 
         if type(graph_data) == int:
             return graph_data
@@ -185,5 +190,34 @@ class GraphGenerator:
                 ]
             ]
         '''
-        print(array_2d)
+
         return [array_2d, array_2d_ow_co_me]
+
+    def graph_generator_longitudinal(self):
+
+        length_check = 0
+        array_2d = []
+        array_1d = []
+        counter = 0
+
+        if self.l_data is None or self.role != 'admin':
+            return [[], []]
+
+        lg_data = self.graph_pre_processor(self.l_data)
+
+        for final_json in lg_data:
+            if self.role\
+                    not in self.graph_config[final_json]['visibility']:
+                length_check = length_check + 1
+                continue
+
+            array_1d.append({final_json: lg_data[final_json]})
+            counter = counter + 1
+            if counter == 2 or length_check == len(lg_data) - 1:
+                counter = 0
+                array_2d.append(array_1d)
+                array_1d = []
+
+            length_check = length_check + 1
+
+        return array_2d

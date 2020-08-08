@@ -149,30 +149,14 @@ class Fetcher:
 
         return all_data
 
-
-class FetcherLong:
-
-    SELECTOR = None
-    fetcher = None
-
-    # Initializing the central interface object in the constructor
-    def __init__(self, name, password, server, ssl):
-
-        SELECTOR = pyxnat.Interface(
-            server=server,
-            user=name,
-            password=password,
-            verify=(not ssl))
-        self.SELECTOR = SELECTOR
-        self.fetcher = Fetcher(name, password, server, ssl)
-
     def get_resources(self):
 
-        experiments = self.fetcher.get_experiments_details()
+        experiments = self.get_experiments_details()
 
         resources = []
 
         for exp in tqdm(experiments):
+
             res = self.SELECTOR.select.experiments(exp['ID']).resources()
             res_Arr = []
 
@@ -192,7 +176,7 @@ class FetcherLong:
     def get_experiment_resources(self):
 
         resource_bbrc_validator = []
-        experiments = self.fetcher.get_experiments_details()
+        experiments = self.get_experiments_details()
 
         for exp in tqdm(experiments):
 
@@ -210,10 +194,10 @@ class FetcherLong:
                             BBRC_VALIDATOR, 'ArchivingValidator')])
                 except IndexError:
                     resource_bbrc_validator.append(
-                        [exp['project'], exp['ID'], True, 0])
+                        [exp['project'], exp['ID'], exists, 0])
             else:
                 resource_bbrc_validator.append([
-                    exp['project'], exp['ID'], False, 0])
+                    exp['project'], exp['ID'], exists, 0])
 
         return resource_bbrc_validator
 

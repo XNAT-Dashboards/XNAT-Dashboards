@@ -8,6 +8,7 @@ from app.dashboards import model
 # Define the blueprint: 'dashboards', set its url prefix: app.url/dashboards
 dashboards = Blueprint('dashboards', __name__, url_prefix='/dashboards')
 
+longitudinal_data = []
 graph_data_stats = []  # Contains graph Data loaded globally for get request
 project_lists = []  # Contains project list globally for get request
 username = ''  # For saving username globally
@@ -47,6 +48,8 @@ def stats_db():
         password = user_details['password']
         server = user_details['server']
         ssl = False if user_details.get('ssl') is None else True
+
+        global longitudinal_data
         global graph_data_stats
         global project_lists
 
@@ -67,15 +70,19 @@ def stats_db():
                         role_exist = 'guest'
 
                     data = model.load_users_data_pk(server)
-                    user_data = data['info']
-                    resources = data['resources']
-                    resources_bbrc = data['resources_bbrc']
 
-                    if user_data is not None:
+                    if data is not None:
+
+                        user_data = data['info']
+                        resources = data['resources']
+                        resources_bbrc = data['resources_bbrc']
+                        l_data = data['longitudinal_data']
+
                         plotting_object = graph_generator_DB.\
                             GraphGenerator(
                                 username,
                                 user_data,
+                                l_data,
                                 role_exist,
                                 config['project_visible'],
                                 resources,
@@ -83,6 +90,9 @@ def stats_db():
 
                         graph_data_stats = plotting_object.\
                             graph_generator()
+
+                        longitudinal_data = plotting_object.\
+                            graph_generator_longitudinal()
 
                         project_lists = plotting_object.\
                             project_list_generator()
@@ -109,6 +119,7 @@ def stats_db():
                                    graph_data=graph_data,
                                    project_list=project_list,
                                    stats_data=stats_data,
+                                   longitudinal_data=longitudinal_data,
                                    project_list_ow_co_me=project_list_ow_co_me,
                                    username=username.capitalize(),
                                    server=server,
@@ -128,6 +139,7 @@ def stats_db():
                                    graph_data=graph_data,
                                    project_list=project_list,
                                    stats_data=stats_data,
+                                   longitudinal_data=longitudinal_data,
                                    project_list_ow_co_me=project_list_ow_co_me,
                                    username=username.capitalize(),
                                    server=server,

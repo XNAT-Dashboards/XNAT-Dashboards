@@ -32,19 +32,19 @@ def test_graph_preprocessor(mocker):
     graph_object = create_mocker(
         mocker, 'testUser', info, 'guest', ['*'],
         {'project_list': ['p1', 'p2'], 'project_list_ow_co_me': ['p3', 'p4']})
-    assert type(graph_object.graph_pre_processor()) == dict
+    assert type(graph_object.graph_pre_processor(info)) == dict
 
     graph_object = create_mocker(
         mocker, 'testUser', info, 'guest', ["*"],
         {'project_list': [], 'project_list_ow_co_me': []})
 
-    assert type(graph_object.graph_pre_processor()) == dict
+    assert type(graph_object.graph_pre_processor(info)) == dict
 
     graph_object = create_mocker(
         mocker, 'testUser', 1, 'guest', ["*"],
         {'project_list': [], 'project_list_ow_co_me': []})
 
-    assert graph_object.graph_pre_processor() == 1
+    assert graph_object.graph_pre_processor([]) == []
 
 
 def test_graph_generator(mocker):
