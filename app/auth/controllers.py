@@ -37,5 +37,4 @@ def login_DB():
     else:
         # If there is no error meaning the user is called login
         # page using browser instead of a redirect
-        print("H")
         return render_template('auth/login_DB.html')

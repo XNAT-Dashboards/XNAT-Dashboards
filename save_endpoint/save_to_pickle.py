@@ -22,12 +22,20 @@ class SaveToPk:
 
     def save_to_PK(self):
 
+        # Method to save the data as pickle
+
+        # Fetch all resources, session, scans, projects, subjects
         data_pro_sub_exp_sc = self.fetcher.fetch_all()
         data_res = self.fetcher.get_resources()
         data_res_bbrc = self.fetcher.get_experiment_resources()
 
         file_exist = os.path.isfile('pickles/data/general.pickle')
+
+        # Create a temporary dict for longitudinal data
         user_data = {}
+
+        # File exists then longitudinal data also exist save the longitudinal
+        # data in user_data dict
 
         if file_exist:
 
@@ -42,10 +50,12 @@ class SaveToPk:
                         print("Wrong server")
                         return -1
 
+        # Call method for formatting the longitudinal data from raw saved data
         longitudinal_data = self.longitudinal_data_processing(
             data_pro_sub_exp_sc, data_res, user_data
         )
 
+        # Save all the data to pickle
         with open(
                 'pickles/data/general.pickle',
                 'wb') as handle:
@@ -63,9 +73,11 @@ class SaveToPk:
     def longitudinal_data_processing(
             self, data_pro_sub_exp_sc, data_res, user_data):
 
+        # Get current time
         now = datetime.now()
         dt = now.strftime("%d/%m/%Y")
 
+        # Create the format of data to be saved
         projects_number = {'list': {dt: []}}
         subjects_number = {'list': {dt: []}}
         experiments_number = {'list': {dt: []}}
@@ -103,6 +115,9 @@ class SaveToPk:
 
         if user_data == {}:
 
+            # If user_data is {} then this is the first time data
+            # is being fetched thus create empty dict with normal formatting
+
             user_data['Projects'] = {'list': {}, 'count': {}}
             user_data['Subjects'] = {'list': {}, 'count': {}}
             user_data['Experiments'] = {'list': {}, 'count': {}}
@@ -110,6 +125,9 @@ class SaveToPk:
             user_data['Resources'] = {'list': {}, 'count': {}}
 
         else:
+
+            # Data is already present and use the longitudinal data from
+            # the file and update the details of current data
             user_data = user_data['longitudinal_data']
 
         user_data['Projects']['list'].update(projects_number['list'])
@@ -125,4 +143,13 @@ class SaveToPk:
         user_data['Scans']['count'].update(scans_number['count'])
         user_data['Resources']['count'].update(resource_number['count'])
 
+        '''
+        Returns the formatted data
+        {
+            'Graph Name': {
+                'count': {'date': 'counted_value'},
+                'list': {'date': 'list_of_counted_values'}
+            }
+        }
+        '''
         return user_data

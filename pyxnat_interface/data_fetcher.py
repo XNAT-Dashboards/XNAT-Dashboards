@@ -138,6 +138,8 @@ class Fetcher:
 
     def fetch_all(self):
 
+        # A singele method that calls all the above methods
+
         all_data = {}
 
         all_data['projects'] = self.get_projects_details()
@@ -151,17 +153,24 @@ class Fetcher:
 
     def get_resources(self):
 
+        # Method for fetching resources details, get the list of experiments
+
         experiments = self.get_experiments_details()
 
         resources = []
 
+        # For each experiments fetch all the resources associated with it
         for exp in tqdm(experiments):
 
             res = self.SELECTOR.select.experiments(exp['ID']).resources()
             res_Arr = []
 
+            # Add resource of different type to res_Arr
             for r in res:
                 res_Arr.append(r)
+
+            # If their is a resource associated get it's id and label
+            # If empty then use 'No Data'
 
             if res_Arr == []:
                 resources.append(
@@ -175,15 +184,24 @@ class Fetcher:
 
     def get_experiment_resources(self):
 
+        # This method is specific to BBRC XNAT instance
+
+        # Get the list of all experiments
         resource_bbrc_validator = []
         experiments = self.get_experiments_details()
 
         for exp in tqdm(experiments):
 
+            # Check whether 'BBRC Validator' type resource exists
+            # for the experiment
+
             BBRC_VALIDATOR = self.SELECTOR.select.experiment(
                 exp['ID']).resource('BBRC_VALIDATOR')
             exists = 'Exists' if BBRC_VALIDATOR.exists() else 'No Exists'
 
+            # If exist then further process and check whether archiving
+            # validator exist if exist then get the test json and if not
+            # exists then Index error will be thrown and place 0 instead
             if exists:
                 try:
                     resource_bbrc_validator.append([
@@ -203,8 +221,13 @@ class Fetcher:
 
     def tests_resource(self, res, name, key=None):
 
+        # Method from pyxnat_bbrc branch. This method get the resource
+        # name and fetches the json file associated with the resource
+
         j = [e for e in list(res.files('{}*.json'.format(name)))][0]
         j = json.loads(res._intf.get(j._uri).text)
+
+        # Return dict with tests details
         if key is None:
             return j
         else:
