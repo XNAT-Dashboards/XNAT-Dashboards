@@ -96,13 +96,13 @@
                     <div class="col-md-7 align-self-center text-right">
                         <div class="d-flex justify-content-end align-items-center">
                             <h4>
-                                {% if access == 'private'%}
+                                {% if data_array['access'] == 'private'%}
                                 <span class="badge badge-danger">Private Project</span>
                                 {% endif %}
-                                {% if access == 'protected'%}
+                                {% if data_array['access'] == 'protected'%}
                                 <span class="badge badge-warning">Protected Project</span>
                                 {% endif %}
-                                {% if access == 'public'%}
+                                {% if data_array['access'] == 'public'%}
                                 <span class="badge badge-success">Public Project</span>
                                 {% endif %}
 
@@ -155,7 +155,7 @@
                                         <tbody>
                                             <tr>
                                                 <td ><b>Project Name</b></td>
-                                                <td class="text-center">{{name}}</td>
+                                                <td class="text-center">{{data_array['name']}}</td>
                                             </tr>
                                             <tr>
                                                 <td ><b>Project ID</td>
@@ -164,32 +164,32 @@
                                             <tr>
                                                 <td><b>Project Owner(s)</b></td>
                                                 <td class="text-center">
-                                                    {% for user in owners%}
+                                                    {% for user in data_array['Owner(s)']%}
                                                     {{user}},&nbsp
                                                     {%endfor%}END
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td><b>Inserted on </b></td>
-                                                <td class="text-center">{{insert_date}}</td>
+                                                <td class="text-center">{{data_array['insert_date']}}</td>
                                             </tr>
                                             <tr>
                                                 <td><b>Inserted By</b></td>
-                                                <td class="text-center">{{insert_users}}</td>
+                                                <td class="text-center">{{data_array['insert_user(s)']}}</td>
                                             </tr>
                                             <tr>
                                                 <td><b>Last Workflow</b></td>
-                                                <td class="text-center">{{last_workflow}}</td>
+                                                <td class="text-center">{{data_array['last_workflow']}}</td>
                                             </tr>
                                             <tr>
                                                 <td><b>Project Collaborators</b></td><td class="text-center">
-                                                {% for user in collaborators%}
+                                                {% for user in data_array['Collaborator(s)']%}
                                                 {{user}},&nbsp
                                                 {%endfor%}END</td>
                                             </tr>
                                             <tr>
                                                 <td><b>Project Members</b></td><td class="text-center">
-                                                {% for user in members%}
+                                                {% for user in data_array['member(s)']%}
                                                 {{user}},&nbsp
                                                 {% endfor%}END
                                             </td>
@@ -198,7 +198,7 @@
                                             <tr>
                                                 <td ><b>Project Users</b></td>
                                                 <td class="text-center">
-                                                    {% for user in users%}
+                                                    {% for user in data_array['user(s)']%}
                                                     {{user}},&nbsp
                                                     {%endfor%}
                                                     END
@@ -207,7 +207,7 @@
                                             <tr>
                                                 <td ><b>Last Accessed By</b></td>
                                                 <td class="text-center">
-                                                {% for user in last_accessed%}
+                                                {% for user in  data_array['last_accessed(s)']%}
                                                 {{user}},&nbsp
                                                 {% endfor %}
                                                 END

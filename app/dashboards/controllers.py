@@ -1,190 +1,123 @@
 # Import flask dependencies
-from flask import Blueprint, render_template, session, request,\
+from flask import Blueprint, render_template, session,\
     redirect, url_for
-from saved_data_processing import graph_generator_DB, graph_generator_pp_DB
+from saved_data_processing import graph_generator_DB
 from app.dashboards import model
 
 
 # Define the blueprint: 'dashboards', set its url prefix: app.url/dashboards
 dashboards = Blueprint('dashboards', __name__, url_prefix='/dashboards')
 
-longitudinal_data = []
-graph_data_stats = []  # Contains graph Data loaded globally for get request
-project_lists = []  # Contains project list globally for get request
-username = ''  # For saving username globally
-password = ''  # For saving password globally
-server = ''  # For saving server url globally
-ssl = ''  # For saving username globally
-role_exist = ''
-
 
 # Logout route
 @dashboards.route('/logout/', methods=['GET'])
 def logout():
 
-    global graph_data_stats, username, password, ssl
-    global server, role_exist
-    graph_data_stats = []
-    username = ''
-    password = ''
-    server = ''
-    ssl = ''
-    role_exist = ''
-
+    # Delete session keys if exist
     if 'username' in session:
         del session['username']
+    if 'server' in session:
+        del session['server']
+    if 'project_visible' in session:
+        del session['project_visible']
+    if 'role_exists' in session:
+        del session['role_exists']
+
     session['error'] = -1
 
     return redirect(url_for('auth.login_DB'))
 
 
-@dashboards.route('/db/stats/', methods=['GET', 'POST'])
+@dashboards.route('/db/stats/', methods=['GET'])
 def stats_db():
 
-    if request.method == 'POST':
-        global username, server
-        user_details = request.form
-        username = user_details['username']
-        password = user_details['password']
-        server = user_details['server']
-        ssl = False if user_details.get('ssl') is None else True
+    # If server key doesn't exist return to login page
 
-        global longitudinal_data
-        global graph_data_stats
-        global project_lists
+    if 'server' not in session:
+        return redirect(url_for('auth.login_DB'))
 
-        if 'username' in session and graph_data_stats != []:
-            session['error'] = "Already logged in"
-        else:
-            exist = model.user_exists(username, password, server, ssl)
+    data = model.load_users_data_pk(session['server'])
 
-            global role_exist
+    # Check if pickle data is of correct server
+    if data is not None:
 
-            if type(exist) == int:
-                config = model.user_role_config(username)
+        user_data = data['info']
+        resources = data['resources']
+        resources_bbrc = data['resources_bbrc']
+        l_data = data['longitudinal_data']
 
-                if config:
-                    if username in config['user roles']:
-                        role_exist = config['user roles'][username]
-                    else:
-                        role_exist = 'guest'
+        # Calling plot generator
+        plotting_object = graph_generator_DB.\
+            GraphGenerator(
+                session['username'],
+                user_data,
+                l_data,
+                session['role_exist'],
+                session['project_visible'],
+                resources,
+                resources_bbrc)
 
-                    data = model.load_users_data_pk(server)
+        graph_data_stats = plotting_object.\
+            graph_generator()
 
-                    if data is not None:
+        longitudinal_data = plotting_object.\
+            graph_generator_longitudinal()
 
-                        user_data = data['info']
-                        resources = data['resources']
-                        resources_bbrc = data['resources_bbrc']
-                        l_data = data['longitudinal_data']
+        project_lists = plotting_object.\
+            project_list_generator()
+    else:
+        # If server is wrong add error message in session
+        session['error'] = 'Wrong server or data'
+        'not downloaded'
 
-                        plotting_object = graph_generator_DB.\
-                            GraphGenerator(
-                                username,
-                                user_data,
-                                l_data,
-                                role_exist,
-                                config['project_visible'],
-                                resources,
-                                resources_bbrc)
-
-                        graph_data_stats = plotting_object.\
-                            graph_generator()
-
-                        longitudinal_data = plotting_object.\
-                            graph_generator_longitudinal()
-
-                        project_lists = plotting_object.\
-                            project_list_generator()
-                    else:
-                        session['error'] = 'Wrong server or data'
-                        'not downloaded'
-
-                else:
-                    session['error'] = "Wrong Password"
-                    role_exist = ''
-            else:
-                session['error'] = exist
-
-        if 'error' in session:
-
-            return redirect(url_for('auth.login_DB'))
-
-        else:
-            project_list = project_lists[0]
-            project_list_ow_co_me = project_lists[1]
-            graph_data = graph_data_stats[0]
-            stats_data = graph_data_stats[1]
-            return render_template('dashboards/stats_dashboards.html',
-                                   graph_data=graph_data,
-                                   project_list=project_list,
-                                   stats_data=stats_data,
-                                   longitudinal_data=longitudinal_data,
-                                   project_list_ow_co_me=project_list_ow_co_me,
-                                   username=username.capitalize(),
-                                   server=server,
-                                   db=True)
+    # If error message in session redirect to login page else render the data
+    if 'error' in session:
+        return redirect(url_for('auth.login_DB'))
 
     else:
-        # If user reloads page
-        if graph_data_stats == [] or type(graph_data_stats) == int:
-            session['error'] = graph_data_stats
-            return redirect(url_for('auth.login_DB'))
-        else:
-            project_list = project_lists[0]
-            project_list_ow_co_me = project_lists[1]
-            graph_data = graph_data_stats[0]
-            stats_data = graph_data_stats[1]
-            return render_template('dashboards/stats_dashboards.html',
-                                   graph_data=graph_data,
-                                   project_list=project_list,
-                                   stats_data=stats_data,
-                                   longitudinal_data=longitudinal_data,
-                                   project_list_ow_co_me=project_list_ow_co_me,
-                                   username=username.capitalize(),
-                                   server=server,
-                                   db=True)
+        project_list = project_lists[0]
+        project_list_ow_co_me = project_lists[1]
+        graph_data = graph_data_stats[0]
+        stats_data = graph_data_stats[1]
+
+        return render_template(
+            'dashboards/stats_dashboards.html',
+            graph_data=graph_data,
+            project_list=project_list,
+            stats_data=stats_data,
+            longitudinal_data=longitudinal_data,
+            project_list_ow_co_me=project_list_ow_co_me,
+            username=session['username'].capitalize(),
+            server=session['server'],
+            db=True)
 
 
 # this route give the details of the project
 @dashboards.route('db/project/<id>', methods=['GET'])
 def project_db(id):
 
-    global username
-    global role_exist
-
-    if role_exist == '':
+    if session['role_exist'] == '':
         return redirect(url_for('auth.login_DB'))
 
-    data = model.load_users_data_pk(server)
+    data = model.load_users_data_pk(session['server'])
     users_data = data['info']
     resources = data['resources']
     resources_bbrc = data['resources_bbrc']
 
-    config = model.user_role_config(username)
-
     # Get the details for plotting
-    data_array = graph_generator_pp_DB.GraphGenerator(
-        username, users_data, id, role_exist,
-        config['project_visible'], resources, resources_bbrc
+    data_array = graph_generator_DB.GraphGeneratorPP(
+        session['username'], users_data, id, session['role_exist'],
+        session['project_visible'], resources, resources_bbrc
     ).graph_generator()
 
+    # If no data found redirect to login page else render the data
+    # with template
     if data_array is None:
 
-        return render_template('dashboards/stats_dashboards_pp.html')
+        return render_template('dashboards/stats_dashboards.html')
 
     graph_data = data_array[0]
     stats_data = data_array[1]
-    members = data_array[2]['member(s)']
-    users = data_array[2]['user(s)']
-    collaborators = data_array[2]['Collaborator(s)']
-    owners = data_array[2]['Owner(s)']
-    last_accessed = data_array[2]['last_accessed(s)']
-    insert_users = data_array[2]['insert_user(s)']
-    insert_date = data_array[2]['insert_date']
-    access = data_array[2]['access']
-    name = data_array[2]['name']
-    last_workflow = data_array[2]['last_workflow']
 
     th = data_array[3][0]
     td = data_array[3][1]
@@ -193,19 +126,10 @@ def project_db(id):
         'dashboards/stats_dashboards_pp.html',
         graph_data=graph_data,
         stats_data=stats_data,
-        username=username.capitalize(),
-        server=server,
+        username=session['username'].capitalize(),
+        server=session['server'],
         db=True,
-        members=members,
-        users=users,
-        collaborators=collaborators,
-        owners=owners,
-        last_accessed=last_accessed,
-        insert_date=insert_date,
-        insert_users=insert_users,
-        access=access,
-        name=name,
-        last_workflow=last_workflow,
+        data_array=data_array[2],
         id=id,
         t_header_info=th,
         t_data_info=td)

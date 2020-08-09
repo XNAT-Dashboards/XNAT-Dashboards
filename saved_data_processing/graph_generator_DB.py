@@ -46,8 +46,10 @@ class GraphGenerator:
         final_json_dict = data
 
         for final_json in final_json_dict:
-            if final_json == 'Stats'\
-                    or self.role\
+            if final_json == 'Stats' or\
+                final_json == 'test_grid' or\
+                final_json == 'Project details' or\
+                self.role\
                     not in self.graph_config[final_json]['visibility']:
                 continue
 
@@ -91,8 +93,8 @@ class GraphGenerator:
             return graph_data
 
         for final_json in graph_data:
-            if final_json == 'Stats'\
-                    or self.role\
+            if final_json == 'Stats' or\
+                self.role\
                     not in self.graph_config[final_json]['visibility']:
                 length_check = length_check + 1
                 continue
@@ -120,6 +122,7 @@ class GraphGenerator:
                 }
             ]
         '''
+
         return [array_2d, graph_data['Stats']]
 
     def project_list_generator(self):
@@ -221,3 +224,78 @@ class GraphGenerator:
             length_check = length_check + 1
 
         return array_2d
+
+
+class GraphGeneratorPP(GraphGenerator):
+
+    data = None
+    project_id = ''
+
+    def __init__(
+            self,
+            username,
+            info, project_id, role, project_visible=None,
+            resources=None, resources_bbrc=None):
+
+        info = get_info_DB.GetInfoPP(
+            username, info, project_id, role, project_visible,
+            resources, resources_bbrc)
+
+        self.counter_id = 0
+        self.role = role
+        self.data = info.get_per_project_view()
+
+    def graph_generator(self):
+
+        '''
+        Returns a 2d array with each row having 2 columns which will
+        be used in the html
+        '''
+
+        length_check = 0
+        array_2d = []
+        array_1d = []
+        counter = 0
+
+        graph_data = self.graph_pre_processor(self.data)
+
+        if type(graph_data) == int or graph_data is None:
+            return graph_data
+
+        for final_json in graph_data:
+            if final_json == 'Stats' or\
+                final_json == 'test_grid' or\
+                final_json == 'Project details' or\
+                    self.role not in\
+                    self.graph_config[final_json]['visibility']:
+
+                length_check = length_check + 1
+                continue
+
+            array_1d.append({final_json: graph_data[final_json]})
+            counter = counter + 1
+            if counter == 2 or length_check == len(graph_data) - 1:
+                counter = 0
+                array_2d.append(array_1d)
+                array_1d = []
+
+            length_check = length_check + 1
+
+        '''
+            Returns a nested list with dict inside
+            [
+                array_2d[
+                    [project1_info, project2_info]
+                    [project3_info, project4_info]
+                ]
+                graph_data['Stats']{
+                    Projects: count
+                    Experiment: count
+                    Scans: count
+                    Subjects: count
+                }
+            ]
+        '''
+        return [
+            array_2d, graph_data['Stats'],
+            graph_data['Project details'], graph_data['test_grid']]
