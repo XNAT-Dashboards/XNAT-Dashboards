@@ -61,7 +61,7 @@ def test_dashboard_db(mocker):
                                         ssl=False,
                                         DB=True)
 
-    response_post = app.test_client().post('dashboards/db/stats/',
+    response_post = app.test_client().post('auth/db/login/',
                                            data=data_post_login_dash_present,
                                            ).status_code
 
@@ -72,18 +72,30 @@ def test_dashboard_db(mocker):
                                            DB=True)
 
     response_post_pk = app.test_client().post(
-        'dashboards/db/stats/',
+        'auth/db/login/',
         data=data_post_login_dash_present_pk).status_code
 
-    assert response_post_pk == 200
+    assert response_post_pk == 302  # Redirects
 
-    response_get_pp = app.test_client().\
-        get('dashboards/db/project/CENTRAL_OASIS_CS').status_code
+    with app.test_client() as c:
+        with c.session_transaction() as sess:
+            sess['server'] = 'https://central.xnat.org'
+            sess['role_exist'] = 'guest'
+            sess['username'] = 'testUser'
+            sess['project_visible'] = '*'
+
+        response_get_pp = c.\
+            get('dashboards/db/project/CENTRAL_OASIS_CS').status_code
+
+        response_get_stats = c.\
+            get('dashboards/db/stats/').status_code
 
     assert response_get_pp == 200
 
-    assert response_post == 200
+    assert response_post == 302  # Redirects to dashboards
 
     response_get = app.test_client().get('dashboards/db/stats/').status_code
 
-    assert response_get == 200
+    assert response_get == 302
+
+    assert response_get_stats == 200
