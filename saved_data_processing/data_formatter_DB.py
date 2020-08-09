@@ -413,12 +413,14 @@ class Formatter:
                     property_list.append([item[property_x], item[property_y]])
                 else:
                     property_list.append(
-                        [item[property_x], item[property_y]+'/'+item[extra]])
+                        [
+                            item[property_x],
+                            item[property_y] + '/' + item[extra]])
             else:
                 if extra is None:
                     property_none.append(item[property_y])
                 else:
-                    property_none.append(item[property_y]+'/'+item[extra])
+                    property_none.append(item[property_y] + '/' + item[extra])
 
         property_df = pd.DataFrame(
             property_list, columns=[x_new, 'count'])
@@ -696,7 +698,7 @@ class FormatterPP(Formatter):
         df_diff = df_acq_insert_date
 
         diff_test = df_diff[['ID', 'diff']].rename(
-           columns={'ID': 'count'})
+            columns={'ID': 'count'})
         per_df_series = diff_test.groupby('diff')['count'].apply(list)
         per_df = diff_test.groupby('diff').count()
         per_df['list'] = per_df_series

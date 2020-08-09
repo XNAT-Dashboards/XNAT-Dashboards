@@ -1,5 +1,5 @@
 # Import flask dependencies
-from flask import Blueprint, render_template, session, request,\
+from flask import Blueprint, render_template, session,\
     redirect, url_for
 from saved_data_processing import graph_generator_DB
 from app.dashboards import model
