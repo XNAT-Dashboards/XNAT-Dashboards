@@ -1,5 +1,9 @@
 from app import app
+import path_creator
+import os
 
+path_creator.set_pickle_path(os.path.abspath('pickles/data/general.pickle'))
+path_creator.set_dashboard_config_path(os.path.abspath('utils/dashboard_config.json'))
 
 def test_login_db():
 

@@ -1,8 +1,6 @@
-import sys
-from os.path import dirname, abspath
 import json
-sys.path.insert(0, dirname(dirname(abspath(__file__))))
 from saved_data_processing import get_info_DB
+import path_creator
 
 
 class GraphGenerator:
@@ -37,7 +35,7 @@ class GraphGenerator:
         html file
         '''
 
-        with open('utils/dashboard_config.json') as json_file:
+        with open(path_creator.get_dashboard_config_path()) as json_file:
             self.graph_config = json.load(json_file)['graph_config']
 
         if type(data) != dict:

@@ -1,5 +1,6 @@
 import json
 from pyxnat_interface import data_fetcher
+import path_creator
 
 
 # Function to check if user exist
@@ -20,7 +21,7 @@ def user_exists(username, password, server, ssl):
 # Get user role config file
 def user_role_config(username):
 
-    with open('utils/dashboard_config.json') as json_file:
+    with open(path_creator.get_dashboard_config_path()) as json_file:
         config = json.load(json_file)['roles_config']
 
     # If user role exist
