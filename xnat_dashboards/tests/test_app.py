@@ -2,8 +2,9 @@ from xnat_dashboards.app import app
 from xnat_dashboards import path_creator
 import os
 
-path_creator.set_pickle_path(os.path.abspath('pickles/data/general.pickle'))
-path_creator.set_dashboard_config_path(os.path.abspath('config/dashboard_config.json'))
+path_creator.set_pickle_path(os.path.abspath('xnat_dashboards/pickles/data/general.pickle'))
+path_creator.set_dashboard_config_path(os.path.abspath('xnat_dashboards/config/dashboard_config.json'))
+
 
 def test_login_db():
 
@@ -31,31 +32,31 @@ def test_home_redirect():
 def test_dashboard_db(mocker):
 
     mocker.patch(
-        'saved_data_processing.graph_generator_DB.GraphGenerator.__init__',
+        'xnat_dashboards.saved_data_processing.graph_generator_DB.GraphGenerator.__init__',
         return_value=None)
 
     mocker.patch(
-        'saved_data_processing.graph_generator_DB.'
+        'xnat_dashboards.saved_data_processing.graph_generator_DB.'
         'GraphGenerator.graph_generator',
         return_value=[[], []])
 
     mocker.patch(
-        'saved_data_processing.graph_generator_DB.'
+        'xnat_dashboards.saved_data_processing.graph_generator_DB.'
         'GraphGenerator.project_list_generator',
         return_value=[[], []])
 
     mocker.patch(
-        'saved_data_processing.graph_generator_DB.'
+        'xnat_dashboards.saved_data_processing.graph_generator_DB.'
         'GraphGeneratorPP.__init__',
         return_value=None)
 
     mocker.patch(
-        'saved_data_processing.graph_generator_DB.'
+        'xnat_dashboards.saved_data_processing.graph_generator_DB.'
         'GraphGeneratorPP.graph_generator',
         return_value=None)
 
     mocker.patch(
-        'saved_data_processing.graph_generator_DB.'
+        'xnat_dashboards.saved_data_processing.graph_generator_DB.'
         'GraphGenerator.graph_generator_longitudinal',
         return_value=[])
 

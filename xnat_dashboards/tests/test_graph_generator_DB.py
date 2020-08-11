@@ -2,17 +2,17 @@ from xnat_dashboards.saved_data_processing import graph_generator_DB
 
 
 def create_mocker(
-    mocker, username, info, role,  graph_visibility, return_get_project_list,
+    mocker, username, info, role, graph_visibility, return_get_project_list,
         project_visible=None, resources=None, resources_bbrc=None):
 
     mocker.patch(
-        'saved_data_processing.get_info_DB.GetInfo.__init__',
+        'xnat_dashboards.saved_data_processing.get_info_DB.GetInfo.__init__',
         return_value=None)
     mocker.patch(
-        'saved_data_processing.get_info_DB.GetInfo.get_project_list',
+        'xnat_dashboards.saved_data_processing.get_info_DB.GetInfo.get_project_list',
         return_value=return_get_project_list)
     mocker.patch(
-        'saved_data_processing.get_info_DB.GetInfo.get_info',
+        'xnat_dashboards.saved_data_processing.get_info_DB.GetInfo.get_info',
         return_value=info)
 
     graph_object = graph_generator_DB.GraphGenerator(

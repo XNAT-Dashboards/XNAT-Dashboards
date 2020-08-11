@@ -7,10 +7,10 @@ def create_mocker(
         project_visible=None, resources=None, resources_bbrc=None):
 
     mocker.patch(
-        'saved_data_processing.get_info_DB.GetInfoPP.__init__',
+        'xnat_dashboards.saved_data_processing.get_info_DB.GetInfoPP.__init__',
         return_value=None)
     mocker.patch(
-        'saved_data_processing.get_info_DB.GetInfoPP.get_per_project_view',
+        'xnat_dashboards.saved_data_processing.get_info_DB.GetInfoPP.get_per_project_view',
         return_value=info)
 
     graph_object = graph_generator_DB.GraphGeneratorPP(

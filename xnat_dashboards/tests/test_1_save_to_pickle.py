@@ -18,15 +18,15 @@ def test_save_data_and_user(mocker):
         'experiments': [], 'scans': []}
 
     mocker.patch(
-        'pyxnat_interface.data_fetcher.Fetcher.get_resources',
+        'xnat_dashboards.pyxnat_interface.data_fetcher.Fetcher.get_resources',
         return_value=resource_return_value)
 
     mocker.patch(
-        'pyxnat_interface.data_fetcher.Fetcher.get_experiment_resources',
+        'xnat_dashboards.pyxnat_interface.data_fetcher.Fetcher.get_experiment_resources',
         return_value=resource_return_value)
 
     mocker.patch(
-        'pyxnat_interface.data_fetcher.Fetcher.fetch_all',
+        'xnat_dashboards.pyxnat_interface.data_fetcher.Fetcher.fetch_all',
         return_value=data_return_value)
 
     save_to_pickle.SaveToPk(
