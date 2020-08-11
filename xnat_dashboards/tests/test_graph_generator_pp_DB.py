@@ -1,4 +1,4 @@
-from saved_data_processing import graph_generator_DB
+from xnat_dashboards.saved_data_processing import graph_generator_DB
 
 
 def create_mocker(

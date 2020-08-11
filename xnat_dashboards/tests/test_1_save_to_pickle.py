@@ -1,4 +1,5 @@
-from save_endpoint import save_to_pickle
+from xnat_dashboards.save_endpoint import save_to_pickle
+from xnat_dashboards import path_creator
 import pickle
 
 
@@ -31,7 +32,7 @@ def test_save_data_and_user(mocker):
     save_to_pickle.SaveToPk(
         username, password, server, ssl).save_to_PK()
 
-    with open('pickles/data/general.pickle', 'rb') as handle:
+    with open(path_creator.get_pickle_path(), 'rb') as handle:
         data = pickle.load(handle)
 
     assert type(data) == dict

@@ -1,4 +1,4 @@
-from pyxnat_interface import data_fetcher
+from xnat_dashboards.pyxnat_interface import data_fetcher
 
 fetch_object_connected = data_fetcher.Fetcher(
     name='testUser',

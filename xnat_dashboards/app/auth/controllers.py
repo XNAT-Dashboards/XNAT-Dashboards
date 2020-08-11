@@ -1,7 +1,7 @@
 # Import flask dependencies
 from flask import Blueprint, render_template, session, request, redirect,\
     url_for
-from app.auth import model
+from xnat_dashboards.app.auth import model
 
 # Define the blueprint: 'auth', set its url prefix: app.url/auth
 auth = Blueprint('auth', __name__, url_prefix='/auth')

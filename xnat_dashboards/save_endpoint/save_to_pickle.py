@@ -1,10 +1,7 @@
-import sys
 import pickle
-import os.path
-from os.path import dirname, abspath
 from datetime import datetime
-sys.path.insert(0, dirname(dirname(abspath(__file__))))
-from pyxnat_interface import data_fetcher
+import os
+from xnat_dashboards.pyxnat_interface import data_fetcher
 
 
 class SaveToPk:

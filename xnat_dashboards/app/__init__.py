@@ -1,14 +1,14 @@
 # Import flask and template operators
 from flask import Flask, redirect, url_for
-from app.dashboards.controllers import dashboards
-from app.auth.controllers import auth
+from xnat_dashboards.app.dashboards.controllers import dashboards
+from xnat_dashboards.app.auth.controllers import auth
 
 
 # Define the WSGI application object
 app = Flask(__name__)
 
 # Configurations
-app.config.from_object('config')
+app.config.from_object('xnat_dashboards.config')
 
 
 # Set the redirecting route for dashboard

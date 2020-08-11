@@ -1,5 +1,5 @@
 import pickle
-import path_creator
+from xnat_dashboards import path_creator
 
 
 def load_users_data_pk(server):

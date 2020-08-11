@@ -1,6 +1,6 @@
 import json
-from pyxnat_interface import data_fetcher
-import path_creator
+from xnat_dashboards.pyxnat_interface import data_fetcher
+from xnat_dashboards import path_creator
 
 
 # Function to check if user exist

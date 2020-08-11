@@ -1,4 +1,4 @@
-from saved_data_processing import data_formatter_DB
+from xnat_dashboards.saved_data_processing import data_formatter_DB
 
 
 class GetInfo:

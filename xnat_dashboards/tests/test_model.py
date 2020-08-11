@@ -1,5 +1,5 @@
-from app.dashboards import model as model_dash
-from app.auth import model as model_auth
+from xnat_dashboards.app.dashboards import model as model_dash
+from xnat_dashboards.app.auth import model as model_auth
 
 
 def test_user_exists(mocker):

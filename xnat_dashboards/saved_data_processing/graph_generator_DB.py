@@ -1,6 +1,6 @@
 import json
-from saved_data_processing import get_info_DB
-import path_creator
+from xnat_dashboards.saved_data_processing import get_info_DB
+from xnat_dashboards import path_creator
 
 
 class GraphGenerator:
