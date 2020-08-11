@@ -3,7 +3,7 @@ import path_creator
 import os
 
 # Path to configuration and pickle files
-path_creator.set_dashboard_config_path(os.path.abspath('utils/dashboard_config.json'))
+path_creator.set_dashboard_config_path(os.path.abspath('config/dashboard_config.json'))
 path_creator.set_pickle_path(os.path.abspath('pickles/data/general.pickle'))
 
 '''
