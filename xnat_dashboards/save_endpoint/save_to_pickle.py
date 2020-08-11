@@ -1,6 +1,7 @@
 import pickle
 from datetime import datetime
 import os
+from xnat_dashboards import path_creator
 from xnat_dashboards.pyxnat_interface import data_fetcher
 
 
@@ -26,7 +27,7 @@ class SaveToPk:
         data_res = self.fetcher.get_resources()
         data_res_bbrc = self.fetcher.get_experiment_resources()
 
-        file_exist = os.path.isfile('pickles/data/general.pickle')
+        file_exist = os.path.isfile(path_creator.get_pickle_path())
 
         # Create a temporary dict for longitudinal data
         user_data = {}
@@ -37,7 +38,7 @@ class SaveToPk:
         if file_exist:
 
             with open(
-                    'pickles/data/general.pickle',
+                    path_creator.get_pickle_path(),
                     'rb') as handle:
                 user_data = pickle.load(handle)
 
@@ -54,7 +55,7 @@ class SaveToPk:
 
         # Save all the data to pickle
         with open(
-                'pickles/data/general.pickle',
+                path_creator.get_pickle_path(),
                 'wb') as handle:
 
             pickle.dump(
