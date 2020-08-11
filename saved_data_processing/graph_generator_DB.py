@@ -37,8 +37,8 @@ class GraphGenerator:
         html file
         '''
 
-        with open('utils/graph_config.json') as json_file:
-            self.graph_config = json.load(json_file)
+        with open('utils/dashboard_config.json') as json_file:
+            self.graph_config = json.load(json_file)['graph_config']
 
         if type(data) != dict:
             return data

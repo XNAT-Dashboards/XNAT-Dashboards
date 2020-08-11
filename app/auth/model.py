@@ -20,8 +20,8 @@ def user_exists(username, password, server, ssl):
 # Get user role config file
 def user_role_config(username):
 
-    with open('utils/roles_config.json') as json_file:
-        config = json.load(json_file)
+    with open('utils/dashboard_config.json') as json_file:
+        config = json.load(json_file)['roles_config']
 
     # If user role exist
     if username in config['user roles']:
