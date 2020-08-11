@@ -13,7 +13,7 @@ def test_user_exists(mocker):
     assert type(not_exist) == list
 
     mocker.patch(
-        'xnat_dashboards.yxnat_interface.data_fetcher.Fetcher.get_projects_details',
+        'xnat_dashboards.pyxnat_interface.data_fetcher.Fetcher.get_projects_details',
         return_value=[3, 2])
 
     exist = model_auth.user_exists('x', 'y', 'z', 'p')
