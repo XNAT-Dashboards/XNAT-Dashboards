@@ -12,13 +12,18 @@ class Fetcher:
     SELECTOR = None
 
     # Initializing the central interface object in the constructor
-    def __init__(self, name, password, server, ssl=False):
+    def __init__(
+            self, path=None, name=None, password=None, server=None, ssl=False):
 
-        SELECTOR = pyxnat.Interface(
-            server=server,
-            user=name,
-            password=password,
-            verify=(not ssl))
+        if path is None:
+            SELECTOR = pyxnat.Interface(
+                server=server,
+                user=name,
+                password=password,
+                verify=(not ssl))
+        else:
+            SELECTOR = pyxnat.Interface(config=path)
+
         self.SELECTOR = SELECTOR
 
     # Disconnect with the instance

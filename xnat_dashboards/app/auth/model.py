@@ -7,7 +7,8 @@ from xnat_dashboards import path_creator
 def user_exists(username, password, server, ssl):
 
     exists = data_fetcher.Fetcher(
-        username, password, server, ssl).get_projects_details()
+        name=username, password=password, server=server, ssl=ssl)\
+            .get_projects_details()
 
     # If user exists then no int will be returned
     if type(exists) == int:

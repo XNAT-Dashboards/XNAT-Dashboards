@@ -2,8 +2,10 @@ from xnat_dashboards.app import app
 from xnat_dashboards import path_creator
 import os
 
-path_creator.set_pickle_path(os.path.abspath('xnat_dashboards/pickles/data/general.pickle'))
-path_creator.set_dashboard_config_path(os.path.abspath('xnat_dashboards/config/dashboard_config.json'))
+path_creator.set_pickle_path(os.path.abspath(
+    'xnat_dashboards/pickles/data/general.pickle'))
+path_creator.set_dashboard_config_path(os.path.abspath(
+    'xnat_dashboards/config/dashboard_config.json'))
 
 
 def test_login_db():
@@ -32,7 +34,8 @@ def test_home_redirect():
 def test_dashboard_db(mocker):
 
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.graph_generator_DB.GraphGenerator.__init__',
+        'xnat_dashboards.saved_data_processing.'
+        'graph_generator_DB.GraphGenerator.__init__',
         return_value=None)
 
     mocker.patch(
