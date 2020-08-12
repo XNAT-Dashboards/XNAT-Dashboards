@@ -196,7 +196,7 @@ function barchart_generator(graph_name, graph_info, id, color, id_type){
 
 
 // Code for scatterchart
-function scatterchart_generator(graph_name, graph_info, color, id_type){
+function scatterchart_generator(graph_name, graph_info, id, color, id_type){
 
     xy_axis = generate_x_y_axis(graph_info['count']);
     x_axis = xy_axis[0];
@@ -274,7 +274,7 @@ function piechart_generator(graph_name, graph_info){
 }
 
 // Code for linechart
-function linechart_generator(graph_name, graph_info, color, id_type){
+function linechart_generator(graph_name, graph_info, id, color, id_type){
 
     xy_axis = generate_x_y_axis(graph_info['count']);
     x_axis = xy_axis[0];

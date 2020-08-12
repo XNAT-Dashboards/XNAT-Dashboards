@@ -159,15 +159,16 @@ class Formatter:
 
         # Scans per project information
 
-        scans_per_project = self.dict_generator_per_view(
-            scans, 'project', 'ID', 'spp')
+        scans_per_project = self.dict_generator_overview(
+            scans, 'project', 'ID', 'spp', 'xnat:imagescandata/id')
         scans_per_project['id_type'] = 'experiment'
 
         # Scans per subject information
 
-        scans_per_subject = self.dict_generator_per_view(
-            scans, 'xnat:imagesessiondata/subject_id', 'ID', 'sps')
-        scans_per_project['id_type'] = 'experiment'
+        scans_per_subject = self.dict_generator_overview(
+            scans, 'xnat:imagesessiondata/subject_id',
+            'ID', 'sps', 'xnat:imagescandata/id')
+        scans_per_subject['id_type'] = 'experiment'
 
         scans_details = {}
 
