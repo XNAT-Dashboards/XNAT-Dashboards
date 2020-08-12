@@ -1,6 +1,6 @@
 {   "roles_config":{
         "user roles":{
-                "testUser":"superuser",
+                "testUser":"admin",
                 "noUser":"forbidden",
                 "asif":"admin"
         },

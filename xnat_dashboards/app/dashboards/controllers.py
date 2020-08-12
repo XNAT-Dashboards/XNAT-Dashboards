@@ -41,9 +41,15 @@ def stats_db():
     # Check if pickle data is of correct server
     if data is not None:
 
+        resources = None
+        resources_bbrc = None
+
         user_data = data['info']
-        resources = data['resources']
-        resources_bbrc = data['resources_bbrc']
+
+        if 'resources' in data and 'resources_bbrc' in data:
+            resources = data['resources']
+            resources_bbrc = data['resources_bbrc']
+
         l_data = data['longitudinal_data']
 
         # Calling plot generator
@@ -101,8 +107,13 @@ def project_db(id):
 
     data = model.load_users_data_pk(session['server'])
     users_data = data['info']
-    resources = data['resources']
-    resources_bbrc = data['resources_bbrc']
+
+    resources = None
+    resources_bbrc = None
+
+    if 'resources' in data and 'resources_bbrc' in data:
+        resources = data['resources']
+        resources_bbrc = data['resources_bbrc']
 
     # Get the details for plotting
     data_array = graph_generator_DB.GraphGeneratorPP(

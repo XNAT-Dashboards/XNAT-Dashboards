@@ -73,15 +73,17 @@ class GetInfo:
         # Loop through each resources and resources bbrc and check it's project
         # id present for the role or role containting *
 
-        for resource in resources:
-            if resource[0] not in self.project_visible\
-                    or "*" in self.project_visible:
-                resources_list.append(resource)
+        if resources is not None and resources_bbrc is not None:
 
-        for resource in resources_bbrc:
-            if resource[0] not in self.project_visible\
-                    or "*" in self.project_visible:
-                resources_bbrc_list.append(resource)
+            for resource in resources:
+                if resource[0] not in self.project_visible\
+                        or "*" in self.project_visible:
+                    resources_list.append(resource)
+
+            for resource in resources_bbrc:
+                if resource[0] not in self.project_visible\
+                        or "*" in self.project_visible:
+                    resources_bbrc_list.append(resource)
 
         self.resources = resources_list
         self.resources_bbrc = resources_bbrc_list
@@ -151,7 +153,8 @@ class GetInfo:
         resources = self.formatter_object.get_resources_details(
             self.resources, self.resources_bbrc)
 
-        if resources is not None and type(resources) != int:
+        if resources is not None and\
+                type(resources) != int and self.resources != []:
 
             final_json_dict.update(resources)
 
