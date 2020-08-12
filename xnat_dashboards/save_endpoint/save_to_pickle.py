@@ -11,11 +11,11 @@ class SaveToPk:
     coll_users = None
     fetcher = None
 
-    def __init__(self, username, password, server, ssl):
+    def __init__(self, path, skip=False):
 
-        self.server = server
-        self.fetcher = data_fetcher.Fetcher(
-            username, password, server, ssl)
+        self.fetcher = data_fetcher.Fetcher(path=path)
+        self.server = self.fetcher.SELECTOR._server
+        self.skip = skip
         self.save_to_PK()
 
     def save_to_PK(self):
@@ -24,8 +24,10 @@ class SaveToPk:
 
         # Fetch all resources, session, scans, projects, subjects
         data_pro_sub_exp_sc = self.fetcher.fetch_all()
-        data_res = self.fetcher.get_resources()
-        data_res_bbrc = self.fetcher.get_experiment_resources()
+
+        if not self.skip:
+            data_res = self.fetcher.get_resources()
+            data_res_bbrc = self.fetcher.get_experiment_resources()
 
         file_exist = os.path.isfile(path_creator.get_pickle_path())
 
@@ -49,27 +51,41 @@ class SaveToPk:
                         return -1
 
         # Call method for formatting the longitudinal data from raw saved data
-        longitudinal_data = self.longitudinal_data_processing(
-            data_pro_sub_exp_sc, data_res, user_data
-        )
+        if not self.skip:
+            longitudinal_data = self.longitudinal_data_processing(
+                data_pro_sub_exp_sc, user_data, data_res
+            )
+        else:
+            longitudinal_data = self.longitudinal_data_processing(
+                data_pro_sub_exp_sc, user_data
+            )
 
         # Save all the data to pickle
         with open(
                 path_creator.get_pickle_path(),
                 'wb') as handle:
 
-            pickle.dump(
-                {
-                    'server': self.server,
-                    'info': data_pro_sub_exp_sc,
-                    'resources': data_res,
-                    'resources_bbrc': data_res_bbrc,
-                    'longitudinal_data': longitudinal_data
-                },
-                handle, protocol=pickle.HIGHEST_PROTOCOL)
+            if not self.skip:
+                pickle.dump(
+                    {
+                        'server': self.server,
+                        'info': data_pro_sub_exp_sc,
+                        'resources': data_res,
+                        'resources_bbrc': data_res_bbrc,
+                        'longitudinal_data': longitudinal_data
+                    },
+                    handle, protocol=pickle.HIGHEST_PROTOCOL)
+            else:
+                pickle.dump(
+                    {
+                        'server': self.server,
+                        'info': data_pro_sub_exp_sc,
+                        'longitudinal_data': longitudinal_data
+                    },
+                    handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     def longitudinal_data_processing(
-            self, data_pro_sub_exp_sc, data_res, user_data):
+            self, data_pro_sub_exp_sc, user_data, data_res=None):
 
         # Get current time
         now = datetime.now()
@@ -101,15 +117,15 @@ class SaveToPk:
             scans_number['list'][dt].append(scan['ID'])
 
         # Resource data processing
+        if not self.skip:
+            resource_number = {'list': {dt: []}}
 
-        resource_number = {'list': {dt: []}}
+            for resource in data_res:
+                if resource[2] != 'No Data':
+                    resource_number['list'][dt].append(
+                        str(resource[1]) + '  ' + str(resource[2]))
 
-        for resource in data_res:
-            if resource[2] != 'No Data':
-                resource_number['list'][dt].append(
-                    str(resource[1]) + '  ' + str(resource[2]))
-
-        resource_number['count'] = {dt: len(resource_number['list'][dt])}
+            resource_number['count'] = {dt: len(resource_number['list'][dt])}
 
         if user_data == {}:
 
@@ -120,7 +136,9 @@ class SaveToPk:
             user_data['Subjects'] = {'list': {}, 'count': {}}
             user_data['Experiments'] = {'list': {}, 'count': {}}
             user_data['Scans'] = {'list': {}, 'count': {}}
-            user_data['Resources'] = {'list': {}, 'count': {}}
+
+            if not self.skip:
+                user_data['Resources'] = {'list': {}, 'count': {}}
 
         else:
 
@@ -132,14 +150,18 @@ class SaveToPk:
         user_data['Subjects']['list'].update(subjects_number['list'])
         user_data['Experiments']['list'].update(experiments_number['list'])
         user_data['Scans']['list'].update(scans_number['list'])
-        user_data['Resources']['list'].update(resource_number['list'])
+
+        if not self.skip:
+            user_data['Resources']['list'].update(resource_number['list'])
 
         user_data['Projects']['count'].update(projects_number['count'])
         user_data['Subjects']['count'].update(subjects_number['count'])
         user_data['Experiments']['count'].update(
             experiments_number['count'])
         user_data['Scans']['count'].update(scans_number['count'])
-        user_data['Resources']['count'].update(resource_number['count'])
+
+        if not self.skip:
+            user_data['Resources']['count'].update(resource_number['count'])
 
         '''
         Returns the formatted data

@@ -5,10 +5,7 @@ import pickle
 
 def test_save_data_and_user(mocker):
 
-    username = 'testUser'
-    password = 'testPassword'
-    server = 'https://central.xnat.org'
-    ssl = False
+    path = 'central.cfg'
 
     resource_return_value = {
         'date': '28', 'resources': [], 'resources_bbrc': []}
@@ -22,15 +19,15 @@ def test_save_data_and_user(mocker):
         return_value=resource_return_value)
 
     mocker.patch(
-        'xnat_dashboards.pyxnat_interface.data_fetcher.Fetcher.get_experiment_resources',
+        'xnat_dashboards.pyxnat_interface.data_fetcher.Fetcher'
+        '.get_experiment_resources',
         return_value=resource_return_value)
 
     mocker.patch(
         'xnat_dashboards.pyxnat_interface.data_fetcher.Fetcher.fetch_all',
         return_value=data_return_value)
 
-    save_to_pickle.SaveToPk(
-        username, password, server, ssl).save_to_PK()
+    save_to_pickle.SaveToPk(path).save_to_PK()
 
     with open(path_creator.get_pickle_path(), 'rb') as handle:
         data = pickle.load(handle)
