@@ -270,13 +270,15 @@
                         <div class="table-responsive">
                             <table id='tests_table' class="table table-hover">
                                 <thead>
-                                    <tr>
-                                        <td class="Stick">Sessions/Tests</td>
-                                        <td>Version</td>
-                                        {% for data in t_header_info%}
-                                        <td>{{data}}</td>
-                                        {% endfor %}
-                                    </tr>
+                                    {% if t_header_info|length > 0%}
+                                        <tr>
+                                            <td class="Stick">Sessions/Tests</td>
+                                            <td>Version</td>
+                                            {% for data in t_header_info%}
+                                            <td>{{data}}</td>
+                                            {% endfor %}
+                                        </tr>
+                                    {% endif %}
                                 </thead>
                                 <tbody>
                                     <!-- Every row per session details -->
@@ -361,7 +363,7 @@
     <script src="/static/dashboards/js/graph_descriptor.js"></script>
     {% for i in graph_data%}
         {% for j in i%}
-            <script>         
+            <script>
                 chart_generator({{ j | tojson}});
             </script>
         {%endfor%}

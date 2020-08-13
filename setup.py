@@ -11,10 +11,11 @@ long_description = 'This project is about creating a responsive dashboard'
 
 setuptools.setup(
      name='xnat_dashboards',
-     version='0.9',
+     version='0.0.1',
      summary='XNAT data visualization',
      author='Grégory Operto, Jordi Huguet, Mohammad Asif Hashmi',
-     author_email='goperto@barcelonabeta.org, goperto@barcelonabeta.org, hashmi.masif@gmail.com',
+     author_email='goperto@barcelonabeta.org,\
+          jhuguet@barcelonabeta.org, hashmi.masif@gmail.com',
      url='',
      include_package_data=True,
      package_data={
