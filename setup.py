@@ -1,17 +1,17 @@
 import setuptools
 
-long_description = 'This project is about creating a responsive dashboard'
-' framework for extensive exploration, monitoring, and reviewing large '
-'neurological imaging datasets present on the XNAT server instance. '
-'This dashboard will fetch data from any XNAT instance servers and '
-'will generate highly-visualized, summarized representations of complex '
-'scientific data present on the servers and facilitate user navigation '
-'through large cohorts. This dashboard will be a light-weight, flexible and '
-'modular framework'
+long_description = 'This project is about creating a responsive dashboard'\
+     ' framework for extensive exploration, monitoring, and reviewing large '\
+     'neurological imaging datasets present on the XNAT server instance. '\
+     'This dashboard will fetch data from any XNAT instance servers and '\
+     'will generate highly-visualized, summarized representations of complex '\
+     'scientific data present on the servers and facilitate user navigation '\
+     'through large cohorts. This dashboard will be a light-weight, flexible'\
+     'and modular framework'
 
 setuptools.setup(
      name='xnat_dashboards',
-     version='0.0.1',
+     version='0.0.2',
      summary='XNAT data visualization',
      author='Grégory Operto, Jordi Huguet, Mohammad Asif Hashmi',
      author_email='goperto@barcelonabeta.org,\
@@ -40,6 +40,7 @@ setuptools.setup(
           'flask',
           'flask-wtf',
           'pandas',
+          'pyxnat',
           'tqdm'
      ],
      platforms='any',
