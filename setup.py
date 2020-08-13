@@ -11,12 +11,11 @@ long_description = 'This project is about creating a responsive dashboard'\
 
 setuptools.setup(
      name='xnat_dashboards',
-     version='0.0.2',
+     version='0.0.3',
      summary='XNAT data visualization',
-     author='Grégory Operto, Jordi Huguet, Mohammad Asif Hashmi',
-     author_email='goperto@barcelonabeta.org,\
-          jhuguet@barcelonabeta.org, hashmi.masif@gmail.com',
-     url='',
+     author='Mohammad Asif Hashmi',
+     author_email='hashmi.masif@gmail.com',
+     url='https://pypi.org/project/xnat-dashboards/',
      include_package_data=True,
      package_data={
           'static': ['xnat_dashboards/app/static/*'],
@@ -29,7 +28,7 @@ setuptools.setup(
           'Intended Audience :: Developers',
           'Intended Audience :: Science/Research',
           'Intended Audience :: Education',
-          'License :: OSI Approved :: BSD License',
+          'License :: OSI Approved :: MIT License',
           'Operating System :: OS Independent',
           'Topic :: Scientific/Engineering',
           'Topic :: Utilities',
