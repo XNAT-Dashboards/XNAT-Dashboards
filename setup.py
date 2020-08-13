@@ -24,7 +24,7 @@ setuptools.setup(
      packages=setuptools.find_packages(exclude=('tests')),
      description='XNAT data visualization using Flask',
      long_description=long_description,
-     license='BSD',
+     license='MIT',
      classifiers=[
           'Intended Audience :: Developers',
           'Intended Audience :: Science/Research',
