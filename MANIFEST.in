@@ -1,0 +1,2 @@
+recursive-include xnat_dashboards/app/templates *
+recursive-include xnat_dashboards/app/static *
