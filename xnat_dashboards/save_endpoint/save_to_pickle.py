@@ -13,6 +13,7 @@ class SaveToPk:
 
     def __init__(self, path, skip=False):
 
+        # skip argument tell that whether to download resources
         self.fetcher = data_fetcher.Fetcher(path=path)
         self.server = self.fetcher.SELECTOR._server
         self.skip = skip

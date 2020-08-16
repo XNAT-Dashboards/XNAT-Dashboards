@@ -17,6 +17,7 @@ class Formatter:
 
         projects_details = {}
 
+        # key id_type is used by frontend to add appropriate urls in frontend
         project_acccess = self.dict_generator_overview(
             projects, 'project_access', 'id', 'access')
         project_acccess['id_type'] = 'project'

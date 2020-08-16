@@ -43,10 +43,10 @@ class GraphGenerator:
 
         final_json_dict = data
 
+        skip_data = ['Stats', 'test_grid', 'Project details']
+
         for final_json in final_json_dict:
-            if final_json == 'Stats' or\
-                final_json == 'test_grid' or\
-                final_json == 'Project details' or\
+            if final_json in skip_data or\
                 self.role\
                     not in self.graph_config[final_json]['visibility']:
                 continue
@@ -260,10 +260,10 @@ class GraphGeneratorPP(GraphGenerator):
         if type(graph_data) == int or graph_data is None:
             return graph_data
 
+        skip_data = ['Stats', 'test_grid', 'Project details']
+
         for final_json in graph_data:
-            if final_json == 'Stats' or\
-                final_json == 'test_grid' or\
-                final_json == 'Project details' or\
+            if final_json in skip_data or\
                     self.role not in\
                     self.graph_config[final_json]['visibility']:
 
