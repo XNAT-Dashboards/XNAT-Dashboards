@@ -284,3 +284,34 @@ $('#tests_table tbody td').on('click', function(){
         html_output = '';
     }
 });
+
+
+// Download data as excel from table
+
+$(document).ready(function(){
+    $("#btnExport").click(function() {
+        let table = document.getElementsByTagName("table");
+        TableToExcel.convert(table[1], { // html code may contain multiple tables so here we are refering to 1st table tag
+           name: project_id+`_export.xlsx`, // fileName you could use any name
+           sheet: {
+              name: 'Sheet 1' // sheetName
+           }
+        });
+    });
+});
+
+// Code for filtering version
+function filterVersion(){
+        var input = document.getElementById("version_list");
+        alert(input);
+        filter = input.value;
+        console.log(filter);
+        if(filter == 'All'){
+            var rows = $('#tests_table tbody tr');
+            rows.show();
+        }else{
+            $("#tests_table tbody tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(filter) > -1)
+              });
+        }
+}

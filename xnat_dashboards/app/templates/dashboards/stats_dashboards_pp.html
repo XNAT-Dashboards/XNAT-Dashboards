@@ -74,7 +74,9 @@
                 <nav class="sidebar-nav">
                     <ul id="sidebarnav">
                         <li id="project"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-eye"></i><span class="hide-menu">Project</span></a></li>
-                        <li id="tests_grid"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-table"></i><span class="hide-menu">Tests Grid</span></a></li>                       
+                        {% if t_header_info|length > 0%}
+                            <li id="tests_grid"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-table"></i><span class="hide-menu">Tests Grid</span></a></li>
+                        {% endif %}                
                     </ul>
                 </nav>
             </div>
@@ -258,90 +260,105 @@
                     <!-- Modal Drill Down-->
                 </div>
                 <!-- Start test grid addition -->
-                <div class="tests_grid_part">
-                    <div class="card">
+                {% if t_header_info|length > 0%}
+                    <div class="tests_grid_part">
+                        <div class="card">
                             <div class="card-body">
                                 <div class="d-flex">
-                                    <div>
-                                        <h5 class="card-title">Sessions with corresponding tests</h5>
-                                    </div>
+                                    <h5 class="card-title">Sessions with corresponding tests</h5>
                                 </div>
                             </div>
-                        <div class="table-responsive">
-                            <table id='tests_table' class="table table-hover">
-                                <thead>
-                                    {% if t_header_info|length > 0%}
-                                        <tr>
-                                            <td class="Stick">Sessions/Tests</td>
-                                            <td>Version</td>
-                                            {% for data in t_header_info%}
-                                            <td>{{data}}</td>
-                                            {% endfor %}
-                                        </tr>
-                                    {% endif %}
-                                </thead>
-                                <tbody>
-                                    <!-- Every row per session details -->
-                                    {% for data_l in t_data_info %}
-                                        <tr>
-                                            {% for data in data_l %}
-                                                {% if data[0] == true %}
-                                                <td class="green_bg">
-                                                    <div style="display: none;">
-                                                        {{data[1] | tojson}}
-                                                    </div>
-                                                </td>
-                                                {% elif data[0] == false%}
-                                                <td class="red_bg">
-                                                    <div style="display: none;">
-                                                        {{data[1] | tojson}}
-                                                    </div>
-                                                </td>
-                                                {% elif data[0] == None%}
-                                                <td class="grey_bg">
-                                                    <div style="display: none;">
-                                                        {{data[1] | tojson}}
-                                                    </div>
-                                                </td>
-                                                {% elif data[0] == 'version' %}
-                                                <td>
-                                                    {{data[1]}}
-                                                </td>
-                                                {% elif data == '' %}
-                                                <td class="black_bg"></td>
-                                                {% else %}
-                                                <td class="stick">
-                                                    <a href="{{server}}/app/action/DisplayItemAction/search_value/{{data}}/search_element/xnat:Data/search_field/xnat:imageSessionData.ID" target="_blank">
-                                                    {{data}}
-                                                    </a>
-                                                </td>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                            <div class="row">
+                                <div class="col-md-6 col-xs-5">
+                                    &nbsp &nbsp<label for="version_list">Version: </label>
+                                    <select id="version_list" name="version_list" onchange="filterVersion()">
+                                        <option>All</option>
+                                        {% for ver in diff_version%}
+                                        <option>{{ver}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-4 col-xs-2">
+                                </div>
+                                <div class="col-md-2 col-xs-5">
+                                    Download Tests Report
+                                    <i id="btnExport" class="fa fa-download" aria-hidden="true"></i>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table id='tests_table' class="table table-hover">
+                                    <thead>
+                                            <tr>
+                                                <td class="Stick">Sessions/Tests</td>
+                                                <td>Version</td>
+                                                {% for data in t_header_info%}
+                                                <td>{{data}}</td>
+                                                {% endfor %}
+                                            </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Every row per session details -->
+                                        {% for data_l in t_data_info %}
+                                            <tr>
+                                                {% for data in data_l %}
+                                                    {% if data[0] == true %}
+                                                    <td class="green_bg">
+                                                        <div style="display: none;">
+                                                            {{data[1] | tojson}}
+                                                        </div>
+                                                    </td>
+                                                    {% elif data[0] == false%}
+                                                    <td class="red_bg">
+                                                        <div style="display: none;">
+                                                            {{data[1] | tojson}}
+                                                        </div>
+                                                    </td>
+                                                    {% elif data[0] == None%}
+                                                    <td class="grey_bg">
+                                                        <div style="display: none;">
+                                                            {{data[1] | tojson}}
+                                                        </div>
+                                                    </td>
+                                                    {% elif data[0] == 'version' %}
+                                                    <td>
+                                                        {{data[1]}}
+                                                    </td>
+                                                    {% elif data == '' %}
+                                                    <td class="black_bg"></td>
+                                                    {% else %}
+                                                    <td class="stick">
+                                                        <a href="{{server}}/app/action/DisplayItemAction/search_value/{{data}}/search_element/xnat:Data/search_field/xnat:imageSessionData.ID" target="_blank">
+                                                        {{data}}
+                                                        </a>
+                                                    </td>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <!-- End test grid addition -->
-                <!-- Modal test false-->
-                <div class="modal fade" id="test" tabindex="-1" role="dialog" aria-labelledby="testTitle" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="testTitle"></h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                    </button>
-                            </div>
-                            <div class="modal-body" id="modalTest">
-                
+                    <!-- End test grid addition -->
+                    <!-- Modal test false-->
+                    <div class="modal fade" id="test" tabindex="-1" role="dialog" aria-labelledby="testTitle" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="testTitle"></h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                        </button>
+                                </div>
+                                <div class="modal-body" id="modalTest">
+                    
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- Modal test false -->
+                    <!-- Modal test false -->
+                {% endif %}
             </div>
         </div>
         <!-- Plotly graphs container end-->
@@ -354,6 +371,10 @@
     <!-- Js include Start -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/linways/table-to-excel@v1.0.4/dist/tableToExcel.js"></script>
+    <script>
+        project_id = '{{id}}';
+    </script>
     <script src="/static/dashboards/js/custom.js"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script>
