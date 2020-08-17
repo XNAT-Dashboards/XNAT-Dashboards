@@ -303,7 +303,6 @@ $(document).ready(function(){
 // Code for filtering version
 function filterVersion(){
         var input = document.getElementById("version_list");
-        alert(input);
         filter = input.value;
         console.log(filter);
         if(filter == 'All'){
