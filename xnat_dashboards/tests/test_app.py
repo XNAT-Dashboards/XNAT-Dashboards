@@ -3,7 +3,7 @@ from xnat_dashboards import path_creator
 import os
 
 path_creator.set_pickle_path(os.path.abspath(
-    'xnat_dashboards/pickles/data/general.pickle'))
+    'xnat_dashboards/config/general.pickle'))
 path_creator.set_dashboard_config_path(os.path.abspath(
     'xnat_dashboards/config/dashboard_config.json'))
 
@@ -35,7 +35,7 @@ def test_dashboard_db(mocker):
 
     mocker.patch(
         'xnat_dashboards.saved_data_processing.'
-        'graph_generator_DB.GraphGenerator.__init__',
+        'graph_generator.GraphGenerator.__init__',
         return_value=None)
 
     mocker.patch(
