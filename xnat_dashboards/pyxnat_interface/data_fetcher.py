@@ -19,16 +19,16 @@ class Fetcher:
             path (String): Path to pyxnat configuration file.
 
         Attributes:
-            SELECTOR: Pyxnat Interface object used in whole class for
+            selector: Pyxnat Interface object used in whole class for
                 calling different methods of pyxnat
     """
 
     # Initializing the central interface object in the constructor
     def __init__(self, config):
 
-        SELECTOR = pyxnat.Interface(config=config)
+        selector = pyxnat.Interface(config=config)
 
-        self.SELECTOR = SELECTOR
+        self.selector = selector
 
     # Disconnect with the instance
     def __del__(self):
@@ -36,7 +36,7 @@ class Fetcher:
         Disconnect from the server after pyxnat object is destroyed
         """
         print("Disconnected")
-        self.SELECTOR.disconnect()
+        self.selector.disconnect()
 
     def get_instance_details(self):
         """Fetches all project details from XNAT instance
@@ -67,18 +67,18 @@ class Fetcher:
             **1** Connection can't be established\n
         """
         try:
-            projects = self.SELECTOR.select('xnat:projectData').all().data
+            projects = self.selector.select('xnat:projectData').all().data
 
-            subjects = self.SELECTOR.get(
+            subjects = self.selector.get(
                 '/data/subjects',
                 params={'columns': 'ID,project,handedness,'
                         'age,gender'}).json()['ResultSet']['Result']\
 
-            self.experiments = self.SELECTOR.array.experiments(
+            self.experiments = self.selector.array.experiments(
                 experiment_type='',
                 columns=['subject_ID', 'date']).data
 
-            scans = self.SELECTOR.array.scans(
+            scans = self.selector.array.scans(
                 columns=['xnat:imageScanData/quality',
                          'xnat:imageScanData/type']).data
 
@@ -127,7 +127,7 @@ class Fetcher:
         # For each experiments fetch all the resources associated with it
         for exp in tqdm(experiments):
 
-            res = self.SELECTOR.select.experiments(exp['ID']).resources()
+            res = self.selector.select.experiments(exp['ID']).resources()
             res_Arr = []
 
             # Add resource of different type to res_Arr
@@ -175,7 +175,7 @@ class Fetcher:
             # Check whether 'BBRC Validator' type resource exists
             # for the experiment
 
-            BBRC_VALIDATOR = self.SELECTOR.select.experiment(
+            BBRC_VALIDATOR = self.selector.select.experiment(
                 exp['ID']).resource('BBRC_VALIDATOR')
             exists = 'Exists' if BBRC_VALIDATOR.exists() else 'No Exists'
 

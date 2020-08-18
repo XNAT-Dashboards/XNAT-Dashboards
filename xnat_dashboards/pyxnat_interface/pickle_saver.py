@@ -5,7 +5,7 @@ from xnat_dashboards import path_creator
 from xnat_dashboards.pyxnat_interface import data_fetcher
 
 
-class SaveToPk:
+class PickleSaver:
     """Class for saving the fetched data into pickle
 
         Different methods are provided to save different type of data.
@@ -25,12 +25,14 @@ class SaveToPk:
     def __init__(self, config, skip=False):
 
         # skip argument tell that whether to download resources
+        # In case you want a quick look of xnat dashboard or you don't want
+        # graphs related to resources use skip as True
         self.fetcher = data_fetcher.Fetcher(config=config)
-        self.server = self.fetcher.SELECTOR._server
+        self.server = self.fetcher.selector._server
         self.skip = skip
-        self.save_to_PK()
+        self.save()
 
-    def save_to_PK(self):
+    def save(self):
         """Method to save in pickle format
 
         This method fetches the details from Data Fetcher class methods,

@@ -1,4 +1,4 @@
-from xnat_dashboards.pyxnat_interface import save_to_pickle
+from xnat_dashboards.pyxnat_interface import pickle_saver
 from xnat_dashboards import path_creator
 import pickle
 
@@ -28,7 +28,7 @@ def test_save_data_and_user(mocker):
         '.get_instance_details',
         return_value=data_return_value)
 
-    save_to_pickle.SaveToPk(path).save_to_PK()
+    pickle_saver.PickleSaver(path).save()
 
     with open(path_creator.get_pickle_path(), 'rb') as handle:
         data = pickle.load(handle)
