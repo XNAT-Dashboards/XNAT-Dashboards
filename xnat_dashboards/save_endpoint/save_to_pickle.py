@@ -22,14 +22,6 @@ class SaveToPk:
     def save_to_PK(self):
 
         # Method to save the data as pickle
-
-        # Fetch all resources, session, scans, projects, subjects
-        data_pro_sub_exp_sc = self.fetcher.fetch_all()
-
-        if not self.skip:
-            data_res = self.fetcher.get_resources()
-            data_res_bbrc = self.fetcher.get_experiment_resources()
-
         file_exist = os.path.isfile(path_creator.get_pickle_path())
 
         # Create a temporary dict for longitudinal data
@@ -48,8 +40,17 @@ class SaveToPk:
                 if 'server' in user_data:
 
                     if self.server != user_data['server']:
-                        print("Wrong server")
+                        print("Wrong server previously saved pickle\
+                            have different server url, change pickle file\
+                            or delete the previous pickle file")
                         return -1
+
+        # Fetch all resources, session, scans, projects, subjects
+        data_pro_sub_exp_sc = self.fetcher.fetch_all()
+
+        if not self.skip:
+            data_res = self.fetcher.get_resources()
+            data_res_bbrc = self.fetcher.get_experiment_resources()
 
         # Call method for formatting the longitudinal data from raw saved data
         if not self.skip:
