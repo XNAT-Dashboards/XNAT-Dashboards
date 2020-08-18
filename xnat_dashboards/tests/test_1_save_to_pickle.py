@@ -5,7 +5,7 @@ import pickle
 
 def test_save_data_and_user(mocker):
 
-    path = 'central.cfg'
+    path = 'xnat_dashboards/config/central.cfg'
 
     resource_return_value = {
         'date': '28', 'resources': [], 'resources_bbrc': []}
