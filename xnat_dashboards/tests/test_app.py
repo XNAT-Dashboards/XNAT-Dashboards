@@ -39,27 +39,27 @@ def test_dashboard_db(mocker):
         return_value=None)
 
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.graph_generator_DB.'
+        'xnat_dashboards.saved_data_processing.graph_generator.'
         'GraphGenerator.graph_generator',
         return_value=[[], []])
 
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.graph_generator_DB.'
+        'xnat_dashboards.saved_data_processing.graph_generator.'
         'GraphGenerator.project_list_generator',
         return_value=[[], []])
 
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.graph_generator_DB.'
+        'xnat_dashboards.saved_data_processing.graph_generator.'
         'GraphGeneratorPP.__init__',
         return_value=None)
 
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.graph_generator_DB.'
+        'xnat_dashboards.saved_data_processing.graph_generator.'
         'GraphGeneratorPP.graph_generator',
         return_value=None)
 
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.graph_generator_DB.'
+        'xnat_dashboards.saved_data_processing.graph_generator.'
         'GraphGenerator.graph_generator_longitudinal',
         return_value=[])
 
