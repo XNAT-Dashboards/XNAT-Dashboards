@@ -1,24 +1,49 @@
-from xnat_dashboards.saved_data_processing import data_formatter_DB
+from xnat_dashboards.saved_data_processing import data_formatter
 
 
 class GetInfo:
+    """
+    It first filter out the data based on project ids
+    that should not be visible to user based on role.
 
+    It then sends the data to data formatter which
+    format the data then ordering is done using the
+    GetInfo
+
+    Args:
+        username (str): Username
+        info (list): list of project, subjects, exp., scans
+        role (str): role of the user.
+        project_visible (list): list of projects that is visible
+        resources (list, optional): List of resources and Default as None.
+        resources_bbrc (list, optional): List of bbrc resources
+            and Default as None.
+    """
     def __init__(
             self, username, info, role, project_visible=[],
             resources=None, resources_bbrc=None):
 
-        self.formatter_object = data_formatter_DB.Formatter(
-            username)
+        self.formatter_object = data_formatter.Formatter()
         if project_visible != []:
             self.project_visible = project_visible[role]
         else:
             self.project_visible = []
-
+        self.username = username
         self.info_preprocessor(info)
         self.resources_preprocessor(resources, resources_bbrc)
 
     def info_preprocessor(self, info_f):
+        """This methods filters project, subject, scans and
+        experiments based on project id that should be visible
+        to user.
 
+        Args:
+            info_f (dict): dict of projects, subjects, experiments and
+                scans.
+        Returns:
+            dict: resources and bbrc resources that belongs to the
+            project that should be visible as per role and user.
+        """
         # Method to restrict access to projects details
         # based on role of the user
 
@@ -64,7 +89,17 @@ class GetInfo:
         self.info['scans'] = scans
 
     def resources_preprocessor(self, resources, resources_bbrc):
-
+        """
+            This is used to filter resources and bbrc resources
+            based on project id that should be visible
+            to user.
+        Args:
+            resources (list): list of resources
+            resources_bbrc (list): list of bbrc resources
+        Returns:
+            dict: resources and bbrc resources that belongs to the
+            project that should be visible as per role and user.
+        """
         self.resources = {}
         self.resources_bbrc = {}
         resources_list = []
@@ -90,21 +125,13 @@ class GetInfo:
 
     def __preprocessor(self):
 
-        '''
-        This preprocessor makes the final dictionary with each key representing
-        a graph.
-        In return data each key and value pair represent a graph.
-        If the key and value doesn't represent a graph further processing will
-        be done.
-        In the current case only 4 key and value pair have this structure:
-        Number of projects
-        Number of subjects
-        Number of experiments
-        Number of scans
+        """
+        This reorder the data as per requirements.
 
-        Return type of this function is a single dictionary with each key and
-        value pair representing graph.
-        '''
+        Returns:
+            dict: data information that belongs to the
+            project that should be visible as per role and user.
+        """
 
         stats = {}
         final_json_dict = {}
@@ -158,33 +185,47 @@ class GetInfo:
 
             final_json_dict.update(resources)
 
-        '''
-        returns a nested dict
-        {
-            Graph1_name : { count:{x_axis_values, y_axis_values},
-                            list:{x_axis_values, y_axis_values}},
-            Graph2_name : { count:{x_axis_values, y_axis_values},
-                            list:{x_axis_values, y_axis_values}},
-            Graph3_name : { count:{x_axis_values, y_axis_values},
-                            list:{x_axis_values, y_axis_values}},
-            Graph4_name : { count:{x_axis_values, y_axis_values},
-                            list:{x_axis_values, y_axis_values}},
-        }
-        '''
-
         return final_json_dict
 
     def get_project_list(self):
+        """This is used for creating project list
 
+        Returns:
+            list: List of projects
+        """
         return self.formatter_object.get_projects_details_specific(
-            self.info['projects'])
+            self.info['projects'], self.username)
 
     def get_info(self):
+        """This sends data back to Graph Generator class.
 
+        Returns:
+            dict: This returns a dict with all the information regarding
+                overview page.
+        """
         return self.__preprocessor()
 
 
 class GetInfoPP(GetInfo):
+    """GetInfoPP processes the for per project view.
+
+    It first checks whether the project should be
+    visible to users.
+    Then sends the data to data formatter which
+    format the data then ordering is done using the
+    GetInfoPP
+
+    Args:
+        GetInfo (GetInfo): It inherits GetInfo.
+        username (str): Username
+        info (list): list of project, subjects, exp., scans
+        project_id (str): ID of project in per project view.
+        role (str): role of the user.
+        project_visible (list): list of projects that is visible
+        resources (list, optional): List of resources and Default as None.
+        resources_bbrc (list, optional): List of bbrc resources
+            and Default as None.
+    """
 
     def __init__(
             self,
@@ -192,8 +233,8 @@ class GetInfoPP(GetInfo):
             info, project_id, role, project_visible=[],
             resources=None, resources_bbrc=None):
 
-        self.formatter_object_per_project = data_formatter_DB.FormatterPP(
-            username, project_id)
+        self.formatter_object_per_project = data_formatter.FormatterPP(
+            project_id)
         self.info = info
         if project_visible != []:
             self.project_visible = project_visible[role]
@@ -207,21 +248,22 @@ class GetInfoPP(GetInfo):
 
     def __preprocessor_per_project(self):
 
-        '''
-        This preprocessor makes the final dictionary with each key representing
-        a graph.
-        In return data each key and value pair represent a graph.
-        If the key and value doesn't represent a graph further processing will
-        be done.
-        In the current case only 4 key and value pair have this structure:
-        Number of projects
-        Number of subjects
-        Number of experiments
-        Number of scans
+        """
+        This preprocessor makes the final dictionary with each key being
+        a part in graph view or a data view.
 
-        Return type of this function is a single dictionary with each key and
-        value pair representing graph.
-        '''
+        This checks which information to be sent to frontend per project
+        view.
+
+        return:
+            dict: Data each key and value pair represent a graph.
+            If the key and value doesn't represent a graph further
+            processing will be done.
+
+            {Graph1_name : { count:{x_axis_values: y_axis_values},
+                            list:{x_axis_values: y_list} },
+            Data_name: {other informations to be sent to frontend}}
+        """
 
         stats = {}
         final_json_dict = {}
@@ -281,24 +323,22 @@ class GetInfoPP(GetInfo):
 
         final_json_dict.update({'test_grid': test_grid})
 
-        '''
-        returns a nested dict
-        {
-            Graph1_name : { count:{x_axis_values: y_axis_values},
-                            list:{x_axis_values: y_list} },
-            Graph2_name : { count:{x_axis_values: y_axis_values},
-                            list:{x_axis_values: y_list} },
-            Graph3_name : { count:{x_axis_values: y_axis_values},
-                            list:{x_axis_values: y_list} },
-            Graph4_name : { count:{x_axis_values: y_axis_values},
-                            list:{x_axis_values: y_list} },
-        }
-        '''
-
         return final_json_dict
 
     def get_per_project_view(self):
+        """
+        This sends the data to Graph per project view by first getting
+        data from pre processor.
 
+        return:
+            dict/None: It sends dict if the project have information,
+            if project don't have any information it will be None is set
+            by default.
+
+            {Graph1_name : { count:{x_axis_values: y_axis_values},
+                            list:{x_axis_values: y_list} },
+            Data_name: {other informations to be sent to frontend}}
+        """
         # Checks if the project should be visible to user with the role
 
         if self.project_id in self.project_visible\

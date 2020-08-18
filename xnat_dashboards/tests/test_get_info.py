@@ -1,4 +1,4 @@
-from xnat_dashboards.saved_data_processing import get_info_DB
+from xnat_dashboards.saved_data_processing import get_info
 
 
 def create_mocker(
@@ -6,10 +6,10 @@ def create_mocker(
         project_visible=[], resources=None, resources_bbrc=None):
 
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.data_formatter_DB.Formatter.__init__',
+        'xnat_dashboards.saved_data_processing.data_formatter.Formatter.__init__',
         return_value=None)
 
-    info_object = get_info_DB.GetInfo(
+    info_object = get_info.GetInfo(
         username, info, role, [], resources, resources_bbrc)
 
     return info_object
@@ -25,23 +25,23 @@ def test_info(mocker):
         "Stats": {}}
 
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.data_formatter_DB.'
+        'xnat_dashboards.saved_data_processing.data_formatter.'
         'Formatter.get_projects_details',
         return_value={'Number of Projects': 3})
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.data_formatter_DB.'
+        'xnat_dashboards.saved_data_processing.data_formatter.'
         'Formatter.get_subjects_details',
         return_value={'Number of Subjects': 5})
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.data_formatter_DB.'
+        'xnat_dashboards.saved_data_processing.data_formatter.'
         'Formatter.get_experiments_details',
         return_value={'Number of Experiments': 4})
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.data_formatter_DB.'
+        'xnat_dashboards.saved_data_processing.data_formatter.'
         'Formatter.get_scans_details',
         return_value={'Number of Scans': 1})
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.data_formatter_DB.'
+        'xnat_dashboards.saved_data_processing.data_formatter.'
         'Formatter.get_resources_details',
         return_value={})
 
@@ -64,7 +64,7 @@ def test_get_project_list(mocker):
         "Stats": {}}
 
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.data_formatter_DB.'
+        'xnat_dashboards.saved_data_processing.data_formatter.'
         'Formatter.get_projects_details_specific',
         return_value=[
             'p1', 'p2', 'p3', 'p4', 'p1', 'p2',

@@ -3,7 +3,7 @@ from xnat_dashboards import path_creator
 import os
 
 path_creator.set_pickle_path(os.path.abspath(
-    'xnat_dashboards/config/general.pickle'))
+    'xnat_dashboards/pickles/data/general.pickle'))
 path_creator.set_dashboard_config_path(os.path.abspath(
     'xnat_dashboards/config/dashboard_config.json'))
 

@@ -1,4 +1,8 @@
-from xnat_dashboards.saved_data_processing import graph_generator_DB
+from xnat_dashboards.saved_data_processing import graph_generator
+from xnat_dashboards import path_creator
+
+path_creator.set_dashboard_config_path(
+    'xnat_dashboards/config/dashboard_config.json')
 
 
 def create_mocker(
@@ -7,13 +11,14 @@ def create_mocker(
         project_visible=None, resources=None, resources_bbrc=None):
 
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.get_info_DB.GetInfoPP.__init__',
+        'xnat_dashboards.saved_data_processing.get_info.GetInfoPP.__init__',
         return_value=None)
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.get_info_DB.GetInfoPP.get_per_project_view',
+        'xnat_dashboards.saved_data_processing.get_info.GetInfoPP.'
+        'get_per_project_view',
         return_value=info)
 
-    graph_object = graph_generator_DB.GraphGeneratorPP(
+    graph_object = graph_generator.GraphGeneratorPP(
         username, info, project_id, role, {role: ['p1', 'y']})
 
     return graph_object

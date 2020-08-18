@@ -1,4 +1,4 @@
-from xnat_dashboards.saved_data_processing import get_info_DB
+from xnat_dashboards.saved_data_processing import get_info
 
 
 def create_mocker(
@@ -7,10 +7,10 @@ def create_mocker(
         resources=None, resources_bbrc=None):
 
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.data_formatter_DB.FormatterPP.__init__',
+        'xnat_dashboards.saved_data_processing.data_formatter.FormatterPP.__init__',
         return_value=None)
 
-    info_object = get_info_DB.GetInfoPP(
+    info_object = get_info.GetInfoPP(
         username, info, 'p2', role, project_visible, resources, resources_bbrc)
 
     return info_object
@@ -26,33 +26,33 @@ def test_info(mocker):
         "Stats": {}}
 
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.data_formatter_DB.'
+        'xnat_dashboards.saved_data_processing.data_formatter.'
         'FormatterPP.get_projects_details',
         return_value={'Number of Projects': 3})
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.data_formatter_DB.'
+        'xnat_dashboards.saved_data_processing.data_formatter.'
         'FormatterPP.get_subjects_details',
         return_value={'Number of Subjects': 5})
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.data_formatter_DB.'
+        'xnat_dashboards.saved_data_processing.data_formatter.'
         'FormatterPP.get_experiments_details',
         return_value={'Number of Experiments': 4})
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.data_formatter_DB.'
+        'xnat_dashboards.saved_data_processing.data_formatter.'
         'FormatterPP.get_scans_details',
         return_value={'Number of Scans': 1})
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.data_formatter_DB.'
+        'xnat_dashboards.saved_data_processing.data_formatter.'
         'FormatterPP.get_resources_details',
         return_value={})
 
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.data_formatter_DB.'
+        'xnat_dashboards.saved_data_processing.data_formatter.'
         'FormatterPP.diff_dates',
         return_value={"count": {}})
 
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.data_formatter_DB.'
+        'xnat_dashboards.saved_data_processing.data_formatter.'
         'FormatterPP.generate_test_grid_bbrc',
         return_value=[])
 

@@ -1,10 +1,23 @@
 import json
-from xnat_dashboards.saved_data_processing import get_info_DB
+from xnat_dashboards.saved_data_processing import get_info
 from xnat_dashboards import path_creator
 
 
 class GraphGenerator:
+    """Class for making final changes in data.
 
+    This class makes final changes that are then sent to frontend.
+    Which is then displayed using jinja.
+
+    Args:
+        username (list): Name of the user
+        info (str): project, subject, experiment and scan details
+        l_data (list): Longitudinal data.
+        project_visible (list, optional): list of project that should be
+            visible to the user.
+        resources (list, optional): list of resources.
+        resources_bbrc (list, optional): list of bbrc resource
+    """
     data = {}
     project_list = []
     project_list_ow_co_me = []
@@ -13,7 +26,7 @@ class GraphGenerator:
             self, username, info, l_data, role,
             project_visible=None, resources=None, resources_bbrc=None):
 
-        self.info = get_info_DB.GetInfo(
+        self.info = get_info.GetInfo(
             username, info,
             role, project_visible, resources, resources_bbrc)
 
@@ -28,12 +41,20 @@ class GraphGenerator:
             projects_data_dict['project_list_ow_co_me']
 
     def graph_pre_processor(self, data):
+        """It pre process the data received from GetInfo.
 
-        '''
-        Add graph type and id for html using the graph_type.json file
-        returns a dictionary which will have id and graph type for the
-        html file
-        '''
+        Graph pre processor add data regarding graph type ie.
+        bar, pie etc, graph description, graph color, graph id.
+
+        It also skip graph that should not be visible to user
+        as per role.
+
+        Args:
+            data (dict): Data of graphs and information from GetInfo
+
+        Returns:
+            dict: Data to frontend.
+        """
 
         with open(path_creator.get_dashboard_config_path()) as json_file:
             self.graph_config = json.load(json_file)['graph_config']
@@ -61,24 +82,16 @@ class GraphGenerator:
             final_json_dict[final_json]['color'] =\
                 self.graph_config[final_json]['color']
 
-        '''
-        Returns a nested dict with id and graph type added
-        {
-            Graph1_name : { x_axis_values, y_axis_values, id, graph_type},
-            Graph2_name : { x_axis_values, y_axis_values, id, graph_type},
-            Graph3_name : { x_axis_values, y_axis_values, id, graph_type},
-            Graph4_name : { x_axis_values, y_axis_values, id, graph_type},
-        }
-        '''
-
         return final_json_dict
 
     def graph_generator(self):
+        """This first process the data using graph preprocessor.
+        Then create a 2D array that help in distribution of graph
+        in frontend. Where each row contains 2 graph.
 
-        '''
-        Returns a 2d array with each row having 2 columns which will
-        be used in the html
-        '''
+        Returns:
+            list: 2D array of graphs and other information.
+        """
 
         length_check = 0
         array_2d = []
@@ -124,14 +137,16 @@ class GraphGenerator:
         return [array_2d, graph_data['Stats']]
 
     def project_list_generator(self):
-        '''
-        Returns a the names of project based in a 2dArray
-        To be processed by frontend
+        """
+        Process the project list for displaying the project id.
 
-        ow_co_me means owned_collob_member all variables
-        with this suffix represent the project list for
-        owned collaborated or member list
-        '''
+        Returns:
+            array_2D (list): The id of project based in a 2dArray
+            To be processed by frontend
+            array_2d_ow_co_me (list): arrayow_co_me means
+            owned_collob_member all variables with this suffix
+            represent the project list for owned collaborated or member list
+        """
         length_check = 0
         length_check_ow_co_me = 0
         array_2d = []
@@ -195,6 +210,12 @@ class GraphGenerator:
         return [array_2d, array_2d_ow_co_me]
 
     def graph_generator_longitudinal(self):
+        """Graphs for longitudinal data. Visible to
+        admin role only.
+
+        Returns:
+            list: 2D array of graphs and other information.
+        """
 
         length_check = 0
         array_2d = []
@@ -225,9 +246,21 @@ class GraphGenerator:
 
 
 class GraphGeneratorPP(GraphGenerator):
+    """Class for making final changes in data for per project view.
+    Inherits GraphGenerator class.
+    This class makes final changes that are then sent to frontend.
+    Which is then displayed using jinja.
 
-    data = None
-    project_id = ''
+    Args:
+        username (list): Name of the user
+        info (str): project, subject, experiment and scan details
+        project_id (str): id of the project.
+        role (str): role assigned to the user.
+        project_visible (list, optional): list of project that should be
+            visible to the user.
+        resources (list, optional): list of resources.
+        resources_bbrc (list, optional): list of bbrc resource
+    """
 
     def __init__(
             self,
@@ -235,21 +268,25 @@ class GraphGeneratorPP(GraphGenerator):
             info, project_id, role, project_visible=None,
             resources=None, resources_bbrc=None):
 
-        info = get_info_DB.GetInfoPP(
+        info = get_info.GetInfoPP(
             username, info, project_id, role, project_visible,
             resources, resources_bbrc)
-
+        self.data = None
+        self.project_id = ''
         self.counter_id = 0
         self.role = role
         self.data = info.get_per_project_view()
 
     def graph_generator(self):
 
-        '''
-        Returns a 2d array with each row having 2 columns which will
-        be used in the html
-        '''
+        """This first process the data using graph preprocessor
+        of parent class.
+        Then create a 2D array that help in distribution of graph
+        in frontend. Where each row contains 2 graph.
 
+        Returns:
+            list: 2D array of graphs and other information.
+        """
         length_check = 0
         array_2d = []
         array_1d = []
