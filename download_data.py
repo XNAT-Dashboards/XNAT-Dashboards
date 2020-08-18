@@ -9,4 +9,4 @@ path_creator.set_pickle_path(
 
 # if true is given as an argument, it will skip the downloading of resources
 # Default is false
-save_to_pickle.SaveToPk('central.cfg', True)
+save_to_pickle.SaveToPk('xnat_dashboards/config/central.cfg', True)
