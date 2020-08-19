@@ -7,15 +7,6 @@ XNAT Dashboards
    xnat_dashboards.app
    xnat_dashboards.pyxnat_interface
    xnat_dashboards.saved_data_processing
-   xnat_dashboards.tests
-
-Config
-------------------------------
-
-.. automodule:: xnat_dashboards.config
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 Path creator
 -------------------------------------
