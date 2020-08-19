@@ -1,6 +1,14 @@
 pickle_path = ''
 dashboard_config_path = ''
 
+"""
+Use to set the path of pickle and configuration file globally
+that will be used by different part of code.
+
+Set method are used when downloading the data or starting the server
+get method are used in different parts of code to get the path details.
+"""
+
 
 def set_pickle_path(path):
 

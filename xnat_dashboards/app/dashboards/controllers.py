@@ -4,6 +4,15 @@ from flask import Blueprint, render_template, session,\
 from xnat_dashboards.saved_data_processing import graph_generator
 from xnat_dashboards.app.dashboards import model
 
+"""
+This is an dashboard controller. Here all routes that are
+related to dashboards are present.
+
+Contains overview dashboard route, per project dashboard route and
+logout dashboard route.
+
+It uses dashboard model module for fetching data from pickle.
+"""
 
 # Define the blueprint: 'dashboards', set its url prefix: app.url/dashboards
 dashboards = Blueprint('dashboards', __name__, url_prefix='/dashboards')
@@ -36,7 +45,7 @@ def stats_db():
     if 'server' not in session:
         return redirect(url_for('auth.login_DB'))
 
-    data = model.load_users_data_pk(session['server'])
+    data = model.load_users_data(session['server'])
 
     # Check if pickle data is of correct server
     if data is not None:
@@ -105,7 +114,7 @@ def project_db(id):
     if session['role_exist'] == '':
         return redirect(url_for('auth.login_DB'))
 
-    data = model.load_users_data_pk(session['server'])
+    data = model.load_users_data(session['server'])
     users_data = data['info']
 
     resources = None

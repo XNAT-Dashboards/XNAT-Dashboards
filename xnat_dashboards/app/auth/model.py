@@ -2,6 +2,15 @@ import json
 from pyxnat import Interface
 from xnat_dashboards import path_creator
 
+"""
+This is an authentication model. Here user identification related
+function are present for identifying the user and thier roles.
+
+user_exists: Checks whether user exist on XNAT instance.
+user_role_config: Checks whether user roles are assigned in configuration
+file.
+"""
+
 
 # Function to check if user exist
 def user_exists(username, password, server, ssl):

@@ -15,11 +15,12 @@ class PickleSaver:
         Args:
             config (String): Path to pyxnat configuration file.
             skip (Bool, Optional): Whether to skip resources fetching.
+                If you don't want to see graphs related to resources.
                 Default is to don't skip.
         Attributes:
             Server: Server url to be saved as a key for checking whether
                 user belong to server.
-            Skip: Makes the arg skip a class variable
+            Skip: Used by methods for skipping resource details
     """
 
     def __init__(self, config, skip=False):

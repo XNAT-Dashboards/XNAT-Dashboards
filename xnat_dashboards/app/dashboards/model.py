@@ -1,8 +1,15 @@
 import pickle
 from xnat_dashboards import path_creator
 
+"""
+This is a dashboard model. Here pickle related
+function are present for displaying the pickle data.
 
-def load_users_data_pk(server):
+load_users_data: Loads the pickle data.
+"""
+
+
+def load_users_data(server):
 
     try:
         with open(

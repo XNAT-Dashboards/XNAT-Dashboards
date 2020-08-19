@@ -3,10 +3,21 @@ from flask import Blueprint, render_template, session, request, redirect,\
     url_for
 from xnat_dashboards.app.auth import model
 
+"""
+This is an authentication controller. Here all routes that are
+related to user authentication like login are present.
+
+Contains login/ route. Uses authentication model for checking
+the user details.
+
+User Exist function checks whether user exist on the XNAT instance.
+If user exist we proceed further.
+Then this checks user roles whether user role is assigned, If user
+roles isn't assigned we set it as guest.
+"""
+
 # Define the blueprint: 'auth', set its url prefix: app.url/auth
 auth = Blueprint('auth', __name__, url_prefix='/auth')
-
-pickle_saver = True
 
 
 # Set the route and accepted methods
