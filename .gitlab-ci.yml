@@ -11,7 +11,7 @@ test:
     coverage: '/TOTAL.+ ([0-9]{1,3}%)/'
 
 pages:
-  stage: deploy
+  stage: .post
   script:
   - pip install -U sphinx
   - sphinx-build -b html docs public
