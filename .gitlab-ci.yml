@@ -14,7 +14,7 @@ pages:
   image: "python:3.7"
   stage: .post
   script:
-  - pip install -U sphinx
+  - pip install -r requirements.txt
   - sphinx-build -b html docs public
   artifacts:
     paths:
