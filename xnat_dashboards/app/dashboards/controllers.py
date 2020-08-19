@@ -4,16 +4,6 @@ from flask import Blueprint, render_template, session,\
 from xnat_dashboards.saved_data_processing import graph_generator
 from xnat_dashboards.app.dashboards import model
 
-"""
-This is an dashboard controller. Here all routes that are
-related to dashboards are present.
-
-Contains overview dashboard route, per project dashboard route and
-logout dashboard route.
-
-It uses dashboard model module for fetching data from pickle.
-"""
-
 # Define the blueprint: 'dashboards', set its url prefix: app.url/dashboards
 dashboards = Blueprint('dashboards', __name__, url_prefix='/dashboards')
 
@@ -21,7 +11,11 @@ dashboards = Blueprint('dashboards', __name__, url_prefix='/dashboards')
 # Logout route
 @dashboards.route('/logout/', methods=['GET'])
 def logout():
+    """Logout route here we delete all existing sesson variables
 
+    Returns:
+        route: Redirect to login page.
+    """
     # Delete session keys if exist
     if 'username' in session:
         del session['username']
@@ -39,7 +33,16 @@ def logout():
 
 @dashboards.route('/db/stats/', methods=['GET'])
 def stats_db():
+    """This is the overview dashboard route.
 
+    First we check whether pickle file have same server details
+    if same server details exists we load the pickle data.
+    Then sends the data processed from graph generator file
+    to the frontend.
+
+    Returns:
+        route: The jinja html templates to frontend
+    """
     # If server key doesn't exist return to login page
 
     if 'server' not in session:
@@ -110,7 +113,14 @@ def stats_db():
 # this route give the details of the project
 @dashboards.route('db/project/<id>', methods=['GET'])
 def project_db(id):
+    """This is the per project dashboard view.
 
+    Args:
+        id (str): Id of the project we like to view.
+
+    Returns:
+        route: Project details
+    """
     if session['role_exist'] == '':
         return redirect(url_for('auth.login_DB'))
 

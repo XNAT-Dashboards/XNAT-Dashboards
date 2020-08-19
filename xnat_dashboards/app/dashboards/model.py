@@ -1,16 +1,19 @@
 import pickle
 from xnat_dashboards import path_creator
 
-"""
-This is a dashboard model. Here pickle related
-function are present for displaying the pickle data.
-
-load_users_data: Loads the pickle data.
-"""
-
 
 def load_users_data(server):
+    """Opens pickle file to be used the the dashboard
+    controller.
 
+    Args:
+        server (str): URL of the server where user is
+            is registered.
+
+    Returns:
+        dict/None: If server details are mistaching it returns
+            None else returns the details from pickle as a dict.
+    """
     try:
         with open(
                 path_creator.get_pickle_path(), 'rb') as handle:
