@@ -10,4 +10,11 @@ test:
        - coverage report -m
     coverage: '/TOTAL.+ ([0-9]{1,3}%)/'
 
-
+pages:
+  stage: deploy
+  script:
+  - pip install -U sphinx
+  - sphinx-build -b html docs public
+  artifacts:
+    paths:
+    - public
