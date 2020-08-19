@@ -6,5 +6,4 @@ XNAT Dashboards
 
    download_data
    server
-   setup
    xnat_dashboards
