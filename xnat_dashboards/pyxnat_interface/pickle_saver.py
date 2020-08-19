@@ -5,23 +5,49 @@ from xnat_dashboards import path_creator
 from xnat_dashboards.pyxnat_interface import data_fetcher
 
 
-class SaveToPk:
+class PickleSaver:
+    """Class for saving the fetched data into pickle
 
-    coll_users_data = None
-    coll_users = None
-    fetcher = None
+        Different methods are provided to save different type of data.
+        It can be used to save longitudinal and normal project, subjects,
+        experiments, scans and resource data
 
-    def __init__(self, path, skip=False):
+        Args:
+            config (String): Path to pyxnat configuration file.
+            skip (Bool, Optional): Whether to skip resources fetching.
+                Default is to don't skip.
+        Attributes:
+            Server: Server url to be saved as a key for checking whether
+                user belong to server.
+            Skip: Makes the arg skip a class variable
+    """
+
+    def __init__(self, config, skip=False):
 
         # skip argument tell that whether to download resources
-        self.fetcher = data_fetcher.Fetcher(path=path)
-        self.server = self.fetcher.SELECTOR._server
+        # In case you want a quick look of xnat dashboard or you don't want
+        # graphs related to resources use skip as True
+        self.fetcher = data_fetcher.Fetcher(config=config)
+        self.server = self.fetcher.selector._server
         self.skip = skip
-        self.save_to_PK()
+        self.save()
 
-    def save_to_PK(self):
+    def save(self):
+        """Method to save in pickle format
 
-        # Method to save the data as pickle
+        This method fetches the details from Data Fetcher class methods,
+        saves the projects, experiments, scan, subjects, resources saved.
+
+        Returns:
+            None: This returns None, Output pickled data file with following
+            content.\n
+            **Server:** URL of the server.\n
+            **info:** Details of project, subject, experiments, scans.\n
+            **resources:** Details of resources.\n
+            **resource_bbrc:** Test details of resources specific to bbrc.\n
+            **longitudinal_data:** Longitudinal Data.\n
+        """
+        # Fetch all resources, session, scans, projects, subjects
         file_exist = os.path.isfile(path_creator.get_pickle_path())
 
         # Create a temporary dict for longitudinal data
@@ -40,17 +66,16 @@ class SaveToPk:
                 if 'server' in user_data:
 
                     if self.server != user_data['server']:
-                        print("Wrong server previously saved pickle\
-                            have different server url, change pickle file\
-                            or delete the previous pickle file")
+                        print("Wrong server")
                         return -1
 
-        # Fetch all resources, session, scans, projects, subjects
-        data_pro_sub_exp_sc = self.fetcher.fetch_all()
+        data_pro_sub_exp_sc = self.fetcher.get_instance_details()
 
         if not self.skip:
-            data_res = self.fetcher.get_resources()
-            data_res_bbrc = self.fetcher.get_experiment_resources()
+            data_res = self.fetcher.get_resources(
+                data_pro_sub_exp_sc['experiments'])
+            data_res_bbrc = self.fetcher.get_bbrc_resource(
+                data_pro_sub_exp_sc['experiments'])
 
         # Call method for formatting the longitudinal data from raw saved data
         if not self.skip:
@@ -88,7 +113,28 @@ class SaveToPk:
 
     def longitudinal_data_processing(
             self, data_pro_sub_exp_sc, user_data, data_res=None):
+        """This method is use to save longitudinal data.
 
+        This saves longitudinal data of projects, subjects, experiments,
+        scans and resources. This is called when user fetches data.
+        It takes the date on which the script ran and save the corresponding
+        data.
+
+        Args:
+            data_pro_sub_exp_sc (dict): This contains dict of projects,
+                subjects, experiments and scans
+            user_data (dict): This contains dict either empty which tell that
+                the script is ran for the first time and non empty meaning
+                previous longitudinal data is already present
+            data_res (dict, optional): This provide resource details
+                if user skip the resource fetching option then defaults
+                to None.
+
+        Returns:
+            dict:  Longitudinal data if ran first time then only single
+            date point else will contains date points of time the
+            script was run.
+        """
         # Get current time
         now = datetime.now()
         dt = now.strftime("%d/%m/%Y")

@@ -1,12 +1,17 @@
 from xnat_dashboards.app.dashboards import model as model_dash
 from xnat_dashboards.app.auth import model as model_auth
+from xnat_dashboards import path_creator
+
+
+path_creator.set_dashboard_config_path(
+    'xnat_dashboards/config/dashboard_config.json')
 
 
 def test_user_exists(mocker):
 
     mocker.patch(
         'xnat_dashboards.pyxnat_interface.'
-        'data_fetcher.Fetcher.get_projects_details',
+        'data_fetcher.Fetcher.get_instance_details',
         return_value=0)
 
     not_exist = model_auth.user_exists('x', 'y', 'z', 'p')
@@ -15,12 +20,12 @@ def test_user_exists(mocker):
 
     mocker.patch(
         'xnat_dashboards.pyxnat_interface.'
-        'data_fetcher.Fetcher.get_projects_details',
-        return_value=[3, 2])
+        'data_fetcher.Fetcher.get_instance_details',
+        return_value=[])
 
     exist = model_auth.user_exists('x', 'y', 'z', 'p')
 
-    assert type(exist) == int
+    assert exist == []
 
 
 def test_user_role_exists(mocker):

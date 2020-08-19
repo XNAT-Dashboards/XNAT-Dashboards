@@ -1,22 +1,20 @@
 import json
-from xnat_dashboards.pyxnat_interface import data_fetcher
+from pyxnat import Interface
 from xnat_dashboards import path_creator
 
 
 # Function to check if user exist
 def user_exists(username, password, server, ssl):
 
-    exists = data_fetcher.Fetcher(
-        name=username, password=password, server=server, ssl=ssl)\
-            .get_projects_details()
+    exists = Interface(
+        user=username, password=password, server=server, verify=(not ssl))\
+            .select.projects().get()
 
-    # If user exists then no int will be returned
-    if type(exists) == int:
-        exists = []
+    # If user exists then exists lengths will be more than 0
+    if len(exists) > 0:
+        return len(exists)
     else:
-        exists = 1
-
-    return exists
+        return []
 
 
 # Get user role config file

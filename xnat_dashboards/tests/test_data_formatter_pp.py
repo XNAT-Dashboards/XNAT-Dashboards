@@ -1,8 +1,7 @@
-from xnat_dashboards.saved_data_processing import data_formatter_DB
+from xnat_dashboards.saved_data_processing import data_formatter
 
 
-formatter_object_connected = data_formatter_DB.FormatterPP(
-    'testUser', 'p1')
+formatter_object_connected = data_formatter.FormatterPP('p1')
 
 
 def test_get_projects_details():

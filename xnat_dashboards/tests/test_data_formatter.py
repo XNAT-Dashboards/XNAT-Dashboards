@@ -1,6 +1,6 @@
-from xnat_dashboards.saved_data_processing import data_formatter_DB
+from xnat_dashboards.saved_data_processing import data_formatter
 
-formatter_object_connected = data_formatter_DB.Formatter('testUser')
+formatter_object_connected = data_formatter.Formatter()
 
 
 def test_get_projects_details():
@@ -12,7 +12,7 @@ def test_get_projects_details():
 
     projects = None
     project_details_specific = formatter_object_connected.\
-        get_projects_details_specific(projects)
+        get_projects_details_specific(projects, 'testUser')
 
     assert project_details_specific == 1
 
@@ -31,7 +31,7 @@ def test_get_projects_details():
     assert type(project_details['Projects Visibility']) == dict
 
     project_details_specific = formatter_object_connected.\
-        get_projects_details_specific(projects)
+        get_projects_details_specific(projects, 'testUser')
 
     assert type(project_details_specific) == dict
 

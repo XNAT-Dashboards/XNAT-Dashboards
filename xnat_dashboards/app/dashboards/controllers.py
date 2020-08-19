@@ -1,7 +1,7 @@
 # Import flask dependencies
 from flask import Blueprint, render_template, session,\
     redirect, url_for
-from xnat_dashboards.saved_data_processing import graph_generator_DB
+from xnat_dashboards.saved_data_processing import graph_generator
 from xnat_dashboards.app.dashboards import model
 
 
@@ -53,7 +53,7 @@ def stats_db():
         l_data = data['longitudinal_data']
 
         # Calling plot generator
-        plotting_object = graph_generator_DB.\
+        plotting_object = graph_generator.\
             GraphGenerator(
                 session['username'],
                 user_data,
@@ -116,7 +116,7 @@ def project_db(id):
         resources_bbrc = data['resources_bbrc']
 
     # Get the details for plotting
-    data_array = graph_generator_DB.GraphGeneratorPP(
+    data_array = graph_generator.GraphGeneratorPP(
         session['username'], users_data, id, session['role_exist'],
         session['project_visible'], resources, resources_bbrc
     ).graph_generator()
