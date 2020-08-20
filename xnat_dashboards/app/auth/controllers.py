@@ -23,7 +23,7 @@ def login_DB():
 
     Returns:
         route: It routes to dashboard if user details are correct
-            else reloads the page
+        else reloads the page
     """
     if request.method == 'GET':
 

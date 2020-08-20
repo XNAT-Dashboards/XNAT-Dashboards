@@ -36,8 +36,8 @@ def user_role_config(username):
 
     Returns:
         dict/bool: Dictionary of details to be processed further
-            default user role if not assigned is guest, if user
-            is assigned a forbidden role then return False
+        default user role if not assigned is guest, if user
+        is assigned a forbidden role then return False
     """
     with open(path_creator.get_dashboard_config_path()) as json_file:
         config = json.load(json_file)['roles_config']

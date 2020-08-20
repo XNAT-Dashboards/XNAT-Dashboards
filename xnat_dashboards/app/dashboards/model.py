@@ -12,7 +12,7 @@ def load_users_data(server):
 
     Returns:
         dict/None: If server details are mistaching it returns
-            None else returns the details from pickle as a dict.
+        None else returns the details from pickle as a dict.
     """
     try:
         with open(

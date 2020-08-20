@@ -65,7 +65,7 @@ Creating the configuration files
 --------------------------------
 
 Step-1 Create a configuration file for connecting with the
-XNAT instance with :class:`~pyxnat.Interface`. For this, you will need valid credentials.
+XNAT instance. For this, you will need valid credentials.
 Make sure you have them or request them through the web interface of the targeted host.
 
 .. code-block:: python
@@ -98,7 +98,7 @@ Downloading Data
 ----------------
 
 Downloading data is the process of fetching data from the XNAT instance and saving
-it as pickle. This saved pickcle is used for plotting graphs and information other
+it as pickle. This saved pickcle is used for plotting graphs and other
 informations of the XNAT instance from which it fetched data.
 
 Create a python file with following content and name it download_data.py
