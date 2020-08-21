@@ -3,6 +3,13 @@ from xnat_dashboards import path_creator
 import os
 import argparse
 
+"""
+This file is used for starting the server it takes 2 file paths
+first the is the dashboard configuration file and the second
+is the pickle file that needs to be downloaded first from the
+download data file. This file won't be present when using
+the pypi xnat_dashboards package.
+"""
 
 ap = argparse.ArgumentParser()
 ap.add_argument(

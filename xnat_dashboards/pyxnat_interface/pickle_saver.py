@@ -15,11 +15,12 @@ class PickleSaver:
         Args:
             config (String): Path to pyxnat configuration file.
             skip (Bool, Optional): Whether to skip resources fetching.
+                If you don't want to see graphs related to resources.
                 Default is to don't skip.
         Attributes:
             Server: Server url to be saved as a key for checking whether
                 user belong to server.
-            Skip: Makes the arg skip a class variable
+            Skip: Used by methods for skipping resource details
     """
 
     def __init__(self, config, skip=False):
@@ -66,7 +67,9 @@ class PickleSaver:
                 if 'server' in user_data:
 
                     if self.server != user_data['server']:
-                        print("Wrong server")
+                        print(
+                            "Server URL present in pickle is "
+                            "different form the provided server URL")
                         return -1
 
         data_pro_sub_exp_sc = self.fetcher.get_instance_details()
@@ -184,9 +187,7 @@ class PickleSaver:
             user_data['Subjects'] = {'list': {}, 'count': {}}
             user_data['Experiments'] = {'list': {}, 'count': {}}
             user_data['Scans'] = {'list': {}, 'count': {}}
-
-            if not self.skip:
-                user_data['Resources'] = {'list': {}, 'count': {}}
+            user_data['Resources'] = {'list': {}, 'count': {}}
 
         else:
 
@@ -198,9 +199,6 @@ class PickleSaver:
         user_data['Subjects']['list'].update(subjects_number['list'])
         user_data['Experiments']['list'].update(experiments_number['list'])
         user_data['Scans']['list'].update(scans_number['list'])
-
-        if not self.skip:
-            user_data['Resources']['list'].update(resource_number['list'])
 
         user_data['Projects']['count'].update(projects_number['count'])
         user_data['Subjects']['count'].update(subjects_number['count'])

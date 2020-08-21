@@ -1,6 +1,13 @@
 # Define the application directory
 import os
 
+"""
+Set server specific variable here.
+
+Change both the secret key before using the web app in public
+urls.
+"""
+
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 # Statement for enabling the development environment

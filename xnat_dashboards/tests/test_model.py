@@ -40,8 +40,8 @@ def test_user_role_exists(mocker):
 
 def test_model():
 
-    user_data = model_dash.load_users_data_pk('https://central.xnat.org')
+    user_data = model_dash.load_users_data('https://central.xnat.org')
     assert type(user_data)
 
-    user_data = model_dash.load_users_data_pk('ttps://central.org')
+    user_data = model_dash.load_users_data('ttps://central.org')
     assert user_data is None

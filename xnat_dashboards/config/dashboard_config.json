@@ -1,12 +1,12 @@
 {   "roles_config":{
         "user roles":{
-                "testUser":"admin",
+                "testUser":"superuser",
                 "noUser":"forbidden",
                 "asif":"admin"
         },
         "project_visible":{
                 "guest":["testenv"],
-                "superuser":["ALFA_PLUS", "testenv"],
+                "superuser":["ALFA_PLUS", "testenv", "CENTRAL_OASIS_CS"],
                 "admin":["*"]
         }
     },
