@@ -187,9 +187,7 @@ class PickleSaver:
             user_data['Subjects'] = {'list': {}, 'count': {}}
             user_data['Experiments'] = {'list': {}, 'count': {}}
             user_data['Scans'] = {'list': {}, 'count': {}}
-
-            if not self.skip:
-                user_data['Resources'] = {'list': {}, 'count': {}}
+            user_data['Resources'] = {'list': {}, 'count': {}}
 
         else:
 
@@ -201,9 +199,6 @@ class PickleSaver:
         user_data['Subjects']['list'].update(subjects_number['list'])
         user_data['Experiments']['list'].update(experiments_number['list'])
         user_data['Scans']['list'].update(scans_number['list'])
-
-        if not self.skip:
-            user_data['Resources']['list'].update(resource_number['list'])
 
         user_data['Projects']['count'].update(projects_number['count'])
         user_data['Subjects']['count'].update(subjects_number['count'])
