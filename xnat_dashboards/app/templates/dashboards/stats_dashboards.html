@@ -272,18 +272,18 @@
     <script src="/static/dashboards/js/plotly_chart_generator.js"></script>
     <script src="/static/dashboards/js/graph_descriptor.js"></script>
     
-    {% for i in graph_data%}
-        {% for j in i%}
+    {% for row in graph_data%}
+        {% for graph_column in row%}
             <script>
-                chart_generator({{ j | tojson}});
+                chart_generator({{ graph_column | tojson}});
             </script>
         {%endfor%}
     {%endfor%}
 
-    {% for i in longitudinal_data%}
-    {% for j in i%}
+    {% for row in longitudinal_data%}
+    {% for graph_column in row%}
         <script>
-            chart_generator({{ j | tojson}});
+            chart_generator({{ graph_column | tojson}});
         </script>
     {%endfor%}
     {%endfor%}

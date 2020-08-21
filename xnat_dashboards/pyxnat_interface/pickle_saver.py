@@ -67,7 +67,9 @@ class PickleSaver:
                 if 'server' in user_data:
 
                     if self.server != user_data['server']:
-                        print("Wrong server")
+                        print(
+                            "Server URL present in pickle is "
+                            "different form the provided server URL")
                         return -1
 
         data_pro_sub_exp_sc = self.fetcher.get_instance_details()
