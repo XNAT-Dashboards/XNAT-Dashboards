@@ -359,6 +359,6 @@ class GraphGeneratorPP(GraphGenerator):
         if 'test_grid' in graph_data:
             graph_stats_data.append(graph_data['test_grid'])
         else:
-            graph_stats_data.append([[], []])
+            graph_stats_data.append([[], [], []])
 
         return graph_stats_data

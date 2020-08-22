@@ -127,15 +127,6 @@ def project_db(id):
     graph_data = data_array[0]
     stats_data = data_array[1]
 
-    th = data_array[3][0]
-    td = data_array[3][1]
-    diff_version = []
-
-    # For filtering differnt version
-    for td_v in td:
-        if td_v[1][1] not in diff_version:
-            diff_version.append(td_v[1][1])
-
     return render_template(
         'dashboards/stats_dashboards_pp.html',
         graph_data=graph_data,
@@ -143,8 +134,6 @@ def project_db(id):
         username=session['username'].capitalize(),
         server=session['server'],
         db=True,
-        diff_version=diff_version,
+        test_grid=data_array[3],
         data_array=data_array[2],
-        id=id,
-        t_header_info=th,
-        t_data_info=td)
+        id=id)

@@ -252,4 +252,10 @@ class Formatter:
                 if resource[0] == project_id:
                     tests_list.append(test_list)
 
-        return [tests_union, tests_list]
+        diff_version = []
+
+        for td_v in tests_list:
+            if td_v[1][1] not in diff_version:
+                diff_version.append(td_v[1][1])
+
+        return [tests_union, tests_list, diff_version]
