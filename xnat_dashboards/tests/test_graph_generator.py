@@ -1,47 +1,59 @@
-from xnat_dashboards.saved_data_processing import graph_generator
+from xnat_dashboards.data_cleaning import graph_generator
+from xnat_dashboards import path_creator
+
+
+path_creator.set_dashboard_config_path(
+    'xnat_dashboards/config/dashboard_config.json')
+path_creator.set_pickle_path(
+    'xnat_dashboards/config/general.pickle')
 
 
 def create_mocker(
-    mocker, username, info, role, graph_visibility, return_get_project_list,
-        project_visible=None, resources=None, resources_bbrc=None):
+    mocker, username, data, role, graph_visibility, return_get_project_list,
+        project_visible=None):
 
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.get_info.GetInfo.__init__',
+        'xnat_dashboards.data_cleaning.data_filter.DataFilter.__init__',
         return_value=None)
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.get_info.GetInfo.get_project_list',
+        'xnat_dashboards.data_cleaning.data_filter.DataFilter.get_project_list',
         return_value=return_get_project_list)
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.get_info.GetInfo.get_info',
-        return_value=info)
+        'xnat_dashboards.data_cleaning.data_filter.DataFilter.get_info',
+        return_value=data['info'])
 
     graph_object = graph_generator.GraphGenerator(
-        username, info, role, {role: ['p1', 'y']})
+        username, role, data, {role: ['p1', 'y']})
 
     return graph_object
 
 
 def test_graph_preprocessor(mocker):
 
-    info = {
-        "Age Range": {"x1": "y1", "x2": "y2"},
-        "Gender": {"x1": "y1", "x2": "y2"},
-        "Handedness": {"x1": "y1", "x2": "y2"},
-        "Experiments/Project": {"x1": "y1", "x2": "y2"}, "Stats": {}}
+    data = {
+        'info': {
+            "Age Range": {"x1": "y1", "x2": "y2"},
+            "Gender": {"x1": "y1", "x2": "y2"},
+            "Handedness": {"x1": "y1", "x2": "y2"},
+            "Experiments/Project": {"x1": "y1", "x2": "y2"}, "Stats": {}
+            },
+        'resources': {},
+        'longitudinal_data': {}
+    }
 
     graph_object = create_mocker(
-        mocker, 'testUser', info, 'guest', ['*'],
+        mocker, 'testUser', data, 'guest', ['*'],
         {'project_list': ['p1', 'p2'], 'project_list_ow_co_me': ['p3', 'p4']})
-    assert type(graph_object.graph_pre_processor(info)) == dict
+    assert type(graph_object.graph_pre_processor(data['info'])) == dict
 
     graph_object = create_mocker(
-        mocker, 'testUser', info, 'guest', ["*"],
+        mocker, 'testUser', data, 'guest', ["*"],
         {'project_list': [], 'project_list_ow_co_me': []})
 
-    assert type(graph_object.graph_pre_processor(info)) == dict
+    assert type(graph_object.graph_pre_processor(data['info'])) == dict
 
     graph_object = create_mocker(
-        mocker, 'testUser', 1, 'guest', ["*"],
+        mocker, 'testUser', data, 'guest', ["*"],
         {'project_list': [], 'project_list_ow_co_me': []})
 
     assert graph_object.graph_pre_processor([]) == []
@@ -49,37 +61,39 @@ def test_graph_preprocessor(mocker):
 
 def test_graph_generator(mocker):
 
-    info = {
-        "Age Range": {"x1": "y1", "x2": "y2"},
-        "Gender": {"x1": "y1", "x2": "y2"},
-        "Handedness": {"x1": "y1", "x2": "y2"},
-        "Experiments/Project": {"x1": "y1", "x2": "y2"}, "Stats": {}}
+    data = {
+        'info': {
+            "Age Range": {"x1": "y1", "x2": "y2"},
+            "Gender": {"x1": "y1", "x2": "y2"},
+            "Handedness": {"x1": "y1", "x2": "y2"},
+            "Stats": {}},
+        "Experiments/Project": {"x1": "y1", "x2": "y2"},
+        "resources": {},
+        'longitudinal_data': {}}
 
     graph_object = create_mocker(
-        mocker, 'testUser', info, 'guest', ["*"],
+        mocker, 'testUser', data, 'guest', ["*"],
         {'project_list': ['p1', 'p2'], 'project_list_ow_co_me': ['p3', 'p4']})
 
     assert type(graph_object.graph_generator()) == list
     assert type(graph_object.graph_generator()[0]) == list
     assert type(graph_object.graph_generator()[1]) == dict
 
-    graph_object = create_mocker(
-        mocker, 'testUser', 1, 'guest', ["*"],
-        {'project_list': [], 'project_list_ow_co_me': []})
-
-    assert graph_object.graph_generator() == 1
-
 
 def test_project_list_generator(mocker):
 
-    info = {
-        "Age Range": {"x1": "y1", "x2": "y2"},
-        "Gender": {"x1": "y1", "x2": "y2"},
-        "Handedness": {"x1": "y1", "x2": "y2"},
-        "Experiments/Project": {"x1": "y1", "x2": "y2"}, "Stats": {}}
+    data = {
+        "info": {
+            "Age Range": {"x1": "y1", "x2": "y2"},
+            "Gender": {"x1": "y1", "x2": "y2"},
+            "Handedness": {"x1": "y1", "x2": "y2"},
+            "Stats": {}},
+        "Experiments/Project": {"x1": "y1", "x2": "y2"},
+        "resources": {},
+        'longitudinal_data': {}}
 
     graph_object = create_mocker(
-        mocker, 'testUser', info, 'guest', ['p1'],
+        mocker, 'testUser', data, 'guest', ['p1'],
         {'project_list': ['p1', 'p2'], 'project_list_ow_co_me': ['p3', 'p4']})
 
     project_list = graph_object.project_list_generator()
@@ -88,12 +102,12 @@ def test_project_list_generator(mocker):
     assert type(project_list[1]) == list
 
     graph_object = create_mocker(
-        mocker, 'testUser', info, 'guest', ["*"],
+        mocker, 'testUser', data, 'guest', ["*"],
         {'project_list': [], 'project_list_ow_co_me': []})
 
     assert graph_object.project_list_generator() == [[[]], [[]]]
 
     graph_object = create_mocker(
-        mocker, 'testUser', info, 'guest', ["*"],
+        mocker, 'testUser', data, 'guest', ["*"],
         {'project_list': 1, 'project_list_ow_co_me': 1})
     assert graph_object.project_list_generator() == 1

@@ -1,7 +1,9 @@
-from xnat_dashboards.saved_data_processing import data_formatter
+from xnat_dashboards.data_cleaning import data_formatter
+from xnat_dashboards.bbrc import data_formatter as data_formatter_b
 
 
 formatter_object_connected = data_formatter.FormatterPP('p1')
+formatter_object_connected_b = data_formatter_b.Formatter()
 
 
 def test_get_projects_details():
@@ -190,10 +192,14 @@ def test_get_resources_details():
             {'has_passed': True, 'data': '2020-9-25'}}]]
 
     resource_details = formatter_object_connected.get_resources_details(
-        resources, resources_bbrc)
+        resources)
+
+    resource_details_b = formatter_object_connected_b.get_resource_details(
+        resources_bbrc)
 
     assert type(resource_details) == dict
-    assert len(resource_details) == 7
+    assert len(resource_details) == 1
+    assert len(resource_details_b) == 5
 
     experiments = [
         {
@@ -218,7 +224,7 @@ def test_get_resources_details():
             'project': 'p4', 'ID': 's2', 'date': '2020-03-20',
             'xsiType': 't1', 'subject_ID': 'sb3'}]
 
-    diff_dates = formatter_object_connected.diff_dates(
-        resources_bbrc, experiments)
+    diff_dates = formatter_object_connected_b.diff_dates(
+        resources_bbrc, experiments, 'p1')
 
     assert type(diff_dates) == dict

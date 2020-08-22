@@ -1,7 +1,7 @@
-from xnat_dashboards.saved_data_processing import data_formatter
+from xnat_dashboards.data_cleaning import data_formatter
 
 
-class GetInfo:
+class DataFilter:
     """
     It first filter out the data based on project ids
     that should not be visible to user based on role.
@@ -21,7 +21,7 @@ class GetInfo:
     """
     def __init__(
             self, username, info, role, project_visible=[],
-            resources=None, resources_bbrc=None):
+            resources=None):
 
         self.formatter_object = data_formatter.Formatter()
         if project_visible != []:
@@ -29,10 +29,9 @@ class GetInfo:
         else:
             self.project_visible = []
         self.username = username
-        self.info_preprocessor(info)
-        self.resources_preprocessor(resources, resources_bbrc)
+        self.filter_projects(info, resources)
 
-    def info_preprocessor(self, info_f):
+    def filter_projects(self, info_f, resources):
         """This methods filters project, subject, scans and
         experiments based on project id that should be visible
         to user.
@@ -88,42 +87,22 @@ class GetInfo:
         self.info['experiments'] = experiments
         self.info['scans'] = scans
 
-    def resources_preprocessor(self, resources, resources_bbrc):
-        """
-            This is used to filter resources and bbrc resources
-            based on project id that should be visible
-            to user.
-        Args:
-            resources (list): list of resources
-            resources_bbrc (list): list of bbrc resources
-        Returns:
-            dict: resources and bbrc resources that belongs to the
-            project that should be visible as per role and user.
-        """
         self.resources = {}
-        self.resources_bbrc = {}
         resources_list = []
-        resources_bbrc_list = []
 
         # Loop through each resources and resources bbrc and check it's project
         # id present for the role or role containting *
 
-        if resources is not None and resources_bbrc is not None:
+        if resources is not None:
 
             for resource in resources:
                 if resource[0] not in self.project_visible\
                         or "*" in self.project_visible:
                     resources_list.append(resource)
 
-            for resource in resources_bbrc:
-                if resource[0] not in self.project_visible\
-                        or "*" in self.project_visible:
-                    resources_bbrc_list.append(resource)
-
         self.resources = resources_list
-        self.resources_bbrc = resources_bbrc_list
 
-    def __preprocessor(self):
+    def graphs_reordering(self):
 
         """
         This reorder the data as per requirements.
@@ -178,7 +157,7 @@ class GetInfo:
         final_json_dict.update(stat_final)
 
         resources = self.formatter_object.get_resources_details(
-            self.resources, self.resources_bbrc)
+            self.resources)
 
         if resources is not None and\
                 type(resources) != int and self.resources != []:
@@ -203,10 +182,10 @@ class GetInfo:
             dict: This returns a dict with all the information regarding
                 overview page.
         """
-        return self.__preprocessor()
+        return self.graphs_reordering()
 
 
-class GetInfoPP(GetInfo):
+class DataFilterPP(DataFilter):
     """GetInfoPP processes the for per project view.
 
     It first checks whether the project should be
@@ -231,7 +210,7 @@ class GetInfoPP(GetInfo):
             self,
             username,
             info, project_id, role, project_visible=[],
-            resources=None, resources_bbrc=None):
+            resources=None):
 
         self.formatter_object_per_project = data_formatter.FormatterPP(
             project_id)
@@ -244,9 +223,8 @@ class GetInfoPP(GetInfo):
         self.resources = resources
         self.username = username
         self.project_id = project_id
-        self.resources_bbrc = resources_bbrc
 
-    def __preprocessor_per_project(self):
+    def graphs_reordering_pp(self):
 
         """
         This preprocessor makes the final dictionary with each key being
@@ -306,23 +284,6 @@ class GetInfoPP(GetInfo):
         final_json_dict.update(scans_details)
         final_json_dict.update(stat_final)
 
-        resources = self.formatter_object_per_project.get_resources_details(
-            self.resources, self.resources_bbrc)
-
-        test_grid = self.formatter_object_per_project.generate_test_grid_bbrc(
-            self.resources_bbrc)
-
-        if type(resources) != int and resources is not None:
-            final_json_dict.update(resources)
-
-        diff_dates = self.formatter_object_per_project.diff_dates(
-            self.resources_bbrc, self.info['experiments'])
-
-        if diff_dates is not None and diff_dates['count'] != {}:
-            final_json_dict.update({'Dates Diff': diff_dates})
-
-        final_json_dict.update({'test_grid': test_grid})
-
         return final_json_dict
 
     def get_per_project_view(self):
@@ -343,6 +304,6 @@ class GetInfoPP(GetInfo):
 
         if self.project_id in self.project_visible\
                 or "*" in self.project_visible:
-            return self.__preprocessor_per_project()
+            return self.graphs_reordering_pp()
         else:
             return None

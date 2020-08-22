@@ -1,5 +1,6 @@
 import json
-from xnat_dashboards.saved_data_processing import get_info
+from xnat_dashboards.data_cleaning import data_filter
+from xnat_dashboards.bbrc import data_filter as data_filter_b
 from xnat_dashboards import path_creator
 
 
@@ -16,26 +17,35 @@ class GraphGenerator:
         project_visible (list, optional): list of project that should be
             visible to the user.
         resources (list, optional): list of resources.
-        resources_bbrc (list, optional): list of bbrc resource
+        extra_resources (list, optional): list of bbrc resource
     """
     data = {}
     project_list = []
     project_list_ow_co_me = []
 
     def __init__(
-            self, username, info, l_data, role,
-            project_visible=None, resources=None, resources_bbrc=None):
+            self, username, role, data, project_visible=None):
 
-        self.info = get_info.GetInfo(
-            username, info,
-            role, project_visible, resources, resources_bbrc)
+        if 'resources' not in data:
+            data['resources'] = None
+
+        self.info = data_filter.DataFilter(
+            username, data['info'],
+            role, project_visible, data['resources'])
 
         projects_data_dict = self.info.get_project_list()
 
         self.counter_id = 0
         self.role = role
-        self.l_data = l_data
-        self.data = self.info.get_info()
+        self.l_data = data['longitudinal_data']
+        self.data_ordered = self.info.get_info()
+
+        if 'extra_resources' in data:
+            self.data_ordered.update(
+                data_filter_b.DataFilter(
+                    role, project_visible,
+                    data['extra_resources']).get_info())
+
         self.project_list = projects_data_dict['project_list']
         self.project_list_ow_co_me =\
             projects_data_dict['project_list_ow_co_me']
@@ -98,8 +108,8 @@ class GraphGenerator:
         array_1d = []
         counter = 0
 
-        graph_data = self.graph_pre_processor(self.data)
-
+        graph_data = self.graph_pre_processor(self.data_ordered)
+        print(graph_data)
         if type(graph_data) == int:
             return graph_data
 
@@ -259,23 +269,33 @@ class GraphGeneratorPP(GraphGenerator):
         project_visible (list, optional): list of project that should be
             visible to the user.
         resources (list, optional): list of resources.
-        resources_bbrc (list, optional): list of bbrc resource
+        extra_resources (list, optional): list of bbrc resource
     """
 
     def __init__(
             self,
             username,
-            info, project_id, role, project_visible=None,
-            resources=None, resources_bbrc=None):
+            project_id, role, data, project_visible=None):
 
-        info = get_info.GetInfoPP(
-            username, info, project_id, role, project_visible,
-            resources, resources_bbrc)
-        self.data = None
+        if 'resources' not in data:
+            data['resources'] = None
+
+        info_obj = data_filter.DataFilterPP(
+            username, data['info'], project_id, role, project_visible,
+            data['resources'])
+
         self.project_id = ''
         self.counter_id = 0
         self.role = role
-        self.data = info.get_per_project_view()
+        self.data_ordered = info_obj.get_per_project_view()
+
+        if 'extra_resources' in data:
+
+            self.data_ordered.update(
+                data_filter_b.DataFilterPP(
+                    data['info']['experiments'], project_id, role,
+                    project_visible,
+                    data['extra_resources']).get_per_project_view())
 
     def graph_generator(self):
 
@@ -292,7 +312,7 @@ class GraphGeneratorPP(GraphGenerator):
         array_1d = []
         counter = 0
 
-        graph_data = self.graph_pre_processor(self.data)
+        graph_data = self.graph_pre_processor(self.data_ordered)
 
         if type(graph_data) == int or graph_data is None:
             return graph_data
@@ -331,6 +351,14 @@ class GraphGeneratorPP(GraphGenerator):
                 }
             ]
         '''
-        return [
+
+        graph_stats_data = [
             array_2d, graph_data['Stats'],
-            graph_data['Project details'], graph_data['test_grid']]
+            graph_data['Project details']]
+
+        if 'test_grid' in graph_data:
+            graph_stats_data.append(graph_data['test_grid'])
+        else:
+            graph_stats_data.append([[], []])
+
+        return graph_stats_data
