@@ -16,8 +16,6 @@ class DataFilter:
         role (str): role of the user.
         project_visible (list): list of projects that is visible
         resources (list, optional): List of resources and Default as None.
-        resources_bbrc (list, optional): List of bbrc resources
-            and Default as None.
     """
     def __init__(
             self, username, info, role, project_visible=[],
@@ -40,8 +38,8 @@ class DataFilter:
             info_f (dict): dict of projects, subjects, experiments and
                 scans.
         Returns:
-            dict: resources and bbrc resources that belongs to the
-            project that should be visible as per role and user.
+            dict: resources that belongs to the project that
+                should be visible as per role and user.
         """
         # Method to restrict access to projects details
         # based on role of the user
@@ -90,7 +88,7 @@ class DataFilter:
         self.resources = {}
         resources_list = []
 
-        # Loop through each resources and resources bbrc and check it's project
+        # Loop through each resources and check it's project
         # id present for the role or role containting *
 
         if resources is not None:
@@ -202,8 +200,6 @@ class DataFilterPP(DataFilter):
         role (str): role of the user.
         project_visible (list): list of projects that is visible
         resources (list, optional): List of resources and Default as None.
-        resources_bbrc (list, optional): List of bbrc resources
-            and Default as None.
     """
 
     def __init__(

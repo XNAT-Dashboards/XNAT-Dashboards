@@ -301,8 +301,6 @@ class Formatter:
         Args:
             resources ( list, optional): Each resource have it's corrs.
                 ID, project ID, label and experiemnt id. Defaults to None.
-            resources_bbrc (list, optional): Each bbrc resource have it's
-                ID, project ID, tests dict and experiemnt id. Defaults to None.
             project_id (String, optional): For per project view, the project id
                 Defaults to None.
 
@@ -679,7 +677,6 @@ class FormatterPP(Formatter):
 
         Args:
             resources (list, optional): List of resources.
-            resources_bbrc (list, optional): List of bbrc resources.
         Returns:
             dict/int: If no resource data present then return -1 else
             For each graph this format is used

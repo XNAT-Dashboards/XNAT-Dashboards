@@ -19,10 +19,9 @@ class DataFilter:
             based on project id that should be visible
             to user.
         Args:
-            resources (list): list of resources
             resources_bbrc (list): list of bbrc resources
         Returns:
-            dict: resources and bbrc resources that belongs to the
+            dict: bbrc resources that belongs to the
             project that should be visible as per role and user.
         """
         self.resources_bbrc = {}
@@ -46,7 +45,7 @@ class DataFilter:
         This reorder the data as per requirements.
 
         Returns:
-            dict: data information that belongs to the
+            dict: bbrc resources information that belongs to the
             project that should be visible as per role and user.
         """
 
@@ -84,11 +83,9 @@ class DataFilterPP(DataFilter):
     Args:
         GetInfo (GetInfo): It inherits GetInfo.
         username (str): Username
-        info (list): list of project, subjects, exp., scans
         project_id (str): ID of project in per project view.
         role (str): role of the user.
         project_visible (list): list of projects that is visible
-        resources (list, optional): List of resources and Default as None.
         resources_bbrc (list, optional): List of bbrc resources
             and Default as None.
     """

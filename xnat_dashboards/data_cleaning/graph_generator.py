@@ -12,12 +12,12 @@ class GraphGenerator:
 
     Args:
         username (list): Name of the user
-        info (str): project, subject, experiment and scan details
-        l_data (list): Longitudinal data.
+        info (str): project, subject, experiment and scan details.
         project_visible (list, optional): list of project that should be
             visible to the user.
-        resources (list, optional): list of resources.
-        extra_resources (list, optional): list of bbrc resource
+        role (str): Role assigned to user.
+        data (dict): Dict containing data of projects, subjects, exp.,
+            scans, resources, extra_resources, longitudinal data
     """
     data = {}
     project_list = []
@@ -263,13 +263,12 @@ class GraphGeneratorPP(GraphGenerator):
 
     Args:
         username (list): Name of the user
-        info (str): project, subject, experiment and scan details
         project_id (str): id of the project.
         role (str): role assigned to the user.
+        data (dict): Dict containing data of projects, subjects, exp.,
+            scans, resources, extra_resources, longitudinal data
         project_visible (list, optional): list of project that should be
             visible to the user.
-        resources (list, optional): list of resources.
-        extra_resources (list, optional): list of bbrc resource
     """
 
     def __init__(
