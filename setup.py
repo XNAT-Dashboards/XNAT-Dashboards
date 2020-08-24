@@ -11,7 +11,7 @@ long_description = 'This project is about creating a responsive dashboard'\
 
 setuptools.setup(
      name='xnat_dashboards',
-     version='0.0.3',
+     version='0.3.0',
      summary='XNAT data visualization',
      author='Mohammad Asif Hashmi',
      author_email='hashmi.masif@gmail.com',
@@ -24,6 +24,8 @@ setuptools.setup(
      description='XNAT data visualization using Flask',
      long_description=long_description,
      license='MIT',
+     scripts=[
+          'bin/run_dashboards.py', 'bin/download_data.py'],
      classifiers=[
           'Intended Audience :: Developers',
           'Intended Audience :: Science/Research',

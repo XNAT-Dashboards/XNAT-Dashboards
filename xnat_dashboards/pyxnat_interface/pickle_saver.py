@@ -116,6 +116,10 @@ class PickleSaver:
                     },
                     handle, protocol=pickle.HIGHEST_PROTOCOL)
 
+        print(
+            "Pickle file successfully saved at",
+            path_creator.get_pickle_path())
+
     def longitudinal_data_processing(
             self, data_pro_sub_exp_sc, user_data, data_res=None):
         """This method is use to save longitudinal data.

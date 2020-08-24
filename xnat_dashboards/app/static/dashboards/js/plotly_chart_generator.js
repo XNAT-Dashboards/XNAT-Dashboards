@@ -57,7 +57,7 @@ function chart_generator(json){
         }
 
         delete graph_info['color'];
-        delete graph_info['graph_descriptor'];
+        delete graph_info['graph descriptor'];
         delete graph_info['graph_type'];
         delete graph_info['id'];
     }
@@ -143,9 +143,21 @@ function barchart_generator(graph_name, graph_info, id, color, id_type){
 
     }else{
 
-        xy_axis = generate_x_y_axis(graph_info['count']);
-        x_axis = xy_axis[0];
-        y_axis = xy_axis[1];
+        if(graph_name == "Age Range"){
+            x_axis = []
+            y_axis = []
+
+            for (x in graph_info['count']){
+                console.log(x);
+                x_axis.push(x);
+                y_axis.push(graph_info['count'][x]);
+            }
+    
+        }else{
+            xy_axis = generate_x_y_axis(graph_info['count']);
+            x_axis = xy_axis[0];
+            y_axis = xy_axis[1];
+        }
 
         var data = [
             {
@@ -336,11 +348,11 @@ function generate_x_y_axis(graph_info){
 Drill down functionlity
 */
 
-a_s_1 = '<a href="'+server_o+'/app/action/DisplayItemAction/search_value/'
-a_subject_s_2= '/search_element/xnat:Data/search_field/xnat:subjectData.ID" target="_blank">'
-a_experiment_s_2= '/search_element/xnat:Data/search_field/xnat:imageSessionData.ID" target="_blank">'
-a_project_s_2 = '/search_element/xnat:Data/search_field/xnat:projectData.ID" target="_blank">'
-a_end = '</a>'
+a_end_e = '</a>'
+a_pro = '<a href="'+ server_o + '/data/projects/'
+a_sub = '<a href="'+ server_o + '/data/subjects/'
+a_exp = '<a href="'+ server_o + '/data/experiments/'
+a_end_s = '?format=html" target="_blank">'
 
 function drill_down(myDiv, graph_info, graph_name, id_type){
 
@@ -354,11 +366,11 @@ function drill_down(myDiv, graph_info, graph_name, id_type){
             for (output in lists_output){
 
                 if(id_type == 'experiment'){
-                    html_output = html_output + '<center>'+a_s_1+lists_output[output].split('/')[0]+a_experiment_s_2+lists_output[output]+a_end+'</center><br/>';
+                    html_output = html_output + '<center>'+a_exp+lists_output[output].split('/')[0]+a_end_s+lists_output[output]+a_end_e+'</center><br/>';
                 }else if(id_type == 'subject'){
-                    html_output = html_output + '<center>'+a_s_1+lists_output[output].split('/')[0]+a_subject_s_2+lists_output[output]+a_end+'</center><br/>';
+                    html_output = html_output + '<center>'+a_sub+lists_output[output].split('/')[0]+a_end_s+lists_output[output]+a_end_e+'</center><br/>';
                 }else if(id_type == 'project'){
-                    html_output = html_output + '<center>'+a_s_1+lists_output[output].split('/')[0]+a_project_s_2+lists_output[output]+a_end+'</center><br/>';
+                    html_output = html_output + '<center>'+a_pro+lists_output[output].split('/')[0]+a_end_s+lists_output[output]+a_end_e+'</center><br/>';
                 }else{
                     html_output = html_output + '<center>'+lists_output[output]+'</center><br/>';
                 }
@@ -389,11 +401,11 @@ function drill_down_stacked(myDiv, graph_info, graph_name){
                 html_output = html_output + '<center><b>'+i+'</b></center><br/>'
                 for(x in lists_output[i]){
                     if(id_type == 'experiment'){
-                        html_output = html_output + '<center>'+a_s_1+lists_output[i][x].split('/')[0]+a_experiment_s_2+lists_output[i][x]+a_end+'</center><br/>';
+                        html_output = html_output + '<center>'+a_exp+lists_output[i][x].split('/')[0]+a_end_s+lists_output[i][x]+a_end_e+'</center><br/>';
                     }else if(id_type == 'subject'){
-                        html_output = html_output + '<center>'+a_s_1+lists_output[i][x].split('/')[0]+a_subject_s_2+lists_output[i][x]+a_end+'</center><br/>';
+                        html_output = html_output + '<center>'+a_sub+lists_output[i][x].split('/')[0]+a_end_s+lists_output[i][x]+a_end_e+'</center><br/>';
                     }else if(id_type == 'project'){
-                        html_output = html_output + '<center>'+a_s_1+lists_output[i][x].split('/')[0]+a_project_s_2+lists_output[i][x]+a_end+'</center><br/>';
+                        html_output = html_output + '<center>'+a_pro+lists_output[i][x].split('/')[0]+a_end_s+lists_output[i][x]+a_end_e+'</center><br/>';
                     }else{
                         html_output = html_output + '<center>'+lists_output[i][x]+'</center><br/>';
                     }
@@ -418,11 +430,11 @@ function drill_down_pie(myDiv, graph_info, graph_name, id_type){
             html_output = '';
             for (output in lists_output){
                 if(id_type == 'experiment'){
-                    html_output = html_output + '<center>'+a_s_1+lists_output[output].split('/')[0]+a_experiment_s_2+lists_output[output]+a_end+'</center><br/>';
+                    html_output = html_output + '<center>'+a_exp+lists_output[output].split('/')[0]+a_end_s+lists_output[output]+a_end_e+'</center><br/>';
                 }else if(id_type == 'subject'){
-                    html_output = html_output + '<center>'+a_s_1+lists_output[output].split('/')[0]+a_subject_s_2+lists_output[output]+a_end+'</center><br/>';
+                    html_output = html_output + '<center>'+a_sub+lists_output[output].split('/')[0]+a_end_s+lists_output[output]+a_end_e+'</center><br/>';
                 }else if(id_type == 'project'){
-                    html_output = html_output + '<center>'+a_s_1+lists_output[output].split('/')[0]+a_project_s_2+lists_output[output]+a_end+'</center><br/>';
+                    html_output = html_output + '<center>'+a_pro+lists_output[output].split('/')[0]+a_end_s+lists_output[output]+a_end_e+'</center><br/>';
                 }else{
                     html_output = html_output + '<center>'+lists_output[output]+'</center><br/>';
                 }

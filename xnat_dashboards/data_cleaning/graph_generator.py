@@ -109,7 +109,7 @@ class GraphGenerator:
         counter = 0
 
         graph_data = self.graph_pre_processor(self.data_ordered)
-        print(graph_data)
+
         if type(graph_data) == int:
             return graph_data
 

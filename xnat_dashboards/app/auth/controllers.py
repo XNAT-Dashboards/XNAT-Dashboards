@@ -24,7 +24,11 @@ def login_DB():
     Returns:
         route: It routes to dashboard if user details are correct
         else reloads the page
+
     """
+
+    servers_list = model.login_urls()
+
     if request.method == 'GET':
 
         # Checks if there is a error key in session
@@ -38,11 +42,13 @@ def login_DB():
                 del session['error']
             return render_template(
                 'auth/login_DB.html',
-                error=display_error)
+                error=display_error,
+                servers_list=servers_list)
         else:
             # If there is no error meaning the user is called login
             # page using browser instead of a redirect
-            return render_template('auth/login_DB.html')
+            return render_template(
+                'auth/login_DB.html', servers_list=servers_list)
 
     else:
 
@@ -52,11 +58,19 @@ def login_DB():
 
         username = user_details['username']
         password = user_details['password']
-        server = user_details['server']
-        ssl = False if user_details.get('ssl') is None else True
+        server_name = user_details['server']
+
+        for server in servers_list:
+
+            if server_name == server['name']:
+                print(server)
+                server_url = server['url']
+                ssl = server['verify']
+
+                break
 
         # Check from API whether user exist in the XNAT instance
-        exists = model.user_exists(username, password, server, ssl)
+        exists = model.user_exists(username, password, server_url, ssl)
 
         if type(exists) == int:
             # If exist check whether the XNAT instance is same
@@ -72,7 +86,7 @@ def login_DB():
 
                 # Add data to session
                 session['username'] = username
-                session['server'] = server
+                session['server'] = server_url
                 session['project_visible'] = config['project_visible']
 
                 # Redirect to dashboard
