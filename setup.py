@@ -25,7 +25,7 @@ setuptools.setup(
      long_description=long_description,
      license='MIT',
      scripts=[
-          'bin/server.py', 'bin/download_data.py'],
+          'bin/run_server.py', 'bin/download_data.py'],
      classifiers=[
           'Intended Audience :: Developers',
           'Intended Audience :: Science/Research',
