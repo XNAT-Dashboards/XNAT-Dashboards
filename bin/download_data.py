@@ -15,6 +15,12 @@ ap.add_argument(
     "-o", "--pickle", type=str,
     help="Path where the pickle file will be created")
 
+ap.add_argument(
+    "-skip", "--skip", type=bool,
+    help="Skip resources download if you want to a"
+    " take quick look of xnat dashboards",
+    default=False)
+
 args = vars(ap.parse_args())
 
 if __name__ == "__main__":
@@ -30,4 +36,4 @@ if __name__ == "__main__":
 
         # if true is given as an argument, it will skip the downloading
         # of resourceS Default is false
-        pickle_saver.PickleSaver(args['cfg'], True)
+        pickle_saver.PickleSaver(args['cfg'], args['skip'])
