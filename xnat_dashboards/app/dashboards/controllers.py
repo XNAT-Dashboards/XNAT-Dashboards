@@ -1,7 +1,7 @@
 # Import flask dependencies
 from flask import Blueprint, render_template, session,\
     redirect, url_for
-from xnat_dashboards.saved_data_processing import graph_generator
+from xnat_dashboards.data_cleaning import graph_generator
 from xnat_dashboards.app.dashboards import model
 
 # Define the blueprint: 'dashboards', set its url prefix: app.url/dashboards
@@ -53,27 +53,13 @@ def stats_db():
     # Check if pickle data is of correct server
     if data is not None:
 
-        resources = None
-        resources_bbrc = None
-
-        user_data = data['info']
-
-        if 'resources' in data and 'resources_bbrc' in data:
-            resources = data['resources']
-            resources_bbrc = data['resources_bbrc']
-
-        l_data = data['longitudinal_data']
-
         # Calling plot generator
         plotting_object = graph_generator.\
             GraphGenerator(
                 session['username'],
-                user_data,
-                l_data,
                 session['role_exist'],
-                session['project_visible'],
-                resources,
-                resources_bbrc)
+                data,
+                session['project_visible'])
 
         graph_data_stats = plotting_object.\
             graph_generator()
@@ -125,19 +111,11 @@ def project_db(id):
         return redirect(url_for('auth.login_DB'))
 
     data = model.load_users_data(session['server'])
-    users_data = data['info']
-
-    resources = None
-    resources_bbrc = None
-
-    if 'resources' in data and 'resources_bbrc' in data:
-        resources = data['resources']
-        resources_bbrc = data['resources_bbrc']
 
     # Get the details for plotting
     data_array = graph_generator.GraphGeneratorPP(
-        session['username'], users_data, id, session['role_exist'],
-        session['project_visible'], resources, resources_bbrc
+        session['username'], id, session['role_exist'],
+        data, session['project_visible']
     ).graph_generator()
 
     # If no data found redirect to login page else render the data
@@ -149,15 +127,6 @@ def project_db(id):
     graph_data = data_array[0]
     stats_data = data_array[1]
 
-    th = data_array[3][0]
-    td = data_array[3][1]
-    diff_version = []
-
-    # For filtering differnt version
-    for td_v in td:
-        if td_v[1][1] not in diff_version:
-            diff_version.append(td_v[1][1])
-
     return render_template(
         'dashboards/stats_dashboards_pp.html',
         graph_data=graph_data,
@@ -165,8 +134,6 @@ def project_db(id):
         username=session['username'].capitalize(),
         server=session['server'],
         db=True,
-        diff_version=diff_version,
+        test_grid=data_array[3],
         data_array=data_array[2],
-        id=id,
-        t_header_info=th,
-        t_data_info=td)
+        id=id)

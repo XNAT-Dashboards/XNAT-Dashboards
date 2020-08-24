@@ -1,4 +1,4 @@
-from xnat_dashboards.saved_data_processing import data_formatter
+from xnat_dashboards.data_cleaning import data_formatter
 
 formatter_object_connected = data_formatter.Formatter()
 
@@ -205,7 +205,7 @@ def test_get_resources_details():
             'IsAcquisitionDateConsistent': {'has_passed': True}}]]
 
     resource_details = formatter_object_connected.get_resources_details(
-        resources, resources_bbrc)
+        resources)
 
     assert type(resource_details) == dict
-    assert len(resource_details) == 8
+    assert len(resource_details) == 2

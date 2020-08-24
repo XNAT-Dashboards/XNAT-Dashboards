@@ -34,32 +34,32 @@ def test_home_redirect():
 def test_dashboard_db(mocker):
 
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.'
+        'xnat_dashboards.data_cleaning.'
         'graph_generator.GraphGenerator.__init__',
         return_value=None)
 
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.graph_generator.'
+        'xnat_dashboards.data_cleaning.graph_generator.'
         'GraphGenerator.graph_generator',
         return_value=[[], []])
 
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.graph_generator.'
+        'xnat_dashboards.data_cleaning.graph_generator.'
         'GraphGenerator.project_list_generator',
         return_value=[[], []])
 
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.graph_generator.'
+        'xnat_dashboards.data_cleaning.graph_generator.'
         'GraphGeneratorPP.__init__',
         return_value=None)
 
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.graph_generator.'
+        'xnat_dashboards.data_cleaning.graph_generator.'
         'GraphGeneratorPP.graph_generator',
         return_value=None)
 
     mocker.patch(
-        'xnat_dashboards.saved_data_processing.graph_generator.'
+        'xnat_dashboards.data_cleaning.graph_generator.'
         'GraphGenerator.graph_generator_longitudinal',
         return_value=[])
 

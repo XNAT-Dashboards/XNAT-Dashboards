@@ -2,6 +2,7 @@ import pickle
 from datetime import datetime
 import os
 from xnat_dashboards import path_creator
+from xnat_dashboards.bbrc import data_fetcher as data_fetcher_b
 from xnat_dashboards.pyxnat_interface import data_fetcher
 
 
@@ -29,6 +30,7 @@ class PickleSaver:
         # In case you want a quick look of xnat dashboard or you don't want
         # graphs related to resources use skip as True
         self.fetcher = data_fetcher.Fetcher(config=config)
+        self.fetcher_bbrc = data_fetcher_b.Fetcher(config=config)
         self.server = self.fetcher.selector._server
         self.skip = skip
         self.save()
@@ -77,7 +79,7 @@ class PickleSaver:
         if not self.skip:
             data_res = self.fetcher.get_resources(
                 data_pro_sub_exp_sc['experiments'])
-            data_res_bbrc = self.fetcher.get_bbrc_resource(
+            extra_resources = self.fetcher_bbrc.get_resource(
                 data_pro_sub_exp_sc['experiments'])
 
         # Call method for formatting the longitudinal data from raw saved data
@@ -101,7 +103,7 @@ class PickleSaver:
                         'server': self.server,
                         'info': data_pro_sub_exp_sc,
                         'resources': data_res,
-                        'resources_bbrc': data_res_bbrc,
+                        'extra_resources': extra_resources,
                         'longitudinal_data': longitudinal_data
                     },
                     handle, protocol=pickle.HIGHEST_PROTOCOL)

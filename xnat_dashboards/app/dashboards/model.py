@@ -21,8 +21,8 @@ def load_users_data(server):
         if user_data['server'] != server:
             return None
     except FileNotFoundError:
-        print(path_creator.get_pickle_path())
-        print("pickle file not found")
+        print(
+            "pickle file not found on path: ", path_creator.get_pickle_path())
         return None
 
     return user_data
