@@ -34,7 +34,7 @@
 			<div class="wrap-login100">
 				<!-- Login form start -->
 				<form method="POST" action="{{ url_for('auth.login_DB') }}" class="login100-form validate-form">
-					<span class="login100-form-title p-b-43">
+					<span class="login100-form-title">
 						Login to XNAT Dashboards
                     </span>
                     {% if error is defined %}
@@ -53,19 +53,14 @@
 						<span class="focus-input100"></span>
 						<span class="label-input100">Password</span>
 					</div>
-					<div class="wrap-input100 validate-input">
-						<input class="input100" type="text" name="server">
-						<span class="focus-input100"></span>
-						<span class="label-input100">Server</span>
-					</div>
-					<div class="flex-sb-m w-full p-t-3 p-b-20">
-						<div class="contact100-form-checkbox">
-							<input class="input-checkbox100" id="ckb1" type="checkbox" name="ssl">
-							<label class="label-checkbox100 ssl" for="ckb1">
-								Disable host verification
-							</label>
-						</div>
-					</div>
+					<div id="server_div">
+						<label for="server">Servers</label>
+						<select name="server" id="server" class="form-control">
+							{% for server in servers_list %}
+							<option value="{{ server['name'] }}">{{server['name']}}</option>
+							{% endfor %}
+						</select>
+					  </div>
 					<div class="container-login100-form-btn">
 						<button class="login100-form-btn">
 							Login
@@ -81,8 +76,8 @@
 	</div>
 </body>
     <!-- Js include Start -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 	<script src="/static/auth/js/main.js"></script>
 
     <!-- Js include End -->

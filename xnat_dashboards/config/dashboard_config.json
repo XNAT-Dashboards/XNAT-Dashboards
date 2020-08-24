@@ -191,5 +191,19 @@
             "visibility": ["admin", "superuser", "guest"],
             "color": "#16ffec"
         }
-    }
+    },
+    "login_urls":
+        [
+            {
+            "name": "CENTRAL XNAT",
+            "url": "https://central.xnat.org",
+            "verify": 1
+            },
+            {
+            "name": "BBRC DEV XNAT",
+            "url": "https://bscmaragall01.bsc.es",
+            "verify": 0
+            }
+        ]  
+    
 }
