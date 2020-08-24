@@ -33,7 +33,7 @@ ap.add_argument(
 
 ap.add_argument(
     "-debug", "--debug", type=bool,
-    help="URL for the server", default=False)
+    help="Activate debugger", default=False)
 
 args = vars(ap.parse_args())
 
