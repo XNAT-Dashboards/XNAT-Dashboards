@@ -65,25 +65,14 @@ def test_dashboard_db(mocker):
 
     data_post_login_dash_present = dict(username='testUser',
                                         password='testPassword',
-                                        server='https://central.xnat.org',
+                                        server='CENTRAL XNAT',
+                                        server_url='https://central.xnat.org',
                                         ssl=False,
                                         DB=True)
 
     response_post = app.test_client().post('auth/db/login/',
                                            data=data_post_login_dash_present,
                                            ).status_code
-
-    data_post_login_dash_present_pk = dict(username='testUser',
-                                           password='testPassword',
-                                           server='https://central.xnat.org',
-                                           ssl=False,
-                                           DB=True)
-
-    response_post_pk = app.test_client().post(
-        'auth/db/login/',
-        data=data_post_login_dash_present_pk).status_code
-
-    assert response_post_pk == 302  # Redirects
 
     with app.test_client() as c:
         with c.session_transaction() as sess:
@@ -106,4 +95,4 @@ def test_dashboard_db(mocker):
 
     assert response_get == 302
 
-    assert response_get_stats == 200
+    assert response_get_stats == 302
