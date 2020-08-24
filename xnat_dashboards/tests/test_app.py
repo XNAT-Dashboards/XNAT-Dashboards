@@ -95,4 +95,4 @@ def test_dashboard_db(mocker):
 
     assert response_get == 302
 
-    assert response_get_stats == 302
+    assert response_get_stats == 200
