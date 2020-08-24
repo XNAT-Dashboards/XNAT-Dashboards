@@ -1,6 +1,9 @@
+#!/usr/bin/env python
+
 from xnat_dashboards.app import app
 from xnat_dashboards import path_creator
 import os
+import socket
 import argparse
 
 """
@@ -20,11 +23,27 @@ ap.add_argument(
     help="Path to configuration file")
 args = vars(ap.parse_args())
 
+ap.add_argument(
+    "-port", "--port", type=int,
+    help="Port number", default=5000)
+
+ap.add_argument(
+    "-url", "--url", type=str,
+    help="URL for the server", default='localhost')
+
+ap.add_argument(
+    "-debug", "--debug", type=bool,
+    help="URL for the server", default=False)
+
+args = vars(ap.parse_args())
+
 
 if __name__ == "__main__":
 
     if args['pickle'] is None or args['config'] is None:
-        print("Please provide path to both pickle and config file")
+        print(
+            "Please provide path, name to both pickle and"
+            "dashboard configuraion file")
     else:
         # Path to configuration and pickle files
         path_creator.set_dashboard_config_path(
@@ -32,4 +51,13 @@ if __name__ == "__main__":
         path_creator.set_pickle_path(
             os.path.abspath(args['pickle']))
         # Change localhost url or port here
-        app.run(debug=True)
+
+    try:
+        print(args['port'])
+        app.run(host=args['url'], port=args['port'], debug=args['debug'])
+    except socket.gaierror:
+        print("Wrong server url provided to run the application")
+    except PermissionError:
+        print(
+            "Port number is not correct please check whether "
+            "port number is an integer")
