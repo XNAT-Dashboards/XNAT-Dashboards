@@ -1,7 +1,7 @@
 import json
 from xnat_dashboards.data_cleaning import data_filter
 from xnat_dashboards.bbrc import data_filter as data_filter_b
-from xnat_dashboards import path_creator
+from xnat_dashboards import config
 
 
 class GraphGenerator:
@@ -10,11 +10,20 @@ class GraphGenerator:
     This class makes final changes that are then sent to frontend.
     Which is then displayed using jinja.
 
+    The final chages includes addition of:
+    1. Additon of ID to graphs.
+    2. Addition of graph description from the dashboard config file.
+    3. Addition of graph type from the dashboard config file.
+    4. Addition of default color to graph.
+
+    Then the graph is formatted in a 2D array structure where each
+    row contains 2 columns these 2 columns are filled with graphs.
+
     Args:
         username (list): Name of the user
         info (str): project, subject, experiment and scan details.
         project_visible (list, optional): list of project that should be
-            visible to the user.
+            visible to the user by default it will show no project details.
         role (str): Role assigned to user.
         data (dict): Dict containing data of projects, subjects, exp.,
             scans, resources, extra_resources, longitudinal data
@@ -24,7 +33,7 @@ class GraphGenerator:
     project_list_ow_co_me = []
 
     def __init__(
-            self, username, role, data, project_visible=None):
+            self, username, role, data, project_visible=[]):
 
         if 'resources' not in data:
             data['resources'] = None
@@ -66,7 +75,8 @@ class GraphGenerator:
             dict: Data to frontend.
         """
 
-        with open(path_creator.get_dashboard_config_path()) as json_file:
+        # Opens the dashboard_config.json file
+        with open(config.DASHBOARD_CONFIG_PATH) as json_file:
             self.graph_config = json.load(json_file)['graph_config']
 
         if type(data) != dict:
@@ -74,21 +84,30 @@ class GraphGenerator:
 
         final_json_dict = data
 
+        # Skip data that don't require plotting
         skip_data = ['Stats', 'test_grid', 'Project details']
 
+        # Loop through each dict values and if it need to be plotted as
+        # graph add the required details from dashboard config file
         for final_json in final_json_dict:
+            # Skip if key is not a graph
             if final_json in skip_data or\
                 self.role\
                     not in self.graph_config[final_json]['visibility']:
                 continue
 
+            # Addition of graph id, js need distinct graph id for each
+            # graphs
             final_json_dict[final_json]['id'] = self.counter_id
             self.counter_id = self.counter_id + 1
 
+            # Type of graph (bar, line, etc) from config file
             final_json_dict[final_json]['graph_type'] =\
                 self.graph_config[final_json]['type']
+            # Description of graph from config file
             final_json_dict[final_json]['graph descriptor'] =\
                 self.graph_config[final_json]['description']
+            # Graph color from config file
             final_json_dict[final_json]['color'] =\
                 self.graph_config[final_json]['color']
 
@@ -166,13 +185,17 @@ class GraphGenerator:
         counter = 0
         counter_ow_co_me = 0
 
+        # List of projects
         list_data = self.project_list
 
+        # List of projects that user is a owner, collab or member
         list_data_ow_co_me = self.project_list_ow_co_me
 
         if type(list_data) == int:
             return list_data
 
+        # Create a 2d array with each row containing 4 columns and each column
+        # will have single project id
         if len(list_data) == 0:
             array_2d = [[]]
         else:
@@ -259,7 +282,13 @@ class GraphGeneratorPP(GraphGenerator):
     """Class for making final changes in data for per project view.
     Inherits GraphGenerator class.
     This class makes final changes that are then sent to frontend.
-    Which is then displayed using jinja.
+    Which is then displayed using jinja for per project view.
+
+    The final chages includes addition of:
+    1. Additon of ID to graphs.
+    2. Addition of graph description from the dashboard config file.
+    3. Addition of graph type from the dashboard config file.
+    4. Addition of default color to graph.
 
     Args:
         username (list): Name of the user
@@ -311,6 +340,7 @@ class GraphGeneratorPP(GraphGenerator):
         array_1d = []
         counter = 0
 
+        # Do the required addition using pre processor
         graph_data = self.graph_pre_processor(self.data_ordered)
 
         if type(graph_data) == int or graph_data is None:
@@ -318,6 +348,9 @@ class GraphGeneratorPP(GraphGenerator):
 
         skip_data = ['Stats', 'test_grid', 'Project details']
 
+        # Loop through each graph field and add it into
+        # graph 2d array where each row have 2 columns and each
+        # columns contains single graph
         for final_json in graph_data:
             if final_json in skip_data or\
                     self.role not in\
@@ -355,6 +388,8 @@ class GraphGeneratorPP(GraphGenerator):
             array_2d, graph_data['Stats'],
             graph_data['Project details']]
 
+        # Test grid is a specific dashboard for BBRC XNATs
+        # not visible to normal xnat instance
         if 'test_grid' in graph_data:
             graph_stats_data.append(graph_data['test_grid'])
         else:
