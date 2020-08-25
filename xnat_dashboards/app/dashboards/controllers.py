@@ -23,8 +23,8 @@ def logout():
         del session['server']
     if 'project_visible' in session:
         del session['project_visible']
-    if 'role_exists' in session:
-        del session['role_exists']
+    if 'role_exist' in session:
+        del session['role_exist']
 
     session['error'] = -1
 

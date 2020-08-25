@@ -11,10 +11,10 @@ class GraphGenerator:
     Which is then displayed using jinja.
 
     The final chages includes addition of:
-    1. Additon of ID to graphs.
-    2. Addition of graph description from the dashboard config file.
-    3. Addition of graph type from the dashboard config file.
-    4. Addition of default color to graph.
+    1. id to graphs.
+    2. graph description from the dashboard config file.
+    3. graph type from the dashboard config file.
+    4. default color to graph.
 
     Then the graph is formatted in a 2D array structure where each
     row contains 2 columns these 2 columns are filled with graphs.
@@ -67,7 +67,8 @@ class GraphGenerator:
         as per role.
 
         Args:
-            data (dict): Data of graphs and information from DataFilter.
+            data (dict): Data of graphs and information that are not plotted
+            like Number of subjects, experiemtn etc from DataFilter.
 
         Returns:
             dict: Data to frontend.
@@ -80,14 +81,12 @@ class GraphGenerator:
         if type(data) != dict:
             return data
 
-        final_json_dict = data
-
         # Skip data that don't require plotting
         skip_data = ['Stats', 'test_grid', 'Project details']
 
         # Loop through each dict values and if it need to be plotted as
         # graph add the required details from dashboard config file
-        for final_json in final_json_dict:
+        for final_json in data:
             # Skip if key is not a graph
             if final_json in skip_data or\
                 self.role\
@@ -96,20 +95,20 @@ class GraphGenerator:
 
             # Addition of graph id, js need distinct graph id for each
             # graphs
-            final_json_dict[final_json]['id'] = self.counter_id
+            data[final_json]['id'] = self.counter_id
             self.counter_id = self.counter_id + 1
 
             # Type of graph (bar, line, etc) from config file
-            final_json_dict[final_json]['graph_type'] =\
+            data[final_json]['graph_type'] =\
                 self.graph_config[final_json]['type']
             # Description of graph from config file
-            final_json_dict[final_json]['graph descriptor'] =\
+            data[final_json]['graph descriptor'] =\
                 self.graph_config[final_json]['description']
             # Graph color from config file
-            final_json_dict[final_json]['color'] =\
+            data[final_json]['color'] =\
                 self.graph_config[final_json]['color']
 
-        return final_json_dict
+        return data
 
     def graph_generator(self):
         """This first process the data using graph preprocessor.
