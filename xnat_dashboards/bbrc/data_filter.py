@@ -72,13 +72,13 @@ class DataFilter:
 
 
 class DataFilterPP(DataFilter):
-    """GetInfoPP processes the for per project view.
+    """DataFilterPP processes the for per project view.
 
     It first checks whether the project should be
     visible to users.
     Then sends the data to data formatter which
     format the data then ordering is done using the
-    GetInfoPP
+    DataFilterPP
 
     Args:
         GetInfo (GetInfo): It inherits GetInfo.
@@ -87,7 +87,8 @@ class DataFilterPP(DataFilter):
         role (str): role of the user.
         project_visible (list): list of projects that is visible
         resources_bbrc (list, optional): List of bbrc resources
-            and Default as None.
+            and Default as None and by default
+            it will be skipped and no graph of resources will be added.
     """
 
     def __init__(
@@ -127,7 +128,7 @@ class DataFilterPP(DataFilter):
         final_json_dict = {}
 
         resources = self.formatter_object_per_project.get_resource_details(
-            self.resources_bbrc)
+            self.resources_bbrc, self.project_id)
 
         test_grid = self.formatter_object_per_project.generate_test_grid_bbrc(
             self.resources_bbrc, self.project_id)
