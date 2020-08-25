@@ -148,30 +148,33 @@ class PickleSaver:
         now = datetime.now()
         dt = now.strftime("%d/%m/%Y")
 
-        # Create the format of data to be saved
-        projects_number = {'list': {dt: []}}
-        subjects_number = {'list': {dt: []}}
-        experiments_number = {'list': {dt: []}}
-        scans_number = {'list': {dt: []}}
+        l_data = {}
 
-        projects_number['count'] = {dt: len(data_pro_sub_exp_sc['projects'])}
-        subjects_number['count'] = {dt: len(data_pro_sub_exp_sc['subjects'])}
-        experiments_number['count'] =\
-            {dt: len(data_pro_sub_exp_sc['experiments'])}
+        if 'longitudinal_data' in user_data:
+            l_data = user_data['longitudinal_data']
 
-        scans_number['count'] = {dt: len(data_pro_sub_exp_sc['scans'])}
+        graph_names = ['Projects', 'Subjects', 'Experiments', 'Scans']
+        key_names = ['projects', 'subjects', 'experiments', 'scans']
 
-        for project in data_pro_sub_exp_sc['projects']:
-            projects_number['list'][dt].append(project['id'])
+        for id in range(0, len(graph_names)):
 
-        for subject in data_pro_sub_exp_sc['subjects']:
-            subjects_number['list'][dt].append(subject['ID'])
+            graph_number = {'list': {dt: []}}
+            graph_number['count'] = {
+                dt: len(data_pro_sub_exp_sc[key_names[id]])}
 
-        for experiment in data_pro_sub_exp_sc['experiments']:
-            experiments_number['list'][dt].append(experiment['ID'])
+            for graph in data_pro_sub_exp_sc[key_names[id]]:
+                if key_names[id] == 'projects':
+                    graph_number['list'][dt].append(graph['id'])
+                else:
+                    graph_number['list'][dt].append(graph['ID'])
 
-        for scan in data_pro_sub_exp_sc['scans']:
-            scans_number['list'][dt].append(scan['ID'])
+            if user_data == {}:
+                l_data[graph_names[id]] = {
+                    'list': graph_number['list'],
+                    'count': graph_number['count']}
+            else:
+                l_data[graph_names[id]]['list'].update(graph_number['list'])
+                l_data[graph_names[id]]['count'].update(graph_number['count'])
 
         # Resource data processing
         if not self.skip:
@@ -183,37 +186,16 @@ class PickleSaver:
                         str(resource[1]) + '  ' + str(resource[2]))
 
             resource_number['count'] = {dt: len(resource_number['list'][dt])}
+        else:
+            resource_number = {'list': {}, 'count': {}}
 
         if user_data == {}:
-
-            # If user_data is {} then this is the first time data
-            # is being fetched thus create empty dict with normal formatting
-
-            user_data['Projects'] = {'list': {}, 'count': {}}
-            user_data['Subjects'] = {'list': {}, 'count': {}}
-            user_data['Experiments'] = {'list': {}, 'count': {}}
-            user_data['Scans'] = {'list': {}, 'count': {}}
-            user_data['Resources'] = {'list': {}, 'count': {}}
-
+            l_data['Resources'] = {
+                'list': resource_number['list'],
+                'count': resource_number['count']}
         else:
-
-            # Data is already present and use the longitudinal data from
-            # the file and update the details of current data
-            user_data = user_data['longitudinal_data']
-
-        user_data['Projects']['list'].update(projects_number['list'])
-        user_data['Subjects']['list'].update(subjects_number['list'])
-        user_data['Experiments']['list'].update(experiments_number['list'])
-        user_data['Scans']['list'].update(scans_number['list'])
-
-        user_data['Projects']['count'].update(projects_number['count'])
-        user_data['Subjects']['count'].update(subjects_number['count'])
-        user_data['Experiments']['count'].update(
-            experiments_number['count'])
-        user_data['Scans']['count'].update(scans_number['count'])
-
-        if not self.skip:
-            user_data['Resources']['count'].update(resource_number['count'])
+            l_data['Resources']['list'].update(resource_number['list'])
+            l_data['Resources']['count'].update(resource_number['count'])
 
         '''
         Returns the formatted data
@@ -224,4 +206,4 @@ class PickleSaver:
             }
         }
         '''
-        return user_data
+        return l_data

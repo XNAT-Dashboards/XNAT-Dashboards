@@ -16,20 +16,15 @@ def user_exists(username, password, server, ssl):
     Returns:
         int/list: If user exist returns an integer else an empty list.
     """
-    if ssl == 1:
-        verify = True
-    else:
-        verify = False
+    verify = ssl == 1
 
     exists = Interface(
         user=username, password=password, server=server, verify=verify)\
         .select.projects().get()
 
     # If user exists then exists lengths will be more than 0
-    if len(exists) > 0:
-        return len(exists)
-    else:
-        return []
+
+    return len(exists) if len(exists) > 0 else []
 
 
 # Get user role config file

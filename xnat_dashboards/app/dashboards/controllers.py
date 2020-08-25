@@ -70,8 +70,9 @@ def stats_db():
         project_lists = plotting_object.\
             project_list_generator()
     else:
-        # If server is wrong add error message in session
-        session['error'] = 'Wrong server or data'
+        # If mismatch between login server url and pickle server url
+        # add error message in session
+        session['error'] = 'Wrong server url of pickle or data'
         'not downloaded'
 
     # If error message in session redirect to login page else render the data

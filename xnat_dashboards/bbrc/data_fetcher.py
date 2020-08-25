@@ -49,7 +49,7 @@ class Fetcher:
 
             BBRC_VALIDATOR = self.selector.select.experiment(
                 exp['ID']).resource('BBRC_VALIDATOR')
-            exists = 'Exists' if BBRC_VALIDATOR.exists() else 'No Exists'
+            exists = BBRC_VALIDATOR.exists()
             # If exist then further process and check whether archiving
             # validator exist if exist then get the test json and if not
             # exists then Index error will be thrown and place 0 instead
@@ -72,10 +72,10 @@ class Fetcher:
             fs = self.selector.select.experiment(
                 exp['ID']).resource('FREESURFER6')
 
-            fs_exists = 'Exists' if fs.exists() else 'Not Exists'
+            fs_exists = fs.exists()
             session_details.append(fs_exists)
 
-            if fs_exists == 'Exists':
+            if fs_exists:
                 try:
                     log_file = list(fs.files('*recon-all.log'))[0]
                     log_content = self.selector.get(log_file._uri).text

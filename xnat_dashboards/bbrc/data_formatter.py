@@ -47,9 +47,7 @@ class Formatter:
     def get_free_surfer_resources(self, resources_bbrc):
 
         resource_processing = []
-
         for resource in resources_bbrc:
-            print(resource[1])
             if resource[5] != '-1':
                 resource_processing.append([
                     resource[0], resource[1],
@@ -259,7 +257,7 @@ class Formatter:
         # except the values present in extra list
         for resource in resources_bbrc:
 
-            if resource[2] == 'Exists' and type(resource[3]) != int:
+            if resource[2] and type(resource[3]) != int:
 
                 for test in resource[3]:
                     if test not in tests_union\
@@ -271,7 +269,7 @@ class Formatter:
         # For resource[3] which is a dict of tests
         for resource in resources_bbrc:
 
-            if resource[2] == 'Exists' and type(resource[3]) != int:
+            if resource[2] and type(resource[3]) != int:
                 test_list = []
                 test_list = [resource[1]]
 
