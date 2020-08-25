@@ -210,11 +210,6 @@
             "name": "CENTRAL XNAT",
             "url": "https://central.xnat.org",
             "verify": 1
-            },
-            {
-                "name": "BBRC",
-                "url": "https://bscmaragall01.bsc.es",
-                "verify": 0
             }
 
         ]  

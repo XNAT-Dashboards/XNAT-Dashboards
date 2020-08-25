@@ -34,7 +34,7 @@ class Fetcher:
             used for fetching resources
 
         Returns:
-            2D list: Each row of this have experiment id it's corresponding
+            2D list: Each row of this have experiment id its corresponding
             project id, Whether BBRC data exist and Archiving details as dict
             if exists
         """
@@ -85,6 +85,7 @@ class Fetcher:
                     target = index+len(target_str)
                     # Some log files have 'recon-all -s' after time and
                     # some log files have 'Info:' after time.
+                    # If 'Info:' exist then use this index else 'recon-all'
                     target_end_second = log_content.find('recon-all -s')
                     target_end_first = log_content.find(
                         'INFO: touching notification file')
