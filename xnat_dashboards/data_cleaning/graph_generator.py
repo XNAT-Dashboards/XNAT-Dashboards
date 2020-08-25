@@ -35,9 +35,6 @@ class GraphGenerator:
     def __init__(
             self, username, role, data, project_visible=[]):
 
-        if 'resources' not in data:
-            data['resources'] = None
-
         self.info = data_filter.DataFilter(
             username, data['info'],
             role, project_visible, data['resources'])
@@ -49,6 +46,7 @@ class GraphGenerator:
         self.l_data = data['longitudinal_data']
         self.data_ordered = self.info.get_info()
 
+        # Check whether extra resources are present in the data
         if 'extra_resources' in data:
             self.data_ordered.update(
                 data_filter_b.DataFilter(
@@ -60,7 +58,7 @@ class GraphGenerator:
             projects_data_dict['project_list_ow_co_me']
 
     def graph_pre_processor(self, data):
-        """It pre process the data received from GetInfo.
+        """It pre process the data received from DataFilter.
 
         Graph pre processor add data regarding graph type ie.
         bar, pie etc, graph description, graph color, graph id.
@@ -69,7 +67,7 @@ class GraphGenerator:
         as per role.
 
         Args:
-            data (dict): Data of graphs and information from GetInfo
+            data (dict): Data of graphs and information from DataFilter.
 
         Returns:
             dict: Data to frontend.

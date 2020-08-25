@@ -112,6 +112,7 @@ class PickleSaver:
                     {
                         'server': self.server,
                         'info': data_pro_sub_exp_sc,
+                        'resources': None,
                         'longitudinal_data': longitudinal_data
                     },
                     handle, protocol=pickle.HIGHEST_PROTOCOL)
