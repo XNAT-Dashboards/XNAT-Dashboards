@@ -49,7 +49,7 @@ class Formatter:
         resource_processing = []
 
         for resource in resources_bbrc:
-
+            print(resource[1])
             if resource[5] != '-1':
                 resource_processing.append([
                     resource[0], resource[1],

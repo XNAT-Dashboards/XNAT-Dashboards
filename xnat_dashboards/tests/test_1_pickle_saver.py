@@ -31,7 +31,7 @@ def test_save_and_user(mocker):
 
     pickle_saver.PickleSaver('xnat_dashboards/config/central.cfg').save()
 
-    with open(path_creator.get_pickle_path(), 'rb') as handle:
+    with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
     assert type(data) == dict
