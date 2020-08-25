@@ -2,7 +2,7 @@
 
 
 from xnat_dashboards.pyxnat_interface import pickle_saver
-from xnat_dashboards import path_creator
+from xnat_dashboards import config as config_file
 import os
 import argparse
 
@@ -17,8 +17,9 @@ ap.add_argument(
 
 ap.add_argument(
     "-skip", "--skip", type=bool,
-    help="Skip resources download if you want to a"
-    " take quick look of xnat dashboards",
+    help="Skip resources fetching if you want to a"
+    " take quick look of xnat dashboards or not "
+    "interested in resource grahps",
     default=False)
 
 args = vars(ap.parse_args())
@@ -26,14 +27,13 @@ args = vars(ap.parse_args())
 if __name__ == "__main__":
     # Add path to the pickle file
 
-    if args['pickle'] is None or args['config'] is None:
+    if args['pickle'] is None or args['cfg'] is None:
         print(
             "Please provide path, to both pickle and"
             "xnat configuraion file")
     else:
-        path_creator.set_pickle_path(
-            os.path.abspath(args['pickle']))
+        config_file.PICKLE_PATH = os.path.abspath(args['pickle'])
 
-        # if true is given as an argument, it will skip the downloading
-        # of resourceS Default is false
-        pickle_saver.PickleSaver(args['cfg'], args['skip'])
+        # if true is given as an argument, it will skip the fetching
+        # of resources Default is false
+        pickle_saver.PickleSaver(os.path.abspath(args['cfg']), args['skip'])

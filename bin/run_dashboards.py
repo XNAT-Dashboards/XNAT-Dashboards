@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from xnat_dashboards.app import app
-from xnat_dashboards import path_creator
+from xnat_dashboards import config
 import os
 import socket
 import argparse
@@ -33,7 +33,7 @@ ap.add_argument(
 
 ap.add_argument(
     "-debug", "--debug", type=bool,
-    help="Activate debugger", default=False)
+    help="Activate debugger", default=True)
 
 args = vars(ap.parse_args())
 
@@ -46,10 +46,8 @@ if __name__ == "__main__":
             "dashboard configuraion file")
     else:
         # Path to configuration and pickle files
-        path_creator.set_dashboard_config_path(
-            os.path.abspath(args['config']))
-        path_creator.set_pickle_path(
-            os.path.abspath(args['pickle']))
+        config.DASHBOARD_CONFIG_PATH = os.path.abspath(args['config'])
+        config.PICKLE_PATH = os.path.abspath(args['pickle'])
         # Change localhost url or port here
 
     try:

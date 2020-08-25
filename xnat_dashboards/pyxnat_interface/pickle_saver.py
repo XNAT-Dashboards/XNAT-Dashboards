@@ -1,7 +1,7 @@
 import pickle
 from datetime import datetime
 import os
-from xnat_dashboards import path_creator
+from xnat_dashboards import config as config_file
 from xnat_dashboards.bbrc import data_fetcher as data_fetcher_b
 from xnat_dashboards.pyxnat_interface import data_fetcher
 
@@ -26,7 +26,7 @@ class PickleSaver:
 
     def __init__(self, config, skip=False):
 
-        # skip argument tell that whether to download resources
+        # skip argument tell that whether to fetch information from resources
         # In case you want a quick look of xnat dashboard or you don't want
         # graphs related to resources use skip as True
         self.fetcher = data_fetcher.Fetcher(config=config)
@@ -51,7 +51,7 @@ class PickleSaver:
             **longitudinal_data:** Longitudinal Data.\n
         """
         # Fetch all resources, session, scans, projects, subjects
-        file_exist = os.path.isfile(path_creator.get_pickle_path())
+        file_exist = os.path.isfile(config_file.PICKLE_PATH)
 
         # Create a temporary dict for longitudinal data
         user_data = {}
@@ -62,7 +62,7 @@ class PickleSaver:
         if file_exist:
 
             with open(
-                    path_creator.get_pickle_path(),
+                    config_file.PICKLE_PATH,
                     'rb') as handle:
                 user_data = pickle.load(handle)
 
@@ -94,7 +94,7 @@ class PickleSaver:
 
         # Save all the data to pickle
         with open(
-                path_creator.get_pickle_path(),
+                config_file.PICKLE_PATH,
                 'wb') as handle:
 
             if not self.skip:
@@ -118,7 +118,7 @@ class PickleSaver:
 
         print(
             "Pickle file successfully saved at",
-            path_creator.get_pickle_path())
+            config_file.PICKLE_PATH)
 
     def longitudinal_data_processing(
             self, data_pro_sub_exp_sc, user_data, data_res=None):
@@ -137,7 +137,7 @@ class PickleSaver:
                 previous longitudinal data is already present
             data_res (dict, optional): This provide resource details
                 if user skip the resource fetching option then defaults
-                to None.
+                to None and no resources data will be added in pickle.
 
         Returns:
             dict:  Longitudinal data if ran first time then only single
