@@ -1,8 +1,7 @@
 from xnat_dashboards.data_cleaning import graph_generator
-from xnat_dashboards import path_creator
+from xnat_dashboards import config
 
-path_creator.set_dashboard_config_path(
-    'xnat_dashboards/config/dashboard_config.json')
+config.DASHBOARD_CONFIG_PATH = 'xnat_dashboards/config/dashboard_config.json'
 
 
 def create_mocker(

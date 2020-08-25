@@ -1,10 +1,9 @@
 from xnat_dashboards.pyxnat_interface import pickle_saver
-from xnat_dashboards import path_creator
+from xnat_dashboards import config
 import pickle
 
-path_creator.set_pickle_path('xnat_dashboards/config/general.pickle')
-path_creator.set_dashboard_config_path(
-    'xnat_dashboards/config/dashboard_config.json')
+config.PICKLE_PATH = 'xnat_dashboards/config/general.pickle'
+config.DASHBOARD_CONFIG_PATH = 'xnat_dashboards/config/dashboard_config.json'
 
 
 def test_save_and_user(mocker):
