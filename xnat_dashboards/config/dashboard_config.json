@@ -109,7 +109,7 @@
         },
         "Resource Types": {
             "type": "bar",
-            "description": "Different type of resources present",
+            "description": "Different type of resources present. No data field represent session don't have any resource object.",
             "visibility": ["admin"],
             "color":"#FB9A99"
         },
@@ -151,7 +151,7 @@
         },
         "Consistent Acquisition Date":{
             "type": "pie",
-            "description": "Acqusition date of files are consistent",
+            "description": "Whether acqisition date field is present in resources. No data means acquistion date for session isn't present",
             "visibility": ["admin"],
             "color":""
         },
@@ -163,33 +163,45 @@
         },
         "Projects":{
             "type": "line",
-            "description": "Test",
+            "description": "Number of projects over time saved in XNAT instance.",
             "visibility": ["admin", "superuser", "guest"],
             "color": "#16ffec"
         },
         "Subjects":{
             "type": "line",
-            "description": "Test",
+            "description": "Number of subjects over time saved in XNAT instance.",
             "visibility": ["admin", "superuser", "guest"],
             "color": "#16ffec"
         },
         "Experiments":{
             "type": "line",
-            "description": "Test",
+            "description": "Number of experiments over time saved in XNAT instance.",
             "visibility": ["admin", "superuser", "guest"],
             "color": "#16ffec"
         },
         "Scans":{
             "type": "line",
-            "description": "Test",
+            "description": "Number of scans over time saved in XNAT instance.",
             "visibility": ["admin", "superuser", "guest"],
             "color": "#16ffec"
         },
         "Resources":{
             "type": "line",
-            "description": "Test",
+            "description": "Number of resources over time saved in XNAT instance.",
             "visibility": ["admin", "superuser", "guest"],
             "color": "#16ffec"
+        },
+        "Free Surfer":{
+            "type": "bar",
+            "description": "Shows whether free surfer resource details exist or not.",
+            "visibility": ["admin"],
+            "color":"#16ffeb"
+        },
+        "Time Difference FreeSurfer":{
+            "type": "line",
+            "description": "Difference between the freesurfer start and end time.",
+            "visibility": ["admin"],
+            "color":"#16ffeb"
         }
     },
     "login_urls":
@@ -198,7 +210,13 @@
             "name": "CENTRAL XNAT",
             "url": "https://central.xnat.org",
             "verify": 1
+            },
+            {
+                "name": "BBRC",
+                "url": "https://bscmaragall01.bsc.es",
+                "verify": 0
             }
+
         ]  
     
 }
