@@ -24,7 +24,7 @@
             "color":"#7394CB"
         },
         "Sessions types/Project": {
-            "type": "bar",
+            "type": "stacked_bar",
             "description": "Number of sessions types for each visible project",
             "visibility": ["admin", "superuser", "guest"],
             "color":"#E1974E"
@@ -216,7 +216,7 @@
             "color":"#16ffeb"
         },
         "Session resource count/Project":{
-            "type": "bar",
+            "type": "stacked_bar",
             "description": "Number of scans that each subject have.",
             "visibility": ["admin"],
             "color":"#16ffeb"
@@ -228,8 +228,12 @@
             "name": "CENTRAL XNAT",
             "url": "https://central.xnat.org",
             "verify": 1
+            },
+            {
+            "name": "BBRC",
+            "url": "https://bscmaragall01.bsc.es",
+            "verify": 0
             }
-
         ]  
     
 }

@@ -1,28 +1,4 @@
 // Generate Charts using the json provided from html jinja
-stack_count = {"Stats": false,
-               "Sessions types/Project":true,
-               "Imaging Sessions": false,
-               "Projects Visibility": false,
-               "Subjects/Project": false,
-               "Age Range":false,
-               "Gender": false,
-               "Handedness": false,
-               "Experiments/Subject": false,
-               "Experiment Types": false,
-               "Experiments/Project": false,
-               "Scans Quality": false,
-               "Scan Types":false,
-               "XSI Scan Types": false,
-               "Scans/Project": false, 
-               "Scans/Subject": false, 
-               "Resources/Project": false,
-               "Resource Types": false,
-               "Resources/Session":false,
-               "UsableT1": false,
-               "Archiving Validator": false,
-               "Version Distribution": false,
-               "BBRC validator": false,
-               "Session resource count/Project": true};
 
 function chart_generator(json){
 
@@ -74,6 +50,8 @@ function chart_generator(json){
         barchart_generator(graph_name, graph_info, id, color, id_type);
     }else if(graph_type == 'line'){
         linechart_generator(graph_name, graph_info, id, color, id_type);
+    }else if(graph_type == 'stacked_bar'){
+        stacked_barchart_generator(graph_name, graph_info, id, color, id_type);
     }
     
 }  
@@ -94,54 +72,6 @@ function getRandomColor() {
 
 // Code for barchart
 function barchart_generator(graph_name, graph_info, id, color, id_type){
-
-    if(stack_count[graph_name]){
-        data = []
-
-        x_axis = []
-        for(x in graph_info['count']){
-            x_axis.push(x);
-        }
-
-        differ_keys = []
-
-        for(x in graph_info['count']){
-            for(y in graph_info['count'][x]){
-                if(differ_keys.includes(y)){
-                    continue;
-                }else{
-                    differ_keys.push(y);
-                }
-            }
-        }
-
-        for(i=0; i<differ_keys.length; i++){
-            y_axis = []
-            for(x in graph_info['count']){
-                if(differ_keys[i] in graph_info['count'][x]){
-                    y_axis.push(graph_info['count'][x][differ_keys[i]]);
-                }else{
-                    y_axis.push(0);
-                }
-            }
-
-            trace = {};
-            color = getRandomColor();
-            trace = {
-                x: x_axis,
-                y: y_axis,
-                name: differ_keys[i],
-                type: 'bar',
-                marker: {
-                color: color // Adding color values
-                }
-            };
-            data.push(trace);
-        }
-
-
-
-    }else{
 
         if(graph_name == "Age Range"){
             x_axis = []
@@ -168,10 +98,9 @@ function barchart_generator(graph_name, graph_info, id, color, id_type){
                 color: color // Adding color values
               }
             }
-          ];
-    }
+        ];
 
-    updatemenus= [{
+        updatemenus= [{
             y: 1.3,
             yanchor: 'top',
             x:0,
@@ -187,6 +116,85 @@ function barchart_generator(graph_name, graph_info, id, color, id_type){
                 label: 'Log'
             }]
         }]
+    
+        var layout = {
+                title: graph_name,
+                updatemenus:updatemenus,
+                barmode:'stack'
+        };
+    
+        var config = {responsive: true}
+    
+        Plotly.newPlot('graph_body'+id, data, layout, config);
+        myDiv = document.getElementById('graph_body'+id);
+
+
+    drill_down(myDiv, graph_info, graph_name, id_type);
+
+}
+
+function stacked_barchart_generator(graph_name, graph_info, id, color, id_type){
+
+    data = []
+
+    x_axis = []
+    for(x in graph_info['count']){
+        x_axis.push(x);
+    }
+
+    differ_keys = []
+
+    for(x in graph_info['count']){
+        for(y in graph_info['count'][x]){
+            if(differ_keys.includes(y)){
+                continue;
+            }else{
+                differ_keys.push(y);
+            }
+        }
+    }
+
+    for(i=0; i<differ_keys.length; i++){
+        y_axis = []
+        for(x in graph_info['count']){
+            if(differ_keys[i] in graph_info['count'][x]){
+                y_axis.push(graph_info['count'][x][differ_keys[i]]);
+            }else{
+                y_axis.push(0);
+            }
+        }
+
+        trace = {};
+        color = getRandomColor();
+        trace = {
+            x: x_axis,
+            y: y_axis,
+            name: differ_keys[i],
+            type: 'bar',
+            marker: {
+            color: color // Adding color values
+            }
+        };
+        data.push(trace);
+    }
+
+
+    updatemenus= [{
+        y: 1.3,
+        yanchor: 'top',
+        x:0,
+        xanchor:"left",
+        pad:{"r": 10, "t": 10},
+        buttons: [{
+            method: 'relayout',
+            args: [{"yaxis.type": "linear"}],
+            label: 'Linear'
+        },{
+            method: 'relayout',
+            args: [{"yaxis.type": "log"}],
+            label: 'Log'
+        }]
+    }]
 
     var layout = {
             title: graph_name,
@@ -199,11 +207,8 @@ function barchart_generator(graph_name, graph_info, id, color, id_type){
     Plotly.newPlot('graph_body'+id, data, layout, config);
     myDiv = document.getElementById('graph_body'+id);
 
-    if(stack_count[graph_name]){
-        drill_down_stacked(myDiv, graph_info, graph_name, id_type)
-    }else{
-        drill_down(myDiv, graph_info, graph_name, id_type);
-    }
+    drill_down_stacked(myDiv, graph_info, graph_name, id_type);
+
 }
 
 
