@@ -93,8 +93,9 @@ def login_DB():
                 return redirect(url_for('dashboards.stats_db'))
             else:
 
-                # Wrong Xnat instance pickle data found
-                session['error'] = "Wrong Server details"
+                # User is forbiden to login
+                session['error'] = "User role assigned is "
+                "forbidden login not allowed"
                 return redirect(url_for('auth.login_DB'))
         else:
 

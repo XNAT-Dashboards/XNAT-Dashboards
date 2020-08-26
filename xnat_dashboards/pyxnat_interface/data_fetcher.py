@@ -108,16 +108,16 @@ class Fetcher:
     def get_resources(self, experiments):
         """Fetches resource details of each experiments
 
-        Looping throug each experiments and fetching their corresponding
+        Looping through each experiments and fetching their corresponding
         resources
 
         Args:
-            experiments (list): Gets the list of experiments with thier IDs
+            experiments (list): List of experiments with thier IDs
                 used for fetching resources
 
         Returns:
-            2D list: Each row of this have resource ID it's corresponding
-            experiment id, it's corresponding project id and it's label
+            2D list: Each row of contains resource ID its corresponding
+            experiment id, project id and label
         """
 
         # Method for fetching resources details, get the list of experiments
@@ -127,13 +127,9 @@ class Fetcher:
         for exp in tqdm(experiments):
 
             res = self.selector.select.experiments(exp['ID']).resources()
-            res_Arr = []
+            res_Arr = list(res)
 
-            # Add resource of different type to res_Arr
-            for r in res:
-                res_Arr.append(r)
-
-            # If their is a resource associated get it's id and label
+            # If their is a resource associated get  id and label
             # If empty then use 'No Data'
 
             if res_Arr == []:

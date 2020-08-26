@@ -23,8 +23,8 @@ def logout():
         del session['server']
     if 'project_visible' in session:
         del session['project_visible']
-    if 'role_exists' in session:
-        del session['role_exists']
+    if 'role_exist' in session:
+        del session['role_exist']
 
     session['error'] = -1
 
@@ -70,8 +70,9 @@ def stats_db():
         project_lists = plotting_object.\
             project_list_generator()
     else:
-        # If server is wrong add error message in session
-        session['error'] = 'Wrong server or data'
+        # If mismatch between login server url and pickle server url
+        # add error message in session
+        session['error'] = 'Wrong server url of pickle or data'
         'not downloaded'
 
     # If error message in session redirect to login page else render the data

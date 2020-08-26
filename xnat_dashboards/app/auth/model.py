@@ -1,6 +1,6 @@
 import json
 from pyxnat import Interface
-from xnat_dashboards import path_creator
+from xnat_dashboards import config as config_file
 
 
 # Function to check if user exist
@@ -16,20 +16,15 @@ def user_exists(username, password, server, ssl):
     Returns:
         int/list: If user exist returns an integer else an empty list.
     """
-    if ssl == 1:
-        verify = True
-    else:
-        verify = False
+    verify = ssl == 1
 
     exists = Interface(
         user=username, password=password, server=server, verify=verify)\
         .select.projects().get()
 
     # If user exists then exists lengths will be more than 0
-    if len(exists) > 0:
-        return len(exists)
-    else:
-        return []
+
+    return len(exists) if len(exists) > 0 else []
 
 
 # Get user role config file
@@ -44,7 +39,7 @@ def user_role_config(username):
         default user role if not assigned is guest, if user
         is assigned a forbidden role then return False
     """
-    with open(path_creator.get_dashboard_config_path()) as json_file:
+    with open(config_file.DASHBOARD_CONFIG_PATH) as json_file:
         config = json.load(json_file)['roles_config']
 
     # If user role exist
@@ -68,7 +63,7 @@ def login_urls():
         default user role if not assigned is guest, if user
         is assigned a forbidden role then return False
     """
-    with open(path_creator.get_dashboard_config_path()) as json_file:
+    with open(config_file.DASHBOARD_CONFIG_PATH) as json_file:
         url_list = json.load(json_file)['login_urls']
 
     return url_list

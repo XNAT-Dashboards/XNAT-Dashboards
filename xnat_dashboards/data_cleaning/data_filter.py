@@ -15,7 +15,9 @@ class DataFilter:
         info (list): list of project, subjects, exp., scans
         role (str): role of the user.
         project_visible (list): list of projects that is visible
-        resources (list, optional): List of resources and Default as None.
+            by default it will show no project details.
+        resources (list, optional): List of resources and by default
+            it will be skipped and no graph of resources will be added.
     """
     def __init__(
             self, username, info, role, project_visible=[],
@@ -184,13 +186,13 @@ class DataFilter:
 
 
 class DataFilterPP(DataFilter):
-    """GetInfoPP processes the for per project view.
+    """DataFilterPP processes the for per project view.
 
     It first checks whether the project should be
     visible to users.
     Then sends the data to data formatter which
     format the data then ordering is done using the
-    GetInfoPP
+    DataFilterPP
 
     Args:
         GetInfo (GetInfo): It inherits GetInfo.
@@ -199,7 +201,8 @@ class DataFilterPP(DataFilter):
         project_id (str): ID of project in per project view.
         role (str): role of the user.
         project_visible (list): list of projects that is visible
-        resources (list, optional): List of resources and Default as None.
+        resources (list, optional): List of resources and by default
+            it will be skipped and no graph of resources will be added.
     """
 
     def __init__(

@@ -1,11 +1,10 @@
 from xnat_dashboards.app import app
-from xnat_dashboards import path_creator
+from xnat_dashboards import config
 import os
 
-path_creator.set_pickle_path(os.path.abspath(
-    'xnat_dashboards/config/general.pickle'))
-path_creator.set_dashboard_config_path(os.path.abspath(
-    'xnat_dashboards/config/dashboard_config.json'))
+config.PICKLE_PATH = os.path.abspath('xnat_dashboards/config/general.pickle')
+config.DASHBOARD_CONFIG_PATH = os.path.abspath(
+    'xnat_dashboards/config/dashboard_config.json')
 
 
 def test_login_db():

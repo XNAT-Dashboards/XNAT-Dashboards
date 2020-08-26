@@ -1,10 +1,9 @@
 from xnat_dashboards.app.dashboards import model as model_dash
 from xnat_dashboards.app.auth import model as model_auth
-from xnat_dashboards import path_creator
+from xnat_dashboards import config
 
 
-path_creator.set_dashboard_config_path(
-    'xnat_dashboards/config/dashboard_config.json')
+config.DASHBOARD_CONFIG_PATH = 'xnat_dashboards/config/dashboard_config.json'
 
 
 def test_user_exists(mocker):

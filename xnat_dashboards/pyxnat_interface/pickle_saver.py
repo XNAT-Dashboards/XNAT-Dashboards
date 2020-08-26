@@ -1,7 +1,7 @@
 import pickle
 from datetime import datetime
 import os
-from xnat_dashboards import path_creator
+from xnat_dashboards import config as config_file
 from xnat_dashboards.bbrc import data_fetcher as data_fetcher_b
 from xnat_dashboards.pyxnat_interface import data_fetcher
 
@@ -26,7 +26,7 @@ class PickleSaver:
 
     def __init__(self, config, skip=False):
 
-        # skip argument tell that whether to download resources
+        # skip argument tell that whether to fetch information from resources
         # In case you want a quick look of xnat dashboard or you don't want
         # graphs related to resources use skip as True
         self.fetcher = data_fetcher.Fetcher(config=config)
@@ -51,7 +51,7 @@ class PickleSaver:
             **longitudinal_data:** Longitudinal Data.\n
         """
         # Fetch all resources, session, scans, projects, subjects
-        file_exist = os.path.isfile(path_creator.get_pickle_path())
+        file_exist = os.path.isfile(config_file.PICKLE_PATH)
 
         # Create a temporary dict for longitudinal data
         user_data = {}
@@ -62,7 +62,7 @@ class PickleSaver:
         if file_exist:
 
             with open(
-                    path_creator.get_pickle_path(),
+                    config_file.PICKLE_PATH,
                     'rb') as handle:
                 user_data = pickle.load(handle)
 
@@ -79,8 +79,21 @@ class PickleSaver:
         if not self.skip:
             data_res = self.fetcher.get_resources(
                 data_pro_sub_exp_sc['experiments'])
-            extra_resources = self.fetcher_bbrc.get_resource(
-                data_pro_sub_exp_sc['experiments'])
+
+            # Check if bbrc resource label exist if they exist then
+            # set the bbrc flag as True and fetch resource data else don't
+
+            bbrc_flag = False
+            for resource in data_res:
+                if resource[3] == 'BBRC_VALIDATOR':
+                    bbrc_flag = True
+                    break
+
+            if bbrc_flag:
+                extra_resources = self.fetcher_bbrc.get_resource(
+                    data_pro_sub_exp_sc['experiments'])
+            else:
+                extra_resources = None
 
         # Call method for formatting the longitudinal data from raw saved data
         if not self.skip:
@@ -94,7 +107,7 @@ class PickleSaver:
 
         # Save all the data to pickle
         with open(
-                path_creator.get_pickle_path(),
+                config_file.PICKLE_PATH,
                 'wb') as handle:
 
             if not self.skip:
@@ -112,13 +125,14 @@ class PickleSaver:
                     {
                         'server': self.server,
                         'info': data_pro_sub_exp_sc,
+                        'resources': None,
                         'longitudinal_data': longitudinal_data
                     },
                     handle, protocol=pickle.HIGHEST_PROTOCOL)
 
         print(
             "Pickle file successfully saved at",
-            path_creator.get_pickle_path())
+            config_file.PICKLE_PATH)
 
     def longitudinal_data_processing(
             self, data_pro_sub_exp_sc, user_data, data_res=None):
@@ -137,7 +151,7 @@ class PickleSaver:
                 previous longitudinal data is already present
             data_res (dict, optional): This provide resource details
                 if user skip the resource fetching option then defaults
-                to None.
+                to None and no resources data will be added in pickle.
 
         Returns:
             dict:  Longitudinal data if ran first time then only single
@@ -148,30 +162,33 @@ class PickleSaver:
         now = datetime.now()
         dt = now.strftime("%d/%m/%Y")
 
-        # Create the format of data to be saved
-        projects_number = {'list': {dt: []}}
-        subjects_number = {'list': {dt: []}}
-        experiments_number = {'list': {dt: []}}
-        scans_number = {'list': {dt: []}}
+        l_data = {}
 
-        projects_number['count'] = {dt: len(data_pro_sub_exp_sc['projects'])}
-        subjects_number['count'] = {dt: len(data_pro_sub_exp_sc['subjects'])}
-        experiments_number['count'] =\
-            {dt: len(data_pro_sub_exp_sc['experiments'])}
+        if 'longitudinal_data' in user_data:
+            l_data = user_data['longitudinal_data']
 
-        scans_number['count'] = {dt: len(data_pro_sub_exp_sc['scans'])}
+        graph_names = ['Projects', 'Subjects', 'Experiments', 'Scans']
+        key_names = ['projects', 'subjects', 'experiments', 'scans']
 
-        for project in data_pro_sub_exp_sc['projects']:
-            projects_number['list'][dt].append(project['id'])
+        for id in range(0, len(graph_names)):
 
-        for subject in data_pro_sub_exp_sc['subjects']:
-            subjects_number['list'][dt].append(subject['ID'])
+            graph_number = {'list': {dt: []}}
+            graph_number['count'] = {
+                dt: len(data_pro_sub_exp_sc[key_names[id]])}
 
-        for experiment in data_pro_sub_exp_sc['experiments']:
-            experiments_number['list'][dt].append(experiment['ID'])
+            for graph in data_pro_sub_exp_sc[key_names[id]]:
+                if key_names[id] == 'projects':
+                    graph_number['list'][dt].append(graph['id'])
+                else:
+                    graph_number['list'][dt].append(graph['ID'])
 
-        for scan in data_pro_sub_exp_sc['scans']:
-            scans_number['list'][dt].append(scan['ID'])
+            if user_data == {}:
+                l_data[graph_names[id]] = {
+                    'list': graph_number['list'],
+                    'count': graph_number['count']}
+            else:
+                l_data[graph_names[id]]['list'].update(graph_number['list'])
+                l_data[graph_names[id]]['count'].update(graph_number['count'])
 
         # Resource data processing
         if not self.skip:
@@ -183,37 +200,16 @@ class PickleSaver:
                         str(resource[1]) + '  ' + str(resource[2]))
 
             resource_number['count'] = {dt: len(resource_number['list'][dt])}
+        else:
+            resource_number = {'list': {}, 'count': {}}
 
         if user_data == {}:
-
-            # If user_data is {} then this is the first time data
-            # is being fetched thus create empty dict with normal formatting
-
-            user_data['Projects'] = {'list': {}, 'count': {}}
-            user_data['Subjects'] = {'list': {}, 'count': {}}
-            user_data['Experiments'] = {'list': {}, 'count': {}}
-            user_data['Scans'] = {'list': {}, 'count': {}}
-            user_data['Resources'] = {'list': {}, 'count': {}}
-
+            l_data['Resources'] = {
+                'list': resource_number['list'],
+                'count': resource_number['count']}
         else:
-
-            # Data is already present and use the longitudinal data from
-            # the file and update the details of current data
-            user_data = user_data['longitudinal_data']
-
-        user_data['Projects']['list'].update(projects_number['list'])
-        user_data['Subjects']['list'].update(subjects_number['list'])
-        user_data['Experiments']['list'].update(experiments_number['list'])
-        user_data['Scans']['list'].update(scans_number['list'])
-
-        user_data['Projects']['count'].update(projects_number['count'])
-        user_data['Subjects']['count'].update(subjects_number['count'])
-        user_data['Experiments']['count'].update(
-            experiments_number['count'])
-        user_data['Scans']['count'].update(scans_number['count'])
-
-        if not self.skip:
-            user_data['Resources']['count'].update(resource_number['count'])
+            l_data['Resources']['list'].update(resource_number['list'])
+            l_data['Resources']['count'].update(resource_number['count'])
 
         '''
         Returns the formatted data
@@ -224,4 +220,4 @@ class PickleSaver:
             }
         }
         '''
-        return user_data
+        return l_data

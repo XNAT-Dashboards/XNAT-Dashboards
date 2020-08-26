@@ -300,9 +300,10 @@ class Formatter:
 
         Args:
             resources ( list, optional): Each resource have it's corrs.
-                ID, project ID, label and experiemnt id. Defaults to None.
+                ID, project ID, label and experiemnt id and by default
+            it will be skipped and no graph of resources will be added.
             project_id (String, optional): For per project view, the project id
-                Defaults to None.
+                by default it will not return any project details.
 
         Returns:
             dict/int: If resource exist then a dict with the corresponding data
@@ -404,7 +405,8 @@ class Formatter:
             x_new (str): The new name which will be shown on X axis of graph
             extra (str, optional): Add another value to be concatenated
                 in x_axis, when click on graph occurs. Useful when
-                the x_axis values are not unique. Defaults to None.
+                the x_axis values are not unique and by default will not
+                be used for concatenation.
 
         Returns:
             Dict: For each graph this format is used
@@ -676,7 +678,8 @@ class FormatterPP(Formatter):
         details and removing extra information for per project view.
 
         Args:
-            resources (list, optional): List of resources.
+            resources (list, optional): List of resources and by default
+            it will be skipped and no graph of resources will be added.
         Returns:
             dict/int: If no resource data present then return -1 else
             For each graph this format is used

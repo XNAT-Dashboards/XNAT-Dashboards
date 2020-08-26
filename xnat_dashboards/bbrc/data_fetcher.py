@@ -34,7 +34,7 @@ class Fetcher:
             used for fetching resources
 
         Returns:
-            2D list: Each row of this have experiment id it's corresponding
+            2D list: Each row of this have experiment id its corresponding
             project id, Whether BBRC data exist and Archiving details as dict
             if exists
         """
@@ -43,30 +43,63 @@ class Fetcher:
 
         for exp in tqdm(experiments):
 
+            session_details = []
             # Check whether 'BBRC Validator' type resource exists
             # for the experiment
 
             BBRC_VALIDATOR = self.selector.select.experiment(
                 exp['ID']).resource('BBRC_VALIDATOR')
-            exists = 'Exists' if BBRC_VALIDATOR.exists() else 'No Exists'
-
+            exists = BBRC_VALIDATOR.exists()
             # If exist then further process and check whether archiving
             # validator exist if exist then get the test json and if not
             # exists then Index error will be thrown and place 0 instead
             if exists:
                 try:
-                    resource_bbrc_validator.append([
+                    session_details = [
                         exp['project'],
                         exp['ID'],
                         exists,
                         self.tests_resource(
-                            BBRC_VALIDATOR, 'ArchivingValidator')])
+                            BBRC_VALIDATOR, 'ArchivingValidator')]
                 except IndexError:
-                    resource_bbrc_validator.append(
-                        [exp['project'], exp['ID'], exists, 0])
+                    session_details = [exp['project'], exp['ID'], exists, 0]
             else:
-                resource_bbrc_validator.append([
-                    exp['project'], exp['ID'], exists, 0])
+                session_details = [
+                    exp['project'], exp['ID'], exists, 0]
+
+            # Fetching free surfer details
+
+            fs = self.selector.select.experiment(
+                exp['ID']).resource('FREESURFER6')
+
+            fs_exists = fs.exists()
+            session_details.append(fs_exists)
+
+            if fs_exists:
+                try:
+                    log_file = list(fs.files('*recon-all.log'))[0]
+                    log_content = self.selector.get(log_file._uri).text
+                    # Fetch the index of time using this string + its length
+                    target_str = '#@#%# recon-all-run-time-hours '
+                    index = log_content.find(target_str)
+                    target = index+len(target_str)
+                    # Some log files have 'recon-all -s' after time and
+                    # some log files have 'Info:' after time.
+                    # If 'Info:' exist then use this index else 'recon-all'
+                    target_end_second = log_content.find('recon-all -s')
+                    target_end_first = log_content.find(
+                        'INFO: touching notification file')
+                    if target_end_first == -1:
+                        time_diff = log_content[target:target_end_second]
+                    else:
+                        time_diff = log_content[target:target_end_first]
+                    session_details.append(time_diff)
+                except IndexError:
+                    session_details.append('-1')
+            else:
+                session_details.append('-1')
+
+            resource_bbrc_validator.append(session_details)
 
         return resource_bbrc_validator
 

@@ -1,6 +1,8 @@
 from xnat_dashboards.data_cleaning import data_formatter
+from xnat_dashboards.bbrc import data_formatter as data_formatter_b
 
 formatter_object_connected = data_formatter.Formatter()
+formatter_object_connected_b = data_formatter_b.Formatter()
 
 
 def test_get_projects_details():
@@ -180,32 +182,42 @@ def test_get_resources_details():
         'p1', 's1', 'r1', {
             'version': 'v1',
             'HasUsableT1': {'has_passed': True},
-            'IsAcquisitionDateConsistent': {'has_passed': True}}],
+            'IsAcquisitionDateConsistent':
+            {'has_passed': True, 'data': '2020-12-19'}}, 'Exists', '34.3\n'],
         ['p2', 's1', 'r3', {
             'version': 'v1',
             'HasUsableT1': {'has_passed': True},
-            'IsAcquisitionDateConsistent': {'has_passed': True}}],
-        ['p2', 's2', 'r3', {'version': 'v3'}],
-        ['p2', 's2', 'r3', 0],
+            'IsAcquisitionDateConsistent':
+            {'has_passed': True, 'data': '2020-11-10'}}, 'Not Exists', '-1'],
+        ['p2', 's2', 'r3', {'version': 'v3'}, 'Exists', '1.4\n'],
+        ['p2', 's2', 'r3', 0, 'Not Exists', '-1'],
         ['p3', 's1', 'r6', {
             'version': 'v2',
             'HasUsableT1': {'has_passed': True},
-            'IsAcquisitionDateConsistent': {'has_passed': True}}],
+            'IsAcquisitionDateConsistent':
+            {'has_passed': True, 'data': '2020-9-20'}}, 'Not Exists', '-1'],
         ['p1', 's2', 'r8', {
             'version': 'v1',
             'HasUsableT1': {'has_passed': True},
-            'IsAcquisitionDateConsistent': {'has_passed': True}}],
+            'IsAcquisitionDateConsistent':
+            {'has_passed': True, 'data': '2020-10-21'}}, 'Exists', '4.3\n'],
         ['p1', 's3', 'r9', {
             'version': 'v2',
             'HasUsableT1': {'has_passed': True},
-            'IsAcquisitionDateConsistent': {'has_passed': True}}],
+            'IsAcquisitionDateConsistent':
+            {'has_passed': True, 'data': '2020-08-22'}}, 'Not Exists', '-1'],
         ['p1', 's4', 'r10', {
             'version': 'v3',
             'HasUsableT1': {'has_passed': True},
-            'IsAcquisitionDateConsistent': {'has_passed': True}}]]
+            'IsAcquisitionDateConsistent':
+            {'has_passed': True, 'data': '2020-9-25'}}, 'Exists', '3.3\n']]
 
     resource_details = formatter_object_connected.get_resources_details(
         resources)
 
+    resource_details_b = formatter_object_connected_b.get_resource_details(
+        resources_bbrc)
+
+    assert len(resource_details_b) == 7
     assert type(resource_details) == dict
     assert len(resource_details) == 2

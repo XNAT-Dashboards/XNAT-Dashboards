@@ -25,3 +25,7 @@ SECRET_KEY = "secret"
 
 # Disable sorting of keys
 JSON_SORT_KEYS = False
+
+DASHBOARD_CONFIG_PATH = ''
+
+PICKLE_PATH = ''
