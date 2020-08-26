@@ -63,7 +63,7 @@ def login_DB():
         for server in servers_list:
 
             if server_name == server['name']:
-                print(server)
+
                 server_url = server['url']
                 ssl = server['verify']
 

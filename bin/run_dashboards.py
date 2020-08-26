@@ -51,7 +51,6 @@ if __name__ == "__main__":
         # Change localhost url or port here
 
     try:
-        print(args['port'])
         app.run(host=args['url'], port=args['port'], debug=args['debug'])
     except socket.gaierror:
         print("Wrong server url provided to run the application")
