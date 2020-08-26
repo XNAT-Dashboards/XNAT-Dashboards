@@ -79,8 +79,21 @@ class PickleSaver:
         if not self.skip:
             data_res = self.fetcher.get_resources(
                 data_pro_sub_exp_sc['experiments'])
-            extra_resources = self.fetcher_bbrc.get_resource(
-                data_pro_sub_exp_sc['experiments'])
+
+            # Check if bbrc resource label exist if they exist then
+            # set the bbrc flag as True and fetch resource data else don't
+
+            bbrc_flag = False
+            for resource in data_res:
+                if resource[3] == 'BBRC_VALIDATOR':
+                    bbrc_flag = True
+                    break
+
+            if bbrc_flag:
+                extra_resources = self.fetcher_bbrc.get_resource(
+                    data_pro_sub_exp_sc['experiments'])
+            else:
+                extra_resources = None
 
         # Call method for formatting the longitudinal data from raw saved data
         if not self.skip:

@@ -47,7 +47,7 @@ class GraphGenerator:
         self.data_ordered = self.info.get_info()
 
         # Check whether extra resources are present in the data
-        if 'extra_resources' in data:
+        if 'extra_resources' in data and data['extra_resources'] is not None:
             self.data_ordered.update(
                 data_filter_b.DataFilter(
                     role, project_visible,
@@ -314,7 +314,7 @@ class GraphGeneratorPP(GraphGenerator):
         self.role = role
         self.data_ordered = info_obj.get_per_project_view()
 
-        if 'extra_resources' in data:
+        if 'extra_resources' in data and data['extra_resources'] is not None:
 
             self.data_ordered.update(
                 data_filter_b.DataFilterPP(
