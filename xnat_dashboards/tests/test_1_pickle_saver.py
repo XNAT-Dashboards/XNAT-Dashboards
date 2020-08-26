@@ -37,4 +37,4 @@ def test_save_and_user(mocker):
     assert type(data) == dict
     assert type(data['info']) == dict
     assert type(data['resources']) == dict
-    assert type(data['extra_resources']) == dict
+    assert data['extra_resources'] is None
