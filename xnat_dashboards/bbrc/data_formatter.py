@@ -1,6 +1,8 @@
 from datetime import date
 import pandas as pd
 from xnat_dashboards.data_cleaning import data_formatter
+import warnings
+warnings.filterwarnings("ignore")
 
 
 class Formatter:
@@ -134,7 +136,7 @@ class Formatter:
                 'Version Distribution': version, 'BBRC validator': bbrc_exists,
                 'Consistent Acquisition Date': consistent_acq_date,
                 'Free Surfer': free_surfer_exists,
-                'Time Difference FreeSurfer': time_diff}
+                'Freesurfer end and start hour difference': time_diff}
 
     def diff_dates(self, resources_bbrc, experiments_data, project_id):
         """Method for calculating date difference.
@@ -201,10 +203,7 @@ class Formatter:
         df_acq_insert_date['diff'] = df_acq_insert_date.apply(
             lambda x: self.dates_diff_calc(x['acq_date'], x['date']), axis=1)
 
-        # Code to formate the dataframe for frontend
-        df_diff = df_acq_insert_date
-
-        diff_test = df_diff[['ID', 'diff']].rename(
+        diff_test = df_acq_insert_date[['ID', 'diff']].rename(
             columns={'ID': 'count'})
         per_df_series = diff_test.groupby('diff')['count'].apply(list)
         per_df = diff_test.groupby('diff').count()

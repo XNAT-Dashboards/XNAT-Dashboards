@@ -197,9 +197,9 @@
             "visibility": ["admin"],
             "color":"#16ffeb"
         },
-        "Time Difference FreeSurfer":{
+        "Freesurfer end and start hour difference":{
             "type": "line",
-            "description": "Difference between the freesurfer start and end time.",
+            "description": "Difference between the freesurfer start and end time in hours.",
             "visibility": ["admin"],
             "color":"#16ffeb"
         },

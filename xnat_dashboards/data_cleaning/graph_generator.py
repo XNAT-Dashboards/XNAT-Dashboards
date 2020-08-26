@@ -358,7 +358,10 @@ class GraphGeneratorPP(GraphGenerator):
 
             array_1d.append({final_json: graph_data[final_json]})
             counter = counter + 1
-            if counter == 2 or length_check == len(graph_data) - 1:
+
+            # Check if we have filled 2 columns or are at the end
+            # of the graphs list
+            if counter == 2 or length_check == len(graph_data) - 2:
                 counter = 0
                 array_2d.append(array_1d)
                 array_1d = []
