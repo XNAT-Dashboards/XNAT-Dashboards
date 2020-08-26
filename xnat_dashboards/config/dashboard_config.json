@@ -202,6 +202,24 @@
             "description": "Difference between the freesurfer start and end time.",
             "visibility": ["admin"],
             "color":"#16ffeb"
+        },
+        "Experiments Proportions":{
+            "type": "pie",
+            "description": "Number of experiments that each subject have.",
+            "visibility": ["admin"],
+            "color":"#16ffeb"
+        },
+        "Scans Proportions":{
+            "type": "pie",
+            "description": "Number of scans that each subject have.",
+            "visibility": ["admin"],
+            "color":"#16ffeb"
+        },
+        "Session resource count/Project":{
+            "type": "bar",
+            "description": "Number of scans that each subject have.",
+            "visibility": ["admin"],
+            "color":"#16ffeb"
         }
     },
     "login_urls":

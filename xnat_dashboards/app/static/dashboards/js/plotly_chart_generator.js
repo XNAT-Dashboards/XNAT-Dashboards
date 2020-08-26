@@ -21,7 +21,8 @@ stack_count = {"Stats": false,
                "UsableT1": false,
                "Archiving Validator": false,
                "Version Distribution": false,
-               "BBRC validator": false};
+               "BBRC validator": false,
+               "Session resource count/Project": true};
 
 function chart_generator(json){
 
@@ -95,7 +96,6 @@ function getRandomColor() {
 function barchart_generator(graph_name, graph_info, id, color, id_type){
 
     if(stack_count[graph_name]){
-        
         data = []
 
         x_axis = []

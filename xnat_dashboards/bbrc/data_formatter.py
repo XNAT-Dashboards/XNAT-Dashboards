@@ -123,6 +123,12 @@ class Formatter:
                 columns={'time diff': 'count'}).set_index(
                 'Session').to_dict()
 
+        list_se = df_free_surfer[
+            df_free_surfer['time diff'] != 'No Data']['Session'].to_list()
+        time_diff['list'] = {key: [key] for key in list_se}
+
+        time_diff['id_type'] = 'experiment'
+
         return {'UsableT1': usable_t1,
                 'Archiving Validator': archiving_valid,
                 'Version Distribution': version, 'BBRC validator': bbrc_exists,
