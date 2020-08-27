@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
     if args['pickle'] is None or args['config'] is None:
         logging.error(
-            "Please provide path, name to both pickle and"
+            "   Please provide path, name to both pickle and "
             "dashboard configuraion file")
     else:
         # Path to configuration and pickle files
@@ -52,11 +52,11 @@ if __name__ == "__main__":
         config.PICKLE_PATH = os.path.abspath(args['pickle'])
         # Change localhost url or port here
 
-    try:
-        app.run(host=args['url'], port=args['port'], debug=args['debug'])
-    except socket.gaierror:
-        logging.error("Wrong server url provided to run the application")
-    except PermissionError:
-        logging.error(
-            "Port number is not correct please check whether "
-            "port number is an integer")
+        try:
+            app.run(host=args['url'], port=args['port'], debug=args['debug'])
+        except socket.gaierror:
+            logging.error("  Wrong server url provided to run the application")
+        except PermissionError:
+            logging.error(
+                "   Port number is not correct please check whether "
+                "port number is an integer")
