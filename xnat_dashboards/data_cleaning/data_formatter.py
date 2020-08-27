@@ -6,7 +6,7 @@ class Formatter:
     """Formatting Class.
 
     This class contains method that are used for formatting the data fetched
-    from the pickle and sent to GetInfo class
+    from the pickle and sent to DataFilter class
 
     """
     def get_projects_details(self, projects):
@@ -307,10 +307,10 @@ class Formatter:
         """Resource processing
 
         This method process the resources that are saved as in pickle file.
-
+        it generates the required format for each plot.
 
         Args:
-            resources ( list, optional): Each resource have it's corrs.
+            resources ( list, optional): Each resource have its corrs.
                 ID, project ID, label and experiemnt id and by default
             it will be skipped and no graph of resources will be added.
             project_id (String, optional): For per project view, the project id
@@ -375,7 +375,7 @@ class Formatter:
             df, 'label', 'session')
         resource_type_ps['id_type'] = 'experiment'
 
-        # Code for stacked Number number of experiments with common
+        # Code for number of experiments having common
         # number of resources for each project
 
         pro_exp_list = [[item[0], item[1]] for item in resources]
@@ -383,6 +383,10 @@ class Formatter:
         pro_exp_df = pd.DataFrame(
             pro_exp_list, columns=['project', 'session'])
 
+        # Create a Dataframe that have 3 columns where
+        # 1st column: project_x will have projects
+        # 2nd column: session will have session details
+        # 3rd column: project_y will have count of resources
         pro_exp_count = pro_exp_df.groupby('session').count().reset_index()
         project_session = pro_exp_df.drop_duplicates(subset="session")
         resource_count_df = pd.merge(
@@ -391,6 +395,8 @@ class Formatter:
         resource_count_df['project_y'] = resource_count_df[
             'project_y'].astype(str) + ' Resources/Session'
 
+        # Send the above created data frome to dict_generator_per_view_stacked
+        # This will create the format required for stacked plot
         resource_count_dict = self.dict_generator_per_view_stacked(
             resource_count_df, 'project_x', 'project_y', 'session')
         resource_count_dict['id_type'] = 'experiment'
@@ -590,7 +596,7 @@ class FormatterPP(Formatter):
     """Formatting Class for per project view.
 
     This class contains method that are used for formatting the data fetched
-    from the pickle and sent to GetInfoPP class.
+    from the pickle and sent to DataFilter class.
 
     Args:
         Formatter (Formatter): Inherits formatter class.

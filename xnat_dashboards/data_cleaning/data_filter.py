@@ -7,8 +7,8 @@ class DataFilter:
     that should not be visible to user based on role.
 
     It then sends the data to data formatter which
-    format the data then ordering is done using the
-    GetInfo
+    format the data, then ordering is done using the
+    DataFilter
 
     Args:
         username (str): Username
@@ -32,9 +32,9 @@ class DataFilter:
         self.filter_projects(info, resources)
 
     def filter_projects(self, info_f, resources):
-        """This methods filters project, subject, scans and
-        experiments based on project id that should be visible
-        to user.
+        """This methods filters project, subject, scans,
+        experiments and resources using project ids based
+        on roles assigned to user.
 
         Args:
             info_f (dict): dict of projects, subjects, experiments and
@@ -105,7 +105,8 @@ class DataFilter:
     def graphs_reordering(self):
 
         """
-        This reorder the data as per requirements.
+        This reorder the data as per requirements that is
+        if needed user can reorder and then return the dict.
 
         Returns:
             dict: data information that belongs to the
@@ -175,12 +176,12 @@ class DataFilter:
         return self.formatter_object.get_projects_details_specific(
             self.info['projects'], self.username)
 
-    def get_info(self):
+    def get_overview(self):
         """This sends data back to Graph Generator class.
 
         Returns:
-            dict: This returns a dict with all the information regarding
-                overview page.
+            dict: This returns a dict with all the information, that is
+                graphs, counters,
         """
         return self.graphs_reordering()
 
@@ -195,7 +196,7 @@ class DataFilterPP(DataFilter):
     DataFilterPP
 
     Args:
-        GetInfo (GetInfo): It inherits GetInfo.
+        DataFilter (DataFilter): It inherits DataFilter.
         username (str): Username
         info (list): list of project, subjects, exp., scans
         project_id (str): ID of project in per project view.
@@ -226,8 +227,8 @@ class DataFilterPP(DataFilter):
     def graphs_reordering_pp(self):
 
         """
-        This preprocessor makes the final dictionary with each key being
-        a part in graph view or a data view.
+        This preprocessor makes the dictionary with each key being
+        used to create plots or other frontend stats.
 
         This checks which information to be sent to frontend per project
         view.
@@ -287,8 +288,8 @@ class DataFilterPP(DataFilter):
 
     def get_per_project_view(self):
         """
-        This sends the data to Graph per project view by first getting
-        data from pre processor.
+        This sends the data to Graph per project view, first getting
+        data from graph reordering.
 
         return:
             dict/None: It sends dict if the project have information,

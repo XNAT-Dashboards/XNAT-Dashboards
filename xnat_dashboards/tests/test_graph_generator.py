@@ -17,7 +17,7 @@ def create_mocker(
         'xnat_dashboards.data_cleaning.data_filter.DataFilter.get_project_list',
         return_value=return_get_project_list)
     mocker.patch(
-        'xnat_dashboards.data_cleaning.data_filter.DataFilter.get_info',
+        'xnat_dashboards.data_cleaning.data_filter.DataFilter.get_overview',
         return_value=data['info'])
 
     graph_object = graph_generator.GraphGenerator(

@@ -30,8 +30,7 @@ class DataFilter:
     def resources_preprocessor(self, resources_bbrc):
         """
         This is used to filter resources and bbrc resources
-        based on project id that should be visible
-        to user.
+        using project ids based on roles assigned to user.
         Args:
             resources_bbrc (list): list of bbrc resources
         Returns:
@@ -76,7 +75,7 @@ class DataFilter:
 
         return final_json_dict
 
-    def get_info(self):
+    def get_overview(self):
         """This sends data back to Graph Generator class present in
         pyxnat interface.
 
@@ -127,8 +126,8 @@ class DataFilterPP(DataFilter):
     def graphs_reordering_pp(self):
 
         """
-        This preprocessor makes the final dictionary with each key being
-        a part in graph view or a data view.
+        This preprocessor makes the dictionary with each key being
+        used to create plots or other frontend stats.
 
         This checks which information to be sent to frontend per project
         view.
@@ -167,7 +166,7 @@ class DataFilterPP(DataFilter):
     def get_per_project_view(self):
         """
         This sends the data to Graph per project view by first getting
-        data from pre processor.
+        data from graph_reordering.
 
         return:
             dict/None: It sends dict if the project have information,

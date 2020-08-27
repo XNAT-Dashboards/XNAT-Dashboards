@@ -49,7 +49,7 @@ def test_info(mocker):
         mocker, 'testUser', info, 'guest',
         resources=['p1', 'res'])
 
-    assert isinstance(info_object.get_info(), dict)  # Dict
+    assert isinstance(info_object.get_overview(), dict)  # Dict
     assert len(info) == 5     # Currently 15 dicts to be returned
 
 
