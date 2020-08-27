@@ -176,7 +176,7 @@ def test_get_resources_details():
         resources)
 
     assert type(resource_details) == dict
-    assert len(resource_details) == 2
+    assert len(resource_details) == 3
 
     resources_bbrc = [[
         'p1', 's1', 'r1', {
@@ -220,4 +220,4 @@ def test_get_resources_details():
 
     assert len(resource_details_b) == 7
     assert type(resource_details) == dict
-    assert len(resource_details) == 2
+    assert len(resource_details) == 3
