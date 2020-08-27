@@ -24,7 +24,7 @@ class PickleSaver:
             Skip: Used by methods for skipping resource details
     """
 
-    def __init__(self, config, skip=False):
+    def __init__(self, config):
 
         # skip argument tell that whether to fetch information from resources
         # In case you want a quick look of xnat dashboard or you don't want
@@ -32,7 +32,7 @@ class PickleSaver:
         self.fetcher = data_fetcher.Fetcher(config=config)
         self.fetcher_bbrc = data_fetcher_b.Fetcher(config=config)
         self.server = self.fetcher.selector._server
-        self.skip = skip
+
         self.save()
 
     def save(self):
@@ -74,68 +74,56 @@ class PickleSaver:
                             "different form the provided server URL")
                         return -1
 
+        print("Fetching projects, subjects, experiments, and scans data\n")
         data_pro_sub_exp_sc = self.fetcher.get_instance_details()
 
-        if not self.skip:
-            data_res = self.fetcher.get_resources(
+        print("Fetching resources\n")
+        data_res = self.fetcher.get_resources(
+            data_pro_sub_exp_sc['experiments'])
+
+        # Check if bbrc resource label exist if they exist then
+        # set the bbrc flag as True and fetch resource data else don't
+
+        bbrc_flag = False
+        for resource in data_res:
+            if resource[3] == 'BBRC_VALIDATOR':
+                bbrc_flag = True
+                break
+
+        if bbrc_flag:
+            print("Fetching BBRC resources")
+            extra_resources = self.fetcher_bbrc.get_resource(
                 data_pro_sub_exp_sc['experiments'])
-
-            # Check if bbrc resource label exist if they exist then
-            # set the bbrc flag as True and fetch resource data else don't
-
-            bbrc_flag = False
-            for resource in data_res:
-                if resource[3] == 'BBRC_VALIDATOR':
-                    bbrc_flag = True
-                    break
-
-            if bbrc_flag:
-                extra_resources = self.fetcher_bbrc.get_resource(
-                    data_pro_sub_exp_sc['experiments'])
-            else:
-                extra_resources = None
-
-        # Call method for formatting the longitudinal data from raw saved data
-        if not self.skip:
-            longitudinal_data = self.longitudinal_data_processing(
-                data_pro_sub_exp_sc, user_data, data_res
-            )
         else:
-            longitudinal_data = self.longitudinal_data_processing(
-                data_pro_sub_exp_sc, user_data
-            )
+            extra_resources = None
+
+        print("Processing longitudinal data")
+        # Call method for formatting the longitudinal data from raw saved data
+        longitudinal_data = self.longitudinal_data_processing(
+            data_pro_sub_exp_sc, user_data, data_res
+        )
 
         # Save all the data to pickle
         with open(
                 config_file.PICKLE_PATH,
                 'wb') as handle:
 
-            if not self.skip:
-                pickle.dump(
-                    {
-                        'server': self.server,
-                        'info': data_pro_sub_exp_sc,
-                        'resources': data_res,
-                        'extra_resources': extra_resources,
-                        'longitudinal_data': longitudinal_data
-                    },
-                    handle, protocol=pickle.HIGHEST_PROTOCOL)
-            else:
-                pickle.dump(
-                    {
-                        'server': self.server,
-                        'info': data_pro_sub_exp_sc,
-                        'resources': None,
-                        'longitudinal_data': longitudinal_data
-                    },
-                    handle, protocol=pickle.HIGHEST_PROTOCOL)
+            pickle.dump(
+                {
+                    'server': self.server,
+                    'info': data_pro_sub_exp_sc,
+                    'resources': data_res,
+                    'extra_resources': extra_resources,
+                    'longitudinal_data': longitudinal_data
+                },
+                handle, protocol=pickle.HIGHEST_PROTOCOL)
 
         print(
-            "Pickle file successfully saved at",
+            "Pickle file successfully saved at: ",
             config_file.PICKLE_PATH)
 
     def longitudinal_data_processing(
-            self, data_pro_sub_exp_sc, user_data, data_res=None):
+            self, data_pro_sub_exp_sc, user_data, data_res):
         """This method is use to save longitudinal data.
 
         This saves longitudinal data of projects, subjects, experiments,
@@ -190,18 +178,14 @@ class PickleSaver:
                 l_data[graph_names[id]]['list'].update(graph_number['list'])
                 l_data[graph_names[id]]['count'].update(graph_number['count'])
 
-        # Resource data processing
-        if not self.skip:
-            resource_number = {'list': {dt: []}}
+        resource_number = {'list': {dt: []}}
 
-            for resource in data_res:
-                if resource[2] != 'No Data':
-                    resource_number['list'][dt].append(
-                        str(resource[1]) + '  ' + str(resource[2]))
+        for resource in data_res:
+            if resource[2] != 'No Data':
+                resource_number['list'][dt].append(
+                    str(resource[1]) + '  ' + str(resource[2]))
 
-            resource_number['count'] = {dt: len(resource_number['list'][dt])}
-        else:
-            resource_number = {'list': {}, 'count': {}}
+        resource_number['count'] = {dt: len(resource_number['list'][dt])}
 
         if user_data == {}:
             l_data['Resources'] = {
