@@ -45,7 +45,7 @@ if __name__ == "__main__":
     if args['pickle'] is None or args['config'] is None:
         logging.error(
             "   Please provide path, name to both pickle and "
-            "dashboard configuraion file")
+            "dashboard configuration file")
     else:
         # Path to configuration and pickle files
         config.DASHBOARD_CONFIG_PATH = os.path.abspath(args['config'])
