@@ -286,7 +286,6 @@
         server_o = '{{server}}';
     </script>
     <script src="/static/dashboards/js/plotly_chart_generator.js"></script>
-    <script src="/static/dashboards/js/graph_descriptor.js"></script>
     {% for row in graph_data%}
         {% for graph_column in row%}
             <script>
@@ -294,7 +293,6 @@
             </script>
         {%endfor%}
     {%endfor%}
-    <script src="/static/dashboards/js/per_project.js"></script>
     <!-- Js include End -->
 </body>
 

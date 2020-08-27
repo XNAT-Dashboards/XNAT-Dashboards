@@ -4,7 +4,9 @@ from xnat_dashboards.app import app
 from xnat_dashboards import config
 import os
 import socket
+import logging
 import argparse
+
 
 """
 This file is used for starting the server it takes 2 file paths
@@ -41,7 +43,7 @@ args = vars(ap.parse_args())
 if __name__ == "__main__":
 
     if args['pickle'] is None or args['config'] is None:
-        print(
+        logging.error(
             "Please provide path, name to both pickle and"
             "dashboard configuraion file")
     else:
@@ -51,11 +53,10 @@ if __name__ == "__main__":
         # Change localhost url or port here
 
     try:
-        print(args['port'])
         app.run(host=args['url'], port=args['port'], debug=args['debug'])
     except socket.gaierror:
-        print("Wrong server url provided to run the application")
+        logging.error("Wrong server url provided to run the application")
     except PermissionError:
-        print(
+        logging.error(
             "Port number is not correct please check whether "
             "port number is an integer")

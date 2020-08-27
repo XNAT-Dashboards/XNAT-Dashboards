@@ -24,7 +24,7 @@
             "color":"#7394CB"
         },
         "Sessions types/Project": {
-            "type": "bar",
+            "type": "stacked_bar",
             "description": "Number of sessions types for each visible project",
             "visibility": ["admin", "superuser", "guest"],
             "color":"#E1974E"
@@ -197,9 +197,27 @@
             "visibility": ["admin"],
             "color":"#16ffeb"
         },
-        "Time Difference FreeSurfer":{
+        "Freesurfer end and start hour difference":{
             "type": "line",
-            "description": "Difference between the freesurfer start and end time.",
+            "description": "Difference between the freesurfer start and end time in hours.",
+            "visibility": ["admin"],
+            "color":"#16ffeb"
+        },
+        "Experiments Proportions":{
+            "type": "pie",
+            "description": "Graph shows how many subjects have 1, 2 or n number of experiments",
+            "visibility": ["admin", "superuser"],
+            "color":"#16ffeb"
+        },
+        "Scans Proportions":{
+            "type": "pie",
+            "description": "Graph shows how many subjects have 1, 2 or n number of scans",
+            "visibility": ["admin", "superuser"],
+            "color":"#16ffeb"
+        },
+        "Session resource count/Project":{
+            "type": "stacked_bar",
+            "description": "Graphs shows how many sessions have 1,2 or n number of resources",
             "visibility": ["admin"],
             "color":"#16ffeb"
         }
@@ -211,7 +229,6 @@
             "url": "https://central.xnat.org",
             "verify": 1
             }
-
         ]  
     
 }

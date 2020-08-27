@@ -29,13 +29,13 @@ def test_get_projects_details():
 
     project_details = formatter_object_connected.get_projects_details(projects)
 
-    assert type(project_details['Number of Projects']) == int
-    assert type(project_details['Projects Visibility']) == dict
+    assert isinstance(project_details['Number of Projects'], int)
+    assert isinstance(project_details['Projects Visibility'], dict)
 
     project_details_specific = formatter_object_connected.\
         get_projects_details_specific(projects, 'testUser')
 
-    assert type(project_details_specific) == dict
+    assert isinstance(project_details_specific, dict)
 
 
 def test_get_subjects_details():
@@ -68,11 +68,11 @@ def test_get_subjects_details():
     subject_details = formatter_object_connected.get_subjects_details(
         subjects)
 
-    assert type(subject_details['Number of Subjects']) == int
-    assert type(subject_details['Age Range']) == dict
-    assert type(subject_details['Gender']) == dict
-    assert type(subject_details['Handedness']) == dict
-    assert type(subject_details['Subjects/Project']) == dict
+    assert isinstance(subject_details['Number of Subjects'], int)
+    assert isinstance(subject_details['Age Range'], dict)
+    assert isinstance(subject_details['Gender'], dict)
+    assert isinstance(subject_details['Handedness'], dict)
+    assert isinstance(subject_details['Subjects/Project'], dict)
 
 
 def test_get_experiments_details():
@@ -109,10 +109,10 @@ def test_get_experiments_details():
     experiment_details = formatter_object_connected.get_experiments_details(
         experiments)
 
-    assert type(experiment_details['Number of Experiments']) == int
-    assert type(experiment_details['Experiments/Subject']) == dict
-    assert type(experiment_details['Experiments/Project']) == dict
-    assert type(experiment_details['Experiment Types']) == dict
+    assert isinstance(experiment_details['Number of Experiments'], int)
+    assert isinstance(experiment_details['Experiments/Subject'], dict)
+    assert isinstance(experiment_details['Experiments/Project'], dict)
+    assert isinstance(experiment_details['Experiment Types'], dict)
 
 
 def test_get_scans_details():
@@ -148,12 +148,12 @@ def test_get_scans_details():
     scans_details = formatter_object_connected.get_scans_details(
         scans)
 
-    assert type(scans_details['Number of Scans']) == int
-    assert type(scans_details['Scans/Subject']) == dict
-    assert type(scans_details['Scans/Project']) == dict
-    assert type(scans_details['Scans Quality']) == dict
-    assert type(scans_details['Scan Types']) == dict
-    assert type(scans_details['XSI Scan Types']) == dict
+    assert isinstance(scans_details['Number of Scans'], int)
+    assert isinstance(scans_details['Scans/Subject'], dict)
+    assert isinstance(scans_details['Scans/Project'], dict)
+    assert isinstance(scans_details['Scans Quality'],  dict)
+    assert isinstance(scans_details['Scan Types'], dict)
+    assert isinstance(scans_details['XSI Scan Types'], dict)
 
 
 def test_get_resources_details():
@@ -175,8 +175,8 @@ def test_get_resources_details():
     resource_details = formatter_object_connected.get_resources_details(
         resources)
 
-    assert type(resource_details) == dict
-    assert len(resource_details) == 2
+    assert isinstance(resource_details, dict)
+    assert len(resource_details) == 3
 
     resources_bbrc = [[
         'p1', 's1', 'r1', {
@@ -219,5 +219,5 @@ def test_get_resources_details():
         resources_bbrc)
 
     assert len(resource_details_b) == 7
-    assert type(resource_details) == dict
-    assert len(resource_details) == 2
+    assert isinstance(resource_details, dict)
+    assert len(resource_details) == 3

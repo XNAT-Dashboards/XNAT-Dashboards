@@ -78,7 +78,7 @@ class GraphGenerator:
         with open(config.DASHBOARD_CONFIG_PATH) as json_file:
             self.graph_config = json.load(json_file)['graph_config']
 
-        if type(data) != dict:
+        if not isinstance(data, dict):
             return data
 
         # Skip data that don't require plotting
@@ -126,17 +126,27 @@ class GraphGenerator:
 
         graph_data = self.graph_pre_processor(self.data_ordered)
 
-        if type(graph_data) == int:
+        if isinstance(graph_data, int):
             return graph_data
 
         for final_json in graph_data:
             if final_json == 'Stats' or\
                 self.role\
                     not in self.graph_config[final_json]['visibility']:
+
+                # Condition if last key is skipped then add
+                # the single column array in graph_data
+                if length_check == len(graph_data) - 1:
+                    array_2d.append(array_1d)
+
                 length_check = length_check + 1
                 continue
+
             array_1d.append({final_json: graph_data[final_json]})
             counter = counter + 1
+
+            # Check if we have filled 2 columns or are at the end
+            # of the graphs list
             if counter == 2 or length_check == len(graph_data) - 1:
                 counter = 0
                 array_2d.append(array_1d)
@@ -188,7 +198,7 @@ class GraphGenerator:
         # List of projects that user is a owner, collab or member
         list_data_ow_co_me = self.project_list_ow_co_me
 
-        if type(list_data) == int:
+        if isinstance(list_data, int):
             return list_data
 
         # Create a 2d array with each row containing 4 columns and each column
@@ -260,6 +270,11 @@ class GraphGenerator:
         for final_json in lg_data:
             if self.role\
                     not in self.graph_config[final_json]['visibility']:
+                length_check = length_check + 1
+
+                if length_check == len(lg_data) - 1:
+                    array_2d.append(array_1d)
+
                 length_check = length_check + 1
                 continue
 
@@ -340,7 +355,7 @@ class GraphGeneratorPP(GraphGenerator):
         # Do the required addition using pre processor
         graph_data = self.graph_pre_processor(self.data_ordered)
 
-        if type(graph_data) == int or graph_data is None:
+        if isinstance(graph_data, int) or graph_data is None:
             return graph_data
 
         skip_data = ['Stats', 'test_grid', 'Project details']
@@ -353,11 +368,18 @@ class GraphGeneratorPP(GraphGenerator):
                     self.role not in\
                     self.graph_config[final_json]['visibility']:
 
+                # Condition if last key is skipped then add
+                # the single column array in graph_data
+                if length_check == len(graph_data) - 1:
+                    array_2d.append(array_1d)
                 length_check = length_check + 1
                 continue
 
             array_1d.append({final_json: graph_data[final_json]})
             counter = counter + 1
+
+            # Check if we have filled 2 columns or are at the end
+            # of the graphs list
             if counter == 2 or length_check == len(graph_data) - 1:
                 counter = 0
                 array_2d.append(array_1d)

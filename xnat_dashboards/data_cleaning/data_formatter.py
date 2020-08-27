@@ -29,7 +29,7 @@ class Formatter:
             "count" represent the count for the x_value and "list" represent
             "Different values" for x_values
         """
-        if type(projects) == int:
+        if isinstance(projects, int):
             return projects
 
         projects_details = {}
@@ -63,7 +63,7 @@ class Formatter:
             "count" represent the count for the x_value and "list" represent
             "Different values" for x_values
         """
-        if type(subjects_data) == int:
+        if isinstance(subjects_data, int):
             return subjects_data
 
         subjects_details = {}
@@ -149,7 +149,7 @@ class Formatter:
             "count" represent the count for the x_value and "list" represent
             "Different values" for x_values
         """
-        if type(experiments) == int:
+        if isinstance(experiments, int):
             return experiments
 
         experiments_details = {}
@@ -178,12 +178,17 @@ class Formatter:
             experiments, 'project', 'xsiType', 'ID')
         experiments_types_per_project['id_type'] = 'experiment'
 
+        prop_exp = self.proportion_graphs(
+            experiments, 'subject_ID', 'ID', 'Subjects with ', ' experiment')
+        prop_exp['id_type'] = 'subject'
+
         experiments_details['Sessions types/Project'] =\
             experiments_types_per_project
 
         experiments_details['Experiments/Subject'] = experiments_per_subject
         experiments_details['Experiment Types'] = experiment_type
         experiments_details['Experiments/Project'] = experiments_per_project
+        experiments_details['Experiments Proportions'] = prop_exp
 
         return experiments_details
 
@@ -208,7 +213,7 @@ class Formatter:
             "count" represent the count for the x_value and "list" represent
             "Different values" for x_values
         """
-        if type(scans) == int:
+        if isinstance(scans, int):
             return scans
 
         scan_quality = self.dict_generator_overview(
@@ -242,6 +247,11 @@ class Formatter:
             'ID', 'sps', 'xnat:imagescandata/id')
         scans_per_subject['id_type'] = 'experiment'
 
+        prop_scan = self.proportion_graphs(
+            scans, 'xnat:imagesessiondata/subject_id',
+            'ID', 'Subjects with ', ' scans')
+        prop_scan['id_type'] = 'subject'
+
         scans_details = {}
 
         scans_details['Scans Quality'] = scan_quality
@@ -249,6 +259,7 @@ class Formatter:
         scans_details['XSI Scan Types'] = xsi_type_dict
         scans_details['Scans/Project'] = scans_per_project
         scans_details['Scans/Subject'] = scans_per_subject
+        scans_details['Scans Proportions'] = prop_scan
         scans_details['Number of Scans'] = len(scans)
 
         return scans_details
@@ -364,9 +375,54 @@ class Formatter:
             df, 'label', 'session')
         resource_type_ps['id_type'] = 'experiment'
 
+        # Code for stacked Number number of experiments with common
+        # number of resources for each project
+
+        pro_exp_list = [[item[0], item[1]] for item in resources]
+
+        pro_exp_df = pd.DataFrame(
+            pro_exp_list, columns=['project', 'session'])
+
+        pro_exp_count = pro_exp_df.groupby('session').count().reset_index()
+        project_session = pro_exp_df.drop_duplicates(subset="session")
+        resource_count_df = pd.merge(
+            project_session, pro_exp_count, on='session')
+
+        resource_count_df['project_y'] = resource_count_df[
+            'project_y'].astype(str) + ' Resources/Session'
+
+        resource_count_dict = self.dict_generator_per_view_stacked(
+            resource_count_df, 'project_x', 'project_y', 'session')
+        resource_count_dict['id_type'] = 'experiment'
+
         return {
             'Resources/Project': resource_pp,
-            'Resource Types': resource_types}
+            'Resource Types': resource_types,
+            'Session resource count/Project': resource_count_dict}
+
+    def proportion_graphs(self, data, property_x, property_y, prefix, suffix):
+
+        data_list = [[item[property_x], item[property_y]] for item in data]
+
+        # Create a data frame
+        df = pd.DataFrame(data_list, columns=['per_view', 'count'])
+
+        # Group by property property_x as per_view and count
+        df_proportion = df.groupby(
+            'per_view', as_index=False).count().groupby('count').count()
+
+        # Use count to group by property x
+        df_proportion['list'] = df.groupby(
+            'per_view', as_index=False).count().groupby(
+                'count')['per_view'].apply(list)
+
+        # Add prefix and suffix to count for easy understanding
+        # Eg. Number of subject with 1 experiments
+        # Here prefix is Number of subject with and suffix is experiments
+        # and count is 1
+        df_proportion.index = prefix + df_proportion.index.astype(str) + suffix
+
+        return df_proportion.rename(columns={'per_view': 'count'}).to_dict()
 
     def dict_generator_resources(self, df, x_name, y_name):
         """Generate a dictonary from the data frame of resources
@@ -462,10 +518,7 @@ class Formatter:
              Dict: For each graph this format is used
                 {"count": {"x": "y"}, "list": {"x": "list"}}
         """
-        per_list = []
-
-        for item in data:
-            per_list.append([item[property_x], item[property_y]])
+        per_list = [[item[property_x], item[property_y]] for item in data]
 
         per_df = pd.DataFrame(per_list, columns=[x_new, 'count'])
         per_df_series = per_df.groupby(x_new)['count'].apply(list)
@@ -494,15 +547,16 @@ class Formatter:
             list:{prop_x:{prop_y:prop_z_list}}
             }
         """
+        if isinstance(data, list):
 
-        per_list = []
+            per_list = [[
+                item[property_x], item[property_y],
+                item[property_z]] for item in data]
 
-        for item in data:
-            per_list.append(
-                [item[property_x], item[property_y], item[property_z]])
-
-        per_df = pd.DataFrame(
-            per_list, columns=[property_x, property_y, property_z])
+            per_df = pd.DataFrame(
+                per_list, columns=[property_x, property_y, property_z])
+        else:
+            per_df = data
 
         per_df_series = per_df.groupby(
             [property_x, property_y])[property_z].apply(list)
@@ -692,7 +746,10 @@ class FormatterPP(Formatter):
         resources_out = super().get_resources_details(
             resources, self.project_id)
 
-        if type(resources_out) != int and 'Resources/Project' in resources_out:
-            del resources_out['Resources/Project']
+        if not isinstance(resources_out, int):
+            if 'Resources/Project' in resources_out:
+                del resources_out['Resources/Project']
+            if 'Session resource count/Project' in resources_out:
+                del resources_out['Session resource count/Project']
 
         return resources_out

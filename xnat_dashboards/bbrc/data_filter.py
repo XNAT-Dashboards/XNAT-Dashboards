@@ -55,7 +55,7 @@ class DataFilter:
             self.resources_bbrc)
 
         if resources is not None and\
-                type(resources) != int:
+                not isinstance(resources, int):
 
             final_json_dict.update(resources)
 
@@ -133,7 +133,7 @@ class DataFilterPP(DataFilter):
         test_grid = self.formatter_object_per_project.generate_test_grid_bbrc(
             self.resources_bbrc, self.project_id)
 
-        if type(resources) != int and resources is not None:
+        if not isinstance(resources, int) and resources is not None:
             final_json_dict.update(resources)
 
         diff_dates = self.formatter_object_per_project.diff_dates(

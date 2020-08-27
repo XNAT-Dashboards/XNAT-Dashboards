@@ -38,8 +38,7 @@ def test_graph_generator(mocker):
     graph_object = create_mocker(
         mocker, 'testUser', data, 'p2', 'guest', ['p1'])
 
-    assert type(graph_object.graph_generator()) == list
-    assert type(graph_object.graph_generator()[0]) == list
-    assert type(graph_object.graph_generator()[1]) == dict
-    assert type(graph_object.graph_generator()[2]) == dict
-
+    assert isinstance(graph_object.graph_generator(), list)
+    assert isinstance(graph_object.graph_generator()[0], list)
+    assert isinstance(graph_object.graph_generator()[1], dict)
+    assert isinstance(graph_object.graph_generator()[2], dict)

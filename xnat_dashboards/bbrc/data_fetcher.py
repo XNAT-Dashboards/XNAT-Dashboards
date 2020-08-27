@@ -1,6 +1,14 @@
 from tqdm import tqdm
 import pyxnat
 import json
+import logging
+import urllib3
+
+
+# Logging format
+logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
+# Remove warnings
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 class Fetcher:
@@ -15,7 +23,7 @@ class Fetcher:
         """Fetcher destructor
         Disconnect from the server after pyxnat object is destroyed
         """
-        print("Disconnected")
+        logging.info("Disconnected from XNAT instance")
         self.selector.disconnect()
 
     def get_resource(self, experiments):

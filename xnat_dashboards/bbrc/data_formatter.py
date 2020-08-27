@@ -1,6 +1,11 @@
 from datetime import date
 import pandas as pd
 from xnat_dashboards.data_cleaning import data_formatter
+import urllib3
+
+# Remove warnings
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+pd.options.mode.chained_assignment = None
 
 
 class Formatter:
@@ -123,12 +128,18 @@ class Formatter:
                 columns={'time diff': 'count'}).set_index(
                 'Session').to_dict()
 
+        list_se = df_free_surfer[
+            df_free_surfer['time diff'] != 'No Data']['Session'].to_list()
+        time_diff['list'] = {key: [key] for key in list_se}
+
+        time_diff['id_type'] = 'experiment'
+
         return {'UsableT1': usable_t1,
                 'Archiving Validator': archiving_valid,
                 'Version Distribution': version, 'BBRC validator': bbrc_exists,
                 'Consistent Acquisition Date': consistent_acq_date,
                 'Free Surfer': free_surfer_exists,
-                'Time Difference FreeSurfer': time_diff}
+                'Freesurfer end and start hour difference': time_diff}
 
     def diff_dates(self, resources_bbrc, experiments_data, project_id):
         """Method for calculating date difference.
@@ -195,10 +206,7 @@ class Formatter:
         df_acq_insert_date['diff'] = df_acq_insert_date.apply(
             lambda x: self.dates_diff_calc(x['acq_date'], x['date']), axis=1)
 
-        # Code to formate the dataframe for frontend
-        df_diff = df_acq_insert_date
-
-        diff_test = df_diff[['ID', 'diff']].rename(
+        diff_test = df_acq_insert_date[['ID', 'diff']].rename(
             columns={'ID': 'count'})
         per_df_series = diff_test.groupby('diff')['count'].apply(list)
         per_df = diff_test.groupby('diff').count()
@@ -257,7 +265,7 @@ class Formatter:
         # except the values present in extra list
         for resource in resources_bbrc:
 
-            if resource[2] and type(resource[3]) != int:
+            if resource[2] and not isinstance(resource[3], int):
 
                 for test in resource[3]:
                     if test not in tests_union\
@@ -269,7 +277,7 @@ class Formatter:
         # For resource[3] which is a dict of tests
         for resource in resources_bbrc:
 
-            if resource[2] and type(resource[3]) != int:
+            if resource[2] and not isinstance(resource[3], int):
                 test_list = []
                 test_list = [resource[1]]
 
