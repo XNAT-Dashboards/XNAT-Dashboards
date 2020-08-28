@@ -118,9 +118,9 @@ class Fetcher:
                         time_diff = log_content[target:target_end_first]
                     session_details.append(time_diff)
                 except IndexError:
-                    session_details.append('-1')
+                    session_details.append(None)
             else:
-                session_details.append('-1')
+                session_details.append(None)
 
             resource_bbrc_validator.append(session_details)
 
