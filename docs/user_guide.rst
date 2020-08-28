@@ -101,38 +101,18 @@ Downloading data is the process of fetching data from the XNAT instance and savi
 it as pickle. This saved pickcle is used for plotting graphs and other
 informations of the XNAT instance from which it fetched data.
 
-Create a python file with following content and name it download_data.py
+Script to download_data as pickle file::
 
-.. code-block:: python
+    download_data.py -i 'path to xnat config file' -o 'path where the pickle will be saved'
 
-    from xnat_dashboards.pyxnat_interface import pickle_saver
-    from xnat_dashboards import path_creator
-    import os
-    import argparse
+Example
 
+- Pickle file to be generated at xnat_dashboards/config/name.pickle
+- XNAT configuration file is present at xnat_dashboards/config/name.cfg
 
-    ap = argparse.ArgumentParser()
-    ap.add_argument(
-        "-i", "--cfg", type=str,
-        help="Path to pyxnat configuration file")
-    ap.add_argument(
-        "-o", "--pickle", type=str,
-        help="Path where the pickle file will be created")
+Script to download_data as pickle file::
 
-    args = vars(ap.parse_args())
-
-    if __name__ == "__main__":
-
-        path_creator.set_pickle_path(
-            os.path.abspath(args['pickle']))
-
-        pickle_saver.PickleSaver(args['cfg'], True)
-
-Run the python file to download the data
-
-Script::
-
-    python download_data.py -i 'path to xnat config file' -o 'path where the pickle will be saved'
+    download_data.py -i 'xnat_dashboards/config/name.cfg' -o 'xnat_dashboards/config/name.pickle'
 
 Starting the server
 -------------------
@@ -140,43 +120,26 @@ Starting the server
 Running the server is the process of assigning path of pickle, dashboard configuration file,
 assigning url and port number to the flask server.
 
-Create a python file with following content and name it as server.py
-
-.. code-block:: python
-
-    from xnat_dashboards.app import app
-    from xnat_dashboards import path_creator
-    import os
-    import argparse
-
-    ap = argparse.ArgumentParser()
-    ap.add_argument(
-        "-p", "--pickle", type=str,
-        help="Path to saved pickle file")
-    ap.add_argument(
-        "-c", "--config", type=str,
-        help="Path to configuration file")
-    args = vars(ap.parse_args())
-
-
-    if __name__ == "__main__":
-
-        if args['pickle'] is None or args['config'] is None:
-            print("Please provide path to both pickle and config file")
-        else:
-            # Path to configuration and pickle files
-            path_creator.set_dashboard_config_path(
-                os.path.abspath(args['config']))
-            path_creator.set_pickle_path(
-                os.path.abspath(args['pickle']))
-            # Change localhost url or port here
-            app.run(debug=True)
-
-Run this python file to start the server.
-
 Script::
 
-    python server.py -p 'path to saved pickle file' -c 'path to dashboard configuration file'
+    run_dashboards.py -p 'path to saved pickle file' -c 'path to dashboard configuration file'
 
 This above script will start the server on this `URL <localhost:5000>`_
 
+
+- Change server URL default as 'localhost'
+- Change server port default as '5000'
+- Change debug as 1 default as 0
+
+Extra Arguments::
+
+    run_dashboards.py -p 'path to saved pickle file' -c 'path to dashboard configuration file' -port 'port number' -url 'URL' -debug 1
+
+Example:
+
+- Pickle file is present at xnat_dashboards/config/name.pickle
+- Dashboard configuration file is present at xnat_dashboards/config/name.json
+
+Script to download_data as pickle file::
+
+    run_dashboards.py -p 'xnat_dashboards/config/name.pickle' -c 'xnat_dashboards/config/name.json'
