@@ -266,20 +266,11 @@ $('#tests_table tbody td').on('click', function(){
     if(data_l == '' || data_l == [] || data_l == 'undefined'){
 
     }else{
-        data_l = JSON.parse(data_l);
-        if(typeof data_l == 'string' || data_l.length == 0){
-            html_output = data_l + '<br/>'
-        }else if(data_l.length == 1){
-            html_output = data_l[0] + '<br/>'
-        }else{
-            for(data in data_l){
-                html_output = html_output + data + ': ';
-                html_output = html_output + data_l[data] + '<br/>'
-                console.log(typeof data_l[data])
-            }
-        }
+        
+        html_output = data_l;
+            
         $('#test').modal('toggle');
-        $('#testTitle').append("Error");
+        $('#testTitle').append("Status");
         $('#modalTest').append(html_output);
         html_output = '';
     }

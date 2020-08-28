@@ -42,19 +42,61 @@
                                 {% if data[0] == true %}
                                 <td class="green_bg">
                                     <div style="display: none;">
-                                        {{data[1] | tojson}}
+                                        <!-- Loop throug each data present in dictionary or in jinja called mapping-->
+                                        {% if data[1] is mapping %}
+                                            {% for data_vi in data[1] %}
+                                            {{data_vi }} ->
+                                            {{data[1][data_vi]}} <br/>
+                                            {% endfor %}
+                                        <!-- If data[1] is of type string just print it-->
+                                        {% elif data[1] is string %}
+                                            {{ data[1] }}
+                                        <!-- Loop throug each data present in list -->
+                                        {% else %}
+                                            {% for data_vi in data[1] %}
+                                                {{data_vi }} <br/>
+                                            {% endfor %}
+                                        {% endif %}
                                     </div>
                                 </td>
                                 {% elif data[0] == false%}
                                 <td class="red_bg">
                                     <div style="display: none;">
-                                        {{data[1] | tojson}}
+                                        <!-- Loop throug each data present in dictionary or in jinja called mapping-->
+                                        {% if data[1] is mapping %}
+                                            {% for data_vi in data[1] %}
+                                            {{data_vi }} ->
+                                            {{data[1][data_vi]}} <br/>
+                                            {% endfor %}
+                                        <!-- If data[1] is of type string just print it-->
+                                        {% elif data[1] is string %}
+                                            {{ data[1] }}
+                                        <!-- Loop throug each data present in list -->
+                                        {% else %}
+                                            {% for data_vi in data[1] %}
+                                                {{data_vi }} <br/>
+                                            {% endfor %}
+                                        {% endif %}
                                     </div>
                                 </td>
                                 {% elif data[0] == None%}
                                 <td class="grey_bg">
                                     <div style="display: none;">
-                                        {{data[1] | tojson}}
+                                        <!-- Loop throug each data present in dictionary or in jinja called mapping-->
+                                        {% if data[1] is mapping %}
+                                            {% for data_vi in data[1] %}
+                                            {{data_vi }} ->
+                                            {{data[1][data_vi]}} <br/>
+                                            {% endfor %}
+                                        <!-- If data[1] is of type string just print it-->
+                                        {% elif data[1] is string %}
+                                            {{ data[1] }}
+                                        <!-- Loop throug each data present in list -->
+                                        {% else %}
+                                            {% for data_vi in data[1] %}
+                                                {{data_vi }} <br/>
+                                            {% endfor %}
+                                        {% endif %}
                                     </div>
                                 </td>
                                 {% elif data[0] == 'version' %}
@@ -65,7 +107,7 @@
                                 <td class="black_bg"></td>
                                 {% else %}
                                 <td class="stick">
-                                    <a href="{{server}}/app/action/DisplayItemAction/search_value/{{data}}/search_element/xnat:Data/search_field/xnat:imageSessionData.ID" target="_blank">
+                                    <a href="{{server}}/data/experiments/{{data}}?format=html" target="_blank">
                                     {{data}}
                                     </a>
                                 </td>
