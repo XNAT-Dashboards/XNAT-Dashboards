@@ -2,7 +2,21 @@ from xnat_dashboards.bbrc import data_formatter
 
 
 class DataFilter:
+    """
+    It first filter out the bbrc resources based on project ids
+    that should not be visible to user based on role.
 
+    It then sends the data to data formatter which
+    format the data then ordering is done using the
+    DataFilter
+
+    Args:
+        role (str): role of the user.
+        project_visible (list): list of projects that is visible
+            by default it will show no project details.
+        resources_bbrcc (list, optional): List of BBRC resources and by default
+            it will be skipped and no graph of BBRC resources will be added.
+    """
     def __init__(
             self, role, project_visible=[], resources_bbrc=None):
 
@@ -15,9 +29,8 @@ class DataFilter:
 
     def resources_preprocessor(self, resources_bbrc):
         """
-            This is used to filter resources and bbrc resources
-            based on project id that should be visible
-            to user.
+        This is used to filter resources and bbrc resources
+        using project ids based on roles assigned to user.
         Args:
             resources_bbrc (list): list of bbrc resources
         Returns:
@@ -27,7 +40,7 @@ class DataFilter:
         self.resources_bbrc = {}
         resources_bbrc_list = []
 
-        # Loop through each resources and resources bbrc and check it's project
+        # Loop through each resources and resources bbrc and check its project
         # id present for the role or role containting *
 
         if resources_bbrc is not None:
@@ -42,11 +55,12 @@ class DataFilter:
     def graphs_reordering(self):
 
         """
-        This reorder the data as per requirements.
+        This reorder the data as per requirements that is
+        if needed user can reorder and then return the dict.
 
         Returns:
             dict: bbrc resources information that belongs to the
-            project that should be visible as per role and user.
+            project should be visible as per role of the user.
         """
 
         final_json_dict = {}
@@ -61,8 +75,9 @@ class DataFilter:
 
         return final_json_dict
 
-    def get_info(self):
-        """This sends data back to Graph Generator class.
+    def get_overview(self):
+        """This sends data back to Graph Generator class present in
+        pyxnat interface.
 
         Returns:
             dict: This returns a dict with all the information regarding
@@ -76,13 +91,15 @@ class DataFilterPP(DataFilter):
 
     It first checks whether the project should be
     visible to users.
+    if it should be visible then further proceed else return
+    None.
     Then sends the data to data formatter which
     format the data then ordering is done using the
     DataFilterPP
 
     Args:
-        GetInfo (GetInfo): It inherits GetInfo.
-        username (str): Username
+        DataFilter (DataFilter): It inherits DataFilter.
+        experiments (list): List of experiments present in project.
         project_id (str): ID of project in per project view.
         role (str): role of the user.
         project_visible (list): list of projects that is visible
@@ -109,8 +126,8 @@ class DataFilterPP(DataFilter):
     def graphs_reordering_pp(self):
 
         """
-        This preprocessor makes the final dictionary with each key being
-        a part in graph view or a data view.
+        This preprocessor makes the dictionary with each key being
+        used to create plots or other frontend stats.
 
         This checks which information to be sent to frontend per project
         view.
@@ -149,7 +166,7 @@ class DataFilterPP(DataFilter):
     def get_per_project_view(self):
         """
         This sends the data to Graph per project view by first getting
-        data from pre processor.
+        data from graph_reordering.
 
         return:
             dict/None: It sends dict if the project have information,

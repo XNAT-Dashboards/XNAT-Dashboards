@@ -44,14 +44,14 @@ class GraphGenerator:
         self.counter_id = 0
         self.role = role
         self.l_data = data['longitudinal_data']
-        self.data_ordered = self.info.get_info()
+        self.data_ordered = self.info.get_overview()
 
         # Check whether extra resources are present in the data
         if 'extra_resources' in data and data['extra_resources'] is not None:
             self.data_ordered.update(
                 data_filter_b.DataFilter(
                     role, project_visible,
-                    data['extra_resources']).get_info())
+                    data['extra_resources']).get_overview())
 
         self.project_list = projects_data_dict['project_list']
         self.project_list_ow_co_me =\

@@ -6,7 +6,7 @@ class Formatter:
     """Formatting Class.
 
     This class contains method that are used for formatting the data fetched
-    from the pickle and sent to GetInfo class
+    from the pickle and sent to DataFilter class
 
     """
     def get_projects_details(self, projects):
@@ -168,12 +168,6 @@ class Formatter:
             experiments, 'xsiType', 'ID', 'xsiType')
         experiment_type['id_type'] = 'experiment'
 
-        # Experiments per subject information
-
-        experiments_per_subject = self.dict_generator_per_view(
-            experiments, 'subject_ID', 'ID', 'eps')
-        experiments_per_subject['id_type'] = 'experiment'
-
         experiments_types_per_project = self.dict_generator_per_view_stacked(
             experiments, 'project', 'xsiType', 'ID')
         experiments_types_per_project['id_type'] = 'experiment'
@@ -185,7 +179,6 @@ class Formatter:
         experiments_details['Sessions types/Project'] =\
             experiments_types_per_project
 
-        experiments_details['Experiments/Subject'] = experiments_per_subject
         experiments_details['Experiment Types'] = experiment_type
         experiments_details['Experiments/Project'] = experiments_per_project
         experiments_details['Experiments Proportions'] = prop_exp
@@ -240,13 +233,6 @@ class Formatter:
             scans, 'project', 'ID', 'spp', 'xnat:imagescandata/id')
         scans_per_project['id_type'] = 'experiment'
 
-        # Scans per subject information
-
-        scans_per_subject = self.dict_generator_overview(
-            scans, 'xnat:imagesessiondata/subject_id',
-            'ID', 'sps', 'xnat:imagescandata/id')
-        scans_per_subject['id_type'] = 'experiment'
-
         prop_scan = self.proportion_graphs(
             scans, 'xnat:imagesessiondata/subject_id',
             'ID', 'Subjects with ', ' scans')
@@ -258,7 +244,6 @@ class Formatter:
         scans_details['Scan Types'] = type_dict
         scans_details['XSI Scan Types'] = xsi_type_dict
         scans_details['Scans/Project'] = scans_per_project
-        scans_details['Scans/Subject'] = scans_per_subject
         scans_details['Scans Proportions'] = prop_scan
         scans_details['Number of Scans'] = len(scans)
 
@@ -307,10 +292,10 @@ class Formatter:
         """Resource processing
 
         This method process the resources that are saved as in pickle file.
-
+        it generates the required format for each plot.
 
         Args:
-            resources ( list, optional): Each resource have it's corrs.
+            resources ( list, optional): Each resource have its corrs.
                 ID, project ID, label and experiemnt id and by default
             it will be skipped and no graph of resources will be added.
             project_id (String, optional): For per project view, the project id
@@ -375,7 +360,7 @@ class Formatter:
             df, 'label', 'session')
         resource_type_ps['id_type'] = 'experiment'
 
-        # Code for stacked Number number of experiments with common
+        # Code for number of experiments having common
         # number of resources for each project
 
         pro_exp_list = [[item[0], item[1]] for item in resources]
@@ -383,6 +368,10 @@ class Formatter:
         pro_exp_df = pd.DataFrame(
             pro_exp_list, columns=['project', 'session'])
 
+        # Create a Dataframe that have 3 columns where
+        # 1st column: project_x will have projects
+        # 2nd column: session will have session details
+        # 3rd column: project_y will have count of resources
         pro_exp_count = pro_exp_df.groupby('session').count().reset_index()
         project_session = pro_exp_df.drop_duplicates(subset="session")
         resource_count_df = pd.merge(
@@ -391,6 +380,8 @@ class Formatter:
         resource_count_df['project_y'] = resource_count_df[
             'project_y'].astype(str) + ' Resources/Session'
 
+        # Send the above created data frome to dict_generator_per_view_stacked
+        # This will create the format required for stacked plot
         resource_count_dict = self.dict_generator_per_view_stacked(
             resource_count_df, 'project_x', 'project_y', 'session')
         resource_count_dict['id_type'] = 'experiment'
@@ -590,7 +581,7 @@ class FormatterPP(Formatter):
     """Formatting Class for per project view.
 
     This class contains method that are used for formatting the data fetched
-    from the pickle and sent to GetInfoPP class.
+    from the pickle and sent to DataFilter class.
 
     Args:
         Formatter (Formatter): Inherits formatter class.
@@ -674,8 +665,9 @@ class FormatterPP(Formatter):
 
         # Using code from the parent class for processing
         subjects_details = super().get_subjects_details(subjects_data)
+        # Delete Subject/Project plot as this is present in counter of
+        # per project view
         del subjects_details['Subjects/Project']
-        # Delete project information
 
         return subjects_details
 
@@ -698,8 +690,16 @@ class FormatterPP(Formatter):
 
         # Using code from the parent class for processing
         experiments_details = super().get_experiments_details(experiments)
+        # Delete Experiments/Project plot as this is present in counterof
+        # per project view
         del experiments_details['Experiments/Project']
-        # Delete project information
+
+        # Experiments per subject information
+
+        experiments_per_subject = super().dict_generator_per_view(
+            experiments, 'subject_ID', 'ID', 'eps')
+        experiments_per_subject['id_type'] = 'experiment'
+        experiments_details['Experiments/Subject'] = experiments_per_subject
 
         return experiments_details
 
@@ -722,8 +722,18 @@ class FormatterPP(Formatter):
 
         # Using code from the parent class for processing
         scans_details = super().get_scans_details(scans)
+        # Delete Scans/Project plot as this is present in counterof
+        # per project view
         del scans_details['Scans/Project']
-        # Delete project information
+
+        # Scans per subject information
+
+        scans_per_subject = super().dict_generator_overview(
+            scans, 'xnat:imagesessiondata/subject_id',
+            'ID', 'sps', 'xnat:imagescandata/id')
+        scans_per_subject['id_type'] = 'experiment'
+
+        scans_details['Scans/Subject'] = scans_per_subject
 
         return scans_details
 

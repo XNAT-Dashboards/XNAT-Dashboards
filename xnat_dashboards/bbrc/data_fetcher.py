@@ -13,6 +13,18 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class Fetcher:
 
+    """
+    This class is used for fetching resources that are present on
+    BBRC XNAT instances.
+
+    Args:
+        path (String): Path to pyxnat configuration file.
+
+    Attributes:
+        selector: Pyxnat Interface object used in whole class for
+            calling different methods of pyxnat
+    """
+
     def __init__(self, config):
 
         selector = pyxnat.Interface(config=config)
@@ -36,6 +48,9 @@ class Fetcher:
         If archiving validator exist then save the json fetched from validator
         as dict with information of tests. If don't exist then use 'No Data' as
         an identifier.
+
+        Freesurfer log file contains details for how log it ran on an
+        experiment. That is also fetched for creating plots.
 
         Args:
             experiments (list): Gets the list of experiments with thier IDs

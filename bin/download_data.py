@@ -11,10 +11,12 @@ import argparse
 ap = argparse.ArgumentParser()
 ap.add_argument(
     "-i", "--cfg", type=str,
-    help="Path to pyxnat configuration file")
+    help="Path to pyxnat configuration file Example:"
+    " path/dashboard_config.json")
 ap.add_argument(
     "-o", "--pickle", type=str,
-    help="Path where the pickle file will be created")
+    help="Path where the pickle file will be created."
+    " Example: path/test.pickle")
 
 args = vars(ap.parse_args())
 
@@ -23,7 +25,7 @@ if __name__ == "__main__":
 
     if args['pickle'] is None or args['cfg'] is None:
         logging.error(
-            "   Please provide path, to both pickle and "
+            "   Please provide path to both pickle and "
             "xnat configuration file")
     else:
         config_file.PICKLE_PATH = os.path.abspath(args['pickle'])

@@ -9,9 +9,15 @@ pd.options.mode.chained_assignment = None
 
 
 class Formatter:
+    """Formatting Class.
 
+    This class contains method that are used for formatting the
+    BBRC resources data fetched from the pickle and sent to DataFilter class
+
+    """
     def generate_resource_df(self, resources_bbrc, test, value):
-        """A method that generates dataframe for bbrc resources.
+        """A method that generates dataframe from BBRC Validator
+        and Archiving Validator of BBRC resources.
 
         Args:
             resources_bbrc (list): List of BBRC resource
@@ -24,9 +30,14 @@ class Formatter:
         """
 
         resource_processing = []
+        # Resource with index 1 represent Session ID
+        # Resource with index 0 represent Project ID
 
         for resource in resources_bbrc:
-
+            # Resource with index 2 represent BBRC Validator
+            # Resource with index 3 represent data from tests that is
+            # whether a dict or 0, if 0 is present then test for the
+            # sessions are not present
             if resource[3] != 0:
                 if test in resource[3]:
                     resource_processing.append([
@@ -41,6 +52,7 @@ class Formatter:
                     resource[0], resource[1], resource[2], 'Not Exists',
                     'No Data', 'No Data'])
 
+        # Creates the dataframe from the list created
         df = pd.DataFrame(
             resource_processing,
             columns=[
@@ -50,9 +62,24 @@ class Formatter:
         return df
 
     def get_free_surfer_resources(self, resources_bbrc):
+        """A method that generates dataframe form freesurfer
+        of BBRC resources.
 
+        Args:
+            resources_bbrc (list): List of BBRC resource
+
+        Returns:
+            Dataframe: A pandas dataframe with each row showing
+            the free surfer resources information.
+        """
         resource_processing = []
+        # Resource with index 1 represent Session ID
+        # Resource with index 0 represent Project ID
+
         for resource in resources_bbrc:
+            # Resource with index 5 represent whether free surfer
+            # resource is present if -1 is present then free surfer
+            # resource for the session is not present
             if resource[5] != '-1':
                 resource_processing.append([
                     resource[0], resource[1],
@@ -61,6 +88,7 @@ class Formatter:
                 resource_processing.append([
                     resource[0], resource[1], resource[4], 'No Data'])
 
+        # Creates the dataframe from the list created
         df = pd.DataFrame(
             resource_processing,
             columns=[
@@ -70,6 +98,23 @@ class Formatter:
         return df
 
     def get_resource_details(self, resources_bbrc, project_id=None):
+        """
+        This method process the resources that are saved as in pickle file.
+        it generates the required format for each plot.
+
+        Args:
+            resources_bbrc ( list): Each resource have its corrs.
+                ID, project ID, label and experiemnt id.
+            project_id (String, optional): For per project view, the project id
+                by default it will not return any project details.
+
+        Returns:
+            dict/int: If resource exist then a dict with the corresponding data
+                else -1.
+
+            For each graph this format is used
+            {"count": {"x": "y"}, "list": {"x": "list"}}
+        """
         # Generating specifc resource type
         df_usable_t1 = self.generate_resource_df(
             resources_bbrc, 'HasUsableT1', 'has_passed')
@@ -142,11 +187,11 @@ class Formatter:
                 'Freesurfer end and start hour difference': time_diff}
 
     def diff_dates(self, resources_bbrc, experiments_data, project_id):
-        """Method for calculating date difference.
+        """Method for Creating Acquistion and insertion dates difference plot.
 
         It takes 2 dates, one from resource test (acquisition date) and
         another from experiment insert date. It calculates the difference
-        between 2 dates and plot graph for each difference and it's
+        between 2 dates and plot graph for each difference and its
         corresponding experiments
 
         Args:
@@ -218,7 +263,7 @@ class Formatter:
         return per_df.to_dict()
 
     def dates_diff_calc(self, date_1, date_2):
-        """This method calculates different between 2 dates.
+        """This method calculates different between 2 dates strings.
 
         This method takes 2 date string, converts them in datetime
         object and calculate the difference between the 2 date in days
@@ -245,7 +290,8 @@ class Formatter:
             return diff.days
 
     def generate_test_grid_bbrc(self, resources_bbrc, project_id):
-        """Test grid for resource bbrc test.
+        """This method is used to create the data for the
+        test grid.
 
         Args:
             resources_bbrc (list): BBRC resource for each experiments
@@ -299,6 +345,8 @@ class Formatter:
                 if resource[0] == project_id:
                     tests_list.append(test_list)
 
+        # Creats a list of different version of tests that are present
+        # this diff_version list is used in the filtering of test grid
         diff_version = []
 
         for td_v in tests_list:
