@@ -110,7 +110,6 @@ def test_get_experiments_details():
         experiments)
 
     assert isinstance(experiment_details['Number of Experiments'], int)
-    assert isinstance(experiment_details['Experiments/Subject'], dict)
     assert isinstance(experiment_details['Experiments/Project'], dict)
     assert isinstance(experiment_details['Experiment Types'], dict)
 
@@ -149,7 +148,6 @@ def test_get_scans_details():
         scans)
 
     assert isinstance(scans_details['Number of Scans'], int)
-    assert isinstance(scans_details['Scans/Subject'], dict)
     assert isinstance(scans_details['Scans/Project'], dict)
     assert isinstance(scans_details['Scans Quality'],  dict)
     assert isinstance(scans_details['Scan Types'], dict)
