@@ -41,14 +41,14 @@ def login():
                 display_error = session['error']
                 del session['error']
             return render_template(
-                'auth/login.html',
+                'authentication/login.html',
                 error=display_error,
                 servers_list=servers_list)
         else:
             # If there is no error meaning the user is called login
             # page using browser instead of a redirect
             return render_template(
-                'auth/login.html', servers_list=servers_list)
+                'authentication/login.html', servers_list=servers_list)
 
     else:
 
