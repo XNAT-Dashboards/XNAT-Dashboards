@@ -22,8 +22,8 @@ if __name__ == "__main__":
 
     if args['pickle'] is None or args['cfg'] is None:
         print(
-            "Please provide path, to both pickle and"
-            "xnat configuraion file")
+            "Please provide path, to both pickle and "
+            "xnat configuration file")
     else:
         config_file.PICKLE_PATH = os.path.abspath(args['pickle'])
 
