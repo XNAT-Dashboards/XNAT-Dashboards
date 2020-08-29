@@ -205,19 +205,19 @@
         },
         "Experiments Proportions":{
             "type": "pie",
-            "description": "Number of experiments that each subject have.",
-            "visibility": ["admin"],
+            "description": "Graph shows how many subjects have 1, 2 or n number of experiments",
+            "visibility": ["admin", "superuser"],
             "color":"#16ffeb"
         },
         "Scans Proportions":{
             "type": "pie",
-            "description": "Number of scans that each subject have.",
-            "visibility": ["admin"],
+            "description": "Graph shows how many subjects have 1, 2 or n number of scans",
+            "visibility": ["admin", "superuser"],
             "color":"#16ffeb"
         },
         "Session resource count/Project":{
             "type": "stacked_bar",
-            "description": "Number of scans that each subject have.",
+            "description": "Graphs shows how many sessions have 1,2 or n number of resources",
             "visibility": ["admin"],
             "color":"#16ffeb"
         }
