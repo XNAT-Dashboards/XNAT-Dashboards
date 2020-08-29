@@ -4,6 +4,7 @@
 from xnat_dashboards.pyxnat_interface import pickle_saver
 from xnat_dashboards import config as config_file
 import os
+import logging
 import argparse
 
 
@@ -21,8 +22,8 @@ if __name__ == "__main__":
     # Add path to the pickle file
 
     if args['pickle'] is None or args['cfg'] is None:
-        print(
-            "Please provide path, to both pickle and "
+        logging.error(
+            "   Please provide path, to both pickle and "
             "xnat configuration file")
     else:
         config_file.PICKLE_PATH = os.path.abspath(args['pickle'])
