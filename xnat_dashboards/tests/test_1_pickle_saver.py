@@ -34,7 +34,7 @@ def test_save_and_user(mocker):
     with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
-    assert type(data) == dict
-    assert type(data['info']) == dict
-    assert type(data['resources']) == dict
+    assert isinstance(data, dict)
+    assert isinstance(data['info'], dict)
+    assert isinstance(data['resources'], dict)
     assert data['extra_resources'] is None

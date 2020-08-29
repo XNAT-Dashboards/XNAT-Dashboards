@@ -9,13 +9,13 @@ def test_instance_details():
 
     details = fetch_object_connected.get_instance_details()
 
-    assert type(details['projects']) == list
+    assert isinstance(details['projects'], list)
 
-    assert type(details['subjects']) == list
+    assert isinstance(details['subjects'], list)
 
-    assert type(details['experiments']) == list
+    assert isinstance(details['experiments'], list)
 
-    assert type(details['scans']) == list
+    assert isinstance(details['scans'], list)
 
     obj = pyxnat.Interface(
         user="testUser",

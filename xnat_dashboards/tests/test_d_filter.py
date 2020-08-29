@@ -49,7 +49,7 @@ def test_info(mocker):
         mocker, 'testUser', info, 'guest',
         resources=['p1', 'res'])
 
-    assert type(info_object.get_info()) == dict  # Return type should be a dict
+    assert isinstance(info_object.get_info(), dict)  # Dict
     assert len(info) == 5     # Currently 15 dicts to be returned
 
 
@@ -73,4 +73,4 @@ def test_get_project_list(mocker):
         mocker, 'testUser', info, 'guest',
         resources=['p1', 'res'])
 
-    assert type(info_object.get_project_list()) == list
+    assert isinstance(info_object.get_project_list(), list)
