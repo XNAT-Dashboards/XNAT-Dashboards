@@ -127,7 +127,7 @@
         },
         "Archiving Validator": {
             "type": "pie",
-            "description": "Number of session which have archiving validato",
+            "description": "Number of session which have archiving validators",
             "visibility": ["admin"],
             "color":""
         },
