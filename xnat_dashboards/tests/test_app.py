@@ -178,3 +178,21 @@ def test_dashboard(mocker):
     # Get request for overview dashboard with no session details
     response_get = app.test_client().get('dashboard/stats/').status_code
     assert response_get == 302
+
+    # If None is returned from graph generator per project view
+    mocker.patch(
+        'xnat_dashboards.data_cleaning.graph_generator.'
+        'GraphGeneratorPP.graph_generator',
+        return_value=None)
+
+    with app.test_client() as c:
+        with c.session_transaction() as sess:
+            sess['server'] = 'https://central.xnat.org'
+            sess['role_exist'] = 'guest'
+            sess['username'] = 'testUser'
+            sess['project_visible'] = '*'
+
+        # Get request for per project dashboard
+        response_get_pp = c.\
+            get('dashboard/project/CENTRAL_OASIS_CS').status_code
+        assert response_get_pp == 200
