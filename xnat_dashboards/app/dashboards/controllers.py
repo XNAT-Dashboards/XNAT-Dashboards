@@ -28,11 +28,11 @@ def logout():
 
     session['error'] = -1
 
-    return redirect(url_for('auth.login_DB'))
+    return redirect(url_for('auth.login'))
 
 
-@dashboards.route('/db/stats/', methods=['GET'])
-def stats_db():
+@dashboards.route('/stats/', methods=['GET'])
+def stats():
     """This is the overview dashboard route.
 
     First we check whether pickle file have same server details
@@ -46,7 +46,7 @@ def stats_db():
     # If server key doesn't exist return to login page
 
     if 'server' not in session:
-        return redirect(url_for('auth.login_DB'))
+        return redirect(url_for('auth.login'))
 
     data = model.load_users_data(session['server'])
 
@@ -77,7 +77,7 @@ def stats_db():
 
     # If error message in session redirect to login page else render the data
     if 'error' in session:
-        return redirect(url_for('auth.login_DB'))
+        return redirect(url_for('auth.login'))
 
     else:
         project_list = project_lists[0]
@@ -98,8 +98,8 @@ def stats_db():
 
 
 # this route give the details of the project
-@dashboards.route('db/project/<id>', methods=['GET'])
-def project_db(id):
+@dashboards.route('project/<id>', methods=['GET'])
+def project(id):
     """This is the per project dashboard view.
 
     Args:
@@ -109,7 +109,7 @@ def project_db(id):
         route: Project details
     """
     if session['role_exist'] == '':
-        return redirect(url_for('auth.login_DB'))
+        return redirect(url_for('auth.login'))
 
     data = model.load_users_data(session['server'])
 
