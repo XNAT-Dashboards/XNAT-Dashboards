@@ -4,15 +4,15 @@
    contain the root `toctree` directive.
 
 Overview
-===========================================
+========
 
-
-**Date**: |today| **Version**: 0.3
+**Date**: |today| **Version**: 0.3.0
 
 **Useful links**:
+
 `Binary Installers <https://pypi.org/project/xnat_dashboards>`__ |
-`Source Repository <https://gitlab.com/udolf47/xnat_dashboards>`__ |
-`Issues & Ideas <https://gitlab.com/Udolf47/xnat_dashboards/-/issues>`__
+`Source Repository <https://gitlab.com/xnat-dashboards/xnat-dashboards>`__ |
+`Issues & Ideas <https://gitlab.com/xnat-dashboards/xnat-dashboards/-/issues>`__
 
 :mod:`XNAT Dashboards` is an open source, MIT-licenced framework providing a summarized graphical
 interface of `XNAT <http://www.xnat.org>`_ using `PyXNAT <http://www.pyxnat.github.io>`_
@@ -29,9 +29,12 @@ It shows data present on XNAT through graphs using `Plotly.js <https://plotly.co
 graphing library and its backend is developed using `Flask <https://flask.palletsprojects.com/en/1.1.x/>`_ web
 development framework.
 
+GSOC 2020
+=======================
+:doc:`gsoc`
 
 Learn more about Xnat Dashboards
---------------------------------
+================================
 
 * :doc:`installation`
 * :doc:`modules`
