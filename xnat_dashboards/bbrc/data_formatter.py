@@ -1,8 +1,11 @@
 from datetime import date
 import pandas as pd
 from xnat_dashboards.data_cleaning import data_formatter
-import warnings
-warnings.filterwarnings("ignore")
+import urllib3
+
+# Remove warnings
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+pd.options.mode.chained_assignment = None
 
 
 class Formatter:
