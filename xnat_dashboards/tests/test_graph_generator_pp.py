@@ -36,9 +36,10 @@ def test_graph_generator(mocker):
         'resources': {}}
 
     graph_object = create_mocker(
-        mocker, 'testUser', data, 'p2', 'guest', ['p1'])
+        mocker, 'testUser', data, 'p2', 'admin', ['p1'])
 
     assert isinstance(graph_object.graph_generator(), list)
     assert isinstance(graph_object.graph_generator()[0], list)
     assert isinstance(graph_object.graph_generator()[1], dict)
     assert isinstance(graph_object.graph_generator()[2], dict)
+

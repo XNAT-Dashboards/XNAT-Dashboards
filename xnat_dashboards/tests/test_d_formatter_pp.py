@@ -3,6 +3,7 @@ from xnat_dashboards.bbrc import data_formatter as data_formatter_b
 
 
 formatter_object_connected = data_formatter.FormatterPP('p1')
+formatter_object_connected_nop = data_formatter.FormatterPP('noP')
 formatter_object_connected_b = data_formatter_b.Formatter()
 
 
@@ -42,6 +43,9 @@ def test_get_subjects_details():
     subjects = [
         {
             'project': 'p1', 'ID': 'sb1', 'age': 50,
+            'handedness': 'left', 'gender': 'M'},
+        {
+            'project': 'p1', 'ID': 'sb1', 'age': '',
             'handedness': 'left', 'gender': 'M'},
         {
             'project': 'p2', 'ID': 'sb2', 'age': 10,
@@ -138,7 +142,6 @@ def test_get_scans_details():
 def test_get_resources_details():
 
     resource_details = formatter_object_connected.get_resources_details()
-
     assert resource_details is None
 
     resources = [
@@ -149,7 +152,9 @@ def test_get_resources_details():
         ['p2', 's3', 'r5', 'l5'],
         ['p2', 's3', 'r6', 'l6'],
         ['p2', 's1', 'r7', 'l7'],
-        ['p1', 's1', 'r8', 'l8']]
+        ['p1', 's1', 'r8', 'l8'],
+        ['p9', 's5', 'No Data', 'No Data'],
+        ['p9', 's9', 'No Data', 'No Data']]
 
     resource_details = formatter_object_connected.get_resources_details(
         resources)
@@ -157,49 +162,16 @@ def test_get_resources_details():
     assert isinstance(resource_details, dict)
     assert len(resource_details) == 1
 
-    resources_bbrc = [[
-        'p1', 's1', 'r1', {
-            'version': 'v1',
-            'HasUsableT1': {'has_passed': True},
-            'IsAcquisitionDateConsistent':
-            {'has_passed': True, 'data': '2020-12-19'}}, 'Exists', '34.3\n'],
-        ['p2', 's1', 'r3', {
-            'version': 'v1',
-            'HasUsableT1': {'has_passed': True},
-            'IsAcquisitionDateConsistent':
-            {'has_passed': True, 'data': '2020-11-10'}}, 'Not Exists', None],
-        ['p2', 's2', 'r3', {'version': 'v3'}, 'Exists', '1.4\n'],
-        ['p2', 's2', 'r3', 0, 'Not Exists', None],
-        ['p3', 's1', 'r6', {
-            'version': 'v2',
-            'HasUsableT1': {'has_passed': True},
-            'IsAcquisitionDateConsistent':
-            {'has_passed': True, 'data': '2020-9-20'}}, 'Not Exists', None],
-        ['p1', 's2', 'r8', {
-            'version': 'v1',
-            'HasUsableT1': {'has_passed': True},
-            'IsAcquisitionDateConsistent':
-            {'has_passed': True, 'data': '2020-10-21'}}, 'Exists', '4.3\n'],
-        ['p1', 's3', 'r9', {
-            'version': 'v2',
-            'HasUsableT1': {'has_passed': True},
-            'IsAcquisitionDateConsistent':
-            {'has_passed': True, 'data': '2020-08-22'}}, 'Not Exists', None],
-        ['p1', 's4', 'r10', {
-            'version': 'v3',
-            'HasUsableT1': {'has_passed': True},
-            'IsAcquisitionDateConsistent':
-            {'has_passed': True, 'data': '2020-9-25'}}, 'Exists', '3.3\n']]
-
     resource_details = formatter_object_connected.get_resources_details(
         resources)
-
-    resource_details_b = formatter_object_connected_b.get_resource_details(
-        resources_bbrc)
-
-    assert isinstance(resource_details, dict)
     assert len(resource_details) == 1
-    assert len(resource_details_b) == 7
+    assert isinstance(resource_details, dict)
+
+    no_output = formatter_object_connected_nop.get_resources_details(resources)
+    assert no_output == -1
+
+
+def test_bbrc_resources():
 
     experiments = [
         {
@@ -224,7 +196,61 @@ def test_get_resources_details():
             'project': 'p4', 'ID': 's2', 'date': '2020-03-20',
             'xsiType': 't1', 'subject_ID': 'sb3'}]
 
+    resources_bbrc = [[
+        'p1', 's1', 'r1', {
+            'version': 'v1',
+            'HasUsableT1': {'has_passed': True, 'data': {}},
+            'IsAcquisitionDateConsistent':
+            {'has_passed': True, 'data': '2020-12-19'}}, 'Exists', '34.3\n'],
+        ['p2', 's1', 'r3', {
+            'version': 'v1',
+            'HasUsableT1': {'has_passed': True, 'data': {}},
+            'IsAcquisitionDateConsistent':
+            {'has_passed': True, 'data': '2020-11-10'}}, 'Not Exists', None],
+        ['p2', 's2', 'r3', {'version': 'v3'}, 'Exists', '1.4\n'],
+        ['p2', 's2', 'r3', 0, 'Not Exists', None],
+        ['p3', 's1', 'r6', {
+            'version': 'v2',
+            'HasUsableT1': {'has_passed': True, 'data': {}},
+            'IsAcquisitionDateConsistent':
+            {'has_passed': True, 'data': '2020-9-20'}}, 'Not Exists', None],
+        ['p1', 's2', 'r8', {
+            'version': 'v1',
+            'HasUsableT1': {'has_passed': True, 'data': {}},
+            'IsAcquisitionDateConsistent':
+            {'has_passed': True, 'data': '2020-10-21'}}, 'Exists', '4.3\n'],
+        ['p1', 's3', 'r9', {
+            'version': 'v2',
+            'HasUsableT1': {'has_passed': True, 'data': {}},
+            'IsAcquisitionDateConsistent':
+            {'has_passed': True, 'data': '2020-08-22'}}, 'Not Exists', None],
+        ['p1', 's4', 'r10', {
+            'version': 'v3',
+            'HasUsableT1': {'has_passed': True, 'data': {}},
+            'IsAcquisitionDateConsistent':
+            {'has_passed': True, 'data': '2020-9-25'}}, 'Exists', '3.3\n']]
+
+    resource_details_b = formatter_object_connected_b.get_resource_details(
+        resources_bbrc)
+    assert len(resource_details_b) == 7
+
     diff_dates = formatter_object_connected_b.diff_dates(
         resources_bbrc, experiments, 'p1')
 
     assert isinstance(diff_dates, dict)
+
+    # If project id is given
+    resources_details = formatter_object_connected_b.\
+        get_resource_details(resources_bbrc, 'p1')
+    assert isinstance(resources_details, dict)
+
+    # If project id isn't present
+    resource_details = formatter_object_connected_b.\
+        get_resource_details(resources_bbrc, 't')
+
+    assert resource_details == -1
+
+    test_grid = formatter_object_connected_b.generate_test_grid_bbrc(
+        resources_bbrc, 'p1')
+
+    assert isinstance(test_grid, list)

@@ -14,7 +14,8 @@ def create_mocker(
         'xnat_dashboards.data_cleaning.data_filter.DataFilter.__init__',
         return_value=None)
     mocker.patch(
-        'xnat_dashboards.data_cleaning.data_filter.DataFilter.get_project_list',
+        'xnat_dashboards.data_cleaning.data_filter.DataFilter.'
+        'get_project_list',
         return_value=return_get_project_list)
     mocker.patch(
         'xnat_dashboards.data_cleaning.data_filter.DataFilter.get_overview',
@@ -40,18 +41,18 @@ def test_graph_preprocessor(mocker):
     }
 
     graph_object = create_mocker(
-        mocker, 'testUser', data, 'guest', ['*'],
+        mocker, 'testUser', data, 'admin', ['*'],
         {'project_list': ['p1', 'p2'], 'project_list_ow_co_me': ['p3', 'p4']})
     assert isinstance(graph_object.graph_pre_processor(data['info']), dict)
 
     graph_object = create_mocker(
-        mocker, 'testUser', data, 'guest', ["*"],
+        mocker, 'testUser', data, 'admin', ["*"],
         {'project_list': [], 'project_list_ow_co_me': []})
 
     assert isinstance(graph_object.graph_pre_processor(data['info']), dict)
 
     graph_object = create_mocker(
-        mocker, 'testUser', data, 'guest', ["*"],
+        mocker, 'testUser', data, 'admin', ["*"],
         {'project_list': [], 'project_list_ow_co_me': []})
 
     assert graph_object.graph_pre_processor([]) == []
@@ -70,7 +71,7 @@ def test_graph_generator(mocker):
         'longitudinal_data': {}}
 
     graph_object = create_mocker(
-        mocker, 'testUser', data, 'guest', ["*"],
+        mocker, 'testUser', data, 'admin', ["*"],
         {'project_list': ['p1', 'p2'], 'project_list_ow_co_me': ['p3', 'p4']})
 
     assert isinstance(graph_object.graph_generator(), list)
@@ -91,7 +92,7 @@ def test_project_list_generator(mocker):
         'longitudinal_data': {}}
 
     graph_object = create_mocker(
-        mocker, 'testUser', data, 'guest', ['p1'],
+        mocker, 'testUser', data, 'admin', ['p1'],
         {'project_list': ['p1', 'p2'], 'project_list_ow_co_me': ['p3', 'p4']})
 
     project_list = graph_object.project_list_generator()
@@ -100,12 +101,38 @@ def test_project_list_generator(mocker):
     assert isinstance(project_list[1], list)
 
     graph_object = create_mocker(
-        mocker, 'testUser', data, 'guest', ["*"],
+        mocker, 'testUser', data, 'admin', ["*"],
         {'project_list': [], 'project_list_ow_co_me': []})
 
     assert graph_object.project_list_generator() == [[[]], [[]]]
 
     graph_object = create_mocker(
-        mocker, 'testUser', data, 'guest', ["*"],
+        mocker, 'testUser', data, 'admin', ["*"],
         {'project_list': 1, 'project_list_ow_co_me': 1})
     assert graph_object.project_list_generator() == 1
+
+
+def test_graph_generator_longitudinal(mocker):
+
+    gp = {
+        "Projects": {}, "Subjects": {}, "Experiments": {},
+        "Scans": {}, "Resources": {}}
+
+    data = {
+        "info": {
+            "Age Range": {"x1": "y1", "x2": "y2"},
+            "Gender": {"x1": "y1", "x2": "y2"},
+            "Handedness": {"x1": "y1", "x2": "y2"},
+            "Stats": {}},
+        "Experiments/Project": {"x1": "y1", "x2": "y2"},
+        "resources": {},
+        'longitudinal_data': gp}
+
+    graph_object = create_mocker(
+        mocker, 'testUser', data, 'admin', ['p1'],
+        {'project_list': ['p1', 'p2'], 'project_list_ow_co_me': ['p3', 'p4']})
+
+
+    ld = graph_object.graph_generator_longitudinal()
+    print(ld)
+    assert isinstance(ld, list)

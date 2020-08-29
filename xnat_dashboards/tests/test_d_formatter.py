@@ -168,7 +168,9 @@ def test_get_resources_details():
         ['p2', 's3', 'r5', 'l5'],
         ['p2', 's3', 'r6', 'l6'],
         ['p2', 's1', 'r7', 'l7'],
-        ['p1', 's1', 'r8', 'l8']]
+        ['p1', 's1', 'r8', 'l8'],
+        ['p9', 's5', 'No Data', 'No Data'],
+        ['p9', 's9', 'No Data', 'No Data']]
 
     resource_details = formatter_object_connected.get_resources_details(
         resources)

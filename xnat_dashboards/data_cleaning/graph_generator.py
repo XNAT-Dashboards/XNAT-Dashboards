@@ -31,6 +31,7 @@ class GraphGenerator:
     data = {}
     project_list = []
     project_list_ow_co_me = []
+    l_data = {}
 
     def __init__(
             self, username, role, data, project_visible=[]):
@@ -86,6 +87,7 @@ class GraphGenerator:
 
         # Loop through each dict values and if it need to be plotted as
         # graph add the required details from dashboard config file
+
         for final_json in data:
             # Skip if key is not a graph
             if final_json in skip_data or\
