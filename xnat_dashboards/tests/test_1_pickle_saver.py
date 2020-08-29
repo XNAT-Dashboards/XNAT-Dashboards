@@ -53,7 +53,7 @@ def test_save(mocker):
         'xnat_dashboards/config/wrong_url.cfg').save() == 1
 
 
-# Code if BBRC resources are presetn
+# Code if BBRC resources are present
 def test_save_bbrc(mocker):
 
     resource_return_value = [
