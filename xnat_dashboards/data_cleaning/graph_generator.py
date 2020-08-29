@@ -133,10 +133,20 @@ class GraphGenerator:
             if final_json == 'Stats' or\
                 self.role\
                     not in self.graph_config[final_json]['visibility']:
+
+                # Condition if last key is skipped then add
+                # the single column array in graph_data
+                if length_check == len(graph_data) - 1:
+                    array_2d.append(array_1d)
+
                 length_check = length_check + 1
                 continue
+
             array_1d.append({final_json: graph_data[final_json]})
             counter = counter + 1
+
+            # Check if we have filled 2 columns or are at the end
+            # of the graphs list
             if counter == 2 or length_check == len(graph_data) - 1:
                 counter = 0
                 array_2d.append(array_1d)
@@ -261,6 +271,11 @@ class GraphGenerator:
             if self.role\
                     not in self.graph_config[final_json]['visibility']:
                 length_check = length_check + 1
+
+                if length_check == len(lg_data) - 1:
+                    array_2d.append(array_1d)
+
+                length_check = length_check + 1
                 continue
 
             array_1d.append({final_json: lg_data[final_json]})
@@ -353,6 +368,10 @@ class GraphGeneratorPP(GraphGenerator):
                     self.role not in\
                     self.graph_config[final_json]['visibility']:
 
+                # Condition if last key is skipped then add
+                # the single column array in graph_data
+                if length_check == len(graph_data) - 1:
+                    array_2d.append(array_1d)
                 length_check = length_check + 1
                 continue
 
@@ -361,7 +380,7 @@ class GraphGeneratorPP(GraphGenerator):
 
             # Check if we have filled 2 columns or are at the end
             # of the graphs list
-            if counter == 2 or length_check == len(graph_data) - 2:
+            if counter == 2 or length_check == len(graph_data) - 1:
                 counter = 0
                 array_2d.append(array_1d)
                 array_1d = []
