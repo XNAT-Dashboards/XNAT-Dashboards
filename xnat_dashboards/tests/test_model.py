@@ -1,5 +1,5 @@
 from xnat_dashboards.app.dashboards import model as model_dash
-from xnat_dashboards.app.auth import model as model_auth
+from xnat_dashboards.app.authentication import model as model_auth
 from xnat_dashboards import config
 
 
