@@ -1,7 +1,7 @@
 # Import flask dependencies
 from flask import Blueprint, render_template, session, request, redirect,\
     url_for
-from xnat_dashboards.app.auth import model
+from xnat_dashboards.app.authentication import model
 
 
 # Define the blueprint: 'auth', set its url prefix: app.url/auth
@@ -90,7 +90,7 @@ def login():
                 session['project_visible'] = config['project_visible']
 
                 # Redirect to dashboard
-                return redirect(url_for('dashboards.stats'))
+                return redirect(url_for('dashboard.stats'))
             else:
 
                 # User is forbiden to login

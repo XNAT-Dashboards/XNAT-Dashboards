@@ -4,12 +4,12 @@ from flask import Blueprint, render_template, session,\
 from xnat_dashboards.data_cleaning import graph_generator
 from xnat_dashboards.app.dashboards import model
 
-# Define the blueprint: 'dashboards', set its url prefix: app.url/dashboards
-dashboards = Blueprint('dashboards', __name__, url_prefix='/dashboards')
+# Define the blueprint: 'dashboard', set its url prefix: app.url/dashboard
+dashboard = Blueprint('dashboard', __name__, url_prefix='/dashboard')
 
 
 # Logout route
-@dashboards.route('/logout/', methods=['GET'])
+@dashboard.route('/logout/', methods=['GET'])
 def logout():
     """Logout route here we delete all existing sesson variables
 
@@ -31,7 +31,7 @@ def logout():
     return redirect(url_for('auth.login'))
 
 
-@dashboards.route('/stats/', methods=['GET'])
+@dashboard.route('/stats/', methods=['GET'])
 def stats():
     """This is the overview dashboard route.
 
@@ -98,7 +98,7 @@ def stats():
 
 
 # this route give the details of the project
-@dashboards.route('project/<id>', methods=['GET'])
+@dashboard.route('project/<id>', methods=['GET'])
 def project(id):
     """This is the per project dashboard view.
 
