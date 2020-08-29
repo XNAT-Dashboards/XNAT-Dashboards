@@ -1,9 +1,13 @@
 import pickle
 from datetime import datetime
 import os
+import logging
 from xnat_dashboards import config as config_file
 from xnat_dashboards.bbrc import data_fetcher as data_fetcher_b
 from xnat_dashboards.pyxnat_interface import data_fetcher
+
+# Logging format
+logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
 
 class PickleSaver:
@@ -69,15 +73,17 @@ class PickleSaver:
                 if 'server' in user_data:
 
                     if self.server != user_data['server']:
-                        print(
+                        logging.error(
                             "Server URL present in pickle is "
                             "different form the provided server URL")
                         return -1
 
-        print("Fetching projects, subjects, experiments, and scans data\n")
+        logging.info(
+            "Fetching projects, subjects, experiments, and scans data")
         data_pro_sub_exp_sc = self.fetcher.get_instance_details()
 
-        print("Fetching resources\n")
+        logging.info("Fetching resources")
+
         data_res = self.fetcher.get_resources(
             data_pro_sub_exp_sc['experiments'])
 
@@ -91,13 +97,13 @@ class PickleSaver:
                 break
 
         if bbrc_flag:
-            print("Fetching BBRC resources")
+            logging.info("Fetching BBRC resources")
             extra_resources = self.fetcher_bbrc.get_resource(
                 data_pro_sub_exp_sc['experiments'])
         else:
             extra_resources = None
 
-        print("Processing longitudinal data")
+        logging.info("Processing longitudinal data")
         # Call method for formatting the longitudinal data from raw saved data
         longitudinal_data = self.longitudinal_data_processing(
             data_pro_sub_exp_sc, user_data, data_res
@@ -118,9 +124,10 @@ class PickleSaver:
                 },
                 handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-        print(
-            "Pickle file successfully saved at: ",
-            config_file.PICKLE_PATH)
+        logging.info(
+            "Pickle file successfully saved at: "
+            +
+            str(config_file.PICKLE_PATH))
 
     def longitudinal_data_processing(
             self, data_pro_sub_exp_sc, user_data, data_res):
