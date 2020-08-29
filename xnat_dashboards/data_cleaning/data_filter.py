@@ -120,7 +120,7 @@ class DataFilter:
             self.info['projects'])
         # If some error in connection 1 will be returned and we will
         # not go further
-        if type(projects_details) != int:
+        if not isinstance(projects_details, int):
             stats['Projects'] = projects_details['Number of Projects']
             del projects_details['Number of Projects']
         else:
@@ -160,7 +160,7 @@ class DataFilter:
             self.resources)
 
         if resources is not None and\
-                type(resources) != int and self.resources != []:
+                not isinstance(resources, int) and self.resources != []:
 
             final_json_dict.update(resources)
 

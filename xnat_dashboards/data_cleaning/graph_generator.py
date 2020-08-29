@@ -78,7 +78,7 @@ class GraphGenerator:
         with open(config.DASHBOARD_CONFIG_PATH) as json_file:
             self.graph_config = json.load(json_file)['graph_config']
 
-        if type(data) != dict:
+        if not isinstance(data, dict):
             return data
 
         # Skip data that don't require plotting
@@ -126,7 +126,7 @@ class GraphGenerator:
 
         graph_data = self.graph_pre_processor(self.data_ordered)
 
-        if type(graph_data) == int:
+        if isinstance(graph_data, int):
             return graph_data
 
         for final_json in graph_data:
@@ -198,7 +198,7 @@ class GraphGenerator:
         # List of projects that user is a owner, collab or member
         list_data_ow_co_me = self.project_list_ow_co_me
 
-        if type(list_data) == int:
+        if isinstance(list_data, int):
             return list_data
 
         # Create a 2d array with each row containing 4 columns and each column
@@ -355,7 +355,7 @@ class GraphGeneratorPP(GraphGenerator):
         # Do the required addition using pre processor
         graph_data = self.graph_pre_processor(self.data_ordered)
 
-        if type(graph_data) == int or graph_data is None:
+        if isinstance(graph_data, int) or graph_data is None:
             return graph_data
 
         skip_data = ['Stats', 'test_grid', 'Project details']

@@ -262,7 +262,7 @@ class Formatter:
         # except the values present in extra list
         for resource in resources_bbrc:
 
-            if resource[2] and type(resource[3]) != int:
+            if resource[2] and not isinstance(resource[3], int):
 
                 for test in resource[3]:
                     if test not in tests_union\
@@ -274,7 +274,7 @@ class Formatter:
         # For resource[3] which is a dict of tests
         for resource in resources_bbrc:
 
-            if resource[2] and type(resource[3]) != int:
+            if resource[2] and not isinstance(resource[3], int):
                 test_list = []
                 test_list = [resource[1]]
 

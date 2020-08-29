@@ -29,7 +29,7 @@ class Formatter:
             "count" represent the count for the x_value and "list" represent
             "Different values" for x_values
         """
-        if type(projects) == int:
+        if isinstance(projects, int):
             return projects
 
         projects_details = {}
@@ -63,7 +63,7 @@ class Formatter:
             "count" represent the count for the x_value and "list" represent
             "Different values" for x_values
         """
-        if type(subjects_data) == int:
+        if isinstance(subjects_data, int):
             return subjects_data
 
         subjects_details = {}
@@ -149,7 +149,7 @@ class Formatter:
             "count" represent the count for the x_value and "list" represent
             "Different values" for x_values
         """
-        if type(experiments) == int:
+        if isinstance(experiments, int):
             return experiments
 
         experiments_details = {}
@@ -213,7 +213,7 @@ class Formatter:
             "count" represent the count for the x_value and "list" represent
             "Different values" for x_values
         """
-        if type(scans) == int:
+        if isinstance(scans, int):
             return scans
 
         scan_quality = self.dict_generator_overview(
@@ -402,10 +402,7 @@ class Formatter:
 
     def proportion_graphs(self, data, property_x, property_y, prefix, suffix):
 
-        data_list = []
-
-        for item in data:
-            data_list.append([item[property_x], item[property_y]])
+        data_list = [[item[property_x], item[property_y]] for item in data]
 
         # Create a data frame
         df = pd.DataFrame(data_list, columns=['per_view', 'count'])
@@ -550,7 +547,7 @@ class Formatter:
             list:{prop_x:{prop_y:prop_z_list}}
             }
         """
-        if type(data) is list:
+        if isinstance(data, list):
 
             per_list = [[
                 item[property_x], item[property_y],
@@ -749,7 +746,7 @@ class FormatterPP(Formatter):
         resources_out = super().get_resources_details(
             resources, self.project_id)
 
-        if type(resources_out) != int:
+        if not isinstance(resources_out, int):
             if 'Resources/Project' in resources_out:
                 del resources_out['Resources/Project']
             if 'Session resource count/Project' in resources_out:
