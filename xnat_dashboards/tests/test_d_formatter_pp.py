@@ -167,14 +167,14 @@ def test_get_resources_details():
             'version': 'v1',
             'HasUsableT1': {'has_passed': True},
             'IsAcquisitionDateConsistent':
-            {'has_passed': True, 'data': '2020-11-10'}}, 'Not Exists', '-1'],
+            {'has_passed': True, 'data': '2020-11-10'}}, 'Not Exists', None],
         ['p2', 's2', 'r3', {'version': 'v3'}, 'Exists', '1.4\n'],
-        ['p2', 's2', 'r3', 0, 'Not Exists', '-1'],
+        ['p2', 's2', 'r3', 0, 'Not Exists', None],
         ['p3', 's1', 'r6', {
             'version': 'v2',
             'HasUsableT1': {'has_passed': True},
             'IsAcquisitionDateConsistent':
-            {'has_passed': True, 'data': '2020-9-20'}}, 'Not Exists', '-1'],
+            {'has_passed': True, 'data': '2020-9-20'}}, 'Not Exists', None],
         ['p1', 's2', 'r8', {
             'version': 'v1',
             'HasUsableT1': {'has_passed': True},
@@ -184,7 +184,7 @@ def test_get_resources_details():
             'version': 'v2',
             'HasUsableT1': {'has_passed': True},
             'IsAcquisitionDateConsistent':
-            {'has_passed': True, 'data': '2020-08-22'}}, 'Not Exists', '-1'],
+            {'has_passed': True, 'data': '2020-08-22'}}, 'Not Exists', None],
         ['p1', 's4', 'r10', {
             'version': 'v3',
             'HasUsableT1': {'has_passed': True},
