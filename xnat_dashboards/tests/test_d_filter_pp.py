@@ -10,10 +10,10 @@ def create_mocker(
         'xnat_dashboards.data_cleaning.data_formatter.FormatterPP.__init__',
         return_value=None)
 
-    info_object = data_filter.DataFilterPP(
+    filtered = data_filter.DataFilterPP(
         username, info, 'p2', role, project_visible, resources)
 
-    return info_object
+    return filtered
 
 
 def test_info(mocker):
@@ -46,11 +46,11 @@ def test_info(mocker):
         'FormatterPP.get_resources_details',
         return_value={})
 
-    info_object = create_mocker(
+    filtered = create_mocker(
         mocker, 'testUser', info, 'guest', {'guest': ['p1', 'p2', 'p3', 'p4']},
         resources=['p1', 'res'])
 
-    info = info_object.get_per_project_view()
+    info = filtered.reorder_graphs_pp()
 
     assert isinstance(info, dict)   # Return type should be a dict
     assert len(info) == 2     # Currently 2 dicts to be returned

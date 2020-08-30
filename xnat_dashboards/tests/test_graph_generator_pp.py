@@ -14,7 +14,7 @@ def create_mocker(
         return_value=None)
     mocker.patch(
         'xnat_dashboards.data_cleaning.data_filter.DataFilterPP.'
-        'get_per_project_view',
+        'reorder_graphs_pp',
         return_value=data['info'])
 
     graph_object = graph_generator.GraphGeneratorPP(
@@ -38,8 +38,8 @@ def test_graph_generator(mocker):
     graph_object = create_mocker(
         mocker, 'testUser', data, 'p2', 'admin', ['p1'])
 
-    assert isinstance(graph_object.graph_generator(), list)
-    assert isinstance(graph_object.graph_generator()[0], list)
-    assert isinstance(graph_object.graph_generator()[1], dict)
-    assert isinstance(graph_object.graph_generator()[2], dict)
+    assert isinstance(graph_object.get_project_view(), list)
+    assert isinstance(graph_object.get_project_view()[0], list)
+    assert isinstance(graph_object.get_project_view()[1], dict)
+    assert isinstance(graph_object.get_project_view()[2], dict)
 

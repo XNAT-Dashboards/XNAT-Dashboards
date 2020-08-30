@@ -18,7 +18,7 @@ def create_mocker(
         'get_project_list',
         return_value=return_get_project_list)
     mocker.patch(
-        'xnat_dashboards.data_cleaning.data_filter.DataFilter.get_overview',
+        'xnat_dashboards.data_cleaning.data_filter.DataFilter.reorder_graphs',
         return_value=data['info'])
 
     graph_object = graph_generator.GraphGenerator(
@@ -43,19 +43,19 @@ def test_graph_preprocessor(mocker):
     graph_object = create_mocker(
         mocker, 'testUser', data, 'admin', ['*'],
         {'project_list': ['p1', 'p2'], 'project_list_ow_co_me': ['p3', 'p4']})
-    assert isinstance(graph_object.graph_pre_processor(data['info']), dict)
+    assert isinstance(graph_object.add_graph_fields(data['info']), dict)
 
     graph_object = create_mocker(
         mocker, 'testUser', data, 'admin', ["*"],
         {'project_list': [], 'project_list_ow_co_me': []})
 
-    assert isinstance(graph_object.graph_pre_processor(data['info']), dict)
+    assert isinstance(graph_object.add_graph_fields(data['info']), dict)
 
     graph_object = create_mocker(
         mocker, 'testUser', data, 'admin', ["*"],
         {'project_list': [], 'project_list_ow_co_me': []})
 
-    assert graph_object.graph_pre_processor([]) == []
+    assert graph_object.add_graph_fields([]) == []
 
 
 def test_graph_generator(mocker):
@@ -74,9 +74,9 @@ def test_graph_generator(mocker):
         mocker, 'testUser', data, 'admin', ["*"],
         {'project_list': ['p1', 'p2'], 'project_list_ow_co_me': ['p3', 'p4']})
 
-    assert isinstance(graph_object.graph_generator(), list)
-    assert isinstance(graph_object.graph_generator()[0], list)
-    assert isinstance(graph_object.graph_generator()[1], dict)
+    assert isinstance(graph_object.get_overview(), list)
+    assert isinstance(graph_object.get_overview()[0], list)
+    assert isinstance(graph_object.get_overview()[1], dict)
 
 
 def test_project_list_generator(mocker):
@@ -95,7 +95,7 @@ def test_project_list_generator(mocker):
         mocker, 'testUser', data, 'admin', ['p1'],
         {'project_list': ['p1', 'p2'], 'project_list_ow_co_me': ['p3', 'p4']})
 
-    project_list = graph_object.project_list_generator()
+    project_list = graph_object.get_project_list()
     assert isinstance(project_list, list)
     assert isinstance(project_list[0], list)
     assert isinstance(project_list[1], list)
@@ -104,12 +104,12 @@ def test_project_list_generator(mocker):
         mocker, 'testUser', data, 'admin', ["*"],
         {'project_list': [], 'project_list_ow_co_me': []})
 
-    assert graph_object.project_list_generator() == [[[]], [[]]]
+    assert graph_object.get_project_list() == [[[]], [[]]]
 
     graph_object = create_mocker(
         mocker, 'testUser', data, 'admin', ["*"],
         {'project_list': 1, 'project_list_ow_co_me': 1})
-    assert graph_object.project_list_generator() == 1
+    assert graph_object.get_project_list() == 1
 
 
 def test_graph_generator_longitudinal(mocker):
@@ -132,7 +132,5 @@ def test_graph_generator_longitudinal(mocker):
         mocker, 'testUser', data, 'admin', ['p1'],
         {'project_list': ['p1', 'p2'], 'project_list_ow_co_me': ['p3', 'p4']})
 
-
-    ld = graph_object.graph_generator_longitudinal()
-    print(ld)
+    ld = graph_object.get_longitudinal_graphs()
     assert isinstance(ld, list)

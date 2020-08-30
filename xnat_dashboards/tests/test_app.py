@@ -134,12 +134,12 @@ def test_dashboard(mocker):
     # If data returned is empty for overview
     mocker.patch(
         'xnat_dashboards.data_cleaning.graph_generator.'
-        'GraphGenerator.graph_generator',
+        'GraphGenerator.get_overview',
         return_value=[[], []])
 
     mocker.patch(
         'xnat_dashboards.data_cleaning.graph_generator.'
-        'GraphGenerator.project_list_generator',
+        'GraphGenerator.get_project_list',
         return_value=[[], []])
 
     mocker.patch(
@@ -150,12 +150,12 @@ def test_dashboard(mocker):
     # If data returned is empty for per project view
     mocker.patch(
         'xnat_dashboards.data_cleaning.graph_generator.'
-        'GraphGeneratorPP.graph_generator',
+        'GraphGeneratorPP.get_project_view',
         return_value=[[], [], [], []])
 
     mocker.patch(
         'xnat_dashboards.data_cleaning.graph_generator.'
-        'GraphGenerator.graph_generator_longitudinal',
+        'GraphGenerator.get_longitudinal_graphs',
         return_value=[])
 
     with app.test_client() as c:
@@ -182,7 +182,7 @@ def test_dashboard(mocker):
     # If None is returned from graph generator per project view
     mocker.patch(
         'xnat_dashboards.data_cleaning.graph_generator.'
-        'GraphGeneratorPP.graph_generator',
+        'GraphGeneratorPP.get_project_view',
         return_value=None)
 
     with app.test_client() as c:

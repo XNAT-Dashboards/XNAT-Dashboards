@@ -9,10 +9,10 @@ def create_mocker(
         'xnat_dashboards.data_cleaning.data_formatter.Formatter.__init__',
         return_value=None)
 
-    info_object = data_filter.DataFilter(
+    filtered = data_filter.DataFilter(
         username, info, role, [], resources)
 
-    return info_object
+    return filtered
 
 
 def test_info(mocker):
@@ -45,11 +45,11 @@ def test_info(mocker):
         'Formatter.get_resources_details',
         return_value={})
 
-    info_object = create_mocker(
+    filtered = create_mocker(
         mocker, 'testUser', info, 'guest',
         resources=['p1', 'res'])
 
-    assert isinstance(info_object.get_overview(), dict)  # Dict
+    assert isinstance(filtered.reorder_graphs(), dict)  # Dict
     assert len(info) == 5     # Currently 15 dicts to be returned
 
 
@@ -69,8 +69,8 @@ def test_get_project_list(mocker):
             'p1', 'p2', 'p3', 'p4', 'p1', 'p2',
             'p3', 'p4', 'p1', 'p2', 'p3', 'p4'])
 
-    info_object = create_mocker(
+    filtered = create_mocker(
         mocker, 'testUser', info, 'guest',
         resources=['p1', 'res'])
 
-    assert isinstance(info_object.get_project_list(), list)
+    assert isinstance(filtered.get_project_list(), list)
