@@ -25,7 +25,7 @@ Why this project?
 Dashboards created during GSoC coding period
 -----------------------------------------------
 
-5 Dasbhoards are created
+5 Dasbhoards were created
 
 * **Overview:** This dashboard contain plots for all data present on the XNAT instance.
 * **Per Project:** This dashboards contain plots that specific to a project ID.
@@ -36,7 +36,7 @@ Dashboards created during GSoC coding period
 BBRC specific dashboard
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-1 Dashboard is created
+1 Dashboard were created
 
 **TEST GRID:** This dashboard contain data of each session of a project in a grid format with color **GREEN** (Test status successfull), **RED** (Test Status failed), **GREY** (Test skipped), **BLACK** (No information for the particular test).
 
