@@ -13,8 +13,8 @@
 	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link rel="icon" type="image/png" sizes="16x16" href="/static/common/images/Logo.png">
-	<link rel="stylesheet" type="text/css" href="/static/auth/css/util.css">
-	<link rel="stylesheet" type="text/css" href="/static/auth/css/main.css">
+	<link rel="stylesheet" type="text/css" href="/static/authentication/css/util.css">
+	<link rel="stylesheet" type="text/css" href="/static/authentication/css/main.css">
 	<link rel="icon" href="data:;base64,=">
 	<!-- CSS import End -->
 </head>
@@ -33,7 +33,7 @@
 		<div class="container-login100">
 			<div class="wrap-login100">
 				<!-- Login form start -->
-				<form method="POST" action="{{ url_for('auth.login_DB') }}" class="login100-form validate-form">
+				<form method="POST" action="{{ url_for('auth.login') }}" class="login100-form validate-form">
 					<span class="login100-form-title">
 						Login to XNAT Dashboards
                     </span>
@@ -78,7 +78,7 @@
     <!-- Js include Start -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-	<script src="/static/auth/js/main.js"></script>
+	<script src="/static/authentication/js/main.js"></script>
 
     <!-- Js include End -->
 </html>

@@ -28,39 +28,41 @@ class GraphGenerator:
         data (dict): Dict containing data of projects, subjects, exp.,
             scans, resources, extra_resources, longitudinal data
     """
-    data = {}
+    pickle_data = {}
     project_list = []
     project_list_ow_co_me = []
+    l_data = {}
 
     def __init__(
-            self, username, role, data, project_visible=[]):
+            self, username, role, pickle_data, project_visible=[]):
 
-        self.info = data_filter.DataFilter(
-            username, data['info'],
-            role, project_visible, data['resources'])
+        self.filtered = data_filter.DataFilter(
+            username, pickle_data['info'],
+            role, project_visible, pickle_data['resources'])
 
-        projects_data_dict = self.info.get_project_list()
+        projects_data_dict = self.filtered.get_project_list()
 
         self.counter_id = 0
         self.role = role
-        self.l_data = data['longitudinal_data']
-        self.data_ordered = self.info.get_overview()
+        self.l_data = pickle_data['longitudinal_data']
+        self.ordered_graphs = self.filtered.reorder_graphs()
 
-        # Check whether extra resources are present in the data
-        if 'extra_resources' in data and data['extra_resources'] is not None:
-            self.data_ordered.update(
+        # Check whether extra resources are present in the pickle_data
+        if 'extra_resources' in pickle_data\
+                and pickle_data['extra_resources'] is not None:
+            self.ordered_graphs.update(
                 data_filter_b.DataFilter(
                     role, project_visible,
-                    data['extra_resources']).get_overview())
+                    pickle_data['extra_resources']).reorder_graphs())
 
         self.project_list = projects_data_dict['project_list']
         self.project_list_ow_co_me =\
             projects_data_dict['project_list_ow_co_me']
 
-    def graph_pre_processor(self, data):
+    def add_graph_fields(self, graphs):
         """It pre process the data received from DataFilter.
 
-        Graph pre processor add data regarding graph type ie.
+        Graph field addition add data regarding graph type ie.
         bar, pie etc, graph description, graph color, graph id.
 
         It also skip graph that should not be visible to user
@@ -78,39 +80,40 @@ class GraphGenerator:
         with open(config.DASHBOARD_CONFIG_PATH) as json_file:
             self.graph_config = json.load(json_file)['graph_config']
 
-        if not isinstance(data, dict):
-            return data
+        if not isinstance(graphs, dict):
+            return graphs
 
-        # Skip data that don't require plotting
-        skip_data = ['Stats', 'test_grid', 'Project details']
+        # non_graph that don't require plotting
+        non_graph = ['Stats', 'test_grid', 'Project details']
 
         # Loop through each dict values and if it need to be plotted as
         # graph add the required details from dashboard config file
-        for final_json in data:
+
+        for graph in graphs:
             # Skip if key is not a graph
-            if final_json in skip_data or\
+            if graph in non_graph or\
                 self.role\
-                    not in self.graph_config[final_json]['visibility']:
+                    not in self.graph_config[graph]['visibility']:
                 continue
 
             # Addition of graph id, js need distinct graph id for each
             # graphs
-            data[final_json]['id'] = self.counter_id
+            graphs[graph]['id'] = self.counter_id
             self.counter_id = self.counter_id + 1
 
             # Type of graph (bar, line, etc) from config file
-            data[final_json]['graph_type'] =\
-                self.graph_config[final_json]['type']
+            graphs[graph]['graph_type'] =\
+                self.graph_config[graph]['type']
             # Description of graph from config file
-            data[final_json]['graph descriptor'] =\
-                self.graph_config[final_json]['description']
+            graphs[graph]['graph descriptor'] =\
+                self.graph_config[graph]['description']
             # Graph color from config file
-            data[final_json]['color'] =\
-                self.graph_config[final_json]['color']
+            graphs[graph]['color'] =\
+                self.graph_config[graph]['color']
 
-        return data
+        return graphs
 
-    def graph_generator(self):
+    def get_overview(self):
         """This first process the data using graph preprocessor.
         Then create a 2D array that help in distribution of graph
         in frontend. Where each row contains 2 graph.
@@ -120,48 +123,48 @@ class GraphGenerator:
         """
 
         length_check = 0
-        array_2d = []
-        array_1d = []
+        graphs_2d_list = []
+        graphs_1d_list = []
         counter = 0
 
-        graph_data = self.graph_pre_processor(self.data_ordered)
+        overview = self.add_graph_fields(self.ordered_graphs)
 
-        if isinstance(graph_data, int):
-            return graph_data
+        if isinstance(overview, int):
+            return overview
 
-        for final_json in graph_data:
-            if final_json == 'Stats' or\
+        for graph in overview:
+            if graph == 'Stats' or\
                 self.role\
-                    not in self.graph_config[final_json]['visibility']:
+                    not in self.graph_config[graph]['visibility']:
 
                 # Condition if last key is skipped then add
-                # the single column array in graph_data
-                if length_check == len(graph_data) - 1:
-                    array_2d.append(array_1d)
+                # the single column array in overview
+                if length_check == len(overview) - 1:
+                    graphs_2d_list.append(graphs_1d_list)
 
                 length_check = length_check + 1
                 continue
 
-            array_1d.append({final_json: graph_data[final_json]})
+            graphs_1d_list.append({graph: overview[graph]})
             counter = counter + 1
 
             # Check if we have filled 2 columns or are at the end
             # of the graphs list
-            if counter == 2 or length_check == len(graph_data) - 1:
+            if counter == 2 or length_check == len(overview) - 1:
                 counter = 0
-                array_2d.append(array_1d)
-                array_1d = []
+                graphs_2d_list.append(graphs_1d_list)
+                graphs_1d_list = []
 
             length_check = length_check + 1
 
         '''
             Returns a nested list with dict inside
             [
-                array_2d[
+                graphs_2d_list[
                     [project1_info, project2_info]
                     [project3_info, project4_info]
                 ]
-                graph_data['Stats']{
+                overview['Stats']{
                     Projects: count
                     Experiment: count
                     Scans: count
@@ -170,66 +173,66 @@ class GraphGenerator:
             ]
         '''
 
-        return [array_2d, graph_data['Stats']]
+        return [graphs_2d_list, overview['Stats']]
 
-    def project_list_generator(self):
+    def get_project_list(self):
         """
         Process the project list for displaying the project id.
 
         Returns:
-            array_2D (list): The id of project based in a 2dArray
+            project_list_2d (list): The id of project based in a 2dArray
             To be processed by frontend
-            array_2d_ow_co_me (list): arrayow_co_me means
+            project_list_2d_ow_co_me (list): arrayow_co_me means
             owned_collob_member all variables with this suffix
             represent the project list for owned collaborated or member list
         """
         length_check = 0
         length_check_ow_co_me = 0
-        array_2d = []
-        array_1d = []
-        array_1d_ow_co_me = []
-        array_2d_ow_co_me = []
+        project_list_2d = []
+        project_list_1d = []
+        project_list_1d_ow_co_me = []
+        project_list_2d_ow_co_me = []
         counter = 0
         counter_ow_co_me = 0
 
         # List of projects
-        list_data = self.project_list
+        project_list = self.project_list
 
         # List of projects that user is a owner, collab or member
         list_data_ow_co_me = self.project_list_ow_co_me
 
-        if isinstance(list_data, int):
-            return list_data
+        if isinstance(project_list, int):
+            return project_list
 
         # Create a 2d array with each row containing 4 columns and each column
         # will have single project id
-        if len(list_data) == 0:
-            array_2d = [[]]
+        if len(project_list) == 0:
+            project_list_2d = [[]]
         else:
-            for data in list_data:
-                array_1d.append(data)
+            for project_id in project_list:
+                project_list_1d.append(project_id)
                 counter = counter + 1
-                if counter == 4 or length_check == len(list_data) - 1:
+                if counter == 4 or length_check == len(project_list) - 1:
                     counter = 0
-                    array_2d.append(array_1d)
-                    array_1d = []
+                    project_list_2d.append(project_list_1d)
+                    project_list_1d = []
 
                 length_check = length_check + 1
 
         if len(self.project_list_ow_co_me) == 0:
-            array_2d_ow_co_me = [[]]
+            project_list_2d_ow_co_me = [[]]
         else:
-            for data in list_data_ow_co_me:
+            for project_id in list_data_ow_co_me:
 
-                array_1d_ow_co_me.append(data)
+                project_list_1d_ow_co_me.append(project_id)
                 counter_ow_co_me = counter_ow_co_me + 1
 
                 if counter_ow_co_me == 4\
                    or length_check_ow_co_me == len(list_data_ow_co_me) - 1:
 
                     counter_ow_co_me = 0
-                    array_2d_ow_co_me.append(array_1d_ow_co_me)
-                    array_1d_ow_co_me = []
+                    project_list_2d_ow_co_me.append(project_list_1d_ow_co_me)
+                    project_list_1d_ow_co_me = []
 
                 length_check_ow_co_me = length_check_ow_co_me + 1
 
@@ -247,9 +250,9 @@ class GraphGenerator:
             ]
         '''
 
-        return [array_2d, array_2d_ow_co_me]
+        return [project_list_2d, project_list_2d_ow_co_me]
 
-    def graph_generator_longitudinal(self):
+    def get_longitudinal_graphs(self):
         """Graphs for longitudinal data. Visible to
         admin role only.
 
@@ -258,36 +261,36 @@ class GraphGenerator:
         """
 
         length_check = 0
-        array_2d = []
-        array_1d = []
+        graphs_2d_list = []
+        graphs_1d_list = []
         counter = 0
 
         if self.l_data is None or self.role != 'admin':
             return [[], []]
 
-        lg_data = self.graph_pre_processor(self.l_data)
+        l_graphs = self.add_graph_fields(self.l_data)
 
-        for final_json in lg_data:
+        for graph in l_graphs:
             if self.role\
-                    not in self.graph_config[final_json]['visibility']:
+                    not in self.graph_config[graph]['visibility']:
                 length_check = length_check + 1
 
-                if length_check == len(lg_data) - 1:
-                    array_2d.append(array_1d)
+                if length_check == len(l_graphs) - 1:
+                    graphs_2d_list.append(graphs_1d_list)
 
                 length_check = length_check + 1
                 continue
 
-            array_1d.append({final_json: lg_data[final_json]})
+            graphs_1d_list.append({graph: l_graphs[graph]})
             counter = counter + 1
-            if counter == 2 or length_check == len(lg_data) - 1:
+            if counter == 2 or length_check == len(l_graphs) - 1:
                 counter = 0
-                array_2d.append(array_1d)
-                array_1d = []
+                graphs_2d_list.append(graphs_1d_list)
+                graphs_1d_list = []
 
             length_check = length_check + 1
 
-        return array_2d
+        return graphs_2d_list
 
 
 class GraphGeneratorPP(GraphGenerator):
@@ -315,29 +318,30 @@ class GraphGeneratorPP(GraphGenerator):
     def __init__(
             self,
             username,
-            project_id, role, data, project_visible=None):
+            project_id, role, pickle_data, project_visible=None):
 
-        if 'resources' not in data:
-            data['resources'] = None
+        if 'resources' not in pickle_data:
+            pickle_data['resources'] = None
 
-        info_obj = data_filter.DataFilterPP(
-            username, data['info'], project_id, role, project_visible,
-            data['resources'])
+        filtered = data_filter.DataFilterPP(
+            username, pickle_data['info'], project_id, role, project_visible,
+            pickle_data['resources'])
 
         self.project_id = ''
         self.counter_id = 0
         self.role = role
-        self.data_ordered = info_obj.get_per_project_view()
+        self.ordered_graphs = filtered.reorder_graphs_pp()
 
-        if 'extra_resources' in data and data['extra_resources'] is not None:
+        if 'extra_resources' in pickle_data and\
+                pickle_data['extra_resources'] is not None:
 
-            self.data_ordered.update(
+            self.ordered_graphs.update(
                 data_filter_b.DataFilterPP(
-                    data['info']['experiments'], project_id, role,
+                    pickle_data['info']['experiments'], project_id, role,
                     project_visible,
-                    data['extra_resources']).get_per_project_view())
+                    pickle_data['extra_resources']).reorder_graphs_pp())
 
-    def graph_generator(self):
+    def get_project_view(self):
 
         """This first process the data using graph preprocessor
         of parent class.
@@ -348,53 +352,53 @@ class GraphGeneratorPP(GraphGenerator):
             list: 2D array of graphs and other information.
         """
         length_check = 0
-        array_2d = []
-        array_1d = []
+        graphs_2d_list = []
+        graphs_1d_list = []
         counter = 0
 
-        # Do the required addition using pre processor
-        graph_data = self.graph_pre_processor(self.data_ordered)
+        # Do the required addition using field addition
+        project_view = self.add_graph_fields(self.ordered_graphs)
 
-        if isinstance(graph_data, int) or graph_data is None:
-            return graph_data
+        if isinstance(project_view, int) or project_view is None:
+            return project_view
 
-        skip_data = ['Stats', 'test_grid', 'Project details']
+        non_graph = ['Stats', 'test_grid', 'Project details']
 
         # Loop through each graph field and add it into
         # graph 2d array where each row have 2 columns and each
         # columns contains single graph
-        for final_json in graph_data:
-            if final_json in skip_data or\
+        for graph in project_view:
+            if graph in non_graph or\
                     self.role not in\
-                    self.graph_config[final_json]['visibility']:
+                    self.graph_config[graph]['visibility']:
 
                 # Condition if last key is skipped then add
-                # the single column array in graph_data
-                if length_check == len(graph_data) - 1:
-                    array_2d.append(array_1d)
+                # the single column array in project_view
+                if length_check == len(project_view) - 1:
+                    graphs_2d_list.append(graphs_1d_list)
                 length_check = length_check + 1
                 continue
 
-            array_1d.append({final_json: graph_data[final_json]})
+            graphs_1d_list.append({graph: project_view[graph]})
             counter = counter + 1
 
             # Check if we have filled 2 columns or are at the end
             # of the graphs list
-            if counter == 2 or length_check == len(graph_data) - 1:
+            if counter == 2 or length_check == len(project_view) - 1:
                 counter = 0
-                array_2d.append(array_1d)
-                array_1d = []
+                graphs_2d_list.append(graphs_1d_list)
+                graphs_1d_list = []
 
             length_check = length_check + 1
 
         '''
             Returns a nested list with dict inside
             [
-                array_2d[
+                graphs_2d_list[
                     [project1_info, project2_info]
                     [project3_info, project4_info]
                 ]
-                graph_data['Stats']{
+                project_view['Stats']{
                     Projects: count
                     Experiment: count
                     Scans: count
@@ -404,13 +408,13 @@ class GraphGeneratorPP(GraphGenerator):
         '''
 
         graph_stats_data = [
-            array_2d, graph_data['Stats'],
-            graph_data['Project details']]
+            graphs_2d_list, project_view['Stats'],
+            project_view['Project details']]
 
         # Test grid is a specific dashboard for BBRC XNATs
         # not visible to normal xnat instance
-        if 'test_grid' in graph_data:
-            graph_stats_data.append(graph_data['test_grid'])
+        if 'test_grid' in project_view:
+            graph_stats_data.append(project_view['test_grid'])
         else:
             graph_stats_data.append([[], [], []])
 

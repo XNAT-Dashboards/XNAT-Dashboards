@@ -341,10 +341,17 @@ class Formatter:
         res_pp_no_data = df[
             df['resource'] == 'No Data'].groupby('project').count()
 
+        # Creates 2 Dataframe
+        # Data frame 1 have project which have resources
+        # Data frame 2 have project which don't have resources
+        # Subtract dataframe 1 from 2 if dataframe 2 have any project id
+        # left then this means project id doesn't have any resource
         no_data_rpp = res_pp_no_data.index.difference(
             resources_pp_df.index).to_list()
 
+        # Remove those project ID
         if len(no_data_rpp) != 0:
+
             no_data_update = {}
 
             for item in no_data_rpp:

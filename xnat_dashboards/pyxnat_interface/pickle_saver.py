@@ -76,7 +76,7 @@ class PickleSaver:
                         logging.error(
                             "Server URL present in pickle is "
                             "different form the provided server URL")
-                        return -1
+                        return 1
 
         logging.info(
             "Fetching projects, subjects, experiments, and scans data")
@@ -93,6 +93,8 @@ class PickleSaver:
         bbrc_flag = False
         for resource in data_res:
             if resource[3] == 'BBRC_VALIDATOR':
+                logging.info(
+                    "BBRC Validator resources found fetching BBRC resources")
                 bbrc_flag = True
                 break
 

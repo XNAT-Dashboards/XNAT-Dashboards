@@ -68,7 +68,7 @@
                             &nbsp&nbsp
                         </li>
                         <li class="nav-item dropdown">
-                            <a href="{{url_for('dashboards.logout')}}" class="logout" > Logout</a>
+                            <a href="{{url_for('dashboard.logout')}}" class="logout" > Logout</a>
                         </li>
                     </ul>
                 </div>
@@ -90,7 +90,7 @@
                         <li id="projects"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-list"></i><span class="hide-menu">Projects</span></a></li>     
                         <li id="projects_ow_co_me"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-list"></i><span class="hide-menu">Projects Owned, Collaborated or Member </span></a></li>                   
                         <div class="text-center m-t-30">
-                            <a href="{{url_for('dashboards.logout')}}" class="waves-effect waves-light btn btn-outline-danger"> Logout </a>
+                            <a href="{{url_for('dashboard.logout')}}" class="waves-effect waves-light btn btn-outline-danger"> Logout </a>
                         </div>
                     </ul>
                 </nav>
@@ -113,13 +113,7 @@
                                 <li class="breadcrumb-item"><a href="javascript:void(0)">Connected</a></li>
                                 <li class="breadcrumb-item active"><a href="{{server}}" target="_blank">{{server}}</a> &nbsp&nbsp&nbsp</li>
                             </ol>
-                            {% if db is sameas true%}
                             <button type="button" class="btn btn-outline-info d-lg-block m-l-15"> Database </button>
-                            {% endif %}
-                            {% if db is sameas false %}
-                            <button type="button" class="btn btn-outline-info d-lg-block m-l-15"> API </button>
-                            {% endif %}
-                            
                         </div>
                     </div>
                 </div>
@@ -211,12 +205,7 @@
                 <div class="row">
                     {% for col in row%}
                         <div class="col-lg-3">
-                            {% if db is sameas true%}
-                            <a href="/dashboards/db/project/{{col}}" target="_blank"> 
-                            {% endif %}
-                            {% if db is sameas false%}
-                            <a href="/dashboards/project/{{col}}" target="_blank"> 
-                            {% endif %}
+                            <a href="/dashboard/project/{{col}}" target="_blank">
                                 <div class="card project">
                                     <div class="card-body" >
                                         {{col}}
@@ -235,12 +224,7 @@
                 <div class="row">
                     {% for col in row%}
                         <div class="col-lg-3">
-                            {% if db is sameas true%}
-                            <a href="/dashboards/db/project/{{col}}" target="_blank"> 
-                            {% endif %}
-                            {% if db is sameas false%}
-                            <a href="/dashboards/project/{{col}}" target="_blank"> 
-                            {% endif %}
+                            <a href="/dashboard/project/{{col}}" target="_blank">
                                 <div class="card project">
                                     <div class="card-body" >
                                         {{col}}

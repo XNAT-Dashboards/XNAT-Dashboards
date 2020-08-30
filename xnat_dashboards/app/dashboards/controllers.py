@@ -4,12 +4,12 @@ from flask import Blueprint, render_template, session,\
 from xnat_dashboards.data_cleaning import graph_generator
 from xnat_dashboards.app.dashboards import model
 
-# Define the blueprint: 'dashboards', set its url prefix: app.url/dashboards
-dashboards = Blueprint('dashboards', __name__, url_prefix='/dashboards')
+# Define the blueprint: 'dashboard', set its url prefix: app.url/dashboard
+dashboard = Blueprint('dashboard', __name__, url_prefix='/dashboard')
 
 
 # Logout route
-@dashboards.route('/logout/', methods=['GET'])
+@dashboard.route('/logout/', methods=['GET'])
 def logout():
     """Logout route here we delete all existing sesson variables
 
@@ -28,11 +28,11 @@ def logout():
 
     session['error'] = -1
 
-    return redirect(url_for('auth.login_DB'))
+    return redirect(url_for('auth.login'))
 
 
-@dashboards.route('/db/stats/', methods=['GET'])
-def stats_db():
+@dashboard.route('/stats/', methods=['GET'])
+def stats():
     """This is the overview dashboard route.
 
     First we check whether pickle file have same server details
@@ -46,29 +46,26 @@ def stats_db():
     # If server key doesn't exist return to login page
 
     if 'server' not in session:
-        return redirect(url_for('auth.login_DB'))
+        return redirect(url_for('auth.login'))
 
-    data = model.load_users_data(session['server'])
+    pickle_data = model.load_users_data(session['server'])
 
     # Check if pickle data is of correct server
-    if data is not None:
+    if pickle_data is not None:
 
         # Calling plot generator
         plotting_object = graph_generator.\
             GraphGenerator(
                 session['username'],
                 session['role_exist'],
-                data,
+                pickle_data,
                 session['project_visible'])
 
-        graph_data_stats = plotting_object.\
-            graph_generator()
+        overview = plotting_object.get_overview()
 
-        longitudinal_data = plotting_object.\
-            graph_generator_longitudinal()
+        longitudinal_data = plotting_object.get_longitudinal_graphs()
 
-        project_lists = plotting_object.\
-            project_list_generator()
+        project_lists = plotting_object.get_project_list()
     else:
         # If mismatch between login server url and pickle server url
         # add error message in session
@@ -77,19 +74,19 @@ def stats_db():
 
     # If error message in session redirect to login page else render the data
     if 'error' in session:
-        return redirect(url_for('auth.login_DB'))
+        return redirect(url_for('auth.login'))
 
     else:
         project_list = project_lists[0]
         project_list_ow_co_me = project_lists[1]
-        graph_data = graph_data_stats[0]
-        stats_data = graph_data_stats[1]
+        graphs = overview[0]
+        stats = overview[1]
 
         return render_template(
             'dashboards/stats_dashboards.html',
-            graph_data=graph_data,
+            graph_data=graphs,
             project_list=project_list,
-            stats_data=stats_data,
+            stats_data=stats,
             longitudinal_data=longitudinal_data,
             project_list_ow_co_me=project_list_ow_co_me,
             username=session['username'].capitalize(),
@@ -98,8 +95,8 @@ def stats_db():
 
 
 # this route give the details of the project
-@dashboards.route('db/project/<id>', methods=['GET'])
-def project_db(id):
+@dashboard.route('project/<id>', methods=['GET'])
+def project(id):
     """This is the per project dashboard view.
 
     Args:
@@ -109,32 +106,32 @@ def project_db(id):
         route: Project details
     """
     if session['role_exist'] == '':
-        return redirect(url_for('auth.login_DB'))
+        return redirect(url_for('auth.login'))
 
-    data = model.load_users_data(session['server'])
+    pickle_data = model.load_users_data(session['server'])
 
     # Get the details for plotting
-    data_array = graph_generator.GraphGeneratorPP(
+    per_project_view = graph_generator.GraphGeneratorPP(
         session['username'], id, session['role_exist'],
-        data, session['project_visible']
-    ).graph_generator()
+        pickle_data, session['project_visible']
+    ).get_project_view()
 
     # If no data found redirect to login page else render the data
     # with template
-    if data_array is None:
+    if per_project_view is None:
 
         return render_template('dashboards/stats_dashboards.html')
 
-    graph_data = data_array[0]
-    stats_data = data_array[1]
+    graphs = per_project_view[0]
+    stats = per_project_view[1]
 
     return render_template(
         'dashboards/stats_dashboards_pp.html',
-        graph_data=graph_data,
-        stats_data=stats_data,
+        graph_data=graphs,
+        stats_data=stats,
         username=session['username'].capitalize(),
         server=session['server'],
         db=True,
-        test_grid=data_array[3],
-        data_array=data_array[2],
+        test_grid=per_project_view[3],
+        data_array=per_project_view[2],
         id=id)

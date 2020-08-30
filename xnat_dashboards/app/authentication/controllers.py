@@ -1,7 +1,7 @@
 # Import flask dependencies
 from flask import Blueprint, render_template, session, request, redirect,\
     url_for
-from xnat_dashboards.app.auth import model
+from xnat_dashboards.app.authentication import model
 
 
 # Define the blueprint: 'auth', set its url prefix: app.url/auth
@@ -9,8 +9,8 @@ auth = Blueprint('auth', __name__, url_prefix='/auth')
 
 
 # Set the route and accepted methods
-@auth.route('/db/login/', methods=['GET', 'POST'])
-def login_DB():
+@auth.route('/login/', methods=['GET', 'POST'])
+def login():
 
     """
     This is the login route. Uses authentication model for checking
@@ -41,14 +41,14 @@ def login_DB():
                 display_error = session['error']
                 del session['error']
             return render_template(
-                'auth/login_DB.html',
+                'authentication/login.html',
                 error=display_error,
                 servers_list=servers_list)
         else:
             # If there is no error meaning the user is called login
             # page using browser instead of a redirect
             return render_template(
-                'auth/login_DB.html', servers_list=servers_list)
+                'authentication/login.html', servers_list=servers_list)
 
     else:
 
@@ -90,15 +90,15 @@ def login_DB():
                 session['project_visible'] = config['project_visible']
 
                 # Redirect to dashboard
-                return redirect(url_for('dashboards.stats_db'))
+                return redirect(url_for('dashboard.stats'))
             else:
 
                 # User is forbiden to login
                 session['error'] = "User role assigned is "
                 "forbidden login not allowed"
-                return redirect(url_for('auth.login_DB'))
+                return redirect(url_for('auth.login'))
         else:
 
             # Wrong password or username
             session['error'] = "Wrong Password or Username"
-            return redirect(url_for('auth.login_DB'))
+            return redirect(url_for('auth.login'))

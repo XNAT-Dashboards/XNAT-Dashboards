@@ -80,7 +80,7 @@ class Formatter:
             # Resource with index 5 represent whether free surfer
             # resource is present if -1 is present then free surfer
             # resource for the session is not present
-            if resource[5] != '-1':
+            if resource[5] is not None:
                 resource_processing.append([
                     resource[0], resource[1],
                     resource[4], float(resource[5][:-1])])

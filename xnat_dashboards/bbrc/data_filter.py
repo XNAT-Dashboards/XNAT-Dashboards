@@ -25,9 +25,9 @@ class DataFilter:
             self.project_visible = project_visible[role]
         else:
             self.project_visible = []
-        self.resources_preprocessor(resources_bbrc)
+        self.filter_projects(resources_bbrc)
 
-    def resources_preprocessor(self, resources_bbrc):
+    def filter_projects(self, resources_bbrc):
         """
         This is used to filter resources and bbrc resources
         using project ids based on roles assigned to user.
@@ -52,7 +52,7 @@ class DataFilter:
 
         self.resources_bbrc = resources_bbrc_list
 
-    def graphs_reordering(self):
+    def reorder_graphs(self):
 
         """
         This reorder the data as per requirements that is
@@ -63,7 +63,7 @@ class DataFilter:
             project should be visible as per role of the user.
         """
 
-        final_json_dict = {}
+        ordered_graphs = {}
 
         resources = data_formatter.Formatter().get_resource_details(
             self.resources_bbrc)
@@ -71,19 +71,9 @@ class DataFilter:
         if resources is not None and\
                 not isinstance(resources, int):
 
-            final_json_dict.update(resources)
+            ordered_graphs.update(resources)
 
-        return final_json_dict
-
-    def get_overview(self):
-        """This sends data back to Graph Generator class present in
-        pyxnat interface.
-
-        Returns:
-            dict: This returns a dict with all the information regarding
-                overview page.
-        """
-        return self.graphs_reordering()
+        return ordered_graphs
 
 
 class DataFilterPP(DataFilter):
@@ -123,7 +113,7 @@ class DataFilterPP(DataFilter):
         self.project_id = project_id
         self.resources_bbrc = resources_bbrc
 
-    def graphs_reordering_pp(self):
+    def reorder_graphs_pp(self):
 
         """
         This preprocessor makes the dictionary with each key being
@@ -142,7 +132,7 @@ class DataFilterPP(DataFilter):
             Data_name: {other informations to be sent to frontend}}
         """
 
-        final_json_dict = {}
+        ordered_graphs = {}
 
         resources = self.formatter_object_per_project.get_resource_details(
             self.resources_bbrc, self.project_id)
@@ -151,36 +141,18 @@ class DataFilterPP(DataFilter):
             self.resources_bbrc, self.project_id)
 
         if not isinstance(resources, int) and resources is not None:
-            final_json_dict.update(resources)
+            ordered_graphs.update(resources)
 
         diff_dates = self.formatter_object_per_project.diff_dates(
             self.resources_bbrc, self.experiments, self.project_id)
 
         if diff_dates is not None and diff_dates['count'] != {}:
-            final_json_dict.update({'Dates Diff': diff_dates})
+            ordered_graphs.update({'Dates Diff': diff_dates})
 
-        final_json_dict.update({'test_grid': test_grid})
-
-        return final_json_dict
-
-    def get_per_project_view(self):
-        """
-        This sends the data to Graph per project view by first getting
-        data from graph_reordering.
-
-        return:
-            dict/None: It sends dict if the project have information,
-            if project don't have any information it will be None is set
-            by default.
-
-            {Graph1_name : { count:{x_axis_values: y_axis_values},
-                            list:{x_axis_values: y_list} },
-            Data_name: {other informations to be sent to frontend}}
-        """
-        # Checks if the project should be visible to user with the role
+        ordered_graphs.update({'test_grid': test_grid})
 
         if self.project_id in self.project_visible\
                 or "*" in self.project_visible:
-            return self.graphs_reordering_pp()
+            return ordered_graphs
         else:
             return None

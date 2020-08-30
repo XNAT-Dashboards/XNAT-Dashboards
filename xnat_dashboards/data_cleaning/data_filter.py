@@ -12,7 +12,7 @@ class DataFilter:
 
     Args:
         username (str): Username
-        info (list): list of project, subjects, exp., scans
+        pro_sub_exp_sc (list): list of project, subjects, exp., scans
         role (str): role of the user.
         project_visible (list): list of projects that is visible
             by default it will show no project details.
@@ -20,7 +20,7 @@ class DataFilter:
             it will be skipped and no graph of resources will be added.
     """
     def __init__(
-            self, username, info, role, project_visible=[],
+            self, username, pro_sub_exp_sc, role, project_visible=[],
             resources=None):
 
         self.formatter_object = data_formatter.Formatter()
@@ -29,7 +29,7 @@ class DataFilter:
         else:
             self.project_visible = []
         self.username = username
-        self.filter_projects(info, resources)
+        self.filter_projects(pro_sub_exp_sc, resources)
 
     def filter_projects(self, info_f, resources):
         """This methods filters project, subject, scans,
@@ -40,7 +40,7 @@ class DataFilter:
             info_f (dict): dict of projects, subjects, experiments and
                 scans.
         Returns:
-            dict: resources that belongs to the project that
+            dict: resources belonging to the project that
                 should be visible as per role and user.
         """
         # Method to restrict access to projects details
@@ -80,12 +80,12 @@ class DataFilter:
                     or "*" in self.project_visible:
                 subjects.append(subject)
 
-        self.info = {}
+        self.pro_sub_exp_sc = {}
 
-        self.info['projects'] = projects
-        self.info['subjects'] = subjects
-        self.info['experiments'] = experiments
-        self.info['scans'] = scans
+        self.pro_sub_exp_sc['projects'] = projects
+        self.pro_sub_exp_sc['subjects'] = subjects
+        self.pro_sub_exp_sc['experiments'] = experiments
+        self.pro_sub_exp_sc['scans'] = scans
 
         self.resources = {}
         resources_list = []
@@ -102,23 +102,23 @@ class DataFilter:
 
         self.resources = resources_list
 
-    def graphs_reordering(self):
+    def reorder_graphs(self):
 
         """
-        This reorder the data as per requirements that is
+        This reorder the data as per requirements ie.
         if needed user can reorder and then return the dict.
 
         Returns:
-            dict: data information that belongs to the
+            dict: information belonging to the
             project that should be visible as per role and user.
         """
 
         stats = {}
-        final_json_dict = {}
+        ordered_graphs = {}
 
         # Preprocessing required in project data for number of projects
         projects_details = self.formatter_object.get_projects_details(
-            self.info['projects'])
+            self.pro_sub_exp_sc['projects'])
         # If some error in connection 1 will be returned and we will
         # not go further
         if not isinstance(projects_details, int):
@@ -129,14 +129,14 @@ class DataFilter:
 
         # Pre processing for subject details required
         subjects_details = self.formatter_object.get_subjects_details(
-            self.info['subjects'])
+            self.pro_sub_exp_sc['subjects'])
         if subjects_details != 1:
             stats['Subjects'] = subjects_details['Number of Subjects']
             del subjects_details['Number of Subjects']
 
         # Pre processing experiment details
         experiments_details = self.formatter_object.get_experiments_details(
-            self.info['experiments'])
+            self.pro_sub_exp_sc['experiments'])
 
         if experiments_details != 1:
             stats['Experiments'] = experiments_details['Number of Experiments']
@@ -144,18 +144,18 @@ class DataFilter:
 
         # Pre processing scans details
         scans_details = self.formatter_object.get_scans_details(
-            self.info['scans'])
+            self.pro_sub_exp_sc['scans'])
         if scans_details != 1:
             stats['Scans'] = scans_details['Number of Scans']
             del scans_details['Number of Scans']
 
         stat_final = {'Stats': stats}
 
-        final_json_dict.update(projects_details)
-        final_json_dict.update(subjects_details)
-        final_json_dict.update(experiments_details)
-        final_json_dict.update(scans_details)
-        final_json_dict.update(stat_final)
+        ordered_graphs.update(projects_details)
+        ordered_graphs.update(subjects_details)
+        ordered_graphs.update(experiments_details)
+        ordered_graphs.update(scans_details)
+        ordered_graphs.update(stat_final)
 
         resources = self.formatter_object.get_resources_details(
             self.resources)
@@ -163,9 +163,9 @@ class DataFilter:
         if resources is not None and\
                 not isinstance(resources, int) and self.resources != []:
 
-            final_json_dict.update(resources)
+            ordered_graphs.update(resources)
 
-        return final_json_dict
+        return ordered_graphs
 
     def get_project_list(self):
         """This is used for creating project list
@@ -174,16 +174,7 @@ class DataFilter:
             list: List of projects
         """
         return self.formatter_object.get_projects_details_specific(
-            self.info['projects'], self.username)
-
-    def get_overview(self):
-        """This sends data back to Graph Generator class.
-
-        Returns:
-            dict: This returns a dict with all the information, that is
-                graphs, counters,
-        """
-        return self.graphs_reordering()
+            self.pro_sub_exp_sc['projects'], self.username)
 
 
 class DataFilterPP(DataFilter):
@@ -198,7 +189,7 @@ class DataFilterPP(DataFilter):
     Args:
         DataFilter (DataFilter): It inherits DataFilter.
         username (str): Username
-        info (list): list of project, subjects, exp., scans
+        pro_sub_exp_sc (list): list of project, subjects, exp., scans
         project_id (str): ID of project in per project view.
         role (str): role of the user.
         project_visible (list): list of projects that is visible
@@ -209,12 +200,12 @@ class DataFilterPP(DataFilter):
     def __init__(
             self,
             username,
-            info, project_id, role, project_visible=[],
+            pro_sub_exp_sc, project_id, role, project_visible=[],
             resources=None):
 
         self.formatter_object_per_project = data_formatter.FormatterPP(
             project_id)
-        self.info = info
+        self.pro_sub_exp_sc = pro_sub_exp_sc
         if project_visible != []:
             self.project_visible = project_visible[role]
         else:
@@ -224,7 +215,7 @@ class DataFilterPP(DataFilter):
         self.username = username
         self.project_id = project_id
 
-    def graphs_reordering_pp(self):
+    def reorder_graphs_pp(self):
 
         """
         This preprocessor makes the dictionary with each key being
@@ -244,15 +235,15 @@ class DataFilterPP(DataFilter):
         """
 
         stats = {}
-        final_json_dict = {}
+        ordered_graphs = {}
 
         # Preprocessing required in project data for number of projects
         projects_details = self.formatter_object_per_project.\
-            get_projects_details(self.info['projects'])
+            get_projects_details(self.pro_sub_exp_sc['projects'])
 
         # Pre processing for subject details required
         subjects_details = self.formatter_object_per_project.\
-            get_subjects_details(self.info['subjects'])
+            get_subjects_details(self.pro_sub_exp_sc['subjects'])
 
         if subjects_details != 1:
             stats['Subjects'] = subjects_details['Number of Subjects']
@@ -260,7 +251,7 @@ class DataFilterPP(DataFilter):
 
         # Pre processing experiment details
         experiments_details = self.formatter_object_per_project.\
-            get_experiments_details(self.info['experiments'])
+            get_experiments_details(self.pro_sub_exp_sc['experiments'])
 
         if experiments_details != 1:
             stats['Experiments'] = experiments_details['Number of Experiments']
@@ -270,7 +261,7 @@ class DataFilterPP(DataFilter):
 
         # Pre processing scans details
         scans_details = self.formatter_object_per_project.\
-            get_scans_details(self.info['scans'])
+            get_scans_details(self.pro_sub_exp_sc['scans'])
 
         if scans_details != 1:
             stats['Scans'] = scans_details['Number of Scans']
@@ -278,32 +269,14 @@ class DataFilterPP(DataFilter):
 
         stat_final = {'Stats': stats}
 
-        final_json_dict.update({'Project details': projects_details})
-        final_json_dict.update(subjects_details)
-        final_json_dict.update(experiments_details)
-        final_json_dict.update(scans_details)
-        final_json_dict.update(stat_final)
-
-        return final_json_dict
-
-    def get_per_project_view(self):
-        """
-        This sends the data to Graph per project view, first getting
-        data from graph reordering.
-
-        return:
-            dict/None: It sends dict if the project have information,
-            if project don't have any information it will be None is set
-            by default.
-
-            {Graph1_name : { count:{x_axis_values: y_axis_values},
-                            list:{x_axis_values: y_list} },
-            Data_name: {other informations to be sent to frontend}}
-        """
-        # Checks if the project should be visible to user with the role
+        ordered_graphs.update({'Project details': projects_details})
+        ordered_graphs.update(subjects_details)
+        ordered_graphs.update(experiments_details)
+        ordered_graphs.update(scans_details)
+        ordered_graphs.update(stat_final)
 
         if self.project_id in self.project_visible\
                 or "*" in self.project_visible:
-            return self.graphs_reordering_pp()
+            return ordered_graphs
         else:
             return None
