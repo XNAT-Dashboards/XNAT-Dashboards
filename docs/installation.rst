@@ -25,11 +25,13 @@ Installing from PyPI
 Prerequisites
 -------------
 
-- *python* v3.6+
-- `pyxnat <https://pyxnat.github.io/pyxnat/>`_ v1.3
-- `flask <https://flask.palletsprojects.com/en/1.1.x/>`_ v1.1
-- `flask-wtf <https://flask-wtf.readthedocs.io/en/stable/>`_ v0.14
-- `pandas <https://pandas.pydata.org/>`_ v1.1.0
+- *Python* v3.6+
+- `Pyxnat <https://pyxnat.github.io/pyxnat/>`_ v1.3
+- `Flask <https://flask.palletsprojects.com/en/1.1.x/>`_ v1.1
+- `Flask-wtf <https://flask-wtf.readthedocs.io/en/stable/>`_ v0.14
+- `Pandas <https://pandas.pydata.org/>`_ v1.1.0
+- `Plotly <https://plotly.com/javascript/>`_ 
+- `Boostrap <https://getbootstrap.com/docs/4.0/>`_ v4
 - `tqdm <https://tqdm.github.io/>`_ v4.48.2
 
 For development purposes:
