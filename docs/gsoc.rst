@@ -124,3 +124,32 @@ Improvement that can be done after GSoC 2020
 * Improvement in code quality and tests.
 * Increasing robustness of code.
 * Automation script for downloading data.
+
+Coding Periods
+--------------
+
+1st coding period
+~~~~~~~~~~~~~~~~~
+
+* Created initial frontend, backend, tests, metrics and data fetched from XNAT API using Pyxnat.
+* Released v0.1.0
+* `Merge Request v0.1.0 <https://gitlab.com/xnat-dashboards/xnat-dashboards/-/merge_requests/3>`_
+
+2nd coding period
+~~~~~~~~~~~~~~~~~
+
+* Updates to frontend UI, backend code, new tests.
+* New metrics
+* Addition of MONGO and Pickle for saving data locally.
+* Released v0.2.0
+* `Merge Request v0.2.0 <https://gitlab.com/xnat-dashboards/xnat-dashboards/-/merge_requests/15>`_
+
+3rd coding period
+~~~~~~~~~~~~~~~~~
+
+* Updates to frontend UI, backend code.
+* Used pickle as database for saving data from XNAT.
+* Mongo and Api code moved to different branches.
+* Added documentation and test updates.
+* New metrics and features.
+* `Merge Request v0.3.0 <https://gitlab.com/xnat-dashboards/xnat-dashboards/-/merge_requests/32>`_
