@@ -1,6 +1,7 @@
-[![pipeline status](https://gitlab.com/xnat-dashboards/xnat-dashboards/badges/development/pipeline.svg)](https://gitlab.com/xnat-dashboards/xnat-dashboards/-/commits/development)
-[![coverage report](https://gitlab.com/xnat-dashboards/xnat-dashboards/badges/development/coverage.svg)](https://gitlab.com/xnat-dashboards/xnat-dashboards/-/commits/development)
-[![MIT License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://gitlab.com/xnat-dashboards/xnat-dashboards/-/blob/development/LICENSE)
+[![pipeline status](https://gitlab.com/xnat-dashboards/xnat-dashboards/badges/master/pipeline.svg)](https://gitlab.com/xnat-dashboards/xnat-dashboards/-/commits/master)
+[![coverage report](https://gitlab.com/xnat-dashboards/xnat-dashboards/badges/master/coverage.svg)](https://gitlab.com/xnat-dashboards/xnat-dashboards/-/commits/master)
+[![MIT License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://gitlab.com/xnat-dashboards/xnat-dashboards/-/blob/master/LICENSE)
+[![version](https://img.shields.io/badge/version-v0.3.0-brightgreen)](https://gitlab.com/xnat-dashboards/xnat-dashboards/-/commits/master)
 
 # XNAT Dashboards
 
