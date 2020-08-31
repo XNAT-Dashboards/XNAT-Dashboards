@@ -1,16 +1,16 @@
 import setuptools
 
-long_description = 'This project is about creating a responsive dashboard'\
+long_description = 'This project is a responsive dashboard'\
      ' framework for extensive exploration, monitoring, and reviewing large '\
      'neurological imaging datasets present on the XNAT server instance. '\
-     'This dashboard will fetch data from any XNAT instance servers and '\
-     'will generate highly-visualized, summarized representations of complex '\
+     'This dashboard fetches data from any XNAT instance servers and '\
+     'generates highly-visualized, summarized representations of complex '\
      'scientific data present on the servers and facilitate user navigation '\
-     'through large cohorts. This dashboard will be a light-weight, flexible'\
+     'through large cohorts. This dashboard is a light-weight, flexible'\
      'and modular framework'
 
 setuptools.setup(
-     name='xnat_dashboards',
+     name='XNAT Dashboards',
      version='0.3.0',
      summary='XNAT data visualization',
      author='Mohammad Asif Hashmi',
@@ -21,7 +21,7 @@ setuptools.setup(
           'static': ['xnat_dashboards/app/static/*'],
           'templates': ['xnat_dashboards/app/templates/*']},
      packages=setuptools.find_packages(exclude=('tests')),
-     description='XNAT data visualization using Flask',
+     description='XNAT data visualization using Flask and Pyxnat',
      long_description=long_description,
      license='MIT',
      scripts=[

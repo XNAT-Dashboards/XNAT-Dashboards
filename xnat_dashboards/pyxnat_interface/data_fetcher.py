@@ -118,7 +118,7 @@ class Fetcher:
         resources
 
         Args:
-            experiments (list): List of experiments with thier IDs
+            experiments (list): List of experiments with their IDs
                 used for fetching resources
 
         Returns:

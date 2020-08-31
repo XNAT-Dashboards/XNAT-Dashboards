@@ -8,9 +8,9 @@ def user_exists(username, password, server, ssl):
     """Checks whether user exist on XNAT instance.
 
     Args:
-        username (str): Name of user on XNAT instancce
+        username (str): Name of user on XNAT instance
         password (str): Password of user on XNAT instance
-        server (str): Server url of XNAT instancce
+        server (str): Server url of XNAT instance
         ssl (str): whether to verify remote host
 
     Returns:

@@ -103,8 +103,8 @@ class Formatter:
         it generates the required format for each plot.
 
         Args:
-            resources_bbrc ( list): Each resource have its corrs.
-                ID, project ID, label and experiemnt id.
+            resources_bbrc ( list): Each resource have its corresponding
+                ID, project ID, label and experiment id.
             project_id (String, optional): For per project view, the project id
                 by default it will not return any project details.
 
@@ -187,7 +187,7 @@ class Formatter:
                 'Freesurfer end and start hour difference': time_diff}
 
     def diff_dates(self, resources_bbrc, experiments_data, project_id):
-        """Method for Creating Acquistion and insertion dates difference plot.
+        """Method for Creating Acquisition and insertion dates difference plot.
 
         It takes 2 dates, one from resource test (acquisition date) and
         another from experiment insert date. It calculates the difference
@@ -345,7 +345,7 @@ class Formatter:
                 if resource[0] == project_id:
                     tests_list.append(test_list)
 
-        # Creats a list of different version of tests that are present
+        # Create a list of different version of tests that are present
         # this diff_version list is used in the filtering of test grid
         diff_version = []
 

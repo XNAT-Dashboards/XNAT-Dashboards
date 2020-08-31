@@ -295,8 +295,8 @@ class Formatter:
         it generates the required format for each plot.
 
         Args:
-            resources ( list, optional): Each resource have its corrs.
-                ID, project ID, label and experiemnt id and by default
+            resources ( list, optional): Each resource have its corresponding
+                ID, project ID, label and experiment id and by default
             it will be skipped and no graph of resources will be added.
             project_id (String, optional): For per project view, the project id
                 by default it will not return any project details.
@@ -387,7 +387,7 @@ class Formatter:
         resource_count_df['project_y'] = resource_count_df[
             'project_y'].astype(str) + ' Resources/Session'
 
-        # Send the above created data frome to dict_generator_per_view_stacked
+        # Send the above created data from to dict_generator_per_view_stacked
         # This will create the format required for stacked plot
         resource_count_dict = self.dict_generator_per_view_stacked(
             resource_count_df, 'project_x', 'project_y', 'session')
@@ -423,7 +423,7 @@ class Formatter:
         return df_proportion.rename(columns={'per_view': 'count'}).to_dict()
 
     def dict_generator_resources(self, df, x_name, y_name):
-        """Generate a dictonary from the data frame of resources
+        """Generate a dictionary from the data frame of resources
         in the format required for graphs
 
         Args:
@@ -449,7 +449,7 @@ class Formatter:
 
     def dict_generator_overview(
             self, data, property_x, property_y, x_new, extra=None):
-        """Generate a dictonary from the data list of project, subjects,
+        """Generate a dictionary from the data list of project, subjects,
         experiments and scans in the format required for graphs.
 
         Args:
@@ -502,7 +502,7 @@ class Formatter:
 
     def dict_generator_per_view(
             self, data, property_x, property_y, x_new):
-        """Generate a dictonary from the data list of subjects,
+        """Generate a dictionary from the data list of subjects,
         experiments and scans in the format required for graphs.
         The generated data is only for single project.
 
@@ -535,7 +535,7 @@ class Formatter:
         property_x and property_y are used to group by the pandas data frame
         and both are used on x axis values while property_z is used on y axis.
         Args:
-            data (list): List of data project, subject, scan and experiemnts
+            data (list): List of data project, subject, scan and experiments
             property_x (str): The name which will be on X axis of graph
             property_y (str): The name which will be on X axis of graph
             property_z (str): The name which will be on Y axis of graph
@@ -697,7 +697,7 @@ class FormatterPP(Formatter):
 
         # Using code from the parent class for processing
         experiments_details = super().get_experiments_details(experiments)
-        # Delete Experiments/Project plot as this is present in counterof
+        # Delete Experiments/Project plot as this is present in counter of
         # per project view
         del experiments_details['Experiments/Project']
 
@@ -729,7 +729,7 @@ class FormatterPP(Formatter):
 
         # Using code from the parent class for processing
         scans_details = super().get_scans_details(scans)
-        # Delete Scans/Project plot as this is present in counterof
+        # Delete Scans/Project plot as this is present in counter of
         # per project view
         del scans_details['Scans/Project']
 

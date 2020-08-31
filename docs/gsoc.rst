@@ -74,7 +74,7 @@ Plots/Metrics created during GSoC coding period
 Total of 27 plots were created.
 
 *    **Imaging Sessions:** Total number of different types of session visible
-*    **Projects Visibility:** Total project visible and their visiblity type
+*    **Projects Visibility:** Total project visible and their visibility type
 *    **Sessions types/Project:** Number of sessions types for each visible project
 *    **Subjects/Project:** Number of Subjects or patient in each visible project
 *    **Age Range:** Age distribution of patients or subjects
@@ -112,14 +112,14 @@ BBRC specific Plots/Metrics
 *    **Archiving Validator:** Number of session which have archiving validators
 *    **Version Distribution:** Different versions of Archiving validator for each sessions
 *    **BBRC validator:** BBRC validator present in resources for each session
-*    **Consistent Acquisition Date:** Whether acqisition date field is present in resources. No data means acquistion date for session isn't present
-*    **Dates Diff:** Difference between insertion dates and acquisition dates per session, if acqusition date present in session test
+*    **Consistent Acquisition Date:** Whether acquisition date field is present in resources. No data means acquisition date for session isn't present
+*    **Dates Diff:** Difference between insertion dates and acquisition dates per session, if acquisition date present in session test
 
 
 Improvement that can be done after GSoC 2020
 --------------------------------------------
 
-* Making creation of dashboards purely dependent on backend changes and independent from fontend changes, as of now only plots and graphs can be created from backend changes without a need to change frontend.
+* Making creation of dashboards purely dependent on backend changes and independent from frontend changes, as of now only plots and graphs can be created from backend changes without a need to change frontend.
 * More frontend features, UX and UI Improvement.
 * Improvement in code quality and tests.
 * Increasing robustness of code.

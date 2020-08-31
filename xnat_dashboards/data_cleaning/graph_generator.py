@@ -10,7 +10,7 @@ class GraphGenerator:
     This class makes final changes that are then sent to frontend.
     Which is then displayed using jinja.
 
-    The final chages includes addition of:
+    The final changes includes addition of:
     1. id to graphs.
     2. graph description from the dashboard config file.
     3. graph type from the dashboard config file.
@@ -70,7 +70,7 @@ class GraphGenerator:
 
         Args:
             data (dict): Data of graphs and information that are not plotted
-            like Number of subjects, experiemtn etc from DataFilter.
+            like Number of subjects, experiment etc from DataFilter.
 
         Returns:
             dict: Data to frontend.
@@ -182,7 +182,7 @@ class GraphGenerator:
         Returns:
             project_list_2d (list): The id of project based in a 2dArray
             To be processed by frontend
-            project_list_2d_ow_co_me (list): arrayow_co_me means
+            project_list_2d_ow_co_me (list): ow_co_me means
             owned_collob_member all variables with this suffix
             represent the project list for owned collaborated or member list
         """
@@ -299,8 +299,8 @@ class GraphGeneratorPP(GraphGenerator):
     This class makes final changes that are then sent to frontend.
     Which is then displayed using jinja for per project view.
 
-    The final chages includes addition of:
-    1. Additon of ID to graphs.
+    The final changes includes addition of:
+    1. Addition of ID to graphs.
     2. Addition of graph description from the dashboard config file.
     3. Addition of graph type from the dashboard config file.
     4. Addition of default color to graph.

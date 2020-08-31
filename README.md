@@ -22,7 +22,7 @@ XNAT Dashboards is a responsive dashboard framework for extensive exploration, m
 
 ## Installation
 
-Xnat dashboards can be installed using pip python package index.
+Xnat dashboards can be installed using pip python package index.  
 ```pip install xnat-dashboards```
 
 ## Installation from Sources
@@ -30,10 +30,10 @@ Clone the repository
 ```python setup.py install```
 
 ## Tests
-Pytest is used as a testing framework to run test
+Pytest is used as a testing framework to run test  
 
-```pytest tests```          (Without coverage)
-```pytest --cov tests```    (With coverage)
+```pytest tests```          (Without coverage)  
+```pytest --cov tests```    (With coverage)  
 
 ## Documentation
 

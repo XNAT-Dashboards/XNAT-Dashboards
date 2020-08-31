@@ -151,13 +151,13 @@
         },
         "Consistent Acquisition Date":{
             "type": "pie",
-            "description": "Whether acqisition date field is present in resources. No data means acquistion date for session isn't present",
+            "description": "Whether acquisition date field is present in resources. No data means acquisition date for session isn't present",
             "visibility": ["admin"],
             "color":""
         },
         "Dates Diff": {
             "type": "bar",
-            "description": "Difference between insertion dates and acquisition dates per session, if acqusition date present in session test",
+            "description": "Difference between insertion dates and acquisition dates per session, if acquisition date present in session test",
             "visibility": ["admin"],
             "color":"#16ffeb"
         },

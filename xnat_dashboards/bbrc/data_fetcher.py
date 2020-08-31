@@ -129,7 +129,7 @@ class Fetcher:
     def tests_resource(self, res, name):
         """BBRC specifc test
 
-        This method proces the json fetched from resource and convert
+        This method process the json fetched from resource and convert
         it to dictionary
 
         Args:

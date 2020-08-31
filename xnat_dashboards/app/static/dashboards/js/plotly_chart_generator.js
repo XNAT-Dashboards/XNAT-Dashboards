@@ -9,7 +9,7 @@ function chart_generator(json){
             'x1':'y1',
             'x2':'y2',
             'x3':'y3',
-            'graphy_type':'bar'
+            'graph_type':'bar'
             'graph_id':'1'
         }
     }
@@ -350,7 +350,7 @@ function generate_x_y_axis(graph_info){
 }
 
 /*
-Drill down functionlity
+Drill down functionality
 */
 
 a_end_e = '</a>'

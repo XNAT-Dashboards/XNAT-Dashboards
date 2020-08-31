@@ -31,7 +31,7 @@ Prerequisites
 - `Flask-wtf <https://flask-wtf.readthedocs.io/en/stable/>`_ v0.14
 - `Pandas <https://pandas.pydata.org/>`_ v1.1.0
 - `Plotly <https://plotly.com/javascript/>`_ 
-- `Boostrap <https://getbootstrap.com/docs/4.0/>`_ v4
+- `Bootstrap <https://getbootstrap.com/docs/4.0/>`_ v4
 - `tqdm <https://tqdm.github.io/>`_ v4.48.2
 
 For development purposes:

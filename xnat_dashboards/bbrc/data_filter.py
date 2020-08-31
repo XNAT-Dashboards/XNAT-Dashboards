@@ -14,7 +14,7 @@ class DataFilter:
         role (str): role of the user.
         project_visible (list): list of projects that is visible
             by default it will show no project details.
-        resources_bbrcc (list, optional): List of BBRC resources and by default
+        resources_bbrc (list, optional): List of BBRC resources and by default
             it will be skipped and no graph of BBRC resources will be added.
     """
     def __init__(
@@ -129,7 +129,7 @@ class DataFilterPP(DataFilter):
 
             {Graph1_name : { count:{x_axis_values: y_axis_values},
                             list:{x_axis_values: y_list} },
-            Data_name: {other informations to be sent to frontend}}
+            Data_name: {other information to be sent to frontend}}
         """
 
         ordered_graphs = {}

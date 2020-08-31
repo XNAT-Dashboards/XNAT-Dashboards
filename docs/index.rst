@@ -14,7 +14,7 @@ Overview
 `Source Repository <https://gitlab.com/xnat-dashboards/xnat-dashboards>`__ |
 `Issues & Ideas <https://gitlab.com/xnat-dashboards/xnat-dashboards/-/issues>`__
 
-:mod:`XNAT Dashboards` is an open source, MIT-licenced framework providing a summarized graphical
+:mod:`XNAT Dashboards` is an open source, MIT-licensed framework providing a summarized graphical
 interface of `XNAT <http://www.xnat.org>`_ using `PyXNAT <http://www.pyxnat.github.io>`_
 
 It is a responsive dashboard framework for

@@ -31,7 +31,7 @@ Their are 4 types of roles:
 
 
 **roles_config** this key value contains information regarding user, their assigned roles
-and project that should be visbile to each role.
+and project that should be visible to each role.
 
 user roles::
 
@@ -98,8 +98,8 @@ Downloading Data
 ----------------
 
 Downloading data is the process of fetching data from the XNAT instance and saving
-it as pickle. This saved pickcle is used for plotting graphs and other
-informations of the XNAT instance from which it fetched data.
+it as pickle. This saved pickle is used for plotting graphs and other
+information of the XNAT instance from which it fetched data.
 
 Script to download_data as pickle file::
 

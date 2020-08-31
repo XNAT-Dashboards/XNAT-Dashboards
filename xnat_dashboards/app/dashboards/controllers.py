@@ -11,7 +11,7 @@ dashboard = Blueprint('dashboard', __name__, url_prefix='/dashboard')
 # Logout route
 @dashboard.route('/logout/', methods=['GET'])
 def logout():
-    """Logout route here we delete all existing sesson variables
+    """Logout route here we delete all existing session variables
 
     Returns:
         route: Redirect to login page.

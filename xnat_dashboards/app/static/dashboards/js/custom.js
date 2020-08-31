@@ -282,7 +282,7 @@ $('#tests_table tbody td').on('click', function(){
 $(document).ready(function(){
     $("#btnExport").click(function() {
         let table = document.getElementsByTagName("table");
-        TableToExcel.convert(table[1], { // html code may contain multiple tables so here we are refering to 1st table tag
+        TableToExcel.convert(table[1], { // html code may contain multiple tables so here we are referring to 1st table tag
            name: project_id+`_export.xlsx`, // fileName you could use any name
            sheet: {
               name: 'Sheet 1' // sheetName

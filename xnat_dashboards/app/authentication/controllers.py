@@ -78,7 +78,8 @@ def login():
 
             # If same xnat instance check role assign to user
             if config:
-                # If no role assign to user assigne guest as default role
+                # If no role assigned to a user then guest is set
+                # as default role
                 if username in config['user roles']:
                     session['role_exist'] = config['user roles'][username]
                 else:

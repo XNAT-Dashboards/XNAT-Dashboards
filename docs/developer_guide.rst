@@ -40,7 +40,7 @@ Create a new method in DataFormatter file.
 
 There are 2 options to add a plot:
 
-1 -> Using predifined methods in DataFormatter file.
+1 -> Using pre-defined methods in DataFormatter file.
 
 2 -> Using own logic in DataFormatter file.
 
@@ -62,9 +62,9 @@ Example for option 1::
 In each method provide the arguments::
 
     1st arg= example_data_list
-    2nd arg= Value on Xaxis since on x axis we will have scan type use 'type' for this example_data_list
-    3rd arg= Value on Yaxis since on y axis we will have counted values of each scan type use 'id'
-    4th arg= Provide a name for values displayed on Xaxis if you want the same name as in 'type' write 'id'
+    2nd arg= Value on x-axis since on x axis we will have scan type use 'type' for this example_data_list
+    3rd arg= Value on y-axis since on y axis we will have counted values of each scan type use 'id'
+    4th arg= Provide a name for values displayed on x-axis if you want the same name as in 'type' write 'id'
     
 This method will return a dictionary of following format::
 
@@ -120,7 +120,7 @@ Steps to create a new dashboard frontend:
 Steps to send data from backend to the new dashboards frontend:
 
 - Create the plots from using :doc:`add_plots` or other data in DataFormatter.
-- Use the above workflow and code documenation to make the appropriate changes.
+- Use the above workflow and code documentation to make the appropriate changes.
 - This is then sent to backend.
 - Use jinja formatting to display on frontend.
 
@@ -132,7 +132,7 @@ Frontend is writtend in HTML, CSS, Javascript, plotly.js and bootstrap.
 - All frontend code for creating plots from backend is sent to a Javascript file that can be found on 'app/static/dashboards/js/plotly_chart_generator.js'
 - Using Jinja html template we loop through each graph data sent from backend and call the method present on the above file for creating plots.
 - This file contains code for creating bar, stacked bar, pie, scatter, line graphs.
-- Other js file in the same directory is for differnt part of page.
+- Other js file in the same directory is for different part of page.
 
 Example graph data sent from backend to frontend::
 
