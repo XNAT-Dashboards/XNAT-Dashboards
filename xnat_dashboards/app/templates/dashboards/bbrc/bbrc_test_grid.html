@@ -1,0 +1,139 @@
+
+<div class="tests_grid_part">
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex">
+                <h5 class="card-title">Sessions with corresponding tests</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-xs-5">
+                &nbsp &nbsp<label for="version_list">Version: </label>
+                <select id="version_list" name="version_list" onchange="filterVersion()">
+                    <option>All</option>
+                    {% for ver in test_grid[2]%}
+                    <option>{{ver}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4 col-xs-2">
+            </div>
+            <div class="col-md-2 col-xs-5">
+                Download Tests Report
+                <i id="btnExport" class="fa fa-download" aria-hidden="true"></i>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table id='tests_table' class="table table-hover">
+                <thead>
+                        <tr>
+                            <td class="Stick">Sessions/Tests</td>
+                            <td>Version</td>
+                            {% for data in test_grid[0]%}
+                            <td>{{data}}</td>
+                            {% endfor %}
+                        </tr>
+                </thead>
+                <tbody>
+                    <!-- Every row per session details -->
+                    {% for data_l in test_grid[1] %}
+                        <tr>
+                            {% for data in data_l %}
+                                {% if data[0] == true %}
+                                <td class="green_bg">
+                                    <div style="display: none;">
+                                        <!-- Loop throug each data present in dictionary or in jinja called mapping-->
+                                        {% if data[1] is mapping %}
+                                            {% for data_vi in data[1] %}
+                                            {{data_vi }} ->
+                                            {{data[1][data_vi]}} <br/>
+                                            {% endfor %}
+                                        <!-- If data[1] is of type string just print it-->
+                                        {% elif data[1] is string %}
+                                            {{ data[1] }}
+                                        <!-- Loop throug each data present in list -->
+                                        {% else %}
+                                            {% for data_vi in data[1] %}
+                                                {{data_vi }} <br/>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                {% elif data[0] == false%}
+                                <td class="red_bg">
+                                    <div style="display: none;">
+                                        <!-- Loop throug each data present in dictionary or in jinja called mapping-->
+                                        {% if data[1] is mapping %}
+                                            {% for data_vi in data[1] %}
+                                            {{data_vi }} ->
+                                            {{data[1][data_vi]}} <br/>
+                                            {% endfor %}
+                                        <!-- If data[1] is of type string just print it-->
+                                        {% elif data[1] is string %}
+                                            {{ data[1] }}
+                                        <!-- Loop throug each data present in list -->
+                                        {% else %}
+                                            {% for data_vi in data[1] %}
+                                                {{data_vi }} <br/>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                {% elif data[0] == None%}
+                                <td class="grey_bg">
+                                    <div style="display: none;">
+                                        <!-- Loop throug each data present in dictionary or in jinja called mapping-->
+                                        {% if data[1] is mapping %}
+                                            {% for data_vi in data[1] %}
+                                            {{data_vi }} ->
+                                            {{data[1][data_vi]}} <br/>
+                                            {% endfor %}
+                                        <!-- If data[1] is of type string just print it-->
+                                        {% elif data[1] is string %}
+                                            {{ data[1] }}
+                                        <!-- Loop throug each data present in list -->
+                                        {% else %}
+                                            {% for data_vi in data[1] %}
+                                                {{data_vi }} <br/>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                {% elif data[0] == 'version' %}
+                                <td>
+                                    {{data[1]}}
+                                </td>
+                                {% elif data == '' %}
+                                <td class="black_bg"></td>
+                                {% else %}
+                                <td class="stick">
+                                    <a href="{{server}}/data/experiments/{{data}}?format=html" target="_blank">
+                                    {{data}}
+                                    </a>
+                                </td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- End test grid addition -->
+<!-- Modal test false-->
+<div class="modal fade" id="test" tabindex="-1" role="dialog" aria-labelledby="testTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="testTitle"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+            </div>
+            <div class="modal-body" id="modalTest">
+
+            </div>
+        </div>
+    </div>
+</div>

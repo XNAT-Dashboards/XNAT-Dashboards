@@ -1,1 +1,0 @@
-pickle containing username and fetched information will be saved here

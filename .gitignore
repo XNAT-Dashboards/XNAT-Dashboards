@@ -4,3 +4,5 @@ __pycache__/
 *.pyc
 *.pickle
 *.ipynb
+settings.json
+.vscode/

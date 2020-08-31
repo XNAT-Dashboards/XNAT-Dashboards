@@ -1,68 +1,43 @@
-[![pipeline status](https://gitlab.com/Udolf47/xnat_dashboards/badges/master/pipeline.svg)](https://gitlab.com/Udolf47/xnat_dashboards/-/commits/master)
-[![coverage report](https://gitlab.com/Udolf47/xnat_dashboards/badges/master/coverage.svg)](https://gitlab.com/Udolf47/xnat_dashboards/-/commits/master)
-[![version](https://img.shields.io/badge/version-v0.2.0-brightgreen)](https://gitlab.com/Udolf47/xnat_dashboards/-/commits/master)
-
-
+[![pipeline status](https://gitlab.com/xnat-dashboards/xnat-dashboards/badges/master/pipeline.svg)](https://gitlab.com/xnat-dashboards/xnat-dashboards/-/commits/master)
+[![coverage report](https://gitlab.com/xnat-dashboards/xnat-dashboards/badges/master/coverage.svg)](https://gitlab.com/xnat-dashboards/xnat-dashboards/-/commits/master)
+[![MIT License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://gitlab.com/xnat-dashboards/xnat-dashboards/-/blob/master/LICENSE)
+[![version](https://img.shields.io/badge/version-v0.3.0-brightgreen)](https://gitlab.com/xnat-dashboards/xnat-dashboards/-/commits/master)
 
 # XNAT Dashboards
 
-This project is about creating a responsive dashboard framework for extensive exploration, monitoring, and reviewing large neurological imaging datasets present on the XNAT server instance. This dashboard will fetch data from any XNAT instance servers and will generate highly-visualized, summarized representations of complex scientific data present on the servers and facilitate user navigation through large cohorts. This dashboard will be a light-weight, flexible and modular framework that can adapt and change as per the new needs of the users.
+XNAT Dashboards is a responsive dashboard framework for extensive exploration, monitoring, and reviewing large neurological imaging datasets present on the XNAT server instance. It fetches data from any XNAT instance servers and generates highly-visualized, summarized representations of complex scientific data present on the servers and facilitate user navigation through large cohorts. 
+
+## Built with
+
+- [Flask](https://flask.palletsprojects.com/en/1.1.x/)
+- [Pyxnat](https://pyxnat.github.io/pyxnat/)
+- [Pandas](https://pandas.pydata.org/)
+- [Plotly.js](https://plotly.com/javascript/)
+- [Bootstrap](https://getbootstrap.com/)
 
 ## Prerequisite
 
-- XNAT instance.
+- XNAT Instance.
 - Username and Password for that xnat instance.
 - If no local instance available you can register at [CENTRAL](https://central.xnat.org)
-- Graph type assignment file present in util/graph_type.json
-- [MongoDB Instance](https://www.mongodb.com/) or save data using pickle
 
-## Getting Started
+## Installation
 
-To run this project locally
+Xnat dashboards can be installed using pip python package index.  
+```pip install xnat-dashboards```
 
-- Install Python 3
-- Install virtual env
-- Tests can be found in test directory
+## Installation from Sources
+Clone the repository
+```python setup.py install```
 
-### Installing
+## Tests
+Pytest is used as a testing framework to run test  
 
-- ```Create a virtual environment```
-- ```source env/bin/activate```
-- ```pip3 install -r requirements.txt```
-```
-Create a json file with following format:
-{
-    'username': 'username',
-    'password': 'password',
-    'server': 'server url',
-    'ssl': 'Empty if you want to verify remote host'
-}
-```
-- ```python download_resources.py -p <Relative path to the above JSON file>``` to download data.
-- ``` 3 configuration files are provided with following functionalities: ```
-```
-- db_config.json
-    This file is used to change the url on which MongoDB is hosted
-- graph_config.json
-    This file can be used to change graphs configuration.
-        User can change graphs types.
-        What roles can view which graph can be changed.
-        Change the tooltip information for each graph.
-        Default color are assigned to each graph which can be changed as per need.
-- roles_config.json
-    This file can be used to change roles configurations.
-        Users can be added or removed.
-        Users roles can be changed.
-        Adding projects for users which they will be able to access.
-```
+```pytest tests```          (Without coverage)  
+```pytest --cov tests```    (With coverage)  
 
-### Starting the server
+## Documentation
 
-```python3 run.py```
-
-## Running the tests
-
-Pytest is used as a testing framework to run test
-
-- ``` pytest tests ```          (Without coverage)
-- ``` pytest --cov tests ```    (With coverage)
+- Official Documentation can be found at https://xnat-dashboards.gitlab.io/xnat-dashboards.
+- Users who want to install and run the dashboards read [user guide](https://xnat-dashboards.gitlab.io/xnat-dashboards/user_guide.html)
+- Developers who wants to install, develop, test or add more features to the dashboards read both [user guide](https://xnat-dashboards.gitlab.io/xnat-dashboards/user_guide.html) and [developers guide](https://xnat-dashboards.gitlab.io/xnat-dashboards/developer_guide.html).

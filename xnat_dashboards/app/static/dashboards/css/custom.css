@@ -1,0 +1,400 @@
+
+.skin-default-dark {
+  /*Theme Colors
+    Back ground color for left sidebar, and plotly graphs*/
+   }
+  .skin-default-dark .topbar {
+    background: #fff; }
+    .skin-default-dark .topbar .navbar-dark .navbar-nav .nav-link {
+      color: #adb5bd; }
+  .skin-default-dark .sidebar-nav ul li a.active, .skin-default-dark .sidebar-nav ul li a:hover {
+    color: #009efb; }
+    .skin-default-dark .sidebar-nav ul li a.active i, .skin-default-dark .sidebar-nav ul li a:hover i {
+      color: #009efb; }
+  .skin-default-dark .sidebar-nav > ul > li.active > a {
+    color: #009efb; }
+    .skin-default-dark .sidebar-nav > ul > li.active > a i {
+      color: #009efb; }
+  .skin-default-dark .page-titles .breadcrumb .breadcrumb-item.active {
+    color: #009efb; }
+  .skin-default-dark .topbar .top-navbar .navbar-header .navbar-brand .dark-logo {
+    display: inline-block;
+    color: rgba(255, 255, 255, 0.8); }
+  .skin-default-dark .topbar .top-navbar .navbar-header .navbar-brand .light-logo {
+    display: none; }
+  .skin-default-dark .left-sidebar {
+    background: #2b2f3a; }
+    .skin-default-dark .left-sidebar .user-pro-body a.link {
+      color: #8991a9; }
+    .skin-default-dark .left-sidebar .nav-text-box {
+      border-color: transparent;
+      background: rgba(0, 0, 0, 0.3); }
+    .skin-default-dark .left-sidebar .sidebar-nav > ul > li > a, .skin-default-dark .left-sidebar .sidebar-nav ul li a {
+      color: #8991a9;
+      -webkit-transition: 0.1s ease-in;
+      -o-transition: 0.1s ease-in;
+      transition: 0.1s ease-in; }
+      .skin-default-dark .left-sidebar .sidebar-nav > ul > li > a i, .skin-default-dark .left-sidebar .sidebar-nav ul li a i {
+        color: #7f879b; }
+      .skin-default-dark .left-sidebar .sidebar-nav > ul > li > a:hover i, .skin-default-dark .left-sidebar .sidebar-nav > ul > li > a:hover, .skin-default-dark .left-sidebar .sidebar-nav ul li a:hover i, .skin-default-dark .left-sidebar .sidebar-nav ul li a:hover {
+        color: #fff; }
+      .skin-default-dark .left-sidebar .sidebar-nav > ul > li > a.active, .skin-default-dark .left-sidebar .sidebar-nav > ul > li > a.active i, .skin-default-dark .left-sidebar .sidebar-nav ul li a.active, .skin-default-dark .left-sidebar .sidebar-nav ul li a.active i {
+        color: #fff; }
+    .skin-default-dark .left-sidebar .sidebar-nav > ul > li.selected > a {
+      color: #fff; }
+      .skin-default-dark .left-sidebar .sidebar-nav > ul > li.selected > a i {
+        color: #fff; }
+    .skin-default-dark .left-sidebar .sidebar-nav ul li ul {
+      background: rgba(0, 0, 0, 0.2); }
+  .skin-default-dark .ps > .ps__scrollbar-y-rail > .ps__scrollbar-y {
+    background-color: rgba(255, 255, 255, 0.2); }
+  @media (min-width: 768px) {
+    .skin-default-dark.mini-sidebar .sidebar-nav #sidebarnav > li > ul, .skin-default-dark.mini-sidebar .sidebar-nav #sidebarnav > li:hover > a {
+      background: #1f2023; } }
+
+.hide{
+        display: none;
+      }
+      
+.highlight{
+        background: rgba(0, 0, 0, 0.3);
+      }
+
+/*******************
+  Preloader
+  ********************/
+  .preloader {
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    position: fixed;
+    z-index: 99999;
+    background: #fff; }
+    .preloader .cssload-speeding-wheel {
+      position: absolute;
+      top: calc(50% - 3.5px);
+      left: calc(50% - 3.5px); }
+  
+  .loader,
+  .loader__figure {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%); }
+  
+  .loader {
+    overflow: visible;
+    padding-top: 2em;
+    height: 0;
+    width: 2em; }
+  
+  .loader__figure {
+    height: 0;
+    width: 0;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    border: 0 solid #1976d2;
+    border-radius: 50%;
+    -webkit-animation: loader-figure 1.15s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+    -moz-animation: loader-figure 1.15s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+    animation: loader-figure 1.15s infinite cubic-bezier(0.215, 0.61, 0.355, 1); }
+  
+  .loader__label {
+    float: left;
+    margin-left: 50%;
+    -webkit-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    -o-transform: translateX(-50%);
+    transform: translateX(-50%);
+    margin: 0.5em 0 0 50%;
+    font-size: 0.875em;
+    letter-spacing: 0.1em;
+    line-height: 1.5em;
+    color: #1976d2;
+    white-space: nowrap;
+    -webkit-animation: loader-label 1.15s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+    -moz-animation: loader-label 1.15s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+    animation: loader-label 1.15s infinite cubic-bezier(0.215, 0.61, 0.355, 1); }
+  
+  @-webkit-keyframes loader-figure {
+    0% {
+      height: 0;
+      width: 0;
+      background-color: #1976d2; }
+    29% {
+      background-color: #1976d2; }
+    30% {
+      height: 2em;
+      width: 2em;
+      background-color: transparent;
+      border-width: 1em;
+      opacity: 1; }
+    100% {
+      height: 2em;
+      width: 2em;
+      border-width: 0;
+      opacity: 0;
+      background-color: transparent; } }
+  
+  @-moz-keyframes loader-figure {
+    0% {
+      height: 0;
+      width: 0;
+      background-color: #1976d2; }
+    29% {
+      background-color: #1976d2; }
+    30% {
+      height: 2em;
+      width: 2em;
+      background-color: transparent;
+      border-width: 1em;
+      opacity: 1; }
+    100% {
+      height: 2em;
+      width: 2em;
+      border-width: 0;
+      opacity: 0;
+      background-color: transparent; } }
+  
+  @keyframes loader-figure {
+    0% {
+      height: 0;
+      width: 0;
+      background-color: #1976d2; }
+    29% {
+      background-color: #1976d2; }
+    30% {
+      height: 2em;
+      width: 2em;
+      background-color: transparent;
+      border-width: 1em;
+      opacity: 1; }
+    100% {
+      height: 2em;
+      width: 2em;
+      border-width: 0;
+      opacity: 0;
+      background-color: transparent; } }
+  
+  @-webkit-keyframes loader-label {
+    0% {
+      opacity: 0.25; }
+    30% {
+      opacity: 1; }
+    100% {
+      opacity: 0.25; } }
+  
+  @-moz-keyframes loader-label {
+    0% {
+      opacity: 0.25; }
+    30% {
+      opacity: 1; }
+    100% {
+      opacity: 0.25; } }
+  
+  @keyframes loader-label {
+    0% {
+      opacity: 0.25; }
+    30% {
+      opacity: 1; }
+    100% {
+      opacity: 0.25; } }
+  
+  .btn-circle {
+    border-radius: 100%;
+    width: 40px;
+    height: 40px;
+    padding: 10px; }
+
+.logo{
+  width: 35px;
+  height: 30;
+}
+#logo{
+  color: black;
+}
+.left_pane{
+  color: white;
+}
+
+/*
+Counter for stats data
+*/
+
+.counter {
+  padding: 10px 0;
+  border-radius: 5px;
+}
+
+.count-title {
+  font-size: 3vw;
+  font-weight: bold;
+  margin-top: 10px;
+  margin-bottom: 0;
+  color:#a2caf2;
+  text-align: center;
+}
+
+.count-text {
+  font-size: 2vw;
+  font-weight: normal;
+  margin-top: 10px;
+  margin-bottom: 0;
+  text-align: center;
+}
+
+.fa-2x {
+  margin: 0 auto;
+  float: none;
+  display: table;
+}
+
+/* Nav bar Logout and username */
+
+.username{
+  color:#51a7f7;
+}
+.username:hover{
+  color:blue;
+}
+.logout{
+  color: #DC3446;
+}
+.logout:hover{
+  color:red;
+}
+a.logout:hover{
+  color: red;
+}
+
+    .wrapper_tooltip .tooltip {
+    background: #A1CAF2;
+    bottom: 100%;
+    color: #000;
+    display: block;
+    left: -20px;
+    margin-bottom: 15px;
+    opacity: 0;
+    padding: 20px;
+    pointer-events: none;
+    position: absolute;
+    width: 100%;
+    -webkit-transform: translateY(10px);
+      -moz-transform: translateY(10px);
+      -ms-transform: translateY(10px);
+       -o-transform: translateY(10px);
+        transform: translateY(10px);
+    -webkit-transition: all .25s ease-out;
+      -moz-transition: all .25s ease-out;
+      -ms-transition: all .25s ease-out;
+       -o-transition: all .25s ease-out;
+        transition: all .25s ease-out;
+    -webkit-box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.28);
+      -moz-box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.28);
+      -ms-box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.28);
+       -o-box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.28);
+        box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.28);
+    }
+    
+    /* This bridges the gap so you can mouse into the tooltip without it disappearing */
+    .wrapper_tooltip .tooltip:before {
+    bottom: -20px;
+    content: " ";
+    display: block;
+    height: 20px;
+    left: 0;
+    position: absolute;
+    width: 100%;
+    }
+    
+    /* CSS Triangles */
+    .wrapper_tooltip .tooltip:after {
+    border-left: solid transparent 10px;
+    border-right: solid transparent 10px;
+    border-top: solid #A1CAF2 10px;
+    bottom: -10px;
+    content: " ";
+    height: 0;
+    left: 50%;
+    margin-left: -13px;
+    position: absolute;
+    width: 0;
+    }
+    
+    .wrapper_tooltip:hover .tooltip {
+    opacity: 1;
+    pointer-events: auto;
+    -webkit-transform: translateY(0px);
+      -moz-transform: translateY(0px);
+      -ms-transform: translateY(0px);
+       -o-transform: translateY(0px);
+        transform: translateY(0px);
+    }
+    
+    /* IE can just show/hide with no transition */
+    .lte8 .wrapper_tooltip .tooltip {
+    display: none;
+    }
+    
+    .lte8 .wrapper_tooltip:hover .tooltip {
+    display: block;
+    }
+
+/*
+Test grid color class
+*/
+
+.red_bg{
+  background-color: red;
+  border: 5px solid white;
+}
+.green_bg{
+  background-color: lightgreen;
+  border: 5px solid white;
+}
+.black_bg{
+  background-color: black;
+  border: 5px solid white;
+}
+.grey_bg{
+  background-color: grey;
+  border: 5px solid white;
+}
+
+/*
+Making the table scrollable in x and y
+*/
+
+thead td {
+  position: -webkit-sticky; /* for Safari */
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: white;
+}
+
+thead td:first-child {
+  left: 0;
+  z-index: 4;
+}
+
+.table-responsive{
+  overflow-y: auto;
+  height: 500px;
+}
+
+.stick {
+  position: -webkit-sticky; /* for Safari */
+  position: sticky;
+  top: 0;
+  left: 0;
+  background: #FFF;
+  border-right: 5px solid #fff;
+  left: 0;
+  z-index: 3;
+}

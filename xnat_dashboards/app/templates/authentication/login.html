@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Dashboards login</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- STOP user from back key start-->
+	<script>
+		window.history.forward(); 
+	</script>
+	<!-- STOP user from back key end-->
+	<!-- CSS import Start -->
+	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="icon" type="image/png" sizes="16x16" href="/static/common/images/Logo.png">
+	<link rel="stylesheet" type="text/css" href="/static/authentication/css/util.css">
+	<link rel="stylesheet" type="text/css" href="/static/authentication/css/main.css">
+	<link rel="icon" href="data:;base64,=">
+	<!-- CSS import End -->
+</head>
+
+<body>
+	<div class="limiter">
+		<!-- Preloader Start -->
+		<div class="preloader">
+			<div class="loader">
+				<div class="loader__figure"></div>
+				<p class="loader__label"></p>
+			</div>
+		</div>
+		<!-- Preloader End -->
+		<!-- Bootstarp container Start-->
+		<div class="container-login100">
+			<div class="wrap-login100">
+				<!-- Login form start -->
+				<form method="POST" action="{{ url_for('auth.login') }}" class="login100-form validate-form">
+					<span class="login100-form-title">
+						Login to XNAT Dashboards
+                    </span>
+                    {% if error is defined %}
+					<div class="alert alert-danger" role="alert" id = "success-alert">
+                        {{error}}
+                      </div>
+					{% endif %}
+					<div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
+						<input class="input100" type="text" name="username">
+						<span class="focus-input100"></span>
+						<span class="label-input100">User Name</span>
+					</div>
+					
+					<div class="wrap-input100 validate-input" data-validate="Password is required">
+						<input class="input100" type="password" name="password">
+						<span class="focus-input100"></span>
+						<span class="label-input100">Password</span>
+					</div>
+					<div id="server_div">
+						<label for="server">Servers</label>
+						<select name="server" id="server" class="form-control">
+							{% for server in servers_list %}
+							<option value="{{ server['name'] }}">{{server['name']}}</option>
+							{% endfor %}
+						</select>
+					  </div>
+					<div class="container-login100-form-btn">
+						<button class="login100-form-btn">
+							Login
+						</button>
+					</div>
+					</div>
+				</form>
+				<!-- Login form End -->
+				</div>
+			</div>
+		</div>
+		<!-- Bootstrap container Start-->
+	</div>
+</body>
+    <!-- Js include Start -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+	<script src="/static/authentication/js/main.js"></script>
+
+    <!-- Js include End -->
+</html>

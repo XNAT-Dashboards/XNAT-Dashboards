@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- STOP user from back key start-->
+    <script>
+        window.history.forward(); 
+    </script>
+    <!-- STOP user from back key end-->
+    <title>XNAT Dashboards</title>
+    <!-- CSS import Start -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/common/images/Logo.png">
+    <link href="/static/dashboards/css/custom.css" rel="stylesheet">
+    <link href="/static/dashboards/css/custom_bootstrap_overite.css" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="icon" href="data:;base64,=">
+    <!-- CSS import End -->
+</head>
+<div class="preloader">
+</div>
+<body class="skin-default-dark fixed-layout">
+    <div id="main-wrapper" >
+        <!-- Preloader Start -->
+        <div class="preloader">
+            <div class="loader">
+                <div class="loader__figure"></div>
+                <p class="loader__label">Plotting Data</p>
+            </div>
+        </div>
+        <!-- Preloader End -->
+        <!-- Top nav bar start-->
+        <header class="topbar">
+            <nav class="navbar top-navbar navbar-expand-md navbar-dark">
+                <div class="navbar-header">
+                    <a class="navbar-brand" id="logo" href="#">
+                        <img src="/static/common/images/Logo.png" class="logo">
+                        XNAT Dashboards
+                    </a>
+                </div>
+                <div class="navbar-collapse">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item hidden-sm-up"> <a class="nav-link nav-toggler waves-effect waves-light" href="javascript:void(0)"><i class="fa fa-bars"></i></a></li>
+                    </ul>
+                    <ul class="navbar-nav my-lg-0">
+                        <li>
+                            <i class="fa fa-user username" aria-hidden="true"></i>
+                        </li>
+                        <li>
+                            &nbsp&nbsp&nbsp
+                        </li>
+                        <li class="nav-item dropdown username">
+                            {{username}}   
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <!-- Top nav bar end-->
+        <!-- Left sidebar start-->
+        <aside class="left-sidebar">
+            <div class="d-flex no-block nav-text-box align-items-center left_pane">
+                Dashboards
+                <a class="waves-effect waves-dark ml-auto hidden-sm-down" href="javascript:void(0)"><i class="fa fa-bars"></i></a>
+                <a class="nav-toggler waves-effect waves-dark ml-auto hidden-sm-up" href="javascript:void(0)"><i class="fa fa-bars"></i></a>
+            </div>
+            <div class="scroll-sidebar">
+                <nav class="sidebar-nav">
+                    <ul id="sidebarnav">
+                        <li id="project"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-eye"></i><span class="hide-menu">Project</span></a></li>
+                        {% if test_grid[0]|length > 0%}
+                            <li id="tests_grid"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-table"></i><span class="hide-menu">Tests Grid</span></a></li>
+                        {% endif %}                
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+        <!-- Left sidebar end-->
+        <!-- Plotly graphs container start -->
+        <div class="page-wrapper">
+            <div class="container-fluid ">
+                <div class="row page-titles">
+                    <div class="col-md-5 align-self-center">
+                        <h4 class="text-themecolor overview_part">
+                            Project 
+                            <a href="{{server}}/app/action/DisplayItemAction/search_value/{{id}}//search_element/xnat:Data/search_field/xnat:projectData.ID" target="_blank">
+                                {{id}}
+                            </a> 
+                            Dashboard &nbsp&nbsp
+                        </h4>
+                    </div>
+                    <div class="col-md-7 align-self-center text-right">
+                        <div class="d-flex justify-content-end align-items-center">
+                            <h4>
+                                {% if data_array['access'] == 'private'%}
+                                <span class="badge badge-danger">Private Project</span>
+                                {% endif %}
+                                {% if data_array['access'] == 'protected'%}
+                                <span class="badge badge-warning">Protected Project</span>
+                                {% endif %}
+                                {% if data_array['access'] == 'public'%}
+                                <span class="badge badge-success">Public Project</span>
+                                {% endif %}
+
+                                &nbsp&nbsp
+                            </h4>
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="javascript:void(0)">Connected</a></li>
+                                <li class="breadcrumb-item active"><a href="{{server}}" target="_blank">{{server}}</a>&nbsp&nbsp&nbsp</li>
+                            </ol>
+                            {% if db is sameas true%}
+                            <button type="button" class="btn btn-outline-info d-lg-block m-l-15"> Database </button>
+                            {% endif %}
+                            {% if db is sameas false %}
+                            <button type="button" class="btn btn-outline-info d-lg-block m-l-15"> API </button>
+                            {% endif %}
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="p_project_part">
+                    <!-- Counter Start -->
+                    <div class = "card">
+                        <div class="card-body">
+                                <div class="row">
+                                    {% for key in stats_data %}
+                                    <div class="col">
+                                        <div class="counter">
+                                            <h2 class="timer count-title count-number" data-to="{{stats_data[key]}}" data-speed="1000"></h2>
+                                            <p class="count-text ">{{key}}</p>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                        </div>
+                    </div>
+                    <!-- Counter End -->
+                    <div class="row">
+                        <!-- column -->
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex">
+                                        <div>
+                                            <h5 class="card-title">Project Overview</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <tbody>
+                                            <tr>
+                                                <td ><b>Project Name</b></td>
+                                                <td class="text-center">{{data_array['name']}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td ><b>Project ID</td>
+                                                <td class="text-center">{{id}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Project Owner(s)</b></td>
+                                                <td class="text-center">
+                                                    {% for user in data_array['Owner(s)']%}
+                                                    {{user}},&nbsp
+                                                    {%endfor%}END
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Inserted on </b></td>
+                                                <td class="text-center">{{data_array['insert_date']}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Inserted By</b></td>
+                                                <td class="text-center">{{data_array['insert_user(s)']}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Last Workflow</b></td>
+                                                <td class="text-center">{{data_array['last_workflow']}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Project Collaborators</b></td><td class="text-center">
+                                                {% for user in data_array['Collaborator(s)']%}
+                                                {{user}},&nbsp
+                                                {%endfor%}END</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Project Members</b></td><td class="text-center">
+                                                {% for user in data_array['member(s)']%}
+                                                {{user}},&nbsp
+                                                {% endfor%}END
+                                            </td>
+                                                
+                                            </tr>
+                                            <tr>
+                                                <td ><b>Project Users</b></td>
+                                                <td class="text-center">
+                                                    {% for user in data_array['user(s)']%}
+                                                    {{user}},&nbsp
+                                                    {%endfor%}
+                                                    END
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td ><b>Last Accessed By</b></td>
+                                                <td class="text-center">
+                                                {% for user in  data_array['last_accessed(s)']%}
+                                                {{user}},&nbsp
+                                                {% endfor %}
+                                                END
+                                            </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Graph plotting Start -->
+                    {% for row in graph_data %}
+                    <div class="row">
+                        {% for col in row %}
+                        {% for key in col %}
+                            <div class="col-lg-6" id="myBig{{col['id']}}">
+                                <div class="card">
+                                    <div class="card-body" id="graph_id{{col[key]['id']}}">
+                                        <i id="info_id{{col[key]['id']}}" class="fa fa-info wrapper_tooltip" aria-hidden="true" >
+                                            <div id="info_text_id{{col[key]['id']}}" class="tooltip"></div>
+                                        </i>
+                                        <div id="graph_body{{col[key]['id']}}"><!-- Plotly chart will be drawn inside this DIV --></div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                    <!-- Graph plotting End -->
+                    <!-- Modal Drill Down -->
+                    <div class="modal fade" id="drillDown" tabindex="-1" role="dialog" aria-labelledby="drillDownTile" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="drillDownTitle"></h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                        </button>
+                                </div>
+                                <div class="modal-body" id="modalBodyDrillDown">
+                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal Drill Down-->
+                </div>
+                <!-- Start test grid addition -->
+                    {% if test_grid[0]|length > 0 %}
+                        {% include  '/dashboards/bbrc/bbrc_test_grid.html'  %}
+                    {% endif  %}
+                <!-- End test grid-->
+            </div>
+        </div>
+        <!-- Plotly graphs container end-->
+        <!-- Footer start-->
+        <footer class="footer">
+            © 2020 XNAT Dashboards
+        </footer>
+        <!-- Footer end-->
+    </div>    
+    <!-- Js include Start -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/linways/table-to-excel@v1.0.4/dist/tableToExcel.js"></script>
+    <script>
+        project_id = '{{id}}';
+    </script>
+    <script src="/static/dashboards/js/custom.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        server_o = '{{server}}';
+    </script>
+    <script src="/static/dashboards/js/plotly_chart_generator.js"></script>
+    {% for row in graph_data%}
+        {% for graph_column in row%}
+            <script>
+                chart_generator({{ graph_column | tojson}});
+            </script>
+        {%endfor%}
+    {%endfor%}
+    <!-- Js include End -->
+</body>
+
+</html>
