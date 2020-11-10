@@ -12,11 +12,9 @@ logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
 class PickleSaver:
     """Class for saving the fetched data into pickle
-
         Different methods are provided to save different type of data.
         It can be used to save longitudinal and normal project, subjects,
         experiments, scans and resource data
-
         Args:
             config (String): Path to pyxnat configuration file.
             skip (Bool, Optional): Whether to skip resources fetching.
@@ -34,17 +32,15 @@ class PickleSaver:
         # In case you want a quick look of xnat dashboard or you don't want
         # graphs related to resources use skip as True
         self.fetcher = data_fetcher.Fetcher(config=config)
-        self.fetcher_bbrc = data_fetcher_b.Fetcher(config=config)
+        #self.fetcher_bbrc = data_fetcher_b.Fetcher(config=config)
         self.server = self.fetcher.selector._server
 
         self.save()
 
     def save(self):
         """Method to save in pickle format
-
         This method fetches the details from Data Fetcher class methods,
         saves the projects, experiments, scan, subjects, resources saved.
-
         Returns:
             None: This returns None, Output pickled data file with following
             content.\n
@@ -84,26 +80,26 @@ class PickleSaver:
 
         logging.info("Fetching resources")
 
-        data_res = self.fetcher.get_resources(
+        data_res, resources_bbrc = self.fetcher.get_resources(
             data_pro_sub_exp_sc['experiments'])
 
         # Check if bbrc resource label exist if they exist then
         # set the bbrc flag as True and fetch resource data else don't
 
-        bbrc_flag = False
-        for resource in data_res:
-            if resource[3] == 'BBRC_VALIDATOR':
-                logging.info(
-                    "BBRC Validator resources found fetching BBRC resources")
-                bbrc_flag = True
-                break
-
-        if bbrc_flag:
-            logging.info("Fetching BBRC resources")
-            extra_resources = self.fetcher_bbrc.get_resource(
-                data_pro_sub_exp_sc['experiments'])
-        else:
-            extra_resources = None
+        # bbrc_flag = False
+        # for resource in data_res:
+        #     if resource[3] == 'BBRC_VALIDATOR':
+        #         logging.info(
+        #             "BBRC Validator resources found fetching BBRC resources")
+        #         bbrc_flag = True
+        #         break
+        #
+        # if bbrc_flag:
+        #     logging.info("Fetching BBRC resources")
+        #     extra_resources = self.fetcher_bbrc.get_resource(
+        #         data_pro_sub_exp_sc['experiments'])
+        # else:
+        #     extra_resources = None
 
         logging.info("Processing longitudinal data")
         # Call method for formatting the longitudinal data from raw saved data
@@ -121,7 +117,7 @@ class PickleSaver:
                     'server': self.server,
                     'info': data_pro_sub_exp_sc,
                     'resources': data_res,
-                    'extra_resources': extra_resources,
+                    'extra_resources': resources_bbrc,
                     'longitudinal_data': longitudinal_data
                 },
                 handle, protocol=pickle.HIGHEST_PROTOCOL)
@@ -134,12 +130,10 @@ class PickleSaver:
     def longitudinal_data_processing(
             self, data_pro_sub_exp_sc, user_data, data_res):
         """This method is use to save longitudinal data.
-
         This saves longitudinal data of projects, subjects, experiments,
         scans and resources. This is called when user fetches data.
         It takes the date on which the script ran and save the corresponding
         data.
-
         Args:
             data_pro_sub_exp_sc (dict): This contains dict of projects,
                 subjects, experiments and scans
@@ -149,7 +143,6 @@ class PickleSaver:
             data_res (dict, optional): This provide resource details
                 if user skip the resource fetching option then defaults
                 to None and no resources data will be added in pickle.
-
         Returns:
             dict:  Longitudinal data if ran first time then only single
             date point else will contains date points of time the

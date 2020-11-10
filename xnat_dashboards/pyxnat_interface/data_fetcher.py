@@ -4,7 +4,7 @@ import socket
 from tqdm import tqdm
 import logging
 import urllib3
-
+import json
 
 # Logging format
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
@@ -15,14 +15,11 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 class Fetcher:
 
     """ This class fetches data from XNAT instance
-
         Different methods are provided for fetching data from XNAT instance,
         Class takes path to configuration file for creating pyxnat Interface
         Object.
-
         Args:
             path (String): Path to pyxnat configuration file.
-
         Attributes:
             selector: Pyxnat Interface object used in whole class for
                 calling different methods of pyxnat
@@ -45,14 +42,11 @@ class Fetcher:
 
     def get_instance_details(self):
         """Fetches all project details from XNAT instance
-
         Uses pyxnat methods to fetch all the details of projects, subjects
         experiments, scans present in the instance
-
         Returns:
             dict/int: **If no connection error is present, it returns
             a dictionary else an integer.**
-
             Dict with keys as **Projects**, **subjects**, **experiments**
             and **scans** that are present on instance.\n
             **Project** key contains information of each project.\n
@@ -65,7 +59,6 @@ class Fetcher:
             ID, Project which they belong, subject to which
             they belong, scan type, scan quality, experiments in
             which they belong.\n
-
             **500** Error in url\n
             **401** Error in password or username\n
             **191912** remote host is not verifiable\n
@@ -112,38 +105,55 @@ class Fetcher:
         return all_data
 
     def get_resources(self, experiments):
-        """Fetches resource details of each experiments
 
-        Looping through each experiments and fetching their corresponding
-        resources
-
-        Args:
-            experiments (list): List of experiments with their IDs
-                used for fetching resources
-
-        Returns:
-            2D list: Each row of contains resource ID its corresponding
-            experiment id, project id and label
-        """
-
-        # Method for fetching resources details, get the list of experiments
         resources = []
+        resources_bbrc = []
+        #total_resources_bbrc = []
 
         # For each experiments fetch all the resources associated with it
         for exp in tqdm(experiments):
 
-            res = self.selector.select.experiments(exp['ID']).resources()
-            res_Arr = list(res)
-
-            # If their is a resource associated get  id and label
-            # If empty then use 'No Data'
-
-            if res_Arr == []:
-                resources.append(
-                    [exp['project'], exp['ID'], 'No Data', 'No Data'])
+            res = self.selector._get_json('{}/{}'.format(exp['URI'], 'resources'))
+            if len(res) == 0:
+                print(res)
+                resources.append([exp['project'], exp['ID'], 'No Data', 'No Data'])
             else:
-                for r in res_Arr:
-                    resources.append(
-                        [exp['project'], exp['ID'], r.id(), r.label()])
+                for r in res:
+                    resources.append([exp['project'], exp['ID'], r['xnat_abstractresource_id'], r['label']])
 
-        return resources
+            #-------------------- BBRC RESOURCES--------------------------------#
+
+            # BBRC_VALIDATOR
+            bbrc_validator = self.selector.select.experiment(exp['ID']).resource('BBRC_VALIDATOR')
+            if bbrc_validator.exists:
+                resources_bbrc.append([exp['project'], exp['ID'], 'True',
+                                       self.tests_resource(bbrc_validator, 'ArchivingValidator')])
+            else:
+                resources_bbrc.append([exp['project'], exp['ID'], 'False', 0])
+
+            # FREESURFER
+            # fs = self.selector.select.experiment(exp['ID']).resource('FREESURFER6')
+            # if fs.exists:
+            #     resources_bbrc.append('True')
+            #     try:
+            #         log_file = list(fs.files('*recon-all.log'))[0]
+            #         log_content = self.selector.get(log_file._uri).text
+            #         target_str = '#@#%# recon-all-run-time-hours '
+            #         time_diff = log_content[log_content.find(target_str) + len(target_str):].split()[0]
+            #         resources_bbrc.append(time_diff)
+            #     except IndexError:
+            #         resources_bbrc.append(None)
+            # else:
+            #     resources_bbrc.append(None)
+
+            #total_resources_bbrc.append(resources_bbrc)
+        return resources, resources_bbrc
+
+    def tests_resource(self, res, name):
+
+        try:
+            j = [e for e in list(res.files('{}*.json'.format(name)))][0]
+            j = json.loads(res._intf.get(j._uri).text)
+            return j
+        except IndexError:
+            return 0

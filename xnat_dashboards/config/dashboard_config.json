@@ -2,7 +2,9 @@
         "user roles":{
                 "testUser":"admin",
                 "noUser":"forbidden",
-                "asif":"admin"
+                "asif":"admin",
+                "mgarcia": "admin",
+                "mgarciabbrc": "admin"
         },
         "project_visible":{
                 "guest":["*"],
@@ -225,8 +227,8 @@
     "login_urls":
         [
             {
-            "name": "CENTRAL XNAT",
-            "url": "https://central.xnat.org",
+            "name": "PROD",
+            "url": "https://xnat.barcelonabeta.org",
             "verify": 1
             }
         ]  

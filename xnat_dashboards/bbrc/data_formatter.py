@@ -32,7 +32,6 @@ class Formatter:
         resource_processing = []
         # Resource with index 1 represent Session ID
         # Resource with index 0 represent Project ID
-
         for resource in resources_bbrc:
             # Resource with index 2 represent BBRC Validator
             # Resource with index 3 represent data from tests that is
@@ -61,41 +60,41 @@ class Formatter:
 
         return df
 
-    def get_free_surfer_resources(self, resources_bbrc):
-        """A method that generates dataframe form freesurfer
-        of BBRC resources.
-
-        Args:
-            resources_bbrc (list): List of BBRC resource
-
-        Returns:
-            Dataframe: A pandas dataframe with each row showing
-            the free surfer resources information.
-        """
-        resource_processing = []
-        # Resource with index 1 represent Session ID
-        # Resource with index 0 represent Project ID
-
-        for resource in resources_bbrc:
-            # Resource with index 5 represent whether free surfer
-            # resource is present if -1 is present then free surfer
-            # resource for the session is not present
-            if resource[5] is not None:
-                resource_processing.append([
-                    resource[0], resource[1],
-                    resource[4], float(resource[5][:-1])])
-            else:
-                resource_processing.append([
-                    resource[0], resource[1], resource[4], 'No Data'])
-
-        # Creates the dataframe from the list created
-        df = pd.DataFrame(
-            resource_processing,
-            columns=[
-                'Project', 'Session', 'FreeSurfer',
-                'time diff'])
-
-        return df
+    # def get_free_surfer_resources(self, resources_bbrc):
+    #     """A method that generates dataframe form freesurfer
+    #     of BBRC resources.
+    #
+    #     Args:
+    #         resources_bbrc (list): List of BBRC resource
+    #
+    #     Returns:
+    #         Dataframe: A pandas dataframe with each row showing
+    #         the free surfer resources information.
+    #     """
+    #     resource_processing = []
+    #     # Resource with index 1 represent Session ID
+    #     # Resource with index 0 represent Project ID
+    #
+    #     for resource in resources_bbrc:
+    #         # Resource with index 5 represent whether free surfer
+    #         # resource is present if -1 is present then free surfer
+    #         # resource for the session is not present
+    #         if resource[5] is not None:
+    #             resource_processing.append([
+    #                 resource[0], resource[1],
+    #                 resource[4], float(resource[5][:-1])])
+    #         else:
+    #             resource_processing.append([
+    #                 resource[0], resource[1], resource[4], 'No Data'])
+    #
+    #     # Creates the dataframe from the list created
+    #     df = pd.DataFrame(
+    #         resource_processing,
+    #         columns=[
+    #             'Project', 'Session', 'FreeSurfer',
+    #             'time diff'])
+    #
+    #     return df
 
     def get_resource_details(self, resources_bbrc, project_id=None):
         """
@@ -120,7 +119,7 @@ class Formatter:
             resources_bbrc, 'HasUsableT1', 'has_passed')
         df_con_acq_date = self.generate_resource_df(
             resources_bbrc, 'IsAcquisitionDateConsistent', 'has_passed')
-        df_free_surfer = self.get_free_surfer_resources(resources_bbrc)
+        #df_free_surfer = self.get_free_surfer_resources(resources_bbrc)
 
         if project_id is not None:
 
@@ -130,8 +129,8 @@ class Formatter:
                     'Project').get_group(project_id)
                 df_con_acq_date = df_con_acq_date.groupby(
                     'Project').get_group(project_id)
-                df_free_surfer = df_free_surfer.groupby(
-                    'Project').get_group(project_id)
+                #df_free_surfer = df_free_surfer.groupby(
+                    #'Project').get_group(project_id)
 
             except KeyError:
 
@@ -163,28 +162,28 @@ class Formatter:
             df_usable_t1, 'bbrc exists', 'Session')
         bbrc_exists['id_type'] = 'experiment'
 
-        # Free surfer exists
-        free_surfer_exists = data_formatter.Formatter().\
-            dict_generator_resources(df_free_surfer, 'FreeSurfer', 'Session')
-        free_surfer_exists['id_type'] = 'experiment'
-
-        time_diff = df_free_surfer[
-            df_free_surfer['time diff'] != 'No Data'].rename(
-                columns={'time diff': 'count'}).set_index(
-                'Session').to_dict()
-
-        list_se = df_free_surfer[
-            df_free_surfer['time diff'] != 'No Data']['Session'].to_list()
-        time_diff['list'] = {key: [key] for key in list_se}
-
-        time_diff['id_type'] = 'experiment'
+        # #Free surfer exists
+        # free_surfer_exists = data_formatter.Formatter().\
+        #     dict_generator_resources(df_free_surfer, 'FreeSurfer', 'Session')
+        # free_surfer_exists['id_type'] = 'experiment'
+        #
+        # time_diff = df_free_surfer[
+        #     df_free_surfer['time diff'] != 'No Data'].rename(
+        #         columns={'time diff': 'count'}).set_index(
+        #         'Session').to_dict()
+        #
+        # list_se = df_free_surfer[
+        #     df_free_surfer['time diff'] != 'No Data']['Session'].to_list()
+        # time_diff['list'] = {key: [key] for key in list_se}
+        #
+        # time_diff['id_type'] = 'experiment'
 
         return {'UsableT1': usable_t1,
                 'Archiving Validator': archiving_valid,
                 'Version Distribution': version, 'BBRC validator': bbrc_exists,
-                'Consistent Acquisition Date': consistent_acq_date,
-                'Free Surfer': free_surfer_exists,
-                'Freesurfer end and start hour difference': time_diff}
+                'Consistent Acquisition Date': consistent_acq_date}
+                #'Free Surfer': free_surfer_exists,
+                #'Freesurfer end and start hour difference': time_diff}
 
     def diff_dates(self, resources_bbrc, experiments_data, project_id):
         """Method for Creating Acquisition and insertion dates difference plot.

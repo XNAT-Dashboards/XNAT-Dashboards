@@ -121,7 +121,6 @@ class Formatter:
 
         # Number of subjects information
         subjects_details['Number of Subjects'] = len(subjects_data)
-
         subjects_details['Subjects/Project'] = subjects_per_project
         subjects_details['Age Range'] = age_range
         subjects_details['Gender'] = gender

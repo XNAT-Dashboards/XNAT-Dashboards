@@ -6,3 +6,4 @@ __pycache__/
 *.ipynb
 settings.json
 .vscode/
+.idea/
