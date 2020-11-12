@@ -96,7 +96,8 @@ class DataFilter:
         if resources is not None:
 
             for resource in resources:
-                if resource[0] not in self.project_visible\
+                project = resource[0]
+                if project not in self.project_visible\
                         or "*" in self.project_visible:
                     resources_list.append(resource)
 

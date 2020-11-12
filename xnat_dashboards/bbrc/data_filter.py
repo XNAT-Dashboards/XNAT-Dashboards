@@ -46,7 +46,8 @@ class DataFilter:
         if resources_bbrc is not None:
 
             for resource in resources_bbrc:
-                if resource[0] not in self.project_visible\
+                project = resource[0]
+                if project not in self.project_visible\
                         or "*" in self.project_visible:
                     resources_bbrc_list.append(resource)
 
@@ -147,7 +148,7 @@ class DataFilterPP(DataFilter):
             self.resources_bbrc, self.experiments, self.project_id)
 
         # if diff_dates is not None and diff_dates['count'] != {}:
-        #     ordered_graphs.update({'Dates Diff': diff_dates})
+        # ordered_graphs.update({'Dates Diff': diff_dates})
 
         ordered_graphs.update({'test_grid': test_grid})
 

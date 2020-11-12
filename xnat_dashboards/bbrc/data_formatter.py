@@ -15,6 +15,7 @@ class Formatter:
     BBRC resources data fetched from the pickle and sent to DataFilter class
 
     """
+
     def generate_resource_df(self, resources_bbrc, test, value):
         """A method that generates dataframe from BBRC Validator
         and Archiving Validator of BBRC resources.
@@ -28,27 +29,24 @@ class Formatter:
             Dataframe: A pandas dataframe with each row showing whether
             the test has passed, failed or No information regarding test
         """
-
         resource_processing = []
-        # Resource with index 1 represent Session ID
-        # Resource with index 0 represent Project ID
         for resource in resources_bbrc:
-            # Resource with index 2 represent BBRC Validator
-            # Resource with index 3 represent data from tests that is
-            # whether a dict or 0, if 0 is present then test for the
-            # sessions are not present
-            if resource[3] != 0:
-                if test in resource[3]:
+            project = resource[0]
+            exp_id = resource[1]
+            bbrc_validator = resource[2]
+            archiving_validator = resource[3]
+            if archiving_validator != 0:
+                if test in archiving_validator:
                     resource_processing.append([
-                        resource[0], resource[1], resource[2], 'Exists',
-                        resource[3]['version'], resource[3][test][value]])
+                        project, exp_id, bbrc_validator, 'Exists',
+                        archiving_validator['version'], archiving_validator[test][value]])
                 else:
                     resource_processing.append([
-                        resource[0], resource[1], resource[2], 'Exists',
-                        resource[3]['version'], 'No Data'])
+                        project, exp_id, bbrc_validator, 'Exists',
+                        archiving_validator['version'], 'No Data'])
             else:
                 resource_processing.append([
-                    resource[0], resource[1], resource[2], 'Not Exists',
+                    project, exp_id, bbrc_validator, 'Not Exists',
                     'No Data', 'No Data'])
 
         # Creates the dataframe from the list created
@@ -119,7 +117,7 @@ class Formatter:
             resources_bbrc, 'HasUsableT1', 'has_passed')
         df_con_acq_date = self.generate_resource_df(
             resources_bbrc, 'IsAcquisitionDateConsistent', 'has_passed')
-        #df_free_surfer = self.get_free_surfer_resources(resources_bbrc)
+        # df_free_surfer = self.get_free_surfer_resources(resources_bbrc)
 
         if project_id is not None:
 
@@ -129,8 +127,8 @@ class Formatter:
                     'Project').get_group(project_id)
                 df_con_acq_date = df_con_acq_date.groupby(
                     'Project').get_group(project_id)
-                #df_free_surfer = df_free_surfer.groupby(
-                    #'Project').get_group(project_id)
+                # df_free_surfer = df_free_surfer.groupby(
+                # 'Project').get_group(project_id)
 
             except KeyError:
 
@@ -142,7 +140,7 @@ class Formatter:
         usable_t1['id_type'] = 'experiment'
 
         # consisten_acq_date
-        consistent_acq_date = data_formatter.Formatter().\
+        consistent_acq_date = data_formatter.Formatter(). \
             dict_generator_resources(
             df_con_acq_date, 'IsAcquisitionDateConsistent', 'Session')
         consistent_acq_date['id_type'] = 'experiment'
@@ -182,8 +180,8 @@ class Formatter:
                 'Archiving Validator': archiving_valid,
                 'Version Distribution': version, 'BBRC validator': bbrc_exists,
                 'Consistent Acquisition Date': consistent_acq_date}
-                #'Free Surfer': free_surfer_exists,
-                #'Freesurfer end and start hour difference': time_diff}
+                 #'Free Surfer': free_surfer_exists,
+                 #'Freesurfer end and start hour difference': time_diff}
 
     def diff_dates(self, resources_bbrc, experiments_data, project_id):
         """Method for Creating Acquisition and insertion dates difference plot.
@@ -232,7 +230,7 @@ class Formatter:
         dates_acq_list = []
         dates_acq_dict = merged_inner[
             ['IsAcquisitionDateConsistent']].to_dict()[
-                'IsAcquisitionDateConsistent']
+            'IsAcquisitionDateConsistent']
 
         for dates in dates_acq_dict:
             if 'session_date' in dates_acq_dict[dates]:
@@ -283,8 +281,8 @@ class Formatter:
             date_2_l = list(map(int, date_2.split('-')))
 
             diff = date(
-                date_1_l[0], date_1_l[1], date_1_l[2])\
-                - date(date_2_l[0], date_2_l[1], date_2_l[2])
+                date_1_l[0], date_1_l[1], date_1_l[2]) \
+                   - date(date_2_l[0], date_2_l[1], date_2_l[2])
 
             return diff.days
 
@@ -309,39 +307,39 @@ class Formatter:
         # Creates a tests_unions list which has all tests union
         # except the values present in extra list
         for resource in resources_bbrc:
+            bbrc_validator = resource[2]
+            archiving_validator = resource[3]
 
-            if resource[2] and not isinstance(resource[3], int):
+            if bbrc_validator and not isinstance(archiving_validator, int):
 
-                for test in resource[3]:
-                    if test not in tests_union\
-                        and\
+                for test in archiving_validator:
+                    if test not in tests_union \
+                            and \
                             test not in extra:
                         tests_union.append(test)
 
-        # If resource[2] ie BBRC_Validator exists then further proceed
-        # For resource[3] which is a dict of tests
+        # If bbrc_validator exists then further proceed
+        # for archiving_validator which is a dict of tests
         for resource in resources_bbrc:
+            project = resource[0]
+            bbrc_validator = resource[2]
+            archiving_validator = resource[3]
 
-            if resource[2] and not isinstance(resource[3], int):
-                test_list = []
-                test_list = [resource[1]]
-
-                test_list.append(['version', resource[3]['version']])
+            if bbrc_validator and not isinstance(archiving_validator, int):
+                test_list = [project, ['version', archiving_validator['version']]]
 
                 # Loop through each test if exists then add the details
                 # in the tests_list or just add '' in the test_list
                 for test in tests_union:
                     test_unit = ''
 
-                    if test in resource[3]:
-                        test_unit = [resource[
-                            3][test]['has_passed'],
-                            resource[
-                            3][test]['data']]
+                    if test in archiving_validator:
+                        test_unit = [archiving_validator[test]['has_passed'],
+                                     archiving_validator[test]['data']]
 
                     test_list.append(test_unit)
 
-                if resource[0] == project_id:
+                if project == project_id:
                     tests_list.append(test_list)
 
         # Create a list of different version of tests that are present

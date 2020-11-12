@@ -183,7 +183,8 @@ class PickleSaver:
         resource_number = {'list': {dt: []}}
 
         for resource in data_res:
-            if resource[2] != 'No Data':
+            bbrc_validator = resource[2]
+            if bbrc_validator != 'No Data':
                 resource_number['list'][dt].append(
                     str(resource[1]) + '  ' + str(resource[2]))
 

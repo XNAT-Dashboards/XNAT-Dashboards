@@ -13,7 +13,6 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 class Fetcher:
-
     """ This class fetches data from XNAT instance
         Different methods are provided for fetching data from XNAT instance,
         Class takes path to configuration file for creating pyxnat Interface
@@ -70,7 +69,7 @@ class Fetcher:
             subjects = self.selector.get(
                 '/data/subjects',
                 params={'columns': 'ID,project,handedness,'
-                        'age,gender'}).json()['ResultSet']['Result']\
+                                   'age,gender'}).json()['ResultSet']['Result'] \
 
             self.experiments = self.selector.array.experiments(
                 experiment_type='',
@@ -108,29 +107,25 @@ class Fetcher:
 
         resources = []
         resources_bbrc = []
-        #total_resources_bbrc = []
 
         # For each experiments fetch all the resources associated with it
         for exp in tqdm(experiments):
-
+            # -------------------- RESOURCES--------------------------------#
             res = self.selector._get_json('{}/{}'.format(exp['URI'], 'resources'))
             if len(res) == 0:
-                print(res)
                 resources.append([exp['project'], exp['ID'], 'No Data', 'No Data'])
             else:
                 for r in res:
                     resources.append([exp['project'], exp['ID'], r['xnat_abstractresource_id'], r['label']])
 
-            #-------------------- BBRC RESOURCES--------------------------------#
-
+            # -------------------- BBRC RESOURCES--------------------------------#
             # BBRC_VALIDATOR
             bbrc_validator = self.selector.select.experiment(exp['ID']).resource('BBRC_VALIDATOR')
             if bbrc_validator.exists:
-                resources_bbrc.append([exp['project'], exp['ID'], 'True',
+                resources_bbrc.append([exp['project'], exp['ID'], True,
                                        self.tests_resource(bbrc_validator, 'ArchivingValidator')])
             else:
-                resources_bbrc.append([exp['project'], exp['ID'], 'False', 0])
-
+                resources_bbrc.append([exp['project'], exp['ID'], False, 0])
             # FREESURFER
             # fs = self.selector.select.experiment(exp['ID']).resource('FREESURFER6')
             # if fs.exists:
@@ -146,7 +141,6 @@ class Fetcher:
             # else:
             #     resources_bbrc.append(None)
 
-            #total_resources_bbrc.append(resources_bbrc)
         return resources, resources_bbrc
 
     def tests_resource(self, res, name):
