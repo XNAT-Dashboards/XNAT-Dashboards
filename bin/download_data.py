@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 
-from xnat_dashboards import pickle_saver
+from xnat_dashboards import pickle
 from xnat_dashboards import config as config_file
 import os
 import logging
@@ -32,4 +32,4 @@ if __name__ == "__main__":
 
         # if true is given as an argument, it will skip the fetching
         # of resources Default is false
-        pickle_saver.PickleSaver(os.path.abspath(args['cfg']))
+        pickle.PickleSaver(os.path.abspath(args['cfg']))
