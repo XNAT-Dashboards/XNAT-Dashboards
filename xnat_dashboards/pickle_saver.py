@@ -4,7 +4,7 @@ import os
 import logging
 from xnat_dashboards import config as config_file
 from xnat_dashboards.bbrc import data_fetcher as data_fetcher_b
-from xnat_dashboards.pyxnat_interface import data_fetcher
+from xnat_dashboards import data_fetcher
 
 # Logging format
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)

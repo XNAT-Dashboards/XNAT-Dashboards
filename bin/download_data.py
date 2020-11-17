@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 
-from xnat_dashboards.pyxnat_interface import pickle_saver
+from xnat_dashboards import pickle_saver
 from xnat_dashboards import config as config_file
 import os
 import logging
