@@ -1,0 +1,15 @@
+dist: focal
+
+before_install:
+  - sudo apt-get update
+
+language: python
+python:
+    - "3.8"
+install:
+    - "pip install -r requirements-dev.txt"
+script:
+    - export PYTHONPATH=$PYTHONPATH:$(pwd)
+    - nosetests xnat_dashboards/tests --nocapture --nologcapture --with-coverage --cover-erase --cover-inclusive --cover-package .
+after_success:
+    - coveralls

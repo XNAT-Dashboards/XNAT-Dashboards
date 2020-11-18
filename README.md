@@ -1,7 +1,7 @@
-[![pipeline status](https://gitlab.com/xnat-dashboards/xnat-dashboards/badges/master/pipeline.svg)](https://gitlab.com/xnat-dashboards/xnat-dashboards/-/commits/master)
-[![coverage report](https://gitlab.com/xnat-dashboards/xnat-dashboards/badges/master/coverage.svg)](https://gitlab.com/xnat-dashboards/xnat-dashboards/-/commits/master)
-[![MIT License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://gitlab.com/xnat-dashboards/xnat-dashboards/-/blob/master/LICENSE)
-[![version](https://img.shields.io/badge/version-v0.3.0-brightgreen)](https://gitlab.com/xnat-dashboards/xnat-dashboards/-/commits/master)
+[![build status](https://travis-ci.com/marinagrprat/XNAT-Dashboards.svg?branch=master)](https://github.com/XNAT-Dashboards/XNAT-Dashboards/commits/master)
+[![Coverage Status](https://coveralls.io/repos/github/marinagrprat/XNAT-Dashboards/badge.svg?branch=master)](https://coveralls.io/github/marinagrprat/XNAT-Dashboards?branch=master)
+[![MIT License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/XNAT-Dashboards/XNAT-Dashboards/blob/master/LICENSE)
+[![version](https://img.shields.io/badge/version-v0.3.0-brightgreen)](https://github.com/XNAT-Dashboards/XNAT-Dashboards/commits/master)
 
 # XNAT Dashboards
 
@@ -31,10 +31,15 @@ Clone the repository
 ```python setup.py install```
 
 ## Tests
-Pytest is used as a testing framework to run test  
+Running the test suite requires the following:
 
-```pytest tests```          (Without coverage)  
-```pytest --cov tests```    (With coverage)  
+  - *python-nose* v1.2.1+
+  - *coveralls*
+ 
+Run the tests with the following command (from the root of the project):
+```nosetests xnat-dashboards/tests```
+
+The file ```.travis.yml``` (used for CI) features these described steps and may be referred to for further information.
 
 ## Documentation
 
