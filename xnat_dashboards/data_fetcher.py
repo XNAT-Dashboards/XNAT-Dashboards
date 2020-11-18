@@ -1,6 +1,4 @@
-import warnings
 from tqdm import tqdm
-warnings.filterwarnings("ignore")
 
 n_max = 10
 
