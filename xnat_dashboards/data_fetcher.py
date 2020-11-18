@@ -26,53 +26,60 @@ def get_instance_details(x):
 
 
 def get_resources(x):
+
     experiments = x.array.experiments(columns=['subject_ID', 'date'],
                                       experiment_type='').data
-
     resources = []
+    resources_bbrc = []
 
     # For each experiments fetch all the resources associated with it
-    for e in tqdm(list(experiments)[:n_max]):
-
-        res = x.select.experiments(e['ID']).resources()
-        res = list(res)
-
+    for exp in tqdm(experiments[:n_max]):
+        # -------------------- RESOURCES--------------------------------#
+        res = x._get_json('{}/{}'.format(exp['URI'], 'resources'))
         if len(res) == 0:
-            row = [e['project'], e['ID'], None, None]
-            resources.append(row)
+            resources.append([exp['project'], exp['ID'], 'No Data', 'No Data'])
         else:
             for r in res:
-                row = [e['project'], e['ID'], r.id(), r.label()]
+                row = [exp['project'], exp['ID'],
+                       r['xnat_abstractresource_id'], r['label']]
                 resources.append(row)
 
-    return resources
-
-
-def get_resources_bbrc(x):
-
-    import json
-    experiments = x.array.experiments(columns=['subject_ID', 'date'],
-                                      experiment_type='').data
-    resources = []
-
-    for exp in tqdm(list(experiments)[:n_max]):
-
+        # -------------------- BBRC RESOURCES--------------------------------#
+        # BBRC_VALIDATOR
         e = x.select.experiment(exp['ID'])
-        v = e.resource('BBRC_VALIDATOR')
+        bbrc_validator = e.resource('BBRC_VALIDATOR')
+        if bbrc_validator.exists:
+            row = [exp['project'], exp['ID'], True,
+                   tests_resource(bbrc_validator, 'ArchivingValidator')]
+            resources_bbrc.append(row)
+        else:
+            resources_bbrc.append([exp['project'], exp['ID'], False, 0])
+        # FREESURFER
+        # fs = self.selector.select.experiment(exp['ID']).resource('FREESURFER6')
+        # if fs.exists:
+        #     resources_bbrc.append('True')
+        #     try:
+        #         log_file = list(fs.files('*recon-all.log'))[0]
+        #         log_content = self.selector.get(log_file._uri).text
+        #         target_str = '#@#%# recon-all-run-time-hours '
+        #         time_diff = log_content[log_content.find(target_str) + len(target_str):].split()[0]
+        #         resources_bbrc.append(time_diff)
+        #     except IndexError:
+        #         resources_bbrc.append(None)
+        # else:
+        #     resources_bbrc.append(None)
 
-        try:
-            name = 'ArchivingValidator'
-            j = [e for e in list(v.files('{}*.json'.format(name)))][0]
-            j = json.loads(v._intf.get(j._uri).text)
+    return resources, resources_bbrc
 
-        except IndexError as exc:
-            print(exc, exp['ID'])
-            j = 0
 
-        row = [exp['project'], exp['ID'], v.exists(), j]
-        resources.append(row)
-
-    return resources
+def tests_resource(res, name):
+    import json
+    try:
+        j = [e for e in list(res.files('{}*.json'.format(name)))][0]
+        j = json.loads(res._intf.get(j._uri).text)
+        return j
+    except IndexError:
+        return 0
 
 
 def longitudinal_data(details, resources):

@@ -21,8 +21,7 @@ def save(x, fp):
 
     details = data_fetcher.get_instance_details(x)
 
-    resources = data_fetcher.get_resources(x)
-    bbrc_resources = data_fetcher.get_resources_bbrc(x)
+    resources, bbrc_resources = data_fetcher.get_resources(x)
 
     d = {'server': x._server,
          'verify': x._verify,
