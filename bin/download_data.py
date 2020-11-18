@@ -1,35 +1,28 @@
 #!/usr/bin/env python
+import os.path as op
+import pyxnat
 
 
-from xnat_dashboards import pickle
-from xnat_dashboards import config as config_file
-import os
-import logging
-import argparse
+def create_args():
 
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("-i", "--config", type=argparse.FileType('r'),
+                    help="Path to pyxnat configuration file",
+                    required=True)
+    ap.add_argument("-o", "--pickle", type=argparse.FileType('w'),
+                    help="Path where the pickle file will be created",
+                    required=True)
+    return ap
 
-ap = argparse.ArgumentParser()
-ap.add_argument(
-    "-i", "--cfg", type=str,
-    help="Path to pyxnat configuration file Example:"
-    " path/dashboard_config.json")
-ap.add_argument(
-    "-o", "--pickle", type=str,
-    help="Path where the pickle file will be created."
-    " Example: path/test.pickle")
-
-args = vars(ap.parse_args())
 
 if __name__ == "__main__":
-    # Add path to the pickle file
+    parser = create_args()
+    args = parser.parse_args()
 
-    if args['pickle'] is None or args['cfg'] is None:
-        logging.error(
-            "   Please provide path to both pickle and "
-            "xnat configuration file")
-    else:
-        config_file.PICKLE_PATH = os.path.abspath(args['pickle'])
+    config = args.config.name
+    fp = op.abspath(args.pickle.name)
 
-        # if true is given as an argument, it will skip the fetching
-        # of resources Default is false
-        pickle.PickleSaver(os.path.abspath(args['cfg']))
+    from xnat_dashboards import pickle
+    x = pyxnat.Interface(config=config)
+    pickle.save(x, fp)

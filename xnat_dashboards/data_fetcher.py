@@ -1,154 +1,113 @@
-import pyxnat
-import pyxnat.core.errors as pyxnat_errors
-import socket
+import warnings
 from tqdm import tqdm
-import logging
-import urllib3
-import json
+warnings.filterwarnings("ignore")
 
-# Logging format
-logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
-# Remove warnings
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+n_max = 10
 
 
-class Fetcher:
-    """ This class fetches data from XNAT instance
-        Different methods are provided for fetching data from XNAT instance,
-        Class takes path to configuration file for creating pyxnat Interface
-        Object.
-        Args:
-            path (String): Path to pyxnat configuration file.
-        Attributes:
-            selector: Pyxnat Interface object used in whole class for
-                calling different methods of pyxnat
-    """
+def get_instance_details(x):
 
-    # Initializing the central interface object in the constructor
-    def __init__(self, config):
+    projects = x.select('xnat:projectData').all().data
+    params = {'columns': 'ID,project,handedness,age,gender'}
+    j = x.get('/data/subjects', params=params).json()
+    subjects = j['ResultSet']['Result']
 
-        selector = pyxnat.Interface(config=config)
+    experiments = x.array.experiments(columns=['subject_ID', 'date'],
+                                      experiment_type='').data
 
-        self.selector = selector
+    columns = ['xnat:imageScanData/quality',  'xnat:imageScanData/type']
+    scans = x.array.scans(columns=columns).data
 
-    # Disconnect with the instance
-    def __del__(self):
-        """Fetcher destructor
-        Disconnect from the server after pyxnat object is destroyed
-        """
-        logging.info("Disconnected from XNAT instance")
-        self.selector.disconnect()
+    data = {}
+    data['projects'] = projects
+    data['subjects'] = subjects
+    data['experiments'] = experiments
+    data['scans'] = scans
 
-    def get_instance_details(self):
-        """Fetches all project details from XNAT instance
-        Uses pyxnat methods to fetch all the details of projects, subjects
-        experiments, scans present in the instance
-        Returns:
-            dict/int: **If no connection error is present, it returns
-            a dictionary else an integer.**
-            Dict with keys as **Projects**, **subjects**, **experiments**
-            and **scans** that are present on instance.\n
-            **Project** key contains information of each project.\n
-            **Subject** key contains information of each subject that is
-            age, gender, handedness, id, project which they belong.\n
-            **Experiment** key contains information of each experiment
-            with ID, Project which they belong, subject to which
-            they belong, experiment type.\n
-            **Scan** key contains information of each scan with
-            ID, Project which they belong, subject to which
-            they belong, scan type, scan quality, experiments in
-            which they belong.\n
-            **500** Error in url\n
-            **401** Error in password or username\n
-            **191912** remote host is not verifiable\n
-            **1** Connection can't be established\n
-        """
-        try:
-            projects = self.selector.select('xnat:projectData').all().data
+    return data
 
-            subjects = self.selector.get(
-                '/data/subjects',
-                params={'columns': 'ID,project,handedness,'
-                                   'age,gender'}).json()['ResultSet']['Result'] \
 
-            self.experiments = self.selector.array.experiments(
-                experiment_type='',
-                columns=['subject_ID', 'date']).data
+def get_resources(x):
+    experiments = x.array.experiments(columns=['subject_ID', 'date'],
+                                      experiment_type='').data
 
-            scans = self.selector.array.scans(
-                columns=['xnat:imageScanData/quality',
-                         'xnat:imageScanData/type']).data
+    resources = []
 
-        except pyxnat_errors.DatabaseError as dbe:
-            if str(dbe).find('500') != -1:
-                # 500 represent error in url or uri
-                return 500
-            elif str(dbe).find('401') != -1:
-                # 401 represent error in login details
-                return 401
-        except socket.error as se:
-            if str(se).find('SSL') != -1:
-                # If verification enable and host unable to verify
-                return 191912
-            else:
-                # Wrong URL Connection can't be established
-                return 1
+    # For each experiments fetch all the resources associated with it
+    for e in tqdm(list(experiments)[:n_max]):
 
-        all_data = {}
+        res = x.select.experiments(e['ID']).resources()
+        res = list(res)
 
-        all_data['projects'] = projects
-        all_data['subjects'] = subjects
-        all_data['experiments'] = self.experiments
-        all_data['scans'] = scans
+        if len(res) == 0:
+            row = [e['project'], e['ID'], None, None]
+            resources.append(row)
+        else:
+            for r in res:
+                row = [e['project'], e['ID'], r.id(), r.label()]
+                resources.append(row)
 
-        return all_data
+    return resources
 
-    def get_resources(self, experiments):
 
-        resources = []
-        resources_bbrc = []
-        n_max = 30
+def get_resources_bbrc(x):
 
-        # For each experiments fetch all the resources associated with it
-        for exp in tqdm(experiments[:n_max]):
-            # -------------------- RESOURCES--------------------------------#
-            res = self.selector._get_json('{}/{}'.format(exp['URI'], 'resources'))
-            if len(res) == 0:
-                resources.append([exp['project'], exp['ID'], 'No Data', 'No Data'])
-            else:
-                for r in res:
-                    resources.append([exp['project'], exp['ID'], r['xnat_abstractresource_id'], r['label']])
+    import json
+    experiments = x.array.experiments(columns=['subject_ID', 'date'],
+                                      experiment_type='').data
+    resources = []
 
-            # -------------------- BBRC RESOURCES--------------------------------#
-            # BBRC_VALIDATOR
-            bbrc_validator = self.selector.select.experiment(exp['ID']).resource('BBRC_VALIDATOR')
-            if bbrc_validator.exists:
-                resources_bbrc.append([exp['project'], exp['ID'], True,
-                                       self.tests_resource(bbrc_validator, 'ArchivingValidator')])
-            else:
-                resources_bbrc.append([exp['project'], exp['ID'], False, 0])
-            # FREESURFER
-            # fs = self.selector.select.experiment(exp['ID']).resource('FREESURFER6')
-            # if fs.exists:
-            #     resources_bbrc.append('True')
-            #     try:
-            #         log_file = list(fs.files('*recon-all.log'))[0]
-            #         log_content = self.selector.get(log_file._uri).text
-            #         target_str = '#@#%# recon-all-run-time-hours '
-            #         time_diff = log_content[log_content.find(target_str) + len(target_str):].split()[0]
-            #         resources_bbrc.append(time_diff)
-            #     except IndexError:
-            #         resources_bbrc.append(None)
-            # else:
-            #     resources_bbrc.append(None)
+    for exp in tqdm(list(experiments)[:n_max]):
 
-        return resources, resources_bbrc
-
-    def tests_resource(self, res, name):
+        e = x.select.experiment(exp['ID'])
+        v = e.resource('BBRC_VALIDATOR')
 
         try:
-            j = [e for e in list(res.files('{}*.json'.format(name)))][0]
-            j = json.loads(res._intf.get(j._uri).text)
-            return j
-        except IndexError:
-            return 0
+            name = 'ArchivingValidator'
+            j = [e for e in list(v.files('{}*.json'.format(name)))][0]
+            j = json.loads(v._intf.get(j._uri).text)
+
+        except IndexError as exc:
+            print(exc, exp['ID'])
+            j = 0
+
+        row = [exp['project'], exp['ID'], v.exists(), j]
+        resources.append(row)
+
+    return resources
+
+
+def longitudinal_data(details, resources):
+    # Get current time
+    from datetime import datetime
+
+    now = datetime.now()
+    dt = now.strftime("%d/%m/%Y")
+
+    res = {}
+    eobjects = ['Project', 'Subjects', 'Experiments', 'Scans']
+    names = ['projects', 'subjects', 'experiments', 'scans']
+
+    for each in eobjects:
+        res[each] = {}
+
+    for eobj, n in zip(eobjects, names):
+        res[eobj]['count'] = {dt: len(details[n])}
+
+    for n in names:
+        for p in details[n]:
+            res[eobj].setdefault('list', {})
+            k = 'ID' if n != 'projects' else 'id'
+            res[eobj]['list'].setdefault(dt, []).append(p[k])
+
+    # Resources
+    res['Resources'] = {}
+    for e_proj, e_id, r_id, r_label in resources:
+        if r_id:
+            a = str(e_id) + '  ' + str(r_id)
+            res['Resources'].setdefault('list', {})
+            res['Resources']['list'].setdefault(dt, []).append(a)
+
+    res['Resources']['count'] = {dt: len(res['Resources']['list'][dt])}
+
+    return res
