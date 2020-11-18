@@ -107,9 +107,10 @@ class Fetcher:
 
         resources = []
         resources_bbrc = []
+        n_max = 30
 
         # For each experiments fetch all the resources associated with it
-        for exp in tqdm(experiments):
+        for exp in tqdm(experiments[:n_max]):
             # -------------------- RESOURCES--------------------------------#
             res = self.selector._get_json('{}/{}'.format(exp['URI'], 'resources'))
             if len(res) == 0:
