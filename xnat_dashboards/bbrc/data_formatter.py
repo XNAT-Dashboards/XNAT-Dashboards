@@ -31,10 +31,7 @@ class Formatter:
         """
         resource_processing = []
         for resource in resources_bbrc:
-            project = resource[0]
-            exp_id = resource[1]
-            bbrc_validator = resource[2]
-            archiving_validator = resource[3]
+            project, exp_id, bbrc_validator, archiving_validator = resource
             if archiving_validator != 0:
                 if test in archiving_validator:
                     resource_processing.append([
@@ -307,9 +304,7 @@ class Formatter:
         # Creates a tests_unions list which has all tests union
         # except the values present in extra list
         for resource in resources_bbrc:
-            bbrc_validator = resource[2]
-            archiving_validator = resource[3]
-
+            project, exp_id, bbrc_validator, archiving_validator = resource
             if bbrc_validator and not isinstance(archiving_validator, int):
 
                 for test in archiving_validator:
@@ -321,10 +316,7 @@ class Formatter:
         # If bbrc_validator exists then further proceed
         # for archiving_validator which is a dict of tests
         for resource in resources_bbrc:
-            project = resource[0]
-            bbrc_validator = resource[2]
-            archiving_validator = resource[3]
-
+            project, exp_id, bbrc_validator, archiving_validator = resource
             if bbrc_validator and not isinstance(archiving_validator, int):
                 test_list = [project, ['version', archiving_validator['version']]]
 
