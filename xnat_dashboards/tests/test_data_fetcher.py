@@ -1,13 +1,16 @@
-from xnat_dashboards.pyxnat_interface import data_fetcher
+from xnat_dashboards import data_fetcher as df
+import pyxnat
 import os.path as op
 
 _modulepath = op.dirname(op.abspath(__file__))
 fp = op.join(op.dirname(op.dirname(__file__)), 'config/central.cfg')
+x = pyxnat.Interface(config=fp)
+
 
 def test_get_instance_details():
 
     # CENTRAL
-    details = data_fetcher.Fetcher(fp).get_instance_details()
+    details = df.get_instance_details(x)
 
     # type
     assert isinstance(details['projects'], list)
@@ -25,9 +28,7 @@ def test_get_instance_details():
 def test_get_resources():
 
     # CENTRAL
-    details = data_fetcher.Fetcher(fp).get_instance_details()
-    resources, bbrc_resources = data_fetcher.Fetcher(fp)\
-        .get_resources(details['experiments'])
+    resources, bbrc_resources = df.get_resources(x)
     print(bbrc_resources)
     # type
     assert isinstance(resources, list)
@@ -36,4 +37,3 @@ def test_get_resources():
     # length
     assert len(resources) != 0
     assert len(bbrc_resources) != 0
-
