@@ -1,9 +1,10 @@
 from xnat_dashboards import data_fetcher as df
 import pyxnat
 import os.path as op
+import xnat_dashboards
 
-_moduledir = op.dirname(op.dirname(__file__))
-fp = op.join(_moduledir, 'config', 'central.cfg')
+fp = op.join(op.dirname(xnat_dashboards.__file__), '..', '.xnat.cfg')
+print(fp)
 x = pyxnat.Interface(config=fp)
 
 
