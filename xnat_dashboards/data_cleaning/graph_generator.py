@@ -30,7 +30,6 @@ class GraphGenerator:
     """
     pickle_data = {}
     project_list = []
-    project_list_ow_co_me = []
     l_data = {}
 
     def __init__(
@@ -56,8 +55,6 @@ class GraphGenerator:
                     pickle_data['extra_resources']).reorder_graphs())
 
         self.project_list = projects_data_dict['project_list']
-        self.project_list_ow_co_me =\
-            projects_data_dict['project_list_ow_co_me']
 
     def add_graph_fields(self, graphs):
         """It pre process the data received from DataFilter.
@@ -182,24 +179,14 @@ class GraphGenerator:
         Returns:
             project_list_2d (list): The id of project based in a 2dArray
             To be processed by frontend
-            project_list_2d_ow_co_me (list): ow_co_me means
-            owned_collob_member all variables with this suffix
-            represent the project list for owned collaborated or member list
         """
         length_check = 0
-        length_check_ow_co_me = 0
         project_list_2d = []
         project_list_1d = []
-        project_list_1d_ow_co_me = []
-        project_list_2d_ow_co_me = []
         counter = 0
-        counter_ow_co_me = 0
 
         # List of projects
         project_list = self.project_list
-
-        # List of projects that user is a owner, collab or member
-        list_data_ow_co_me = self.project_list_ow_co_me
 
         if isinstance(project_list, int):
             return project_list
@@ -219,23 +206,6 @@ class GraphGenerator:
 
                 length_check = length_check + 1
 
-        if len(self.project_list_ow_co_me) == 0:
-            project_list_2d_ow_co_me = [[]]
-        else:
-            for project_id in list_data_ow_co_me:
-
-                project_list_1d_ow_co_me.append(project_id)
-                counter_ow_co_me = counter_ow_co_me + 1
-
-                if counter_ow_co_me == 4\
-                   or length_check_ow_co_me == len(list_data_ow_co_me) - 1:
-
-                    counter_ow_co_me = 0
-                    project_list_2d_ow_co_me.append(project_list_1d_ow_co_me)
-                    project_list_1d_ow_co_me = []
-
-                length_check_ow_co_me = length_check_ow_co_me + 1
-
         '''
             Returns a nested list
             [
@@ -243,14 +213,9 @@ class GraphGenerator:
                     [p1 ,p2, p3, p4]
                     [p5 ,p6, p7, p8]
                 ]
-                array_list for ow_co_me projects[
-                    [p1 ,p2, p3, p4]
-                    [p5 ,p6, p7, p8]
-                ]
-            ]
         '''
 
-        return [project_list_2d, project_list_2d_ow_co_me]
+        return [project_list_2d]
 
     def get_longitudinal_graphs(self):
         """Graphs for longitudinal data. Visible to

@@ -87,8 +87,7 @@
                     <ul id="sidebarnav">
                         <li id="overview"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-eye"></i><span class="hide-menu">Overview</span></a></li>
                         <li id="longitudinal"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-line-chart"></i><span class="hide-menu">Longitudinal Metrics</span></a></li>                        
-                        <li id="projects"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-list"></i><span class="hide-menu">Projects</span></a></li>     
-                        <li id="projects_ow_co_me"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-list"></i><span class="hide-menu">Projects Owned, Collaborated or Member </span></a></li>                   
+                        <li id="projects"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-list"></i><span class="hide-menu">Projects</span></a></li>
                         <div class="text-center m-t-30">
                             <a href="{{url_for('dashboard.logout')}}" class="waves-effect waves-light btn btn-outline-danger"> Logout </a>
                         </div>
@@ -105,7 +104,6 @@
                         <h4 class="text-themecolor overview_part">Overview Dashboard</h4>
                         <h4 class="text-themecolor longitudinal_part">Longitudinal data Dashboard</h4>
                         <h4 class="text-themecolor project_part">All Visible Projects Dashboard</h4>
-                        <h4 class="text-themecolor project_part_ow_co_me">Projects Owned, Collaborated or Member Dashboard</h4>
                     </div>
                     <div class="col-md-7 align-self-center text-right">
                         <div class="d-flex justify-content-end align-items-center">
@@ -218,25 +216,6 @@
                 {% endfor %}
             </div>
             <!-- Project list for all visible projects End -->
-            <!-- Project list for owned, collab or member projects Start -->
-            <div class="project_part_ow_co_me">
-                {% for row in project_list_ow_co_me%}
-                <div class="row">
-                    {% for col in row%}
-                        <div class="col-lg-3">
-                            <a href="/dashboard/project/{{col}}" target="_blank">
-                                <div class="card project">
-                                    <div class="card-body" >
-                                        {{col}}
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    {% endfor %}
-                </div>
-                {% endfor %}
-            </div>
-            <!-- Project list for owned, collab or member projects End -->
             <!-- Project List End -->
         </div>
         <!-- Plotly graphs container end-->

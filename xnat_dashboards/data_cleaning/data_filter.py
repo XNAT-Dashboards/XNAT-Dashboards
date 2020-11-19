@@ -175,7 +175,7 @@ class DataFilter:
             list: List of projects
         """
         return self.formatter_object.get_projects_details_specific(
-            self.pro_sub_exp_sc['projects'], self.username)
+            self.pro_sub_exp_sc['projects'])
 
 
 class DataFilterPP(DataFilter):

@@ -248,15 +248,13 @@ class Formatter:
 
         return scans_details
 
-    def get_projects_details_specific(self, projects, name):
+    def get_projects_details_specific(self, projects):
         """This project process list of all projects.
 
-        This generate list of projects that are visible to user and
-        the list of projects owned, collaborated or member.
+        This generate list of projects that are visible to user
 
         Args:
             projects (list): List of projects with there details
-            name (String): Name of the user
 
         Returns:
             list: List of projects which are visible to user.
@@ -265,24 +263,10 @@ class Formatter:
         if projects is None:
             return 1
 
-        project_list_owned_collab_member = []
-
-        for project in projects:
-            project_owner = project['project_owners']
-            project_collabs = project['project_collabs']
-            project_member = project['project_members']
-            user = name
-
-            if project_owner.find(user) != -1\
-               or project_collabs.find(user) != -1\
-               or project_member.find(user) != -1:
-                project_list_owned_collab_member.append(project['id'])
-
         project_list_all = [project['id'] for project in projects]
 
         list_data = {}
         list_data['project_list'] = project_list_all
-        list_data['project_list_ow_co_me'] = project_list_owned_collab_member
 
         return list_data
 

@@ -78,7 +78,6 @@ def stats():
 
     else:
         project_list = project_lists[0]
-        project_list_ow_co_me = project_lists[1]
         graphs = overview[0]
         stats = overview[1]
 
@@ -88,7 +87,6 @@ def stats():
             project_list=project_list,
             stats_data=stats,
             longitudinal_data=longitudinal_data,
-            project_list_ow_co_me=project_list_ow_co_me,
             username=session['username'].capitalize(),
             server=session['server'],
             db=True)
