@@ -9,7 +9,6 @@ x = pyxnat.Interface(config=fp)
 
 def test_get_instance_details():
 
-    # CENTRAL
     details = df.get_instance_details(x)
 
     # type
@@ -27,7 +26,6 @@ def test_get_instance_details():
 
 def test_get_resources():
 
-    # CENTRAL
     resources, bbrc_resources = df.get_resources(x)
     print(bbrc_resources)
     # type
