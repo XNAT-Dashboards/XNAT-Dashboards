@@ -7,7 +7,7 @@ fp = op.join(_moduledir, 'config', 'central.cfg')
 x = pyxnat.Interface(config=fp)
 
 
-def test_get_instance_details():
+def test_data_fetcher():
 
     details = df.get_instance_details(x)
 
@@ -16,11 +16,10 @@ def test_get_instance_details():
     assert len(details['experiments']) != 0
     assert len(details['scans']) != 0
 
-
-def test_get_resources():
-
     resources, bbrc_resources = df.get_resources(x)
     print(bbrc_resources)
 
     assert len(resources) != 0
     assert len(bbrc_resources) != 0
+
+    df.longitudinal_data(details, resources)
