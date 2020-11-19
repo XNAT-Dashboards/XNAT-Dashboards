@@ -1,7 +1,7 @@
-[![build status](https://travis-ci.com/marinagrprat/XNAT-Dashboards.svg?branch=master)](https://github.com/XNAT-Dashboards/XNAT-Dashboards/commits/master)
-[![Coverage Status](https://coveralls.io/repos/github/marinagrprat/XNAT-Dashboards/badge.svg?branch=master)](https://coveralls.io/github/marinagrprat/XNAT-Dashboards?branch=master)
-[![MIT License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/XNAT-Dashboards/XNAT-Dashboards/blob/master/LICENSE)
-[![version](https://img.shields.io/badge/version-v0.3.0-brightgreen)](https://github.com/XNAT-Dashboards/XNAT-Dashboards/commits/master)
+[![build status](https://travis-ci.com/marinagrprat/XNAT-Dashboards.svg?branch=staging)](https://github.com/marinagrprat/XNAT-Dashboards/commits/staging)
+[![Coverage Status](https://coveralls.io/repos/github/marinagrprat/XNAT-Dashboards/badge.svg?branch=staging)](https://coveralls.io/github/marinagrprat/XNAT-Dashboards?branch=staging)
+[![MIT License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/marinagrprat/XNAT-Dashboards/blob/staging/LICENSE)
+[![version](https://img.shields.io/badge/version-v0.3.0-brightgreen)](https://github.com/marinagrprat/XNAT-Dashboards/commits/staging)
 
 # XNAT Dashboards
 
