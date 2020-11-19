@@ -48,7 +48,7 @@ def get_resources(x):
         # BBRC_VALIDATOR
         e = x.select.experiment(exp['ID'])
         bbrc_validator = e.resource('BBRC_VALIDATOR')
-        if bbrc_validator.exists:
+        if bbrc_validator.exists():
             row = [exp['project'], exp['ID'], True,
                    tests_resource(bbrc_validator, 'ArchivingValidator')]
             resources_bbrc.append(row)

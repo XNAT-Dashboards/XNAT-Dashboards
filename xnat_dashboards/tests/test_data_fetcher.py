@@ -17,7 +17,6 @@ def test_data_fetcher():
     assert len(details['scans']) != 0
 
     resources, bbrc_resources = df.get_resources(x)
-    print(bbrc_resources)
 
     assert len(resources) != 0
     assert len(bbrc_resources) != 0
