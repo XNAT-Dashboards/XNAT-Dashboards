@@ -54,20 +54,6 @@ def get_resources(x):
             resources_bbrc.append(row)
         else:
             resources_bbrc.append([exp['project'], exp['ID'], False, 0])
-        # FREESURFER
-        # fs = self.selector.select.experiment(exp['ID']).resource('FREESURFER6')
-        # if fs.exists:
-        #     resources_bbrc.append('True')
-        #     try:
-        #         log_file = list(fs.files('*recon-all.log'))[0]
-        #         log_content = self.selector.get(log_file._uri).text
-        #         target_str = '#@#%# recon-all-run-time-hours '
-        #         time_diff = log_content[log_content.find(target_str) + len(target_str):].split()[0]
-        #         resources_bbrc.append(time_diff)
-        #     except IndexError:
-        #         resources_bbrc.append(None)
-        # else:
-        #     resources_bbrc.append(None)
 
     return resources, resources_bbrc
 

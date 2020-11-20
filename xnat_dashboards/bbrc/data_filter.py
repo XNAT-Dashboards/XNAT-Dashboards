@@ -147,8 +147,8 @@ class DataFilterPP(DataFilter):
         diff_dates = self.formatter_object_per_project.diff_dates(
             self.resources_bbrc, self.experiments, self.project_id)
 
-        # if diff_dates is not None and diff_dates['count'] != {}:
-        # ordered_graphs.update({'Dates Diff': diff_dates})
+        if diff_dates is not None and diff_dates['count'] != {}:
+            ordered_graphs.update({'Dates Diff': diff_dates})
 
         ordered_graphs.update({'test_grid': test_grid})
 
