@@ -31,7 +31,7 @@ def save(x, fp):
     p.update(d)
 
     long_data = data_fetcher.longitudinal_data(details, resources)
-    p.setdefault('longitudinal', {}).update(long_data)
+    p.setdefault('longitudinal_data', {}).update(long_data)
 
     # Save all the data to pickle
     with open(fp, 'wb') as h:

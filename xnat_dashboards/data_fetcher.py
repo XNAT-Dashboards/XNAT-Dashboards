@@ -33,7 +33,7 @@ def get_resources(x):
     resources_bbrc = []
 
     # For each experiments fetch all the resources associated with it
-    for exp in tqdm(experiments[:n_max]):
+    for exp in tqdm(experiments):
         # -------------------- RESOURCES--------------------------------#
         res = x._get_json('{}/{}'.format(exp['URI'], 'resources'))
         if len(res) == 0:
@@ -90,7 +90,7 @@ def longitudinal_data(details, resources):
     dt = now.strftime("%d/%m/%Y")
 
     res = {}
-    eobjects = ['Project', 'Subjects', 'Experiments', 'Scans']
+    eobjects = ['Projects', 'Subjects', 'Experiments', 'Scans']
     names = ['projects', 'subjects', 'experiments', 'scans']
 
     for each in eobjects:
