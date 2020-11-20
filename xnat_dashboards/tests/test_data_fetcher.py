@@ -1,5 +1,4 @@
 from xnat_dashboards import data_fetcher as df
-from xnat_dashboards import pickle
 import pyxnat
 import os.path as op
 import xnat_dashboards

@@ -227,8 +227,8 @@
     "login_urls":
         [
             {
-            "name": "PROD",
-            "url": "https://xnat.barcelonabeta.org",
+            "name": "DEV",
+            "url": "https://dev-xnat.barcelonabeta.org",
             "verify": 1
             }
         ]  
