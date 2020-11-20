@@ -1,5 +1,6 @@
 from xnat_dashboards import pickle
 import pyxnat
+import pickle
 import os.path as op
 import xnat_dashboards
 
