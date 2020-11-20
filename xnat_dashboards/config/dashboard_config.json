@@ -228,9 +228,9 @@
         [
             {
             "name": "DEV",
-            "url": "https://dev-xnat.barcelonabeta.org",
+            "url": "https://devxnat.barcelonabeta.org",
             "verify": 1
             }
-        ]  
-    
+        ]
+
 }

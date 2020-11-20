@@ -15,7 +15,7 @@ def test_pickle_save():
         data = pickle.load(handle)
 
     assert isinstance(data, dict)
-    assert data['server'] == "https://dev-xnat.barcelonabeta.org"
+    assert data['server'] == "https://devxnat.barcelonabeta.org"
     assert data['verify'] == 1
     assert isinstance(data['info'], dict)
     assert isinstance(data['resources'], list)
