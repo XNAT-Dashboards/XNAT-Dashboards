@@ -1,4 +1,4 @@
-from xnat_dashboards import pickle
+from xnat_dashboards import pickle as pk
 import pyxnat
 import pickle
 import os.path as op
@@ -10,7 +10,7 @@ x = pyxnat.Interface(config=fp)
 
 def test_pickle_save():
 
-    pickle.save(x, pickle_path)
+    pk.save(x, pickle_path)
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
