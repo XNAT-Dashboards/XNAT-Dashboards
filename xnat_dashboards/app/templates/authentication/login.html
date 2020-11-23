@@ -53,19 +53,10 @@
 						<span class="focus-input100"></span>
 						<span class="label-input100">Password</span>
 					</div>
-					<div id="server_div">
-						<label for="server">Servers</label>
-						<select name="server" id="server" class="form-control">
-							{% for server in servers_list %}
-							<option value="{{ server['name'] }}">{{server['name']}}</option>
-							{% endfor %}
-						</select>
-					  </div>
 					<div class="container-login100-form-btn">
 						<button class="login100-form-btn">
 							Login
 						</button>
-					</div>
 					</div>
 				</form>
 				<!-- Login form End -->

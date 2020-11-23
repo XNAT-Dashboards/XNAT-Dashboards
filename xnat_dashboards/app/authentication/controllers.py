@@ -58,7 +58,7 @@ def login():
 
         username = user_details['username']
         password = user_details['password']
-        server_name = user_details['server']
+        server_name = servers_list[0]['name']
 
         for server in servers_list:
 
