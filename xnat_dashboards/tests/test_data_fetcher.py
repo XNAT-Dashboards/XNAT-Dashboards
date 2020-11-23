@@ -20,7 +20,3 @@ def test_data_fetcher():
 
     assert len(resources) != 0
     assert len(bbrc_resources) != 0
-
-    longitudinal_data = df.longitudinal_data(details, resources)
-
-    assert len(longitudinal_data) != 0

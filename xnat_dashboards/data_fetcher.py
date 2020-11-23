@@ -66,39 +66,3 @@ def tests_resource(res, name):
         return j
     except IndexError:
         return 0
-
-
-def longitudinal_data(details, resources):
-    # Get current time
-    from datetime import datetime
-
-    now = datetime.now()
-    dt = now.strftime("%d/%m/%Y")
-
-    res = {}
-    eobjects = ['Projects', 'Subjects', 'Experiments', 'Scans']
-    names = ['projects', 'subjects', 'experiments', 'scans']
-
-    for each in eobjects:
-        res[each] = {}
-
-    for eobj, n in zip(eobjects, names):
-        res[eobj]['count'] = {dt: len(details[n])}
-
-    for n in names:
-        for p in details[n]:
-            res[eobj].setdefault('list', {})
-            k = 'ID' if n != 'projects' else 'id'
-            res[eobj]['list'].setdefault(dt, []).append(p[k])
-
-    # Resources
-    res['Resources'] = {}
-    for e_proj, e_id, r_id, r_label in resources:
-        if r_id:
-            a = str(e_id) + '  ' + str(r_id)
-            res['Resources'].setdefault('list', {})
-            res['Resources']['list'].setdefault(dt, []).append(a)
-
-    res['Resources']['count'] = {dt: len(res['Resources']['list'][dt])}
-
-    return res

@@ -76,30 +76,17 @@ $( ".card" ).hover(
 
 $(".project_part").addClass("hide");
 $("#overview").addClass("highlight");
-$(".longitudinal_part").addClass("hide");
 
 $("#overview").click(function(){
     $(".project_part").addClass("hide");
     $(".overview_part").removeClass("hide");
     $("#overview").addClass("highlight");
-    $(".longitudinal_part").addClass("hide");
-    $("#longitudinal").removeClass("highlight");
     $("#projects").removeClass("highlight");
 });
 $("#projects").click(function(){
     $(".project_part").removeClass("hide");
     $(".overview_part").addClass("hide");
-    $(".longitudinal_part").addClass("hide");
-    $("#longitudinal").removeClass("highlight");
     $("#projects").addClass("highlight");
-    $("#overview").removeClass("highlight");
-});
-$("#longitudinal").click(function(){
-    $(".longitudinal_part").removeClass("hide");
-    $(".project_part").addClass("hide");
-    $(".overview_part").addClass("hide");
-    $("#longitudinal").addClass("highlight");
-    $("#projects").removeClass("highlight");
     $("#overview").removeClass("highlight");
 });
 

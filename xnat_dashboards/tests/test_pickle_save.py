@@ -20,4 +20,3 @@ def test_pickle_save():
     assert isinstance(data['info'], dict)
     assert isinstance(data['resources'], list)
     assert isinstance(data['extra_resources'], list)
-    assert isinstance(data['longitudinal_data'], dict)

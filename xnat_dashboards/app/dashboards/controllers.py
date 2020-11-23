@@ -63,8 +63,6 @@ def stats():
 
         overview = plotting_object.get_overview()
 
-        longitudinal_data = plotting_object.get_longitudinal_graphs()
-
         project_lists = plotting_object.get_project_list()
     else:
         # If mismatch between login server url and pickle server url
@@ -86,7 +84,6 @@ def stats():
             graph_data=graphs,
             project_list=project_list,
             stats_data=stats,
-            longitudinal_data=longitudinal_data,
             username=session['username'].capitalize(),
             server=session['server'],
             db=True)

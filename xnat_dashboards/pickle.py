@@ -29,9 +29,6 @@ def save(x, fp):
          'extra_resources': bbrc_resources}
     p.update(d)
 
-    long_data = data_fetcher.longitudinal_data(details, resources)
-    p.setdefault('longitudinal_data', {}).update(long_data)
-
     # Save all the data to pickle
     with open(fp, 'wb') as h:
         pickle.dump(p, h, protocol=pickle.HIGHEST_PROTOCOL)

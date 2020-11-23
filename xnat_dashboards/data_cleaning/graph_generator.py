@@ -26,7 +26,7 @@ class GraphGenerator:
             visible to the user by default it will show no project details.
         role (str): Role assigned to user.
         data (dict): Dict containing data of projects, subjects, exp.,
-            scans, resources, extra_resources, longitudinal data
+            scans, resources, extra_resources
     """
     pickle_data = {}
     project_list = []
@@ -43,7 +43,6 @@ class GraphGenerator:
 
         self.counter_id = 0
         self.role = role
-        self.l_data = pickle_data['longitudinal_data']
         self.ordered_graphs = self.filtered.reorder_graphs()
 
         # Check whether extra resources are present in the pickle_data
@@ -217,46 +216,6 @@ class GraphGenerator:
 
         return [project_list_2d]
 
-    def get_longitudinal_graphs(self):
-        """Graphs for longitudinal data. Visible to
-        admin role only.
-
-        Returns:
-            list: 2D array of graphs and other information.
-        """
-
-        length_check = 0
-        graphs_2d_list = []
-        graphs_1d_list = []
-        counter = 0
-
-        if self.l_data is None or self.role != 'admin':
-            return [[], []]
-
-        l_graphs = self.add_graph_fields(self.l_data)
-
-        for graph in l_graphs:
-            if self.role\
-                    not in self.graph_config[graph]['visibility']:
-                length_check = length_check + 1
-
-                if length_check == len(l_graphs) - 1:
-                    graphs_2d_list.append(graphs_1d_list)
-
-                length_check = length_check + 1
-                continue
-
-            graphs_1d_list.append({graph: l_graphs[graph]})
-            counter = counter + 1
-            if counter == 2 or length_check == len(l_graphs) - 1:
-                counter = 0
-                graphs_2d_list.append(graphs_1d_list)
-                graphs_1d_list = []
-
-            length_check = length_check + 1
-
-        return graphs_2d_list
-
 
 class GraphGeneratorPP(GraphGenerator):
     """Class for making final changes in data for per project view.
@@ -275,7 +234,7 @@ class GraphGeneratorPP(GraphGenerator):
         project_id (str): id of the project.
         role (str): role assigned to the user.
         data (dict): Dict containing data of projects, subjects, exp.,
-            scans, resources, extra_resources, longitudinal data
+            scans, resources, extra_resources
         project_visible (list, optional): list of project that should be
             visible to the user.
     """

@@ -86,7 +86,6 @@
                 <nav class="sidebar-nav">
                     <ul id="sidebarnav">
                         <li id="overview"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-eye"></i><span class="hide-menu">Overview</span></a></li>
-                        <li id="longitudinal"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-line-chart"></i><span class="hide-menu">Longitudinal Metrics</span></a></li>                        
                         <li id="projects"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-list"></i><span class="hide-menu">Projects</span></a></li>
                         <div class="text-center m-t-30">
                             <a href="{{url_for('dashboard.logout')}}" class="waves-effect waves-light btn btn-outline-danger"> Logout </a>
@@ -102,7 +101,6 @@
                 <div class="row page-titles">
                     <div class="col-md-5 align-self-center">
                         <h4 class="text-themecolor overview_part">Overview Dashboard</h4>
-                        <h4 class="text-themecolor longitudinal_part">Longitudinal data Dashboard</h4>
                         <h4 class="text-themecolor project_part">All Visible Projects Dashboard</h4>
                     </div>
                     <div class="col-md-7 align-self-center text-right">
@@ -172,30 +170,6 @@
                 <!-- Modal end for drill down data -->
             </div>
 
-            <!-- longitudinal Start -->
-
-            <div class="longitudinal_part">
-                {% for row in longitudinal_data %}
-                <div class="row">
-                    {% for col in row %}
-                    {% for key in col %}
-                        <div class="col-lg-6" id="myBig{{col['id']}}">
-                            <div class="card">
-                                <div class="card-body" id="graph_id{{col[key]['id']}}">
-                                    <i id="info_id{{col[key]['id']}}" class="fa fa-info wrapper_tooltip" aria-hidden="true" >
-                                            <div id="info_text_id{{col[key]['id']}}" class="tooltip"></div>
-                                    </i>
-                                    <div id="graph_body{{col[key]['id']}}"><!-- Plotly chart will be drawn inside this DIV --></div>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                    {% endfor %}
-                </div>
-                {% endfor %}
-            </div>
-
-            <!-- longitudinal End -->
             <!-- Project List Start -->
             <!-- Project list for all visible projects Start -->
             <div class="project_part">
@@ -242,12 +216,10 @@
         {%endfor%}
     {%endfor%}
 
-    {% for row in longitudinal_data%}
     {% for graph_column in row%}
         <script>
             chart_generator({{ graph_column | tojson}});
         </script>
-    {%endfor%}
     {%endfor%}
 
     <script src="/static/dashboards/js/custom.js"></script>
