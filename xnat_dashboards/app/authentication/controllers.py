@@ -27,7 +27,7 @@ def login():
 
     """
 
-    servers_list = model.login_urls()
+    pickle_data = model.pickle_data()
 
     if request.method == 'GET':
 
@@ -42,13 +42,12 @@ def login():
                 del session['error']
             return render_template(
                 'authentication/login.html',
-                error=display_error,
-                servers_list=servers_list)
+                error=display_error)
         else:
             # If there is no error meaning the user is called login
             # page using browser instead of a redirect
             return render_template(
-                'authentication/login.html', servers_list=servers_list)
+                'authentication/login.html')
 
     else:
 
@@ -58,16 +57,8 @@ def login():
 
         username = user_details['username']
         password = user_details['password']
-        server_name = servers_list[0]['name']
-
-        for server in servers_list:
-
-            if server_name == server['name']:
-
-                server_url = server['url']
-                ssl = server['verify']
-
-                break
+        server_url = pickle_data['server']
+        ssl = pickle_data['verify']
 
         # Check from API whether user exist in the XNAT instance
         exists = model.user_exists(username, password, server_url, ssl)

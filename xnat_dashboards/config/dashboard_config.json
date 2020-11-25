@@ -223,14 +223,5 @@
             "visibility": ["admin"],
             "color":"#16ffeb"
         }
-    },
-    "login_urls":
-        [
-            {
-            "name": "DEV",
-            "url": "https://devxnat.barcelonabeta.org",
-            "verify": 1
-            }
-        ]
-
+    }
 }

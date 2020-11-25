@@ -1,7 +1,7 @@
 import json
 from pyxnat import Interface
 from xnat_dashboards import config as config_file
-
+import pickle
 
 # Function to check if user exist
 def user_exists(username, password, server, ssl):
@@ -52,18 +52,9 @@ def user_role_config(username):
         return config
 
 
-def login_urls():
-    """Checks whether user roles are assigned in configuration file.
+def pickle_data():
 
-    Args:
-        username (str): Username of through which user logged in.
+    with open(config_file.PICKLE_PATH, 'rb') as handle:
+        pickle_data = pickle.load(handle)
 
-    Returns:
-        dict/bool: Dictionary of details to be processed further
-        default user role if not assigned is guest, if user
-        is assigned a forbidden role then return False
-    """
-    with open(config_file.DASHBOARD_CONFIG_PATH) as json_file:
-        url_list = json.load(json_file)['login_urls']
-
-    return url_list
+    return pickle_data
