@@ -64,7 +64,7 @@ def test_get_scans_details():
         data = pickle.load(handle)
 
     scans = data['info']['scans']
-    scans_details = df.Formatter().get_experiments_details(scans)
+    scans_details = df.Formatter().get_scans_details(scans)
 
     assert isinstance(scans_details['Number of Scans'], int)
     assert isinstance(scans_details['Scans/Project'], dict)
