@@ -4,7 +4,7 @@ import pickle
 import os.path as op
 import xnat_dashboards
 
-pickle_path = 'xnat_dashboards/config/test_save.pickle'
+pickle_path = 'xnat_dashboards/config/test.pickle'
 fp = op.join(op.dirname(xnat_dashboards.__file__), '..', '.xnat.cfg')
 x = pyxnat.Interface(config=fp)
 
