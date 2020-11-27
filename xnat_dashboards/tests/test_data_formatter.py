@@ -1,5 +1,4 @@
 from xnat_dashboards.data_cleaning import data_formatter as df
-from xnat_dashboards.bbrc import data_formatter as df_bbrc
 import pickle
 
 pickle_path = 'xnat_dashboards/config/test.pickle'
@@ -79,4 +78,14 @@ def test_get_scans_details():
     assert len(scans_details['XSI Scan Types']) != 0
 
 
+def test_get_resources_details():
+
+    with open(pickle_path, 'rb') as handle:
+        data = pickle.load(handle)
+
+    resources = data['resources']
+    resource_details = df.Formatter().get_resources_details(resources)
+
+    assert isinstance(resource_details, dict)
+    assert len(resource_details) != 0
 
