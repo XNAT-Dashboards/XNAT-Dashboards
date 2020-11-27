@@ -54,3 +54,24 @@ def test_get_experiments_details():
     assert experiments_details['Number of Experiments'] != 0
     assert len(experiments_details['Experiments/Project'] != 0)
     assert len(experiments_details['Experiment Types'] != 0)
+
+
+def test_get_scans_details():
+
+    with open(pickle_path, 'rb') as handle:
+        data = pickle.load(handle)
+
+    scans = data['info']['scans']
+    scans_details = df.Formatter().get_experiments_details(scans)
+
+    assert isinstance(scans_details['Number of Scans'], int)
+    assert isinstance(scans_details['Scans/Project'], dict)
+    assert isinstance(scans_details['Scans Quality'], dict)
+    assert isinstance(scans_details['Scan Types'], dict)
+    assert isinstance(scans_details['XSI Scan Types'], dict)
+
+    assert scans_details['Number of Scans'] != 0
+    assert len(scans_details['Scans/Project'] != 0)
+    assert len(scans_details['Scans Quality'] != 0)
+    assert len(scans_details['Scan Types'] != 0)
+    assert len(scans_details['XSI Scan Types'] != 0)
