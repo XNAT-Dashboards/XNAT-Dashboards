@@ -1,4 +1,5 @@
 from xnat_dashboards.data_cleaning import data_formatter as df
+from xnat_dashboards.bbrc import data_formatter as df_bbrc
 import pickle
 
 pickle_path = 'xnat_dashboards/config/test.pickle'
@@ -15,7 +16,8 @@ def test_get_projects_details():
     assert isinstance(project_details['Projects Visibility'], dict)
 
     assert project_details['Number of Projects'] != 0
-    assert len(project_details['Projects Visibility'] != 0)
+    assert len(project_details['Projects Visibility']) != 0
+
 
 
 def test_get_subjects_details():
@@ -33,10 +35,10 @@ def test_get_subjects_details():
     assert isinstance(subject_details['Subjects/Project'], dict)
 
     assert subject_details['Number of Subjects'] != 0
-    assert len(subject_details['Age Range'] != 0)
-    assert len(subject_details['Gender'] != 0)
-    assert len(subject_details['Handedness'] != 0)
-    assert len(subject_details['Subjects/Project'] != 0)
+    assert len(subject_details['Age Range']) != 0
+    assert len(subject_details['Gender']) != 0
+    assert len(subject_details['Handedness']) != 0
+    assert len(subject_details['Subjects/Project']) != 0
 
 
 def test_get_experiments_details():
@@ -52,8 +54,8 @@ def test_get_experiments_details():
     assert isinstance(experiments_details['Experiment Types'], dict)
 
     assert experiments_details['Number of Experiments'] != 0
-    assert len(experiments_details['Experiments/Project'] != 0)
-    assert len(experiments_details['Experiment Types'] != 0)
+    assert len(experiments_details['Experiments/Project']) != 0
+    assert len(experiments_details['Experiment Types']) != 0
 
 
 def test_get_scans_details():
@@ -71,7 +73,10 @@ def test_get_scans_details():
     assert isinstance(scans_details['XSI Scan Types'], dict)
 
     assert scans_details['Number of Scans'] != 0
-    assert len(scans_details['Scans/Project'] != 0)
-    assert len(scans_details['Scans Quality'] != 0)
-    assert len(scans_details['Scan Types'] != 0)
-    assert len(scans_details['XSI Scan Types'] != 0)
+    assert len(scans_details['Scans/Project']) != 0
+    assert len(scans_details['Scans Quality']) != 0
+    assert len(scans_details['Scan Types']) != 0
+    assert len(scans_details['XSI Scan Types']) != 0
+
+
+
