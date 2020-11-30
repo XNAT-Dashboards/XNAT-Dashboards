@@ -1,7 +1,9 @@
 from xnat_dashboards.data_cleaning import data_formatter as df
 import pickle
+import xnat_dashboards
+import os.path as op
 
-pickle_path = 'xnat_dashboards/config/test.pickle'
+pickle_path = op.join(op.dirname(xnat_dashboards.__file__), 'config', 'test_save.pickle')
 
 def test_get_projects_details():
 
