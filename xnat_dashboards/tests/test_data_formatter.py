@@ -3,7 +3,7 @@ import pickle
 import xnat_dashboards
 import os.path as op
 
-pickle_path = op.join(op.dirname(xnat_dashboards.__file__), 'config', 'test_save.pickle')
+pickle_path = 'xnat_dashboards/config/test_save.pickle'
 
 def test_get_projects_details():
 
