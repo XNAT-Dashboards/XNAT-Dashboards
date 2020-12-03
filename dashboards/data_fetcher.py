@@ -1,6 +1,7 @@
 from tqdm import tqdm
+import os
 
-n_max = 10
+n_max = 10 if os.environ.get('CI_TEST', None) else None
 
 
 def get_instance_details(x):
@@ -33,7 +34,7 @@ def get_resources(x):
     resources_bbrc = []
 
     # For each experiments fetch all the resources associated with it
-    for exp in tqdm(experiments):
+    for exp in tqdm(experiments[:n_max]):
         # -------------------- RESOURCES--------------------------------#
         res = x._get_json('{}/{}'.format(exp['URI'], 'resources'))
         if len(res) == 0:
