@@ -4,7 +4,8 @@
                 "noUser":"forbidden",
                 "asif":"admin",
                 "mgarcia": "admin",
-                "mgarciabbrc": "admin"
+                "mgarciabbrc": "admin",
+                "goperto":"admin"
         },
         "project_visible":{
                 "guest":["*"],
