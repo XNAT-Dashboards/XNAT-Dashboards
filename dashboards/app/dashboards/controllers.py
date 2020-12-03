@@ -8,10 +8,10 @@ from dashboards.app.dashboards import model
 dashboard = Blueprint('dashboard', __name__, url_prefix='/dashboard')
 
 
-# Logout route
+# logout route
 @dashboard.route('/logout/', methods=['GET'])
 def logout():
-    """Logout route here we delete all existing session variables
+    """logout route here we delete all existing session variables
 
     Returns:
         route: Redirect to login page.
