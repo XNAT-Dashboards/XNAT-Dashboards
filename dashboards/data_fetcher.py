@@ -1,7 +1,7 @@
 from tqdm import tqdm
 import os
 
-n_max = 10 if os.environ.get('CI_TEST', None) else None
+n_max = 50 if os.environ.get('CI_TEST', None) else None
 
 
 def get_instance_details(x):
