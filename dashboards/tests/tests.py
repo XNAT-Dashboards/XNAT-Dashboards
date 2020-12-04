@@ -1,7 +1,29 @@
 from dashboards.data_cleaning import data_formatter as df
+import os.path as op
+import dashboards
+import pyxnat
+from dashboards import pickle as pk
 import pickle
 
-pickle_path = 'xnat_dashboards/config/test_save.pickle'
+
+pickle_path = op.join(op.dirname(__file__), 'test_save.pickle')
+fp = op.join(op.dirname(dashboards.__file__), '..', '.xnat.cfg')
+x = pyxnat.Interface(config=fp)
+
+
+def test_001_pickle_save():  # should be run first
+
+    pk.save(x, pickle_path)
+    with open(pickle_path, 'rb') as handle:
+        data = pickle.load(handle)
+
+    assert isinstance(data, dict)
+    assert data['server'] == "https://devxnat.barcelonabeta.org"
+    assert data['verify'] == 1
+    assert isinstance(data['info'], dict)
+    assert isinstance(data['resources'], list)
+    assert isinstance(data['extra_resources'], list)
+
 
 def test_get_projects_details():
 
@@ -16,7 +38,6 @@ def test_get_projects_details():
 
     assert project_details['Number of Projects'] != 0
     assert len(project_details['Projects Visibility']) != 0
-
 
 
 def test_get_subjects_details():
