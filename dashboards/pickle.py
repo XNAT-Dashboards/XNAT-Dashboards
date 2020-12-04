@@ -1,6 +1,6 @@
 import pickle
 import os.path as op
-from xnat_dashboards import data_fetcher
+from dashboards import data_fetcher
 
 
 def save(x, fp):

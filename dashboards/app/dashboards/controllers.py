@@ -1,8 +1,8 @@
 # Import flask dependencies
 from flask import Blueprint, render_template, session,\
     redirect, url_for
-from xnat_dashboards.data_cleaning import graph_generator
-from xnat_dashboards.app.dashboards import model
+from dashboards.data_cleaning import graph_generator
+from dashboards.app.dashboards import model
 
 # Define the blueprint: 'dashboard', set its url prefix: app.url/dashboard
 dashboard = Blueprint('dashboard', __name__, url_prefix='/dashboard')

@@ -1,9 +1,9 @@
-from xnat_dashboards import data_fetcher as df
+from dashboards import data_fetcher as df
 import pyxnat
 import os.path as op
-import xnat_dashboards
+import dashboards
 
-fp = op.join(op.dirname(xnat_dashboards.__file__), '..', '.xnat.cfg')
+fp = op.join(op.dirname(dashboards.__file__), '..', '.xnat.cfg')
 x = pyxnat.Interface(config=fp)
 
 

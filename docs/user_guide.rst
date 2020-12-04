@@ -7,13 +7,13 @@ for exploring data present on their XNAT instance.
 
 Prerequisites
 -------------
-Before starting, make sure that you have the :mod:`xnat_dashboards` distribution
+Before starting, make sure that you have the :mod:`dashboards` distribution
 :doc:`installed <installation>`. In the Python shell, the following
 should run without raising an exception:
 
 .. code-block:: python
 
-  >>> import xnat_dashboards
+  >>> import dashboards
 
 This tutorial also assumes that you have access to an XNAT instance.
 You may also use `XNAT Central <https://central.xnat.org>`_, which is a public
@@ -83,7 +83,7 @@ The easiest way to create this XNAT configuration file is to use the
 
 Step-2 Create dashboard configuration file. You can copy the content of already
 create dashboard configuration file using the following link
-`dashboard_config <https://gitlab.com/Udolf47/xnat_dashboards/-/blob/development/xnat_dashboards/config/dashboard_config.json>`_.
+`dashboard_config <https://gitlab.com/Udolf47/dashboards/-/blob/development/dashboards/config/dashboard_config.json>`_.
 Edit it as per requirements and need.
 
 Changes that can be done using dashboard configuration file
@@ -107,12 +107,12 @@ Script to download_data as pickle file::
 
 Example
 
-- Pickle file to be generated at xnat_dashboards/config/name.pickle
-- XNAT configuration file is present at xnat_dashboards/config/name.cfg
+- Pickle file to be generated at dashboards/config/name.pickle
+- XNAT configuration file is present at dashboards/config/name.cfg
 
 Script to download_data as pickle file::
 
-    download_data.py -i 'xnat_dashboards/config/name.cfg' -o 'xnat_dashboards/config/name.pickle'
+    download_data.py -i 'dashboards/config/name.cfg' -o 'dashboards/config/name.pickle'
 
 Starting the server
 -------------------
@@ -137,9 +137,9 @@ Extra Arguments::
 
 Example:
 
-- Pickle file is present at xnat_dashboards/config/name.pickle
-- Dashboard configuration file is present at xnat_dashboards/config/name.json
+- Pickle file is present at dashboards/config/name.pickle
+- Dashboard configuration file is present at dashboards/config/name.json
 
 Script to download_data as pickle file::
 
-    run_dashboards.py -p 'xnat_dashboards/config/name.pickle' -c 'xnat_dashboards/config/name.json'
+    run_dashboards.py -p 'dashboards/config/name.pickle' -c 'dashboards/config/name.json'

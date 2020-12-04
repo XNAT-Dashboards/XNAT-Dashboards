@@ -4,7 +4,7 @@ Auth
 Controllers
 --------------------------------------------
 
-.. automodule:: xnat_dashboards.app.auth.controllers
+.. automodule:: dashboards.app.auth.controllers
    :members:
    :undoc-members:
    :show-inheritance:
@@ -12,7 +12,7 @@ Controllers
 Model
 --------------------------------------
 
-.. automodule:: xnat_dashboards.app.auth.model
+.. automodule:: dashboards.app.auth.model
    :members:
    :undoc-members:
    :show-inheritance:

@@ -4,7 +4,7 @@ Data Cleaning
 Data Filter
 ---------------------------------------------------
 
-.. automodule:: xnat_dashboards.data_cleaning.data_filter
+.. automodule:: dashboards.data_cleaning.data_filter
    :members:
    :undoc-members:
    :show-inheritance:
@@ -12,7 +12,7 @@ Data Filter
 Data Formatter
 ------------------------------------------------------
 
-.. automodule:: xnat_dashboards.data_cleaning.data_formatter
+.. automodule:: dashboards.data_cleaning.data_formatter
    :members:
    :undoc-members:
    :show-inheritance:
@@ -20,7 +20,7 @@ Data Formatter
 Graph Generator
 -------------------------------------------------------
 
-.. automodule:: xnat_dashboards.data_cleaning.graph_generator
+.. automodule:: dashboards.data_cleaning.graph_generator
    :members:
    :undoc-members:
    :show-inheritance:

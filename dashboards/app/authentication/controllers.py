@@ -1,7 +1,7 @@
 # Import flask dependencies
 from flask import Blueprint, render_template, session, request, redirect,\
     url_for
-from xnat_dashboards.app.authentication import model
+from dashboards.app.authentication import model
 
 
 # Define the blueprint: 'auth', set its url prefix: app.url/auth

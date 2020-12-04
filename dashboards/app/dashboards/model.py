@@ -1,5 +1,5 @@
 import pickle
-from xnat_dashboards import config
+from dashboards import config
 
 
 def load_users_data(server):

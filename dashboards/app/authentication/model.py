@@ -1,6 +1,6 @@
 import json
 from pyxnat import Interface
-from xnat_dashboards import config as config_file
+from dashboards import config as config_file
 import pickle
 
 # Function to check if user exist

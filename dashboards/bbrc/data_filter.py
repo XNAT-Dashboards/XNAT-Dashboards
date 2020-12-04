@@ -1,4 +1,4 @@
-from xnat_dashboards.bbrc import data_formatter
+from dashboards.bbrc import data_formatter
 
 
 class DataFilter:

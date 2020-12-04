@@ -15,12 +15,12 @@ Officially Python 3.6, 3.7
 Installing from PyPI
 --------------------
 
-:mod:`xnat_dashboards` can be installed via pip from
-`PyPI <https://pypi.org/project/xnat_dashboards>`__.
+:mod:`dashboards` can be installed via pip from
+`PyPI <https://pypi.org/project/dashboards>`__.
 
 ::
 
-    pip install xnat_dashboards
+    pip install dashboards
 
 Prerequisites
 -------------

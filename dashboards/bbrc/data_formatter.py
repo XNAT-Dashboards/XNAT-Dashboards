@@ -1,6 +1,6 @@
 from datetime import date
 import pandas as pd
-from xnat_dashboards.data_cleaning import data_formatter
+from dashboards.data_cleaning import data_formatter
 import urllib3
 
 # Remove warnings

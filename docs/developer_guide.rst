@@ -113,7 +113,7 @@ Developers need to have knowledge of **Python**, **Pandas** (if need to add plot
 
 Steps to create a new dashboard frontend:
 
-- Create a new html file in xnat_dashboards/app/templates/dashboards/new.html
+- Create a new html file in dashboards/app/templates/dashboards/new.html
 - Copy the html page of already present dashboards.
 - Remove all the jinja code and other imports.
 

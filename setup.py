@@ -18,8 +18,8 @@ setuptools.setup(
      url='https://pypi.org/project/xnat-dashboards/',
      include_package_data=True,
      package_data={
-          'static': ['xnat_dashboards/app/static/*'],
-          'templates': ['xnat_dashboards/app/templates/*']},
+          'static': ['dashboards/app/static/*'],
+          'templates': ['dashboards/app/templates/*']},
      packages=setuptools.find_packages(exclude=('tests')),
      description='XNAT data visualization using Flask and Pyxnat',
      long_description=long_description,

@@ -1,7 +1,7 @@
 import json
-from xnat_dashboards.data_cleaning import data_filter
-from xnat_dashboards.bbrc import data_filter as data_filter_b
-from xnat_dashboards import config
+from dashboards.data_cleaning import data_filter
+from dashboards.bbrc import data_filter as data_filter_b
+from dashboards import config
 
 
 class GraphGenerator:

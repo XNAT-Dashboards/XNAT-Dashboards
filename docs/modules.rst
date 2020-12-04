@@ -5,4 +5,4 @@ XNAT Dashboards Code
    :maxdepth: 4
 
 
-   xnat_dashboards
+   dashboards

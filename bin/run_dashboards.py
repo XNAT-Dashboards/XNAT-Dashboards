@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from xnat_dashboards.app import app
-from xnat_dashboards import config
+from dashboards.app import app
+from dashboards import config
 import os
 import argparse
 from argparse import RawTextHelpFormatter

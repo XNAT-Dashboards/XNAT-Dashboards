@@ -4,7 +4,7 @@ Dashboards
 Controllers
 --------------------------------------------------
 
-.. automodule:: xnat_dashboards.app.dashboards.controllers
+.. automodule:: dashboards.app.dashboards.controllers
    :members:
    :undoc-members:
    :show-inheritance:
@@ -12,7 +12,7 @@ Controllers
 Model
 --------------------------------------------
 
-.. automodule:: xnat_dashboards.app.dashboards.model
+.. automodule:: dashboards.app.dashboards.model
    :members:
    :undoc-members:
    :show-inheritance:

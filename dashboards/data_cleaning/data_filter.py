@@ -1,4 +1,4 @@
-from xnat_dashboards.data_cleaning import data_formatter
+from dashboards.data_cleaning import data_formatter
 
 
 class DataFilter:

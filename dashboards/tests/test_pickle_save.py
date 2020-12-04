@@ -1,8 +1,8 @@
-from xnat_dashboards import pickle as pk
+from dashboards import pickle as pk
 import pyxnat
 import pickle
 import os.path as op
-import xnat_dashboards
+import dashboards
 
 pickle_path = 'xnat_dashboards/config/test_save.pickle'
 fp = op.join(op.dirname(xnat_dashboards.__file__), '..', '.xnat.cfg')

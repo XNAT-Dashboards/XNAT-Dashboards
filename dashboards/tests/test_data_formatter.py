@@ -1,4 +1,4 @@
-from xnat_dashboards.data_cleaning import data_formatter as df
+from dashboards.data_cleaning import data_formatter as df
 import pickle
 
 pickle_path = 'xnat_dashboards/config/test_save.pickle'
@@ -88,4 +88,3 @@ def test_get_resources_details():
 
     assert isinstance(resource_details, dict)
     assert len(resource_details) != 0
-

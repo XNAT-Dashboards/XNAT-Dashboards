@@ -23,6 +23,6 @@ if __name__ == "__main__":
     config = args.config.name
     fp = op.abspath(args.pickle.name)
 
-    from xnat_dashboards import pickle
+    from dashboards import pickle
     x = pyxnat.Interface(config=config)
     pickle.save(x, fp)

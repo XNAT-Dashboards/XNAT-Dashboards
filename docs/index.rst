@@ -10,7 +10,7 @@ Overview
 
 **Useful links**:
 
-`Binary Installers <https://pypi.org/project/xnat_dashboards>`__ |
+`Binary Installers <https://pypi.org/project/dashboards>`__ |
 `Source Repository <https://gitlab.com/xnat-dashboards/xnat-dashboards>`__ |
 `Issues & Ideas <https://gitlab.com/xnat-dashboards/xnat-dashboards/-/issues>`__
 

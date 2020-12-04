@@ -4,16 +4,16 @@ XNAT Dashboards Code
 .. toctree::
    :maxdepth: 4
 
-   xnat_dashboards.app
-   xnat_dashboards.bbrc
-   xnat_dashboards.data_cleaning
-   xnat_dashboards.pyxnat_interface
-   xnat_dashboards.tests
+   dashboards.app
+   dashboards.bbrc
+   dashboards.data_cleaning
+   dashboards.pyxnat_interface
+   dashboards.tests
 
 Path Creator
 -------------------------------------
 
-.. automodule:: xnat_dashboards.path_creator
+.. automodule:: dashboards.path_creator
    :members:
    :undoc-members:
    :show-inheritance:
