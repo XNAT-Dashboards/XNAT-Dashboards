@@ -41,6 +41,17 @@ def test_get_projects_details():
     assert len(project_details['Projects Visibility']) != 0
 
 
+def test_get_projects_details_specific():
+    with open(pickle_path, 'rb') as handle:
+        data = pickle.load(handle)
+
+    projects = data['info']['projects']
+    project_details_specific = df.Formatter().get_projects_details_specific(projects)
+
+    assert isinstance(project_details_specific, dict)
+    assert len(project_details_specific) != 0
+
+
 def test_get_subjects_details():
 
     with open(pickle_path, 'rb') as handle:
