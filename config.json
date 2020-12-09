@@ -68,12 +68,6 @@
             "visibility": ["admin", "superuser"],
             "color":"#DBC256"
         },
-        "XSI Scan Types": {
-            "type": "bar",
-            "description": "Different XSI types of scans",
-            "visibility": ["admin", "superuser"],
-            "color":"#55DB7F"
-        },
         "Scans/Project": {
             "type": "bar",
             "description": "Number of scans present in each project",

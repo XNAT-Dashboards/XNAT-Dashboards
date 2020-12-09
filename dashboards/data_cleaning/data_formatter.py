@@ -172,12 +172,6 @@ class Formatter:
             'ID', 'type', 'xnat:imagescandata/id')
         type_dict['id_type'] = 'experiment'
 
-        # Scans xsi type information
-
-        xsi_type_dict = self.dict_generator_overview(
-            scans, 'xsiType', 'ID', 'xsiType', 'xnat:imagescandata/id')
-        xsi_type_dict['id_type'] = 'experiment'
-
         # Scans per project information
 
         scans_per_project = self.dict_generator_overview(
@@ -193,7 +187,6 @@ class Formatter:
 
         scans_details['Scans Quality'] = scan_quality
         scans_details['Scan Types'] = type_dict
-        scans_details['XSI Scan Types'] = xsi_type_dict
         scans_details['Scans/Project'] = scans_per_project
         scans_details['Scans Proportions'] = prop_scan
         scans_details['Number of Scans'] = len(scans)

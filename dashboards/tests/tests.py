@@ -96,13 +96,11 @@ def test_get_scans_details():
     assert isinstance(scans_details['Scans/Project'], dict)
     assert isinstance(scans_details['Scans Quality'], dict)
     assert isinstance(scans_details['Scan Types'], dict)
-    assert isinstance(scans_details['XSI Scan Types'], dict)
 
     assert scans_details['Number of Scans'] != 0
     assert len(scans_details['Scans/Project']) != 0
     assert len(scans_details['Scans Quality']) != 0
     assert len(scans_details['Scan Types']) != 0
-    assert len(scans_details['XSI Scan Types']) != 0
 
 
 def test_get_resources_details():
