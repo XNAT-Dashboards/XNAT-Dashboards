@@ -629,13 +629,6 @@ class FormatterPP(Formatter):
         # per project view
         del experiments_details['Experiments/Project']
 
-        # Experiments per subject information
-
-        experiments_per_subject = super().dict_generator_per_view(
-            experiments, 'subject_ID', 'ID', 'eps')
-        experiments_per_subject['id_type'] = 'experiment'
-        experiments_details['Experiments/Subject'] = experiments_per_subject
-
         return experiments_details
 
     def get_scans_details(self, scans_data):
@@ -660,15 +653,6 @@ class FormatterPP(Formatter):
         # Delete Scans/Project plot as this is present in counter of
         # per project view
         del scans_details['Scans/Project']
-
-        # Scans per subject information
-
-        scans_per_subject = super().dict_generator_overview(
-            scans, 'xnat:imagesessiondata/subject_id',
-            'ID', 'sps', 'xnat:imagescandata/id')
-        scans_per_subject['id_type'] = 'experiment'
-
-        scans_details['Scans/Subject'] = scans_per_subject
 
         return scans_details
 
