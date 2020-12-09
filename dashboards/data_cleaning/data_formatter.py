@@ -68,51 +68,6 @@ class Formatter:
 
         subjects_details = {}
 
-        # Subject age information
-
-        age_list = []
-        age_none = []
-
-        for subject in subjects_data:
-            if subject['age'] != '':
-                if int(subject['age']) > 0 and int(subject['age']) < 130:
-                    age_list.append([int(subject['age']), subject['ID']])
-                else:
-                    age_none.append(subject['ID'])
-            else:
-                age_none.append(subject['ID'])
-
-        age_df = pd.DataFrame(age_list, columns=['age', 'count'])
-
-        age_df['age'] = pd.cut(
-            x=age_df['age'],
-            bins=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 130],
-            labels=['0-10', '10-20', '20-30', '30-40', '40-50', '50-60',
-                    '60-70', '70-80', '80-90', '90-100', 'Above_100'])
-
-        age_ranged = age_df.groupby('age')['count'].apply(list)
-        age_final_df = age_df.groupby('age').count()
-        age_final_df['list'] = age_ranged
-
-        age_range = age_final_df.to_dict()
-
-        age_range['count'].update({'No Data': len(age_none)})
-        age_range['list'].update({'No Data': age_none})
-        age_range['id_type'] = 'subject'
-        # Age end
-
-        # Subject handedness information
-
-        handedness = self.dict_generator_overview(
-            subjects_data, 'handedness', 'ID', 'handedness')
-        handedness['id_type'] = 'subject'
-
-        # Subject gender information
-
-        gender = self.dict_generator_overview(
-            subjects_data, 'gender', 'ID', 'gender')
-        gender['id_type'] = 'subject'
-
         # Subjects per project information
 
         subjects_per_project = self.dict_generator_per_view(
@@ -122,9 +77,6 @@ class Formatter:
         # Number of subjects information
         subjects_details['Number of Subjects'] = len(subjects_data)
         subjects_details['Subjects/Project'] = subjects_per_project
-        subjects_details['Age Range'] = age_range
-        subjects_details['Gender'] = gender
-        subjects_details['Handedness'] = handedness
 
         return subjects_details
 

@@ -61,15 +61,9 @@ def test_get_subjects_details():
     subject_details = df.Formatter().get_subjects_details(subjects)
 
     assert isinstance(subject_details['Number of Subjects'], int)
-    assert isinstance(subject_details['Age Range'], dict)
-    assert isinstance(subject_details['Gender'], dict)
-    assert isinstance(subject_details['Handedness'], dict)
     assert isinstance(subject_details['Subjects/Project'], dict)
 
     assert subject_details['Number of Subjects'] != 0
-    assert len(subject_details['Age Range']) != 0
-    assert len(subject_details['Gender']) != 0
-    assert len(subject_details['Handedness']) != 0
     assert len(subject_details['Subjects/Project']) != 0
 
 

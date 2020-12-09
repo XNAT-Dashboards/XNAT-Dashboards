@@ -38,24 +38,6 @@
             "visibility": ["admin", "superuser"],
             "color":"#818787"
         },
-        "Age Range": {
-            "type": "bar",
-            "description": "Age distribution of patients or subjects",
-            "visibility": ["admin", "superuser"],
-            "color":"#CCC374"
-        },
-        "Gender": {
-            "type": "bar",
-            "description": "Gender distribution of patients",
-            "visibility": ["admin", "superuser"],
-            "color":"#3869B1"
-        },
-        "Handedness": {
-            "type": "bar",
-            "description": "Number of patients with their dominant hand count",
-            "visibility": ["admin", "superuser"],
-            "color":"#CAB2D6"
-        },
         "Experiments/Subject": {
             "type": "line",
             "description": "Number of sessions for each patient",
