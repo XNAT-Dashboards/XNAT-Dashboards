@@ -132,3 +132,18 @@ def test_get_bbrc_resource_details():
 
     assert isinstance(resource_bbrc_details, dict)
     assert len(resource_bbrc_details) != 0
+
+def test_diff_dates():
+
+    with open(pickle_path, 'rb') as handle:
+        data = pickle.load(handle)
+
+    resources_bbrc = data['extra_resources']
+    experiments = data['info']['experiments']
+    project = data['info']['projects'][0]
+    project_id = project['id']
+    print('project_id', project_id)
+    dict_diff_dates = df_bbrc.Formatter().diff_dates(resources_bbrc, experiments, project_id)
+
+    assert isinstance(dict_diff_dates, dict)
+    assert len(dict_diff_dates) != 0
