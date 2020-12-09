@@ -149,6 +149,7 @@ class DataFilter:
         if scans_details != 1:
             stats['Scans'] = scans_details['Number of Scans']
             del scans_details['Number of Scans']
+            del scans_details['Scans Proportions']
 
         stat_final = {'Stats': stats}
 
