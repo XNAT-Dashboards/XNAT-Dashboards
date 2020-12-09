@@ -147,3 +147,16 @@ def test_diff_dates():
 
     assert isinstance(dict_diff_dates, dict)
     assert len(dict_diff_dates) != 0
+
+def test_generate_test_grid_bbrc():
+
+    with open(pickle_path, 'rb') as handle:
+        data = pickle.load(handle)
+
+    resources_bbrc = data['extra_resources']
+    project = data['info']['projects'][0]
+    project_id = project['id']
+    test_grid = df_bbrc.Formatter().generate_test_grid_bbrc(resources_bbrc, project_id)
+
+    assert isinstance(test_grid, list)
+    assert len(test_grid) != 0
