@@ -1,4 +1,5 @@
 from dashboards.data_cleaning import data_formatter as df
+from dashboards.bbrc import data_formatter as df_bbrc
 import os.path as op
 import dashboards
 import pyxnat
@@ -109,3 +110,14 @@ def test_get_resources_details():
 
     assert isinstance(resource_details, dict)
     assert len(resource_details) != 0
+
+def test_get_bbrc_resource_details():
+
+    with open(pickle_path, 'rb') as handle:
+        data = pickle.load(handle)
+
+    resources_bbrc = data['extra_resources']
+    resource_bbrc_details = df_bbrc.Formatter().get_resource_details(resources_bbrc)
+
+    assert isinstance(resource_bbrc_details, dict)
+    assert len(resource_bbrc_details) != 0
