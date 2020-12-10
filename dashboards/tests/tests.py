@@ -1,4 +1,6 @@
 from dashboards.data_cleaning import data_formatter as df
+from dashboards.data_cleaning import data_filter as dt_filter
+from dashboards.data_cleaning import graph_generator as gg
 from dashboards.bbrc import data_formatter as df_bbrc
 import os.path as op
 import dashboards
@@ -134,7 +136,6 @@ def test_diff_dates():
     experiments = data['info']['experiments']
     project = data['info']['projects'][0]
     project_id = project['id']
-    print('project_id', project_id)
     dict_diff_dates = df_bbrc.Formatter().diff_dates(resources_bbrc, experiments, project_id)
 
     assert isinstance(dict_diff_dates, dict)
@@ -152,3 +153,18 @@ def test_generate_test_grid_bbrc():
 
     assert isinstance(test_grid, list)
     assert len(test_grid) != 0
+
+
+def test_get_project_list():
+    with open(pickle_path, 'rb') as handle:
+        data = pickle.load(handle)
+
+    info = data['info']
+    resources = data['resources']
+    filtered = dt_filter.DataFilter(
+        'testUser', info, 'admin', [], resources)
+    projects = filtered.get_project_list()
+    print(projects)
+
+    assert isinstance(projects, dict)
+    assert isinstance(projects['project_list'], list)
