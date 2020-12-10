@@ -1,5 +1,6 @@
 from dashboards.data_cleaning import data_formatter as df
 from dashboards.data_cleaning import data_filter as dt_filter
+from dashboards.data_cleaning import graph_generator as gg
 from dashboards.bbrc import data_formatter as df_bbrc
 from dashboards.bbrc import data_filter as dt_filter_bbrc
 import os.path as op
@@ -213,3 +214,18 @@ def test_reorder_graphs_bbrc():
 
     assert isinstance(ordered_graphs, dict)
     assert len(ordered_graphs) != 0
+
+def test_get_overview():
+    with open(pickle_path, 'rb') as handle:
+        data = pickle.load(handle)
+
+    project = data['info']['projects'][0]
+    project_id = project['id']
+    role = 'admin'
+    graph_object = gg.GraphGenerator(
+        ['testUser'], role, data, {role: [project_id]})
+
+    graph_list = graph_object.get_overview()
+
+    assert isinstance(graph_list, list)
+    assert len(graph_list) != 0

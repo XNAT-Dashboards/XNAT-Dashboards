@@ -1,5 +1,7 @@
 # Define the application directory
 import os
+import dashboards
+import os.path as op
 
 """
 Set server specific variable here.
@@ -26,6 +28,6 @@ SECRET_KEY = "secret"
 # Disable sorting of keys
 JSON_SORT_KEYS = False
 
-DASHBOARD_CONFIG_PATH = ''
+DASHBOARD_CONFIG_PATH =  op.join(op.dirname(dashboards.__file__), '..', 'config.json')
 
 PICKLE_PATH = ''
