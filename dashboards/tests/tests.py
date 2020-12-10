@@ -167,6 +167,16 @@ def test_get_project_list():
     assert isinstance(projects, dict)
     assert isinstance(projects['project_list'], list)
 
+def test_filter_projects():
+    with open(pickle_path, 'rb') as handle:
+        data = pickle.load(handle)
+
+    info = data['info']
+    resources = data['resources']
+    filtered = dt_filter.DataFilter(
+        'testUser', info, 'admin', [], resources)
+    filtered.filter_projects(info, resources)
+
 def test_reorder_graphs():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
