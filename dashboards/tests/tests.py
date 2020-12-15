@@ -9,7 +9,6 @@ import pyxnat
 from dashboards import pickle as pk
 import pickle
 
-
 pickle_path = op.join(op.dirname(__file__), 'test_save.pickle')
 fp = op.join(op.dirname(dashboards.__file__), '..', '.xnat.cfg')
 x = pyxnat.Interface(config=fp)
@@ -30,7 +29,6 @@ def test_001_pickle_save():  # should be run first
 
 
 def test_get_projects_details():
-
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -43,8 +41,8 @@ def test_get_projects_details():
     assert project_details['Number of Projects'] != 0
     assert len(project_details['Projects Visibility']) != 0
 
-def test_get_projects_details_PP():
 
+def test_get_projects_details_PP():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -77,7 +75,6 @@ def test_get_projects_details_specific():
 
 
 def test_get_subjects_details():
-
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -90,8 +87,8 @@ def test_get_subjects_details():
     assert subject_details['Number of Subjects'] != 0
     assert len(subject_details['Subjects/Project']) != 0
 
-def test_get_subjects_details_PP():
 
+def test_get_subjects_details_PP():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -105,7 +102,6 @@ def test_get_subjects_details_PP():
 
 
 def test_get_experiments_details():
-
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -122,7 +118,6 @@ def test_get_experiments_details():
 
 
 def test_get_experiments_details_PP():
-
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -139,7 +134,6 @@ def test_get_experiments_details_PP():
 
 
 def test_get_scans_details():
-
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -158,7 +152,6 @@ def test_get_scans_details():
 
 
 def test_get_scans_details_PP():
-
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -177,7 +170,6 @@ def test_get_scans_details_PP():
 
 
 def test_get_resources_details():
-
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -187,8 +179,8 @@ def test_get_resources_details():
     assert isinstance(resource_details, dict)
     assert len(resource_details) != 0
 
-def test_get_resources_details_PP():
 
+def test_get_resources_details_PP():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -202,7 +194,6 @@ def test_get_resources_details_PP():
 
 
 def test_get_bbrc_resource_details():
-
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -212,8 +203,8 @@ def test_get_bbrc_resource_details():
     assert isinstance(resource_bbrc_details, dict)
     assert len(resource_bbrc_details) != 0
 
-def test_diff_dates():
 
+def test_diff_dates():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -226,8 +217,8 @@ def test_diff_dates():
     assert isinstance(dict_diff_dates, dict)
     assert len(dict_diff_dates) != 0
 
-def test_generate_test_grid_bbrc():
 
+def test_generate_test_grid_bbrc():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -253,6 +244,7 @@ def test_get_project_list():
     assert isinstance(projects, dict)
     assert isinstance(projects['project_list'], list)
 
+
 def test_filter_projects():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
@@ -262,6 +254,7 @@ def test_filter_projects():
     filtered = dt_filter.DataFilter(
         'testUser', info, 'admin', [], resources)
     filtered.filter_projects(info, resources)
+
 
 def test_reorder_graphs():
     with open(pickle_path, 'rb') as handle:
@@ -276,28 +269,63 @@ def test_reorder_graphs():
     assert isinstance(ordered_graphs, dict)
     assert len(ordered_graphs) != 0
 
-def test_filter_projects_bbrc():
+
+def test_reorder_graphs_PP():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
     info = data['info']
+    resources = data['resources']
+    project = data['info']['projects'][0]
+    project_id = project['id']
+    role = 'admin'
+    filtered = dt_filter.DataFilterPP(
+        'testUser', info, project_id, role, {role: [project_id]}, resources)
+    ordered_graphs = filtered.reorder_graphs_pp()
+
+    assert isinstance(ordered_graphs, dict)
+    assert len(ordered_graphs) != 0
+
+
+def test_filter_projects_bbrc():
+    with open(pickle_path, 'rb') as handle:
+        data = pickle.load(handle)
+
     resources_bbrc = data['extra_resources']
     filtered = dt_filter_bbrc.DataFilter(
-         'admin', [], resources_bbrc)
+        'admin', [], resources_bbrc)
     filtered.filter_projects(resources_bbrc)
+
 
 def test_reorder_graphs_bbrc():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
-    info = data['info']
     resources_bbrc = data['extra_resources']
     filtered = dt_filter_bbrc.DataFilter(
-          'admin', [], resources_bbrc)
+        'admin', [], resources_bbrc)
     ordered_graphs = filtered.reorder_graphs()
 
     assert isinstance(ordered_graphs, dict)
     assert len(ordered_graphs) != 0
+
+
+def test_reorder_graphs_bbrc_PP():
+    with open(pickle_path, 'rb') as handle:
+        data = pickle.load(handle)
+
+    experiments = data['info']['experiments']
+    resources_bbrc = data['extra_resources']
+    project = data['info']['projects'][0]
+    project_id = project['id']
+    role = 'admin'
+    filtered = dt_filter_bbrc.DataFilterPP(experiments, project_id,
+                                           role, {role: [project_id]}, resources_bbrc)
+    ordered_graphs = filtered.reorder_graphs_pp()
+
+    assert isinstance(ordered_graphs, dict)
+    assert len(ordered_graphs) != 0
+
 
 def test_get_overview():
     with open(pickle_path, 'rb') as handle:
@@ -310,6 +338,22 @@ def test_get_overview():
         ['testUser'], role, data, {role: [project_id]})
 
     graph_list = graph_object.get_overview()
+
+    assert isinstance(graph_list, list)
+    assert len(graph_list) != 0
+
+
+def test_get_project_view():
+    with open(pickle_path, 'rb') as handle:
+        data = pickle.load(handle)
+
+    project = data['info']['projects'][0]
+    project_id = project['id']
+    role = 'admin'
+    graph_object = gg.GraphGeneratorPP(
+        ['testUser'], project_id, role, data, {role: [project_id]})
+
+    graph_list = graph_object.get_project_view()
 
     assert isinstance(graph_list, list)
     assert len(graph_list) != 0
