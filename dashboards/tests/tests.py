@@ -43,6 +43,27 @@ def test_get_projects_details():
     assert project_details['Number of Projects'] != 0
     assert len(project_details['Projects Visibility']) != 0
 
+def test_get_projects_details_PP():
+
+    with open(pickle_path, 'rb') as handle:
+        data = pickle.load(handle)
+
+    projects = data['info']['projects']
+    project = data['info']['projects'][0]
+    project_id = project['id']
+    project_details = df.FormatterPP(project_id).get_projects_details(projects)
+
+    assert isinstance(project_details['Owner(s)'], list)
+    assert isinstance(project_details['Collaborator(s)'], list)
+    assert isinstance(project_details['member(s)'], list)
+    assert isinstance(project_details['user(s)'], list)
+    assert isinstance(project_details['last_accessed(s)'], list)
+    assert isinstance(project_details['insert_user(s)'], str)
+    assert isinstance(project_details['insert_date'], str)
+    assert isinstance(project_details['access'], str)
+    assert isinstance(project_details['name'], str)
+    assert isinstance(project_details['last_workflow'], str)
+
 
 def test_get_projects_details_specific():
     with open(pickle_path, 'rb') as handle:
@@ -69,6 +90,19 @@ def test_get_subjects_details():
     assert subject_details['Number of Subjects'] != 0
     assert len(subject_details['Subjects/Project']) != 0
 
+def test_get_subjects_details_PP():
+
+    with open(pickle_path, 'rb') as handle:
+        data = pickle.load(handle)
+
+    subjects = data['info']['subjects']
+    project = data['info']['projects'][0]
+    project_id = project['id']
+    subject_details = df.FormatterPP(project_id).get_subjects_details(subjects)
+
+    assert isinstance(subject_details['Number of Subjects'], int)
+    assert subject_details['Number of Subjects'] != 0
+
 
 def test_get_experiments_details():
 
@@ -84,6 +118,23 @@ def test_get_experiments_details():
 
     assert experiments_details['Number of Experiments'] != 0
     assert len(experiments_details['Experiments/Project']) != 0
+    assert len(experiments_details['Experiment Types']) != 0
+
+
+def test_get_experiments_details_PP():
+
+    with open(pickle_path, 'rb') as handle:
+        data = pickle.load(handle)
+
+    experiments = data['info']['experiments']
+    project = data['info']['projects'][0]
+    project_id = project['id']
+    experiments_details = df.FormatterPP(project_id).get_experiments_details(experiments)
+
+    assert isinstance(experiments_details['Number of Experiments'], int)
+    assert isinstance(experiments_details['Experiment Types'], dict)
+
+    assert experiments_details['Number of Experiments'] != 0
     assert len(experiments_details['Experiment Types']) != 0
 
 
@@ -106,6 +157,25 @@ def test_get_scans_details():
     assert len(scans_details['Scan Types']) != 0
 
 
+def test_get_scans_details_PP():
+
+    with open(pickle_path, 'rb') as handle:
+        data = pickle.load(handle)
+
+    scans = data['info']['scans']
+    project = data['info']['projects'][0]
+    project_id = project['id']
+    scans_details = df.FormatterPP(project_id).get_scans_details(scans)
+
+    assert isinstance(scans_details['Number of Scans'], int)
+    assert isinstance(scans_details['Scans Quality'], dict)
+    assert isinstance(scans_details['Scan Types'], dict)
+
+    assert scans_details['Number of Scans'] != 0
+    assert len(scans_details['Scans Quality']) != 0
+    assert len(scans_details['Scan Types']) != 0
+
+
 def test_get_resources_details():
 
     with open(pickle_path, 'rb') as handle:
@@ -116,6 +186,20 @@ def test_get_resources_details():
 
     assert isinstance(resource_details, dict)
     assert len(resource_details) != 0
+
+def test_get_resources_details_PP():
+
+    with open(pickle_path, 'rb') as handle:
+        data = pickle.load(handle)
+
+    resources = data['resources']
+    project = data['info']['projects'][0]
+    project_id = project['id']
+    resource_details = df.FormatterPP(project_id).get_resources_details(resources)
+
+    assert isinstance(resource_details, dict)
+    assert len(resource_details) != 0
+
 
 def test_get_bbrc_resource_details():
 
