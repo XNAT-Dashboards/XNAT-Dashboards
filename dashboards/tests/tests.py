@@ -28,7 +28,7 @@ def test_001_pickle_save():  # should be run first
     assert isinstance(data['extra_resources'], list)
 
 
-def test_get_projects_details():
+def test_002_get_projects_details():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -42,7 +42,7 @@ def test_get_projects_details():
     assert len(project_details['Projects Visibility']) != 0
 
 
-def test_get_projects_details_PP():
+def test_003_get_projects_details_PP():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -63,7 +63,7 @@ def test_get_projects_details_PP():
     assert isinstance(project_details['last_workflow'], str)
 
 
-def test_get_projects_details_specific():
+def test_004_get_projects_details_specific():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -74,7 +74,7 @@ def test_get_projects_details_specific():
     assert len(project_details_specific) != 0
 
 
-def test_get_subjects_details():
+def test_005_get_subjects_details():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -88,7 +88,7 @@ def test_get_subjects_details():
     assert len(subject_details['Subjects/Project']) != 0
 
 
-def test_get_subjects_details_PP():
+def test_006_get_subjects_details_PP():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -101,7 +101,7 @@ def test_get_subjects_details_PP():
     assert subject_details['Number of Subjects'] != 0
 
 
-def test_get_experiments_details():
+def test_007_get_experiments_details():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -117,7 +117,7 @@ def test_get_experiments_details():
     assert len(experiments_details['Experiment Types']) != 0
 
 
-def test_get_experiments_details_PP():
+def test_008_get_experiments_details_PP():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -133,7 +133,7 @@ def test_get_experiments_details_PP():
     assert len(experiments_details['Experiment Types']) != 0
 
 
-def test_get_scans_details():
+def test_009_get_scans_details():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -151,7 +151,7 @@ def test_get_scans_details():
     assert len(scans_details['Scan Types']) != 0
 
 
-def test_get_scans_details_PP():
+def test_010_get_scans_details_PP():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -169,7 +169,7 @@ def test_get_scans_details_PP():
     assert len(scans_details['Scan Types']) != 0
 
 
-def test_get_resources_details():
+def test_011_get_resources_details():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -180,7 +180,7 @@ def test_get_resources_details():
     assert len(resource_details) != 0
 
 
-def test_get_resources_details_PP():
+def test_012_get_resources_details_PP():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -193,7 +193,7 @@ def test_get_resources_details_PP():
     assert len(resource_details) != 0
 
 
-def test_get_bbrc_resource_details():
+def test_013_get_bbrc_resource_details():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -204,7 +204,7 @@ def test_get_bbrc_resource_details():
     assert len(resource_bbrc_details) != 0
 
 
-def test_diff_dates():
+def test_014_diff_dates():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -218,7 +218,7 @@ def test_diff_dates():
     assert len(dict_diff_dates) != 0
 
 
-def test_generate_test_grid_bbrc():
+def test_015_generate_test_grid_bbrc():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -231,7 +231,7 @@ def test_generate_test_grid_bbrc():
     assert len(test_grid) != 0
 
 
-def test_get_project_list():
+def test_016_get_project_list():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -245,7 +245,7 @@ def test_get_project_list():
     assert isinstance(projects['project_list'], list)
 
 
-def test_filter_projects():
+def test_017_filter_projects():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -256,7 +256,7 @@ def test_filter_projects():
     filtered.filter_projects(info, resources)
 
 
-def test_reorder_graphs():
+def test_018_reorder_graphs():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -270,7 +270,7 @@ def test_reorder_graphs():
     assert len(ordered_graphs) != 0
 
 
-def test_reorder_graphs_PP():
+def test_019_reorder_graphs_PP():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -287,7 +287,7 @@ def test_reorder_graphs_PP():
     assert len(ordered_graphs) != 0
 
 
-def test_filter_projects_bbrc():
+def test_020_filter_projects_bbrc():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -297,7 +297,7 @@ def test_filter_projects_bbrc():
     filtered.filter_projects(resources_bbrc)
 
 
-def test_reorder_graphs_bbrc():
+def test_021_reorder_graphs_bbrc():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -310,7 +310,7 @@ def test_reorder_graphs_bbrc():
     assert len(ordered_graphs) != 0
 
 
-def test_reorder_graphs_bbrc_PP():
+def test_022_reorder_graphs_bbrc_PP():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -327,7 +327,7 @@ def test_reorder_graphs_bbrc_PP():
     assert len(ordered_graphs) != 0
 
 
-def test_get_overview():
+def test_023_get_overview():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -343,7 +343,7 @@ def test_get_overview():
     assert len(graph_list) != 0
 
 
-def test_get_project_view():
+def test_024_get_project_view():
     with open(pickle_path, 'rb') as handle:
         data = pickle.load(handle)
 
