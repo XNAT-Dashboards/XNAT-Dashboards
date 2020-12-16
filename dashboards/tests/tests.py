@@ -3,21 +3,24 @@ from dashboards.data_cleaning import data_filter as dt_filter
 from dashboards.data_cleaning import graph_generator as gg
 from dashboards.bbrc import data_formatter as df_bbrc
 from dashboards.bbrc import data_filter as dt_filter_bbrc
+from dashboards.app import app
+from dashboards import config
 import os.path as op
 import dashboards
 import pyxnat
 from dashboards import pickle as pk
 import pickle
 
-pickle_path = op.join(op.dirname(__file__), 'test_save.pickle')
+config.PICKLE_PATH = op.join(op.dirname(__file__), 'test_save.pickle')
+config.DASHBOARD_CONFIG_PATH = op.join(op.dirname(dashboards.__file__), '..', 'config.json')
 fp = op.join(op.dirname(dashboards.__file__), '..', '.xnat.cfg')
 x = pyxnat.Interface(config=fp)
 
 
 def test_001_pickle_save():  # should be run first
 
-    pk.save(x, pickle_path)
-    with open(pickle_path, 'rb') as handle:
+    pk.save(x, config.PICKLE_PATH)
+    with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
     assert isinstance(data, dict)
@@ -29,7 +32,7 @@ def test_001_pickle_save():  # should be run first
 
 
 def test_002_get_projects_details():
-    with open(pickle_path, 'rb') as handle:
+    with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
     projects = data['info']['projects']
@@ -43,7 +46,7 @@ def test_002_get_projects_details():
 
 
 def test_003_get_projects_details_PP():
-    with open(pickle_path, 'rb') as handle:
+    with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
     projects = data['info']['projects']
@@ -64,7 +67,7 @@ def test_003_get_projects_details_PP():
 
 
 def test_004_get_projects_details_specific():
-    with open(pickle_path, 'rb') as handle:
+    with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
     projects = data['info']['projects']
@@ -75,7 +78,7 @@ def test_004_get_projects_details_specific():
 
 
 def test_005_get_subjects_details():
-    with open(pickle_path, 'rb') as handle:
+    with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
     subjects = data['info']['subjects']
@@ -89,7 +92,7 @@ def test_005_get_subjects_details():
 
 
 def test_006_get_subjects_details_PP():
-    with open(pickle_path, 'rb') as handle:
+    with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
     subjects = data['info']['subjects']
@@ -102,7 +105,7 @@ def test_006_get_subjects_details_PP():
 
 
 def test_007_get_experiments_details():
-    with open(pickle_path, 'rb') as handle:
+    with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
     experiments = data['info']['experiments']
@@ -118,7 +121,7 @@ def test_007_get_experiments_details():
 
 
 def test_008_get_experiments_details_PP():
-    with open(pickle_path, 'rb') as handle:
+    with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
     experiments = data['info']['experiments']
@@ -134,7 +137,7 @@ def test_008_get_experiments_details_PP():
 
 
 def test_009_get_scans_details():
-    with open(pickle_path, 'rb') as handle:
+    with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
     scans = data['info']['scans']
@@ -152,7 +155,7 @@ def test_009_get_scans_details():
 
 
 def test_010_get_scans_details_PP():
-    with open(pickle_path, 'rb') as handle:
+    with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
     scans = data['info']['scans']
@@ -170,7 +173,7 @@ def test_010_get_scans_details_PP():
 
 
 def test_011_get_resources_details():
-    with open(pickle_path, 'rb') as handle:
+    with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
     resources = data['resources']
@@ -181,7 +184,7 @@ def test_011_get_resources_details():
 
 
 def test_012_get_resources_details_PP():
-    with open(pickle_path, 'rb') as handle:
+    with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
     resources = data['resources']
@@ -194,7 +197,7 @@ def test_012_get_resources_details_PP():
 
 
 def test_013_get_bbrc_resource_details():
-    with open(pickle_path, 'rb') as handle:
+    with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
     resources_bbrc = data['extra_resources']
@@ -205,7 +208,7 @@ def test_013_get_bbrc_resource_details():
 
 
 def test_014_diff_dates():
-    with open(pickle_path, 'rb') as handle:
+    with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
     resources_bbrc = data['extra_resources']
@@ -219,7 +222,7 @@ def test_014_diff_dates():
 
 
 def test_015_generate_test_grid_bbrc():
-    with open(pickle_path, 'rb') as handle:
+    with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
     resources_bbrc = data['extra_resources']
@@ -232,7 +235,7 @@ def test_015_generate_test_grid_bbrc():
 
 
 def test_016_get_project_list():
-    with open(pickle_path, 'rb') as handle:
+    with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
     info = data['info']
@@ -246,7 +249,7 @@ def test_016_get_project_list():
 
 
 def test_017_filter_projects():
-    with open(pickle_path, 'rb') as handle:
+    with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
     info = data['info']
@@ -257,7 +260,7 @@ def test_017_filter_projects():
 
 
 def test_018_reorder_graphs():
-    with open(pickle_path, 'rb') as handle:
+    with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
     info = data['info']
@@ -271,7 +274,7 @@ def test_018_reorder_graphs():
 
 
 def test_019_reorder_graphs_PP():
-    with open(pickle_path, 'rb') as handle:
+    with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
     info = data['info']
@@ -288,7 +291,7 @@ def test_019_reorder_graphs_PP():
 
 
 def test_020_filter_projects_bbrc():
-    with open(pickle_path, 'rb') as handle:
+    with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
     resources_bbrc = data['extra_resources']
@@ -298,7 +301,7 @@ def test_020_filter_projects_bbrc():
 
 
 def test_021_reorder_graphs_bbrc():
-    with open(pickle_path, 'rb') as handle:
+    with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
     resources_bbrc = data['extra_resources']
@@ -311,7 +314,7 @@ def test_021_reorder_graphs_bbrc():
 
 
 def test_022_reorder_graphs_bbrc_PP():
-    with open(pickle_path, 'rb') as handle:
+    with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
     experiments = data['info']['experiments']
@@ -328,7 +331,7 @@ def test_022_reorder_graphs_bbrc_PP():
 
 
 def test_023_get_overview():
-    with open(pickle_path, 'rb') as handle:
+    with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
     project = data['info']['projects'][0]
@@ -344,7 +347,7 @@ def test_023_get_overview():
 
 
 def test_024_get_project_view():
-    with open(pickle_path, 'rb') as handle:
+    with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
     project = data['info']['projects'][0]
@@ -357,3 +360,15 @@ def test_024_get_project_view():
 
     assert isinstance(graph_list, list)
     assert len(graph_list) != 0
+
+def test_025_login():
+    # Login route test
+    respone_get = app.test_client().get('auth/login/')
+    assert respone_get.status_code == 200
+
+def test_026_logout():
+
+    # Checks if we are getting redirected to login if using logout
+    logout = app.test_client().get('dashboard/logout/',
+                                   follow_redirects=True).status_code
+    assert logout == 200
