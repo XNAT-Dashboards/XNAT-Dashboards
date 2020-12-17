@@ -372,3 +372,16 @@ def test_026_logout():
     logout = app.test_client().get('dashboard/logout/',
                                    follow_redirects=True).status_code
     assert logout == 200
+
+def test_027_stats():
+
+    with app.test_client() as c:
+        with c.session_transaction() as sess:
+            sess['server'] = 'https://devxnat.barcelonabeta.org'
+            sess['role_exist'] = 'guest'
+            sess['username'] = 'testUser'
+            sess['project_visible'] = []
+
+    response_get_stats = c. \
+        get('dashboard/stats/').status_code
+    assert response_get_stats == 200
