@@ -68,6 +68,7 @@ class DataFilter:
 
         resources = data_formatter.Formatter().get_resource_details(
             self.resources_bbrc)
+        del resources['Version Distribution']
 
         if resources is not None and\
                 not isinstance(resources, int):
