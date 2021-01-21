@@ -3,8 +3,8 @@
                 "testUser":"admin",
                 "noUser":"forbidden",
                 "asif":"admin",
-                "mgarcia": "admin",
-                "mgarciabbrc": "admin",
+                "mgarcia": "guest",
+                "mgarciabbrc": "guest",
                 "goperto":"admin"
         },
         "project_visible":{

@@ -1,5 +1,6 @@
 from tqdm import tqdm
 import os
+from datetime import datetime
 
 n_max = 50 if os.environ.get('CI_TEST', None) else None
 
@@ -67,3 +68,21 @@ def tests_resource(res, name):
         return j
     except IndexError:
         return 0
+
+
+def resource_monitor(x, resource_name):
+
+    # Get current time
+    now = datetime.now()
+    dt = now.strftime("%d/%m/%Y")
+
+    experiments = [e['ID'] for e in x.array.experiments(columns=['subject_ID', 'date'],
+                                      experiment_type='').data]
+    n_res = 0
+    for e in experiments:
+        exp = x.select.experiment(e)
+        data = x._get_json(exp.resource(resource_name)._uri + '/files')
+        if len(data) != 0:
+            n_res = n_res + 1
+
+    return dt, n_res
