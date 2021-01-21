@@ -21,7 +21,7 @@ class DataFilter:
     """
     def __init__(
             self, username, pro_sub_exp_sc, role, project_visible=[],
-            resources=None):
+            resources=None, longitudinal_data={}):
 
         self.formatter_object = data_formatter.Formatter()
         if project_visible != []:
@@ -30,6 +30,7 @@ class DataFilter:
             self.project_visible = []
         self.username = username
         self.filter_projects(pro_sub_exp_sc, resources)
+        self.longitudinal_data = longitudinal_data
 
     def filter_projects(self, info_f, resources):
         """This methods filters project, subject, scans,
@@ -166,6 +167,10 @@ class DataFilter:
                 not isinstance(resources, int) and self.resources != []:
 
             ordered_graphs.update(resources)
+
+        l_data = self.formatter_object.get_longitudinal_data(
+            self.longitudinal_data)
+        ordered_graphs.update(l_data)
 
         return ordered_graphs
 

@@ -37,7 +37,7 @@ class GraphGenerator:
 
         self.filtered = data_filter.DataFilter(
             username, pickle_data['info'],
-            role, project_visible, pickle_data['resources'])
+            role, project_visible, pickle_data['resources'], pickle_data['longitudinal_data'])
 
         projects_data_dict = self.filtered.get_project_list()
 
