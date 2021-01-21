@@ -38,12 +38,6 @@
             "visibility": ["admin", "superuser"],
             "color":"#818787"
         },
-        "Experiments/Subject": {
-            "type": "line",
-            "description": "Number of sessions for each patient",
-            "visibility": ["admin", "superuser"],
-            "color":"#DB5680"
-        },
         "Experiment Types": {
             "type": "bar",
             "description": "Different types of Sessions",
@@ -73,12 +67,6 @@
             "description": "Number of scans present in each project",
             "visibility": ["admin", "superuser"],
             "color":"#FEFF99"
-        },
-        "Scans/Subject": {
-            "type": "line",
-            "description": "Number of scans for each patient",
-            "visibility": ["admin", "superuser"],
-            "color":"#566FDB"
         },
         "Resources/Project": {
             "type": "bar",
@@ -140,45 +128,9 @@
             "visibility": ["admin"],
             "color":"#16ffeb"
         },
-        "Projects":{
-            "type": "line",
-            "description": "Number of projects over time saved in XNAT instance.",
-            "visibility": ["admin", "superuser", "guest"],
-            "color": "#16ffec"
-        },
-        "Subjects":{
-            "type": "line",
-            "description": "Number of subjects over time saved in XNAT instance.",
-            "visibility": ["admin", "superuser", "guest"],
-            "color": "#16ffec"
-        },
-        "Experiments":{
-            "type": "line",
-            "description": "Number of experiments over time saved in XNAT instance.",
-            "visibility": ["admin", "superuser", "guest"],
-            "color": "#16ffec"
-        },
-        "Scans":{
-            "type": "line",
-            "description": "Number of scans over time saved in XNAT instance.",
-            "visibility": ["admin", "superuser", "guest"],
-            "color": "#16ffec"
-        },
-        "Resources":{
-            "type": "line",
-            "description": "Number of resources over time saved in XNAT instance.",
-            "visibility": ["admin", "superuser", "guest"],
-            "color": "#16ffec"
-        },
         "Free Surfer":{
             "type": "bar",
             "description": "Shows whether free surfer resource details exist or not.",
-            "visibility": ["admin"],
-            "color":"#16ffeb"
-        },
-        "Freesurfer end and start hour difference":{
-            "type": "line",
-            "description": "Difference between the freesurfer start and end time in hours.",
             "visibility": ["admin"],
             "color":"#16ffeb"
         },
