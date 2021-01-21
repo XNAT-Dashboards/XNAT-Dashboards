@@ -151,6 +151,12 @@
             "description": "Graphs shows how many sessions have 1,2 or n number of resources",
             "visibility": ["admin"],
             "color":"#16ffeb"
+        },
+        "Resources monitor":{
+            "type": "line",
+            "description": "Monitorization of resources",
+            "visibility": ["admin", "superuser", "guest"],
+            "color":"#16ffeb"
         }
     }
 }
