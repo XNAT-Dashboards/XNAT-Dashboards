@@ -215,7 +215,6 @@ class Formatter:
         """
         # Calculates difference between 2 dates
         if date_1 == 'No Data' or date_1 == ['No valid scans found.']:
-            print(date_1)
             return 'No Data'
         else:
             date_1_l = list(map(int, date_1.split('-')))
