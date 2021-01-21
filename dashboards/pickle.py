@@ -31,7 +31,8 @@ def save(x, fp):
          'verify': x._verify,
          'info': details,
          'resources': resources,
-         'extra_resources': bbrc_resources}
+         'extra_resources': bbrc_resources,
+         'longitudinal_data': long_data}
     p.update(d)
 
     # Save all the data to pickle
@@ -41,6 +42,8 @@ def save(x, fp):
     print("Pickle file successfully saved at", fp)
 
 def longitudinal_data(dt, n_res, resource_name):
+    dt = '22/01/2021'
+    n_res = 123
 
     if not op.isfile('l_data.json'):
         with open('l_data.json', 'a') as outfile:
