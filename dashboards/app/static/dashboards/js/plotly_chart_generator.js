@@ -325,7 +325,7 @@ function linechart_generator(graph_name, graph_info, id, color, id_type){
     var layout = {
         title: graph_name
     };
-    console.log(data)
+
     var config = {responsive: true}
 
     Plotly.newPlot('graph_body'+id, data, layout, config);
