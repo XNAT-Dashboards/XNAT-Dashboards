@@ -326,9 +326,8 @@ class Formatter:
             'Resource Types': resource_types,
             'Session resource count/Project': resource_count_dict}
 
-
     def get_longitudinal_data(self, l_data):
-        return {'Resources monitor': {"count": l_data}}
+        return {'Resources monitor': {'count': l_data}}
 
 
     def proportion_graphs(self, data, property_x, property_y, prefix, suffix):

@@ -293,25 +293,39 @@ function piechart_generator(graph_name, graph_info){
 // Code for linechart
 function linechart_generator(graph_name, graph_info, id, color, id_type){
 
-    xy_axis = generate_x_y_axis(graph_info['count']);
-    x_axis = xy_axis[0];
-    y_axis = xy_axis[1];
+    data = []
 
-    var data = [
-        {
-          x: x_axis,
-          y: y_axis,
-          type: 'scatter',
-          marker: {
-            color: color // Adding random color values
-          }
+    n_res = []
+    for(r in graph_info['count']){
+        n_res.push(r);
+    }
+    var arrayLength = n_res.length;
+
+    for (var i = 0; i < arrayLength; i++){
+        x_axis = []
+        y_axis = []
+        for(x in graph_info['count'][n_res[i]]){
+            x_axis.push(x);
+            y_axis.push(graph_info['count'][n_res[i]][x]);
         }
-      ];
+        trace = {};
+        color = getRandomColor();
+        trace = {
+            x: x_axis,
+            y: y_axis,
+            name: n_res[i],
+            type: 'scatter',
+            marker: {
+            color: color // Adding color values
+            }
+        };
+        data.push(trace);
+    }
 
-      var layout = {
+    var layout = {
         title: graph_name
     };
-
+    console.log(data)
     var config = {responsive: true}
 
     Plotly.newPlot('graph_body'+id, data, layout, config);

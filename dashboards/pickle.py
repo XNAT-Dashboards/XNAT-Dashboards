@@ -42,8 +42,6 @@ def save(x, fp):
     print("Pickle file successfully saved at", fp)
 
 def longitudinal_data(dt, n_res, resource_name):
-    dt = '22/01/2021'
-    n_res = 123
 
     if not op.isfile('l_data.json'):
         with open('l_data.json', 'a') as outfile:
