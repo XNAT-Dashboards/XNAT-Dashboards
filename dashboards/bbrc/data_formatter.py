@@ -2,6 +2,7 @@ from datetime import date
 import pandas as pd
 from dashboards.data_cleaning import data_formatter
 import urllib3
+import logging as log
 
 # Remove warnings
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -176,11 +177,13 @@ class Formatter:
             if 'session_date' in dates_acq_dict[dates]:
                 dates_acq_list.append(dates_acq_dict[dates]['session_date'])
             else:
-                dates_acq_list.append(dates_acq_dict[dates])
+                dates_acq_list.append('No date')
+                log.warning('Invalid IsAcquisitionDateConsistent value {}'.format(dates_acq_dict[dates]))
 
         # Acquisition date extracted from dict and added to dataframe
 
         merged_inner['acq_date'] = dates_acq_list
+        merged_inner = merged_inner[merged_inner.acq_date != 'No date']
 
         # Creates a dataframe with columns as ID, Acq. date and insert date
         df_acq_insert_date = merged_inner[['ID', 'acq_date', 'date']]
