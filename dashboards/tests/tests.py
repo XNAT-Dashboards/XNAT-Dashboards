@@ -29,6 +29,7 @@ def test_001_pickle_save():  # should be run first
     assert isinstance(data['info'], dict)
     assert isinstance(data['resources'], list)
     assert isinstance(data['extra_resources'], list)
+    assert isinstance(data['longitudinal_data'], dict)
 
 
 def test_002_get_projects_details():
@@ -195,8 +196,15 @@ def test_012_get_resources_details_PP():
     assert isinstance(resource_details, dict)
     assert len(resource_details) != 0
 
+def test_013_get_get_longitudinal_data():
+    with open(config.PICKLE_PATH, 'rb') as handle:
+        data = pickle.load(handle)
+    long_data = data['longitudinal_data']
 
-def test_013_get_bbrc_resource_details():
+    assert isinstance(long_data, dict)
+    assert len(long_data) != 0
+
+def test_014_get_bbrc_resource_details():
     with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -207,7 +215,7 @@ def test_013_get_bbrc_resource_details():
     assert len(resource_bbrc_details) != 0
 
 
-def test_014_diff_dates():
+def test_015_diff_dates():
     with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -221,7 +229,7 @@ def test_014_diff_dates():
     assert len(dict_diff_dates) != 0
 
 
-def test_015_generate_test_grid_bbrc():
+def test_016_generate_test_grid_bbrc():
     with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -234,46 +242,46 @@ def test_015_generate_test_grid_bbrc():
     assert len(test_grid) != 0
 
 
-def test_016_get_project_list():
+def test_017_get_project_list():
     with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
     info = data['info']
     resources = data['resources']
     filtered = dt_filter.DataFilter(
-        'testUser', info, 'admin', [], resources)
+        'testUser', info, 'admin', [], resources, {})
     projects = filtered.get_project_list()
 
     assert isinstance(projects, dict)
     assert isinstance(projects['project_list'], list)
 
 
-def test_017_filter_projects():
+def test_018_filter_projects():
     with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
     info = data['info']
     resources = data['resources']
     filtered = dt_filter.DataFilter(
-        'testUser', info, 'admin', [], resources)
+        'testUser', info, 'admin', [], resources, {})
     filtered.filter_projects(info, resources)
 
 
-def test_018_reorder_graphs():
+def test_019_reorder_graphs():
     with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
     info = data['info']
     resources = data['resources']
     filtered = dt_filter.DataFilter(
-        'testUser', info, 'admin', [], resources)
+        'testUser', info, 'admin', [], resources, {})
     ordered_graphs = filtered.reorder_graphs()
 
     assert isinstance(ordered_graphs, dict)
     assert len(ordered_graphs) != 0
 
 
-def test_019_reorder_graphs_PP():
+def test_020_reorder_graphs_PP():
     with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -290,7 +298,7 @@ def test_019_reorder_graphs_PP():
     assert len(ordered_graphs) != 0
 
 
-def test_020_filter_projects_bbrc():
+def test_021_filter_projects_bbrc():
     with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -300,7 +308,7 @@ def test_020_filter_projects_bbrc():
     filtered.filter_projects(resources_bbrc)
 
 
-def test_021_reorder_graphs_bbrc():
+def test_022_reorder_graphs_bbrc():
     with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -313,7 +321,7 @@ def test_021_reorder_graphs_bbrc():
     assert len(ordered_graphs) != 0
 
 
-def test_022_reorder_graphs_bbrc_PP():
+def test_023_reorder_graphs_bbrc_PP():
     with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -330,7 +338,7 @@ def test_022_reorder_graphs_bbrc_PP():
     assert len(ordered_graphs) != 0
 
 
-def test_023_get_overview():
+def test_024_get_overview():
     with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -346,7 +354,7 @@ def test_023_get_overview():
     assert len(graph_list) != 0
 
 
-def test_024_get_project_view():
+def test_025_get_project_view():
     with open(config.PICKLE_PATH, 'rb') as handle:
         data = pickle.load(handle)
 
@@ -361,19 +369,19 @@ def test_024_get_project_view():
     assert isinstance(graph_list, list)
     assert len(graph_list) != 0
 
-def test_025_login():
+def test_026_login():
     # Login route test
     respone_get = app.test_client().get('auth/login/')
     assert respone_get.status_code == 200
 
-def test_026_logout():
+def test_027_logout():
 
     # Checks if we are getting redirected to login if using logout
     logout = app.test_client().get('dashboard/logout/',
                                    follow_redirects=True).status_code
     assert logout == 200
 
-def test_027_stats():
+def test_028_stats():
 
     with app.test_client() as c:
         with c.session_transaction() as sess:
