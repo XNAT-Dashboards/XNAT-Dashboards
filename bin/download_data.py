@@ -10,7 +10,7 @@ def create_args():
     ap.add_argument("-i", "--config", type=argparse.FileType('r'),
                     help="Path to pyxnat configuration file",
                     required=True)
-    ap.add_argument("-o", "--pickle", type=argparse.FileType('w'),
+    ap.add_argument("-o", "--pickle", type=str,
                     help="Path where the pickle file will be created",
                     required=True)
     return ap
@@ -21,7 +21,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     config = args.config.name
-    fp = op.abspath(args.pickle.name)
+    fp = op.abspath(args.pickle)
 
     from dashboards import pickle
     x = pyxnat.Interface(config=config)
