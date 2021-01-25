@@ -32,27 +32,27 @@ class Formatter:
         """
         resource_processing = []
         for resource in resources_bbrc:
-            project, exp_id, bbrc_validator, archiving_validator = resource
+            project, exp_id, bbrc_validator, archiving_validator, insert_date = resource
             if archiving_validator != 0:
                 if test in archiving_validator:
                     resource_processing.append([
                         project, exp_id, bbrc_validator, 'Exists',
-                        archiving_validator['version'], archiving_validator[test][value]])
+                        archiving_validator['version'], archiving_validator[test][value], insert_date])
                 else:
                     resource_processing.append([
                         project, exp_id, bbrc_validator, 'Exists',
-                        archiving_validator['version'], 'No Data'])
+                        archiving_validator['version'], 'No Data', insert_date])
             else:
                 resource_processing.append([
                     project, exp_id, bbrc_validator, 'Not Exists',
-                    'No Data', 'No Data'])
+                    'No Data', 'No Data', insert_date])
 
         # Creates the dataframe from the list created
         df = pd.DataFrame(
             resource_processing,
             columns=[
                 'Project', 'Session', 'bbrc exists',
-                'Archiving Valid', 'version', test])
+                'Archiving Valid', 'version', test, insert_date])
 
         return df
 

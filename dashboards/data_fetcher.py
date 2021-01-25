@@ -29,7 +29,7 @@ def get_instance_details(x):
 
 def get_resources(x):
 
-    experiments = x.array.experiments(columns=['subject_ID', 'date'],
+    experiments = x.array.experiments(columns=['subject_ID', 'date', 'insert_date'],
                                       experiment_type='').data
     resources = []
     resources_bbrc = []
@@ -51,11 +51,12 @@ def get_resources(x):
         e = x.select.experiment(exp['ID'])
         bbrc_validator = e.resource('BBRC_VALIDATOR')
         if bbrc_validator.exists():
+            insert_date = exp['insert_date'].split(' ')[0]
             row = [exp['project'], exp['ID'], True,
-                   tests_resource(bbrc_validator, 'ArchivingValidator')]
+                   tests_resource(bbrc_validator, 'ArchivingValidator'), insert_date]
             resources_bbrc.append(row)
         else:
-            resources_bbrc.append([exp['project'], exp['ID'], False, 0])
+            resources_bbrc.append([exp['project'], exp['ID'], False, 0, insert_date])
 
     return resources, resources_bbrc
 
