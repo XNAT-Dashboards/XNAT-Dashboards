@@ -22,7 +22,7 @@ def save(x, fp):
 
     resources, bbrc_resources = data_fetcher.get_resources(x)
 
-    res = ['FREESURFER6', 'FREESURFER6_HIRES', 'ASHS']
+    res = ['FREESURFER6', 'FREESURFER6_HIRES', 'ASHS', 'BAMOS']
     for resource_name in res:
         dt, n_res = data_fetcher.resource_monitor(x, resource_name)
         long_data = longitudinal_data(dt, n_res, resource_name)
