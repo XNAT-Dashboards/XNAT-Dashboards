@@ -8,7 +8,6 @@ def save(x, fp):
 
     # Raise Exception if file exists with different server name
     if op.isfile(fp) and op.getsize(fp) > 0:
-        print('fp', fp)
         with open(fp, 'rb') as handle:
             p = pickle.load(handle)
 
