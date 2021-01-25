@@ -24,7 +24,7 @@ def save(x, fp):
 
     res = ['FREESURFER6', 'FREESURFER6_HIRES', 'ASHS', 'BAMOS']
     for resource_name in res:
-        dt, n_res = data_fetcher.resource_monitor(x, resource_name)
+        dt, n_res = data_fetcher.resource_monitor(x, resources, resource_name)
         long_data = longitudinal_data(dt, n_res, resource_name)
 
     d = {'server': x._server,

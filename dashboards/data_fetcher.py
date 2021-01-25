@@ -70,19 +70,17 @@ def tests_resource(res, name):
         return 0
 
 
-def resource_monitor(x, resource_name):
+def resource_monitor(x, resources, resource_name):
 
     # Get current time
     now = datetime.now()
     dt = now.strftime("%d/%m/%Y")
 
-    experiments = [e['ID'] for e in x.array.experiments(columns=['subject_ID', 'date'],
-                                      experiment_type='').data]
+    # Count total number of resources
     n_res = 0
-    for e in experiments:
-        exp = x.select.experiment(e)
-        data = x._get_json(exp.resource(resource_name)._uri + '/files')
-        if len(data) != 0:
+    for r in resources:
+        label = r[3]
+        if label == resource_name:
             n_res = n_res + 1
 
     return dt, n_res
