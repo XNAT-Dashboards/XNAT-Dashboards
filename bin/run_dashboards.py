@@ -16,7 +16,7 @@ ap.add_argument('-p', '--pickle', help='Path to pickle', required=True)
 ap.add_argument('-c', '--config', help='Path to configuration file',
                 required=True)
 ap.add_argument('-P', '--port', help='Port number', default=5000)
-ap.add_argument('-u', '--url', help='URL for the server', default='localhost')
+ap.add_argument('-u', '--url', help='URL for the server', default='0.0.0.0')
 ap.add_argument('--debug', help='Debug mode', action='store_true',
                 default=False)
 args = ap.parse_args()
