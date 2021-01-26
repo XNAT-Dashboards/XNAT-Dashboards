@@ -111,7 +111,6 @@ class DataFilterPP(DataFilter):
         else:
             self.project_visible = []
 
-        self.experiments = experiments
         self.project_id = project_id
         self.resources_bbrc = resources_bbrc
 
@@ -146,7 +145,7 @@ class DataFilterPP(DataFilter):
             ordered_graphs.update(resources)
 
         diff_dates = self.formatter_object_per_project.diff_dates(
-            self.resources_bbrc, self.experiments, self.project_id)
+            self.resources_bbrc, self.project_id)
 
         if diff_dates is not None and diff_dates['count'] != {}:
             ordered_graphs.update({'Dates Diff': diff_dates})

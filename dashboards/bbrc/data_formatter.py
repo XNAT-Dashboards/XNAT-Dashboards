@@ -52,7 +52,7 @@ class Formatter:
             resource_processing,
             columns=[
                 'Project', 'Session', 'bbrc exists',
-                'Archiving Valid', 'version', test, insert_date])
+                'Archiving Valid', 'version', test, 'Insert date'])
 
         return df
 
@@ -124,83 +124,54 @@ class Formatter:
                 'Version Distribution': version, 'BBRC validator': bbrc_exists,
                 'Consistent Acquisition Date': consistent_acq_date}
 
-    def diff_dates(self, resources_bbrc, experiments_data, project_id):
-        """Method for Creating Acquisition and insertion dates difference plot.
-
-        It takes 2 dates, one from resource test (acquisition date) and
-        another from experiment insert date. It calculates the difference
-        between 2 dates and plot graph for each difference and its
-        corresponding experiments
-
-        Args:
-            resources_bbrc (list): List of bbrc resources.
-            experiments_data (list): list of experiments details
-
-        Returns:
-            dict: {"count": {"x": "y"}, "list": {"x": "list"}}
-        """
-        # Create dict format for graph of difference in dates
-        experiments = []
-
-        # Get list of experiments
-        for experiment in experiments_data:
-            if experiment['project'] == project_id:
-                experiments.append(experiment)
+    def diff_dates(self, resources_bbrc, project_id):
 
         if resources_bbrc is None:
             return None
 
-        # Generate a dataframe of Test acq. date and its data (date)
+        # Generate a dataframe of TestAcquisitionDate and its InsertDate
         df = self.generate_resource_df(
             resources_bbrc, 'IsAcquisitionDateConsistent', 'data')
 
+        # Filter by project_id
         try:
             df = df.groupby(['Project']).get_group(project_id)
         except KeyError:
             return {'count': {}, 'list': {}}
 
-        df_exp = pd.DataFrame(experiments)
-
-        # Perform a join operation on Experiment ID and Session(Experiment ID)
-        merged_inner = pd.merge(
-            left=df, right=df_exp, left_on='Session', right_on='ID')
-
-        # Dates acq dict {'IsAcquisitionDateConsistent':{'session_date': date}}
-        # below code get the date from the dictionary
-
+        # Drop experiments with No Date information
         dates_acq_list = []
-        dates_acq_dict = merged_inner[
-            ['IsAcquisitionDateConsistent']].to_dict()[
-            'IsAcquisitionDateConsistent']
-
-        for dates in dates_acq_dict:
-            if 'session_date' in dates_acq_dict[dates]:
-                dates_acq_list.append(dates_acq_dict[dates]['session_date'])
+        dates_acq_dict = df[
+            ['IsAcquisitionDateConsistent']].to_dict()['IsAcquisitionDateConsistent']
+        for date in dates_acq_dict:
+            if 'session_date' in dates_acq_dict[date]:
+                dates_acq_list.append(dates_acq_dict[date]['session_date'])
             else:
-                dates_acq_list.append('No date')
-                log.warning('Invalid IsAcquisitionDateConsistent value {}'.format(dates_acq_dict[dates]))
+                log.warning('Invalid IsAcquisitionDateConsistent value {}'.format(dates_acq_dict[date]))
+                dates_acq_list.append('No Data')
+        df['Acq date'] = dates_acq_list
+        df = df[df['Acq date'] != 'No Data']
 
-        # Acquisition date extracted from dict and added to dataframe
+        # if DataFrame empty
+        if df.empty == True:
+            return {'count': {}, 'list': {}}
 
-        merged_inner['acq_date'] = dates_acq_list
-        merged_inner = merged_inner[merged_inner.acq_date != 'No date']
+        # Create a dataframe with columns as Session, AcqDate and InsertDate
+        df_acq_insert_date = df[['Session', 'Acq date', 'Insert date']]
 
-        # Creates a dataframe with columns as ID, Acq. date and insert date
-        df_acq_insert_date = merged_inner[['ID', 'acq_date', 'date']]
+        # Calculates the time difference
+        df_acq_insert_date['Diff'] = df_acq_insert_date.apply(
+            lambda x: self.dates_diff_calc(x['Acq date'], x['Insert date']), axis=1)
 
-        df_acq_insert_date['diff'] = df_acq_insert_date.apply(
-            lambda x: self.dates_diff_calc(x['acq_date'], x['date']), axis=1)
+        # Create the dictionary: {"count": {"x": "y"}, "list": {"x": "list"}}
+        df_diff = df_acq_insert_date[['Session', 'Diff']].rename(
+            columns={'Session': 'count'})
+        df_series = df_diff.groupby('Diff')['count'].apply(list)
+        df_diff = df_diff.groupby('Diff').count()
+        df_diff['list'] = df_series
+        df_diff.index = df_diff.index.astype(str) + ' days'
 
-        diff_test = df_acq_insert_date[['ID', 'diff']].rename(
-            columns={'ID': 'count'})
-        per_df_series = diff_test.groupby('diff')['count'].apply(list)
-        per_df = diff_test.groupby('diff').count()
-        per_df['list'] = per_df_series
-
-        per_df = per_df.rename(columns={'diff': 'Difference in dates'})
-        per_df.index = per_df.index.astype(str) + ' days'
-
-        return per_df.to_dict()
+        return df_diff.to_dict()
 
     def dates_diff_calc(self, date_1, date_2):
         """This method calculates different between 2 dates strings.
@@ -217,17 +188,14 @@ class Formatter:
             int: Difference in days.
         """
         # Calculates difference between 2 dates
-        if date_1 == 'No Data' or date_1 == ['No valid scans found.']:
-            return 'No Data'
-        else:
-            date_1_l = list(map(int, date_1.split('-')))
-            date_2_l = list(map(int, date_2.split('-')))
+        date_1_l = list(map(int, date_1.split('-')))
+        date_2_l = list(map(int, date_2.split('-')))
 
-            diff = date(
-                date_1_l[0], date_1_l[1], date_1_l[2]) \
-                   - date(date_2_l[0], date_2_l[1], date_2_l[2])
+        diff = date(
+            date_1_l[0], date_1_l[1], date_1_l[2]) \
+               - date(date_2_l[0], date_2_l[1], date_2_l[2])
 
-            return diff.days
+        return abs(diff.days)
 
     def generate_test_grid_bbrc(self, resources_bbrc, project_id):
         """This method is used to create the data for the
@@ -250,7 +218,7 @@ class Formatter:
         # Creates a tests_unions list which has all tests union
         # except the values present in extra list
         for resource in resources_bbrc:
-            project, exp_id, bbrc_validator, archiving_validator = resource
+            project, exp_id, bbrc_validator, archiving_validator, insert_date = resource
             if bbrc_validator and not isinstance(archiving_validator, int):
 
                 for test in archiving_validator:
@@ -262,7 +230,7 @@ class Formatter:
         # If bbrc_validator exists then further proceed
         # for archiving_validator which is a dict of tests
         for resource in resources_bbrc:
-            project, exp_id, bbrc_validator, archiving_validator = resource
+            project, exp_id, bbrc_validator, archiving_validator, insert_date = resource
             if bbrc_validator and not isinstance(archiving_validator, int):
                 test_list = [project, ['version', archiving_validator['version']]]
 
