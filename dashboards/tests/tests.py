@@ -223,7 +223,7 @@ def test_015_diff_dates():
     experiments = data['info']['experiments']
     project = data['info']['projects'][0]
     project_id = project['id']
-    dict_diff_dates = df_bbrc.Formatter().diff_dates(resources_bbrc, experiments, project_id)
+    dict_diff_dates = df_bbrc.Formatter().diff_dates(resources_bbrc, project_id)
 
     assert isinstance(dict_diff_dates, dict)
     assert len(dict_diff_dates) != 0
