@@ -151,6 +151,7 @@ class DataFilter:
             stats['Scans'] = scans_details['Number of Scans']
             del scans_details['Number of Scans']
             del scans_details['Scans Proportions']
+            del scans_details['Scan Types']
 
         stat_final = {'Stats': stats}
 
