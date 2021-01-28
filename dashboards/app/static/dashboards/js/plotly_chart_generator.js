@@ -98,29 +98,9 @@ function barchart_generator(graph_name, graph_info, id, color, id_type){
                 color: color // Adding color values
               }
             }
-        ];
-
-        updatemenus= [{
-            y: 1.3,
-            yanchor: 'top',
-            x:0,
-            xanchor:"left",
-            pad:{"r": 10, "t": 10},
-            buttons: [{
-                method: 'relayout',
-                args: [{"yaxis.type": "linear"}],
-                label: 'Linear'
-            },{
-                method: 'relayout',
-                args: [{"yaxis.type": "log"}],
-                label: 'Log'
-            }]
-        }]
-    
-        var layout = {
-                title: graph_name,
-                updatemenus:updatemenus,
-                barmode:'stack'
+          ];
+          var layout = {
+                title: graph_name
         };
     
         var config = {responsive: true}
@@ -178,28 +158,8 @@ function stacked_barchart_generator(graph_name, graph_info, id, color, id_type){
         data.push(trace);
     }
 
-
-    updatemenus= [{
-        y: 1.3,
-        yanchor: 'top',
-        x:0,
-        xanchor:"left",
-        pad:{"r": 10, "t": 10},
-        buttons: [{
-            method: 'relayout',
-            args: [{"yaxis.type": "linear"}],
-            label: 'Linear'
-        },{
-            method: 'relayout',
-            args: [{"yaxis.type": "log"}],
-            label: 'Log'
-        }]
-    }]
-
     var layout = {
-            title: graph_name,
-            updatemenus:updatemenus,
-            barmode:'stack'
+            title: graph_name
     };
 
     var config = {responsive: true}
