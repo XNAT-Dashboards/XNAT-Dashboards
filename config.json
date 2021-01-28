@@ -51,7 +51,7 @@
             "color":"#56A1DB"
         },
         "Scans Quality": {
-            "type": "bar",
+            "type": "pie",
             "description": "How many scans are of usable quality",
             "visibility": ["admin", "superuser"],
             "color":"#60DB56"
