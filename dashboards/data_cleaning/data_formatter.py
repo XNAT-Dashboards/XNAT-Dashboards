@@ -107,12 +107,6 @@ class Formatter:
 
         experiments_details['Number of Experiments'] = len(experiments)
 
-        # Experiments per project information
-
-        experiments_per_project = self.dict_generator_per_view(
-            experiments, 'project', 'ID', 'epp')
-        experiments_per_project['id_type'] = 'experiment'
-
         # Experiments type information
 
         experiment_type = self.dict_generator_overview(
@@ -131,7 +125,6 @@ class Formatter:
             experiments_types_per_project
 
         experiments_details['Experiment Types'] = experiment_type
-        experiments_details['Experiments/Project'] = experiments_per_project
         experiments_details['Experiments Proportions'] = prop_exp
 
         return experiments_details

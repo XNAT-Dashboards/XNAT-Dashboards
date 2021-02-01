@@ -44,12 +44,6 @@
             "visibility": ["admin", "superuser"],
             "color":"#55D3DB"
         },
-        "Experiments/Project": {
-            "type": "bar",
-            "description": "Number of sessions for each project visible",
-            "visibility": ["admin", "superuser"],
-            "color":"#56A1DB"
-        },
         "Scans Quality": {
             "type": "pie",
             "description": "How many scans are of usable quality",
