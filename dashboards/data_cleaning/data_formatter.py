@@ -172,12 +172,6 @@ class Formatter:
             'ID', 'type', 'xnat:imagescandata/id')
         type_dict['id_type'] = 'experiment'
 
-        # Scans per project information
-
-        scans_per_project = self.dict_generator_overview(
-            scans, 'project', 'ID', 'spp', 'xnat:imagescandata/id')
-        scans_per_project['id_type'] = 'experiment'
-
         prop_scan = self.proportion_graphs(
             scans, 'xnat:imagesessiondata/subject_id',
             'ID', 'Subjects with ', ' scans')
@@ -187,7 +181,6 @@ class Formatter:
 
         scans_details['Scans Quality'] = scan_quality
         scans_details['Scan Types'] = type_dict
-        scans_details['Scans/Project'] = scans_per_project
         scans_details['Scans Proportions'] = prop_scan
         scans_details['Number of Scans'] = len(scans)
 
@@ -244,49 +237,6 @@ class Formatter:
             resources,
             columns=['project', 'session', 'resource', 'label'])
 
-        if project_id is not None:   # Code for per project view
-
-            try:
-
-                df = df.groupby(['project']).get_group(project_id)
-
-            except KeyError:
-
-                return -1
-
-        df['resource'] = df['resource'].map(
-            lambda x: re.sub('<Resource Object>', 'Resource Object', str(x)))
-
-        resource_pp = df[df['resource'] != 'No Data'][['project', 'resource']]
-        session = df[df['resource'] != 'No Data']['session']
-        resource_pp['resource'] = session + '/' + resource_pp['resource']
-        resource_pp = resource_pp.rename(columns={'resource': 'count'})
-        resources_pp_df = resource_pp.groupby('project')['count'].apply(list)
-        resource_pp = resource_pp.groupby('project').count()
-        resource_pp['list'] = resources_pp_df
-        resource_pp = resource_pp.to_dict()
-        resource_pp['id_type'] = 'experiment'
-        res_pp_no_data = df[
-            df['resource'] == 'No Data'].groupby('project').count()
-
-        # Creates 2 Dataframe
-        # Data frame 1 have project which have resources
-        # Data frame 2 have project which don't have resources
-        # Subtract dataframe 1 from 2 if dataframe 2 have any project id
-        # left then this means project id doesn't have any resource
-        no_data_rpp = res_pp_no_data.index.difference(
-            resources_pp_df.index).to_list()
-
-        # Remove those project ID
-        if len(no_data_rpp) != 0:
-
-            no_data_update = {}
-
-            for item in no_data_rpp:
-                no_data_update[item] = 0
-
-            resource_pp['count'].update(no_data_update)
-
         # Resource types
         resource_types = self.dict_generator_resources(df, 'label', 'session')
         resource_types['id_type'] = 'experiment'
@@ -322,7 +272,6 @@ class Formatter:
         resource_count_dict['id_type'] = 'experiment'
 
         return {
-            'Resources/Project': resource_pp,
             'Resource Types': resource_types,
             'Session resource count/Project': resource_count_dict}
 
@@ -654,9 +603,6 @@ class FormatterPP(Formatter):
 
         # Using code from the parent class for processing
         scans_details = super().get_scans_details(scans)
-        # Delete Scans/Project plot as this is present in counter of
-        # per project view
-        del scans_details['Scans/Project']
 
         return scans_details
 

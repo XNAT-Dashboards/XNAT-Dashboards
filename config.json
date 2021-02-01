@@ -62,18 +62,6 @@
             "visibility": ["admin", "superuser"],
             "color":"#DBC256"
         },
-        "Scans/Project": {
-            "type": "bar",
-            "description": "Number of scans present in each project",
-            "visibility": ["admin", "superuser"],
-            "color":"#FEFF99"
-        },
-        "Resources/Project": {
-            "type": "bar",
-            "description": "Number of resources present in each project",
-            "visibility": ["admin"],
-            "color":"#B15928"
-        },
         "Resource Types": {
             "type": "bar",
             "description": "Different type of resources present. No data field represent session don't have any resource object.",
