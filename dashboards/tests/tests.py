@@ -113,11 +113,9 @@ def test_007_get_experiments_details():
     experiments_details = df.Formatter().get_experiments_details(experiments)
 
     assert isinstance(experiments_details['Number of Experiments'], int)
-    assert isinstance(experiments_details['Experiments/Project'], dict)
     assert isinstance(experiments_details['Experiment Types'], dict)
 
     assert experiments_details['Number of Experiments'] != 0
-    assert len(experiments_details['Experiments/Project']) != 0
     assert len(experiments_details['Experiment Types']) != 0
 
 
@@ -145,12 +143,10 @@ def test_009_get_scans_details():
     scans_details = df.Formatter().get_scans_details(scans)
 
     assert isinstance(scans_details['Number of Scans'], int)
-    assert isinstance(scans_details['Scans/Project'], dict)
     assert isinstance(scans_details['Scans Quality'], dict)
     assert isinstance(scans_details['Scan Types'], dict)
 
     assert scans_details['Number of Scans'] != 0
-    assert len(scans_details['Scans/Project']) != 0
     assert len(scans_details['Scans Quality']) != 0
     assert len(scans_details['Scan Types']) != 0
 

@@ -571,9 +571,6 @@ class FormatterPP(Formatter):
 
         # Using code from the parent class for processing
         experiments_details = super().get_experiments_details(experiments)
-        # Delete Experiments/Project plot as this is present in counter of
-        # per project view
-        del experiments_details['Experiments/Project']
 
         return experiments_details
 
