@@ -159,7 +159,8 @@ function stacked_barchart_generator(graph_name, graph_info, id, color, id_type){
     }
 
     var layout = {
-            title: graph_name
+            title: graph_name,
+            barmode:'stack'
     };
 
     var config = {responsive: true}
