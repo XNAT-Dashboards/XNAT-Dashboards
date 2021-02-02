@@ -160,7 +160,8 @@ function stacked_barchart_generator(graph_name, graph_info, id, color, id_type){
 
     var layout = {
             title: graph_name,
-            barmode:'stack'
+            barmode:'stack',
+            "xaxis": {"categoryorder": "total ascending"}
     };
 
     var config = {responsive: true}
