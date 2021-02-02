@@ -32,27 +32,27 @@ class Formatter:
         """
         resource_processing = []
         for resource in resources_bbrc:
-            project, exp_id, archiving_validator, validators, insert_date = resource
+            project, exp_id, archiving_validator, bbrc_validators, insert_date = resource
             if archiving_validator != 0:
                 if test in archiving_validator:
                     resource_processing.append([
                         project, exp_id, 'Exists',
-                        archiving_validator['version'], archiving_validator[test][value], validators, insert_date])
+                        archiving_validator['version'], archiving_validator[test][value], bbrc_validators, insert_date])
                 else:
                     resource_processing.append([
                         project, exp_id, 'Exists',
-                        archiving_validator['version'], 'No Data', validators, insert_date])
+                        archiving_validator['version'], 'No Data', bbrc_validators, insert_date])
             else:
                 resource_processing.append([
                     project, exp_id, 'Not Exists',
-                    'No Data', 'No Data', validators, insert_date])
+                    'No Data', 'No Data', bbrc_validators, insert_date])
 
         # Creates the dataframe from the list created
         df = pd.DataFrame(
             resource_processing,
             columns=[
                 'Project', 'Session', 'Archiving Valid',
-                'version', test, 'Validators', 'Insert date'])
+                'version', test, 'BBRC Validators', 'Insert date'])
 
         return df
 
@@ -81,7 +81,7 @@ class Formatter:
         df_con_acq_date = self.generate_resource_df(
             resources_bbrc, 'IsAcquisitionDateConsistent', 'has_passed')
         df = pd.DataFrame(resources_bbrc, columns=['Project', 'Session',
-                                                   'Archiving Valid', 'Validators', 'Inserted date'])
+                                                   'Archiving Valid', 'BBRC Validators', 'Inserted date'])
 
         if project_id is not None:
 
@@ -121,7 +121,7 @@ class Formatter:
 
         # BBRC Validators
         bbrc_validators = {}
-        series = pd.Series([x for _list in df['Validators'] for x in _list])
+        series = pd.Series([x for _list in df['BBRC Validators'] for x in _list])
         bbrc_validators['count'] = (series.value_counts()).to_dict()
 
         return {'UsableT1': usable_t1,
@@ -223,8 +223,8 @@ class Formatter:
         # Creates a tests_unions list which has all tests union
         # except the values present in extra list
         for resource in resources_bbrc:
-            project, exp_id, bbrc_validator, archiving_validator, insert_date = resource
-            if bbrc_validator and not isinstance(archiving_validator, int):
+            project, exp_id, archiving_validator, bbrc_validators, insert_date = resource
+            if bbrc_validators and not isinstance(archiving_validator, int):
 
                 for test in archiving_validator:
                     if test not in tests_union \
@@ -235,8 +235,8 @@ class Formatter:
         # If bbrc_validator exists then further proceed
         # for archiving_validator which is a dict of tests
         for resource in resources_bbrc:
-            project, exp_id, bbrc_validator, archiving_validator, insert_date = resource
-            if bbrc_validator and not isinstance(archiving_validator, int):
+            project, exp_id, archiving_validator, bbrc_validators, insert_date = resource
+            if bbrc_validators and not isinstance(archiving_validator, int):
                 test_list = [project, ['version', archiving_validator['version']]]
 
                 # Loop through each test if exists then add the details
