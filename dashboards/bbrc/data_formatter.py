@@ -32,27 +32,27 @@ class Formatter:
         """
         resource_processing = []
         for resource in resources_bbrc:
-            project, exp_id, bbrc_validator, archiving_validator, insert_date = resource
+            project, exp_id, archiving_validator, validators, insert_date = resource
             if archiving_validator != 0:
                 if test in archiving_validator:
                     resource_processing.append([
-                        project, exp_id, bbrc_validator, 'Exists',
-                        archiving_validator['version'], archiving_validator[test][value], insert_date])
+                        project, exp_id, 'Exists',
+                        archiving_validator['version'], archiving_validator[test][value], validators, insert_date])
                 else:
                     resource_processing.append([
-                        project, exp_id, bbrc_validator, 'Exists',
-                        archiving_validator['version'], 'No Data', insert_date])
+                        project, exp_id, 'Exists',
+                        archiving_validator['version'], 'No Data', validators, insert_date])
             else:
                 resource_processing.append([
-                    project, exp_id, bbrc_validator, 'Not Exists',
-                    'No Data', 'No Data', insert_date])
+                    project, exp_id, 'Not Exists',
+                    'No Data', 'No Data', validators, insert_date])
 
         # Creates the dataframe from the list created
         df = pd.DataFrame(
             resource_processing,
             columns=[
-                'Project', 'Session', 'bbrc exists',
-                'Archiving Valid', 'version', test, 'Insert date'])
+                'Project', 'Session', 'Archiving Valid',
+                'version', test, 'Validators', 'Insert date'])
 
         return df
 
@@ -114,14 +114,14 @@ class Formatter:
             df_usable_t1, 'version', 'Session')
         version['id_type'] = 'experiment'
 
-        # BBRC resource exist
+        # BBRC Validators
         bbrc_exists = data_formatter.Formatter().dict_generator_resources(
             df_usable_t1, 'bbrc exists', 'Session')
         bbrc_exists['id_type'] = 'experiment'
 
         return {'UsableT1': usable_t1,
                 'Archiving Validator': archiving_valid,
-                'Version Distribution': version, 'BBRC validator': bbrc_exists,
+                'Version Distribution': version, 'BBRC validators': bbrc_exists,
                 'Consistent Acquisition Date': consistent_acq_date}
 
     def diff_dates(self, resources_bbrc, project_id):

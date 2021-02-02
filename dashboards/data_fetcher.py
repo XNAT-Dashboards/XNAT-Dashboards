@@ -50,14 +50,11 @@ def get_resources(x):
         # BBRC_VALIDATOR
         e = x.select.experiment(exp['ID'])
         bbrc_validator = e.resource('BBRC_VALIDATOR')
-        if bbrc_validator.exists():
-            insert_date = exp['insert_date'].split(' ')[0]
-            row = [exp['project'], exp['ID'], True,
-                   tests_resource(bbrc_validator, 'ArchivingValidator')[0],
-                   tests_resource(bbrc_validator, 'ArchivingValidator')[1], insert_date]
-            resources_bbrc.append(row)
-        else:
-            resources_bbrc.append([exp['project'], exp['ID'], False, 0, insert_date])
+        insert_date = exp['insert_date'].split(' ')[0]
+        row = [exp['project'], exp['ID'],
+               tests_resource(bbrc_validator, 'ArchivingValidator')[0],
+               tests_resource(bbrc_validator, 'ArchivingValidator')[1], insert_date]
+        resources_bbrc.append(row)
 
     return resources, resources_bbrc
 
@@ -65,16 +62,17 @@ def get_resources(x):
 def tests_resource(res, name):
     import json
     val = []
-    try:
-        validators = [e for e in list(res.files('*.json'))]
+    AV = 0
+    validators = [e for e in list(res.files('*.json'))]
+    if validators:
         for v in validators:
             if name in str(v):
                 AV = json.loads(res._intf.get(v._uri).text)
-            v = (str(v).split('>')[1]).split('_')[0]
+            v = ((str(v).split('>')[1]).split('_')[0]).strip(' ')
             val.append(v)
         return AV, val
-    except IndexError:
-        return 0, val
+    else:
+        return AV, val
 
 
 def resource_monitor(x, resources, resource_name):
