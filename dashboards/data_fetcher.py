@@ -53,7 +53,8 @@ def get_resources(x):
         if bbrc_validator.exists():
             insert_date = exp['insert_date'].split(' ')[0]
             row = [exp['project'], exp['ID'], True,
-                   tests_resource(bbrc_validator, 'ArchivingValidator'), insert_date]
+                   tests_resource(bbrc_validator, 'ArchivingValidator')[0],
+                   tests_resource(bbrc_validator, 'ArchivingValidator')[1], insert_date]
             resources_bbrc.append(row)
         else:
             resources_bbrc.append([exp['project'], exp['ID'], False, 0, insert_date])
@@ -63,12 +64,17 @@ def get_resources(x):
 
 def tests_resource(res, name):
     import json
+    val = []
     try:
-        j = [e for e in list(res.files('{}*.json'.format(name)))][0]
-        j = json.loads(res._intf.get(j._uri).text)
-        return j
+        validators = [e for e in list(res.files('*.json'))]
+        for v in validators:
+            if name in str(v):
+                AV = json.loads(res._intf.get(v._uri).text)
+            v = (str(v).split('>')[1]).split('_')[0]
+            val.append(v)
+        return AV, val
     except IndexError:
-        return 0
+        return 0, val
 
 
 def resource_monitor(x, resources, resource_name):
