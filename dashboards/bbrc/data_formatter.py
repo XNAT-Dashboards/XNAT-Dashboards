@@ -56,6 +56,7 @@ class Formatter:
 
         return df
 
+
     def get_resource_details(self, resources_bbrc, project_id=None):
         """
         This method process the resources that are saved as in pickle file.
@@ -79,6 +80,8 @@ class Formatter:
             resources_bbrc, 'HasUsableT1', 'has_passed')
         df_con_acq_date = self.generate_resource_df(
             resources_bbrc, 'IsAcquisitionDateConsistent', 'has_passed')
+        df = pd.DataFrame(resources_bbrc, columns=['Project', 'Session',
+                                                   'Archiving Valid', 'Validators', 'Inserted date'])
 
         if project_id is not None:
 
@@ -87,6 +90,8 @@ class Formatter:
                 df_usable_t1 = df_usable_t1.groupby(
                     'Project').get_group(project_id)
                 df_con_acq_date = df_con_acq_date.groupby(
+                    'Project').get_group(project_id)
+                df = df.groupby(
                     'Project').get_group(project_id)
 
             except KeyError:
@@ -115,13 +120,13 @@ class Formatter:
         version['id_type'] = 'experiment'
 
         # BBRC Validators
-        bbrc_exists = data_formatter.Formatter().dict_generator_resources(
-            df_usable_t1, 'bbrc exists', 'Session')
-        bbrc_exists['id_type'] = 'experiment'
+        bbrc_validators = {}
+        series = pd.Series([x for _list in df['Validators'] for x in _list])
+        bbrc_validators['count'] = (series.value_counts()).to_dict()
 
         return {'UsableT1': usable_t1,
                 'Archiving Validator': archiving_valid,
-                'Version Distribution': version, 'BBRC validators': bbrc_exists,
+                'Version Distribution': version, 'BBRC validators': bbrc_validators,
                 'Consistent Acquisition Date': consistent_acq_date}
 
     def diff_dates(self, resources_bbrc, project_id):

@@ -86,8 +86,8 @@
             "visibility": ["admin"],
             "color":""
         },
-        "BBRC validator": {
-            "type": "pie",
+        "BBRC validators": {
+            "type": "bar",
             "description": "BBRC validator present in resources for each session",
             "visibility": ["admin"],
             "color":""
