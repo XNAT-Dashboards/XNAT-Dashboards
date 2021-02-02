@@ -1,5 +1,7 @@
 import pandas as pd
-import re
+import os.path as op
+import dashboards
+fp = op.join(op.dirname(dashboards.__file__), '..', 'whitelist.xlsx')
 
 
 class Formatter:
@@ -159,9 +161,15 @@ class Formatter:
         scan_quality['id_type'] = 'experiment'
 
         # Scans type information
+        excel = pd.read_excel(fp, engine='openpyxl')
+        whitelist = list(excel['scan_type'])
+        filtered_scans = []
+        for s in scans:
+            if s['xnat:imagescandata/type'] in whitelist:
+                filtered_scans.append(s)
 
         type_dict = self.dict_generator_overview(
-            scans, 'xnat:imagescandata/type',
+            filtered_scans, 'xnat:imagescandata/type',
             'ID', 'type', 'xnat:imagescandata/id')
         type_dict['id_type'] = 'experiment'
 
