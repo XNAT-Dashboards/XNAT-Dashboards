@@ -106,7 +106,6 @@ function barchart_generator(graph_name, graph_info, id, color, id_type){
                     r: 100,
                     b: 100,
                     t: 100,
-                    pad: 4
                 },
         };
     
@@ -168,7 +167,13 @@ function stacked_barchart_generator(graph_name, graph_info, id, color, id_type){
     var layout = {
             title: graph_name,
             barmode:'stack',
-            "xaxis": {"categoryorder": "total ascending"}
+            "xaxis": {"categoryorder": "total ascending"},
+            margin: {
+                l: 100,
+                r: 100,
+                b: 100,
+                t: 100,
+            },
     };
 
     var config = {responsive: true}

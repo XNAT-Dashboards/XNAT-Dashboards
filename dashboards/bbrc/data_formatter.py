@@ -56,6 +56,25 @@ class Formatter:
 
         return df
 
+    def generate_bbrc_validators_dict(self, df):
+
+        bbrc_validators = {'count': {}, 'list': {}}
+        series = pd.Series([x for _list in df['BBRC_Validators'] for x in _list])
+        series_dict = (series.value_counts()).to_dict()
+        for k, v in series_dict.items():
+            bbrc_validators['count'][k] = {}
+            bbrc_validators['count'][k]['Sessions with Validator'] = v
+            list_ = df[pd.DataFrame(df.BBRC_Validators.tolist()).isin([k]).any(1).values]
+            ses = pd.Series([x for x in list_['Session']])
+            bbrc_validators['list'][k] = {}
+            bbrc_validators['list'][k]['Sessions with Validator'] = list(ses)
+            missing_ses = []
+            for s in df['Session']:
+                if s not in list(ses):
+                    missing_ses.append(s)
+            bbrc_validators['count'][k]['Sessions wihtout Validator'] = len(missing_ses)
+            bbrc_validators['list'][k]['Sessions without Validator'] = missing_ses
+        return bbrc_validators
 
     def get_resource_details(self, resources_bbrc, project_id=None):
         """
@@ -120,15 +139,7 @@ class Formatter:
         version['id_type'] = 'experiment'
 
         # BBRC Validators
-        bbrc_validators = {}
-        series = pd.Series([x for _list in df['BBRC_Validators'] for x in _list])
-        bbrc_validators['count'] = (series.value_counts()).to_dict()
-        selection = list(set(series))
-        bbrc_validators['list'] = {}
-        for i in selection:
-            list_ = df[pd.DataFrame(df.BBRC_Validators.tolist()).isin([i]).any(1).values]
-            ses = pd.Series([x for x in list_['Session']])
-            bbrc_validators['list'][i] = list(ses)
+        bbrc_validators = self.generate_bbrc_validators_dict(df)
 
         return {'Sessions with usable T1': usable_t1,
                 'ArchivingValidator': archiving_valid,
