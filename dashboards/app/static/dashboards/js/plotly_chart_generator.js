@@ -100,7 +100,14 @@ function barchart_generator(graph_name, graph_info, id, color, id_type){
             }
           ];
           var layout = {
-                title: graph_name
+                title: graph_name,
+                  margin: {
+                    l: 100,
+                    r: 100,
+                    b: 100,
+                    t: 100,
+                    pad: 4
+                },
         };
     
         var config = {responsive: true}
