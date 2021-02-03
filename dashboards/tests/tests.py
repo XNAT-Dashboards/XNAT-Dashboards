@@ -40,10 +40,10 @@ def test_002_get_projects_details():
     project_details = df.Formatter().get_projects_details(projects)
 
     assert isinstance(project_details['Number of Projects'], int)
-    assert isinstance(project_details['Projects Visibility'], dict)
+    assert isinstance(project_details['Projects'], dict)
 
     assert project_details['Number of Projects'] != 0
-    assert len(project_details['Projects Visibility']) != 0
+    assert len(project_details['Projects']) != 0
 
 
 def test_003_get_projects_details_PP():
@@ -86,10 +86,10 @@ def test_005_get_subjects_details():
     subject_details = df.Formatter().get_subjects_details(subjects)
 
     assert isinstance(subject_details['Number of Subjects'], int)
-    assert isinstance(subject_details['Subjects/Project'], dict)
+    assert isinstance(subject_details['Subjects'], dict)
 
     assert subject_details['Number of Subjects'] != 0
-    assert len(subject_details['Subjects/Project']) != 0
+    assert len(subject_details['Subjects']) != 0
 
 
 def test_006_get_subjects_details_PP():
@@ -113,10 +113,10 @@ def test_007_get_experiments_details():
     experiments_details = df.Formatter().get_experiments_details(experiments)
 
     assert isinstance(experiments_details['Number of Experiments'], int)
-    assert isinstance(experiments_details['Experiment Types'], dict)
+    assert isinstance(experiments_details['Total amount of sessions'], dict)
 
     assert experiments_details['Number of Experiments'] != 0
-    assert len(experiments_details['Experiment Types']) != 0
+    assert len(experiments_details['Total amount of sessions']) != 0
 
 
 def test_008_get_experiments_details_PP():
@@ -129,10 +129,10 @@ def test_008_get_experiments_details_PP():
     experiments_details = df.FormatterPP(project_id).get_experiments_details(experiments)
 
     assert isinstance(experiments_details['Number of Experiments'], int)
-    assert isinstance(experiments_details['Experiment Types'], dict)
+    assert isinstance(experiments_details['Total amount of sessions'], dict)
 
     assert experiments_details['Number of Experiments'] != 0
-    assert len(experiments_details['Experiment Types']) != 0
+    assert len(experiments_details['Total amount of sessions']) != 0
 
 
 def test_009_get_scans_details():
@@ -143,11 +143,11 @@ def test_009_get_scans_details():
     scans_details = df.Formatter().get_scans_details(scans)
 
     assert isinstance(scans_details['Number of Scans'], int)
-    assert isinstance(scans_details['Scans Quality'], dict)
+    assert isinstance(scans_details['Scan quality'], dict)
     assert isinstance(scans_details['Scan Types'], dict)
 
     assert scans_details['Number of Scans'] != 0
-    assert len(scans_details['Scans Quality']) != 0
+    assert len(scans_details['Scan quality']) != 0
     assert len(scans_details['Scan Types']) != 0
 
 
@@ -161,11 +161,11 @@ def test_010_get_scans_details_PP():
     scans_details = df.FormatterPP(project_id).get_scans_details(scans)
 
     assert isinstance(scans_details['Number of Scans'], int)
-    assert isinstance(scans_details['Scans Quality'], dict)
+    assert isinstance(scans_details['Scan quality'], dict)
     assert isinstance(scans_details['Scan Types'], dict)
 
     assert scans_details['Number of Scans'] != 0
-    assert len(scans_details['Scans Quality']) != 0
+    assert len(scans_details['Scan quality']) != 0
     assert len(scans_details['Scan Types']) != 0
 
 

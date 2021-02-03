@@ -42,7 +42,7 @@ class Formatter:
         project_acccess['id_type'] = 'project'
 
         projects_details['Number of Projects'] = len(projects)
-        projects_details['Projects Visibility'] = project_acccess
+        projects_details['Projects'] = project_acccess
 
         return projects_details
 
@@ -78,7 +78,7 @@ class Formatter:
 
         # Number of subjects information
         subjects_details['Number of Subjects'] = len(subjects_data)
-        subjects_details['Subjects/Project'] = subjects_per_project
+        subjects_details['Subjects'] = subjects_per_project
 
         return subjects_details
 
@@ -123,10 +123,10 @@ class Formatter:
             experiments, 'subject_ID', 'ID', 'Subjects with ', ' experiment')
         prop_exp['id_type'] = 'subject'
 
-        experiments_details['Sessions types/Project'] =\
+        experiments_details['Imaging sessions'] =\
             experiments_types_per_project
 
-        experiments_details['Experiment Types'] = experiment_type
+        experiments_details['Total amount of sessions'] = experiment_type
         experiments_details['Experiments Proportions'] = prop_exp
 
         return experiments_details
@@ -180,7 +180,7 @@ class Formatter:
 
         scans_details = {}
 
-        scans_details['Scans Quality'] = scan_quality
+        scans_details['Scan quality'] = scan_quality
         scans_details['Scan Types'] = type_dict
         scans_details['Scans Proportions'] = prop_scan
         scans_details['Number of Scans'] = len(scans)
@@ -273,11 +273,11 @@ class Formatter:
         resource_count_dict['id_type'] = 'experiment'
 
         return {
-            'Resource Types': resource_types,
-            'Session resource count/Project': resource_count_dict}
+            'Resources per type': resource_types,
+            'Resources per session': resource_count_dict}
 
     def get_longitudinal_data(self, l_data):
-        return {'Resources monitor': {'count': l_data}}
+        return {'Resources (over time)': {'count': l_data}}
 
 
     def proportion_graphs(self, data, property_x, property_y, prefix, suffix):
@@ -556,7 +556,7 @@ class FormatterPP(Formatter):
         subjects_details = super().get_subjects_details(subjects_data)
         # Delete Subject/Project plot as this is present in counter of
         # per project view
-        del subjects_details['Subjects/Project']
+        del subjects_details['Subjects']
 
         return subjects_details
 
@@ -624,9 +624,7 @@ class FormatterPP(Formatter):
             resources, self.project_id)
 
         if not isinstance(resources_out, int):
-            if 'Resources/Project' in resources_out:
-                del resources_out['Resources/Project']
-            if 'Session resource count/Project' in resources_out:
-                del resources_out['Session resource count/Project']
+            if 'Resources per session' in resources_out:
+                del resources_out['Resources per session']
 
         return resources_out

@@ -124,10 +124,10 @@ class Formatter:
         series = pd.Series([x for _list in df['BBRC Validators'] for x in _list])
         bbrc_validators['count'] = (series.value_counts()).to_dict()
 
-        return {'UsableT1': usable_t1,
-                'Archiving Validator': archiving_valid,
+        return {'Sessions with usable T1': usable_t1,
+                'ArchivingValidator': archiving_valid,
                 'Version Distribution': version, 'BBRC validators': bbrc_validators,
-                'Consistent Acquisition Date': consistent_acq_date}
+                'Is acquisition data consistent across the whole session?': consistent_acq_date}
 
     def diff_dates(self, resources_bbrc, project_id):
 
