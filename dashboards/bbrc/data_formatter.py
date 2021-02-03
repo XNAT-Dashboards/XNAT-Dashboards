@@ -52,7 +52,7 @@ class Formatter:
             resource_processing,
             columns=[
                 'Project', 'Session', 'Archiving Valid',
-                'version', test, 'BBRC Validators', 'Insert date'])
+                'version', test, 'BBRC_Validators', 'Insert date'])
 
         return df
 
@@ -81,7 +81,7 @@ class Formatter:
         df_con_acq_date = self.generate_resource_df(
             resources_bbrc, 'IsAcquisitionDateConsistent', 'has_passed')
         df = pd.DataFrame(resources_bbrc, columns=['Project', 'Session',
-                                                   'Archiving Valid', 'BBRC Validators', 'Inserted date'])
+                                                   'Archiving Valid', 'BBRC_Validators', 'Inserted date'])
 
         if project_id is not None:
 
@@ -121,8 +121,14 @@ class Formatter:
 
         # BBRC Validators
         bbrc_validators = {}
-        series = pd.Series([x for _list in df['BBRC Validators'] for x in _list])
+        series = pd.Series([x for _list in df['BBRC_Validators'] for x in _list])
         bbrc_validators['count'] = (series.value_counts()).to_dict()
+        selection = list(set(series))
+        bbrc_validators['list'] = {}
+        for i in selection:
+            list_ = df[pd.DataFrame(df.BBRC_Validators.tolist()).isin([i]).any(1).values]
+            ses = pd.Series([x for x in list_['Session']])
+            bbrc_validators['list'][i] = list(ses)
 
         return {'Sessions with usable T1': usable_t1,
                 'ArchivingValidator': archiving_valid,
