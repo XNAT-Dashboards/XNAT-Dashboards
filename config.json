@@ -92,9 +92,9 @@
             "visibility": ["admin"],
             "color":"#16ffeb"
         },
-        "Experiments Proportions":{
+        "Sessions per subject":{
             "type": "pie",
-            "description": "Graph shows how many subjects have 1, 2 or n number of experiments",
+            "description": "Shows numbers of sessions per subject (in proportions)",
             "visibility": ["admin", "superuser"],
             "color":"#16ffeb"
         },

@@ -44,7 +44,7 @@ class Formatter:
                         archiving_validator['version'], 'No Data', bbrc_validators, insert_date])
             else:
                 resource_processing.append([
-                    project, exp_id, 'Not Exists',
+                    project, exp_id, 'Missing',
                     'No Data', 'No Data', bbrc_validators, insert_date])
 
         # Creates the dataframe from the list created
@@ -193,7 +193,7 @@ class Formatter:
         df_diff = df_diff.groupby(cut).count()
         df_diff['list'] = df_series
         df_diff.index = df_diff.index.astype(str) + ' days'
-        
+
         return df_diff.to_dict()
 
     def dates_diff_calc(self, date_1, date_2):

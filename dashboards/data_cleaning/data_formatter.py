@@ -120,14 +120,14 @@ class Formatter:
         experiments_types_per_project['id_type'] = 'experiment'
 
         prop_exp = self.proportion_graphs(
-            experiments, 'subject_ID', 'ID', 'Subjects with ', ' experiment')
+            experiments, 'subject_ID', 'ID', 'Subjects with ', ' experiment(s)')
         prop_exp['id_type'] = 'subject'
 
         experiments_details['Imaging sessions'] =\
             experiments_types_per_project
 
         experiments_details['Total amount of sessions'] = experiment_type
-        experiments_details['Experiments Proportions'] = prop_exp
+        experiments_details['Sessions per subject'] = prop_exp
 
         return experiments_details
 
