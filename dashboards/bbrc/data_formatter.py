@@ -255,7 +255,7 @@ class Formatter:
         for resource in resources_bbrc:
             project, exp_id, archiving_validator, bbrc_validators, insert_date = resource
             if bbrc_validators and not isinstance(archiving_validator, int):
-                test_list = [project, ['version', archiving_validator['version']]]
+                test_list = [exp_id, ['version', archiving_validator['version']]]
 
                 # Loop through each test if exists then add the details
                 # in the tests_list or just add '' in the test_list
