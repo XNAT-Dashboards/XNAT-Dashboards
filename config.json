@@ -62,12 +62,6 @@
             "visibility": ["admin"],
             "color":""
         },
-        "ArchivingValidator": {
-            "type": "pie",
-            "description": "Shows percentages of sessions which have an ArchivingValidator as available resource.",
-            "visibility": ["admin"],
-            "color":""
-        },
         "Version Distribution": {
             "type": "pie",
             "description": "Different versions of Archiving validator for each sessions",

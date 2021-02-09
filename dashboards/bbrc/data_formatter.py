@@ -128,11 +128,6 @@ class Formatter:
             df_con_acq_date, 'IsAcquisitionDateConsistent', 'Session')
         consistent_acq_date['id_type'] = 'experiment'
 
-        # Archiving validator
-        archiving_valid = data_formatter.Formatter().dict_generator_resources(
-            df_usable_t1, 'Archiving Valid', 'Session')
-        archiving_valid['id_type'] = 'experiment'
-
         # Version Distribution
         version = data_formatter.Formatter().dict_generator_resources(
             df_usable_t1, 'version', 'Session')
@@ -142,7 +137,6 @@ class Formatter:
         bbrc_validators = self.generate_bbrc_validators_dict(df)
 
         return {'Sessions with usable T1': usable_t1,
-                'ArchivingValidator': archiving_valid,
                 'Version Distribution': version, 'BBRC validators': bbrc_validators,
                 'Is acquisition data consistent across the whole session?': consistent_acq_date}
 
