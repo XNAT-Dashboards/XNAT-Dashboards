@@ -167,8 +167,8 @@
                                                 <td><b>Project Owner(s)</b></td>
                                                 <td class="text-center">
                                                     {% for user in data_array['Owner(s)']%}
-                                                    {{user}},&nbsp
-                                                    {%endfor%}END
+                                                    {{user}}&nbsp
+                                                    {%endfor%}
                                                 </td>
                                             </tr>
                                             <tr>
@@ -186,14 +186,14 @@
                                             <tr>
                                                 <td><b>Project Collaborators</b></td><td class="text-center">
                                                 {% for user in data_array['Collaborator(s)']%}
-                                                {{user}},&nbsp
-                                                {%endfor%}END</td>
+                                                {{user}}&nbsp
+                                                {%endfor%}</td>
                                             </tr>
                                             <tr>
                                                 <td><b>Project Members</b></td><td class="text-center">
                                                 {% for user in data_array['member(s)']%}
-                                                {{user}},&nbsp
-                                                {% endfor%}END
+                                                {{user}}&nbsp
+                                                {% endfor%}
                                             </td>
                                                 
                                             </tr>
@@ -201,18 +201,16 @@
                                                 <td ><b>Project Users</b></td>
                                                 <td class="text-center">
                                                     {% for user in data_array['user(s)']%}
-                                                    {{user}},&nbsp
+                                                    {{user}}&nbsp
                                                     {%endfor%}
-                                                    END
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td ><b>Last Accessed By</b></td>
                                                 <td class="text-center">
                                                 {% for user in  data_array['last_accessed(s)']%}
-                                                {{user}},&nbsp
+                                                {{user}}&nbsp
                                                 {% endfor %}
-                                                END
                                             </td>
                                             </tr>
                                         </tbody>
