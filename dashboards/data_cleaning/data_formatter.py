@@ -1,5 +1,6 @@
 import pandas as pd
 import os.path as op
+from collections import OrderedDict
 import dashboards
 fp = op.join(op.dirname(dashboards.__file__), '..', 'whitelist.xlsx')
 
@@ -264,17 +265,19 @@ class Formatter:
             project_session, pro_exp_count, on='session')
 
         resource_count_df['project_y'] = resource_count_df[
-            'project_y'].astype(str) + ' Resources/Session'
+            'project_y'].astype(int)
 
         # Send the above created data from to dict_generator_per_view_stacked
         # This will create the format required for stacked plot
         resource_count_dict = self.dict_generator_per_view_stacked(
             resource_count_df, 'project_x', 'project_y', 'session')
         resource_count_dict['id_type'] = 'experiment'
+        ordered = OrderedDict(sorted(resource_count_dict['count'].items(), key=lambda x: len(x[0]), reverse=True))
+        resource_count_dict_ordered = {'count': ordered, 'list': resource_count_dict['list']}
 
         return {
             'Resources per type': resource_types,
-            'Resources per session': resource_count_dict}
+            'Resources per session': resource_count_dict_ordered}
 
     def get_longitudinal_data(self, l_data):
         return {'Resources (over time)': {'count': l_data}}
