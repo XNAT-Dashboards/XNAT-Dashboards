@@ -273,7 +273,8 @@ class Formatter:
             resource_count_df, 'project_x', 'project_y', 'session')
         resource_count_dict['id_type'] = 'experiment'
         ordered = OrderedDict(sorted(resource_count_dict['count'].items(), key=lambda x: len(x[0]), reverse=True))
-        resource_count_dict_ordered = {'count': ordered, 'list': resource_count_dict['list']}
+        ordered_ = {a: {str(c)+' Resources/Session': d for c, d in b.items()} for a, b in ordered.items()}
+        resource_count_dict_ordered = {'count': ordered_, 'list': resource_count_dict['list']}
 
         return {
             'Resources per type': resource_types,
