@@ -148,7 +148,7 @@ class DataFilterPP(DataFilter):
             self.resources_bbrc, self.project_id)
 
         if diff_dates is not None and diff_dates['count'] != {}:
-            ordered_graphs.update({'Dates Diff': diff_dates})
+            ordered_graphs.update({'Dates difference (Acquisition date - Insertion date)': diff_dates})
 
         ordered_graphs.update({'test_grid': test_grid})
 

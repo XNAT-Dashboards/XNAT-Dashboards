@@ -73,7 +73,7 @@ function getRandomColor() {
 // Code for barchart
 function barchart_generator(graph_name, graph_info, id, color, id_type){
 
-        if(graph_name == "Dates Diff"){
+        if(graph_name == "Dates difference (Acquisition date - Insertion date)"){
             x_axis = []
             y_axis = []
 
