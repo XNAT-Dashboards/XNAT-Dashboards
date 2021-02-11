@@ -70,7 +70,7 @@
         },
         "BBRC validators": {
             "type": "stacked_bar",
-            "description": "Shows the percentage of validators across all available sessions",
+            "description": "Shows the percentage of validators across all available sessions with BBRC validator resource",
             "visibility": ["admin"],
             "color":""
         },
