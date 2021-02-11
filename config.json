@@ -92,7 +92,7 @@
             "visibility": ["admin", "superuser"],
             "color":"#16ffeb"
         },
-        "Scans Proportions":{
+        "Scans per subject":{
             "type": "pie",
             "description": "Graph shows how many subjects have 1, 2 or n number of scans",
             "visibility": ["admin", "superuser"],
