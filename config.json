@@ -80,7 +80,7 @@
             "visibility": ["admin"],
             "color":""
         },
-        "Dates Diff": {
+        "Dates difference (Acquisition date - Insertion date)": {
             "type": "bar",
             "description": "Difference between insertion dates and acquisition dates per session, if acquisition date present in session test",
             "visibility": ["admin"],
