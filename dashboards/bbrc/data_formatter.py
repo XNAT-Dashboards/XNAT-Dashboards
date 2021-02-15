@@ -72,7 +72,7 @@ class Formatter:
             for s in df['Session']:
                 if s not in list(ses):
                     missing_ses.append(s)
-            bbrc_validators['count'][k]['Sessions wihtout Validator'] = len(missing_ses)
+            bbrc_validators['count'][k]['Sessions without Validator'] = len(missing_ses)
             bbrc_validators['list'][k]['Sessions without Validator'] = missing_ses
         return bbrc_validators
 
