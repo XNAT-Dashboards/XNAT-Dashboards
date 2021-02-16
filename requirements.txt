@@ -1,4 +1,4 @@
-lxml==4.5.2
+lxml==4.6.2
 tqdm==4.48.2
 Flask==1.1.2
 pandas==1.1.0
