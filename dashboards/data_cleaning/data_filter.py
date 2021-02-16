@@ -264,6 +264,7 @@ class DataFilterPP(DataFilter):
         if experiments_details != 1:
             stats['Experiments'] = experiments_details['Number of Experiments']
             del experiments_details['Number of Experiments']
+            del experiments_details['Total amount of sessions']
             if 'Sessions types/Project' in experiments_details:
                 del experiments_details['Sessions types/Project']
 
