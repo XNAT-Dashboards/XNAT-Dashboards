@@ -92,9 +92,9 @@
             "visibility": ["admin", "superuser"],
             "color":"#16ffeb"
         },
-        "Scans per subject":{
-            "type": "pie",
-            "description": "Shows number of scans per subject.",
+        "Scans per session":{
+            "type": "bar",
+            "description": "Shows number of scans per session.",
             "visibility": ["admin", "superuser"],
             "color":"#16ffeb"
         },

@@ -175,15 +175,15 @@ class Formatter:
         type_dict['id_type'] = 'experiment'
 
         prop_scan = self.proportion_graphs(
-            scans, 'xnat:imagesessiondata/subject_id',
-            'ID', '', ' scans')
+            scans, 'ID',
+            'xnat:imagescandata/id', '', ' scans')
         prop_scan['id_type'] = 'subject'
 
         scans_details = {}
 
         scans_details['Scan quality'] = scan_quality
         scans_details['Scan Types'] = type_dict
-        scans_details['Scans per subject'] = prop_scan
+        scans_details['Scans per session'] = prop_scan
         scans_details['Number of Scans'] = len(scans)
 
         return scans_details
