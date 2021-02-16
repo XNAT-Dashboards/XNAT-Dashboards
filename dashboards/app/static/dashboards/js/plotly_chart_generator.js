@@ -151,21 +151,18 @@ function stacked_barchart_generator(graph_name, graph_info, id, color, id_type){
         }
 
         trace = {};
-        color = getRandomColor();
         trace = {
             x: x_axis,
             y: y_axis,
             name: differ_keys[i],
             type: 'bar',
-            marker: {
-            color: color // Adding color values
-            }
         };
         data.push(trace);
     }
 
     var layout = {
             title: graph_name,
+            colorway: color,
             barmode:'stack',
             "xaxis": {"categoryorder": "total ascending"},
             margin: {
@@ -199,9 +196,6 @@ function scatterchart_generator(graph_name, graph_info, id, color, id_type){
           y: y_axis,
           mode: 'markers',
           type: 'scatter',
-          marker: {
-            color: color // Adding color values
-          }
         }
       ];
 
@@ -227,33 +221,18 @@ function piechart_generator(graph_name, graph_info){
             y_axis.push(graph_info['count'][x]);
         
     }
-    
-    colors_num = x_axis.length;
-    colors_list = []
-
-    // Generating color values
-    for( i=0; i<colors_num; i++ ){
-        
-        color = getRandomColor();
-        while(colors_list.indexOf(color) != -1){
-            color = getRandomColor();
-        }
-        colors_list.push(color);
-    }
 
     var data = [
         {
           values: y_axis,
           labels: x_axis,
           type: 'pie',
-          marker: {
-            colors: colors_list // Adding color for each part of pie
-          }
         }
       ];
 
       var layout = {
-        title: graph_name
+        title: graph_name,
+        colorway: color
     };
 
     var config = {responsive: true}
@@ -283,21 +262,18 @@ function linechart_generator(graph_name, graph_info, id, color, id_type){
             y_axis.push(graph_info['count'][n_res[i]][x]);
         }
         trace = {};
-        color = getRandomColor();
         trace = {
             x: x_axis,
             y: y_axis,
             name: n_res[i],
             type: 'scatter',
-            marker: {
-            color: color // Adding color values
-            }
         };
         data.push(trace);
     }
 
     var layout = {
-        title: graph_name
+        title: graph_name,
+        colorway: color
     };
 
     var config = {responsive: true}
