@@ -16,25 +16,25 @@
     "graph_config": {
         "Projects": {
             "type": "bar",
-            "description": "Shows available projects (and their accessibility)",
+            "description": "Shows available projects (and their accessibility).",
             "visibility": ["admin", "superuser", "guest"],
             "color":"#7394CB"
         },
         "Imaging sessions": {
             "type": "stacked_bar",
-            "description": "Shows sessions per available project",
+            "description": "Shows sessions per available project.",
             "visibility": ["admin", "superuser", "guest"],
             "color":"#E1974E"
         },
         "Subjects": {
             "type": "bar",
-            "description": "Shows subjects per available project",
+            "description": "Shows subjects per available project.",
             "visibility": ["admin", "superuser"],
             "color":"#818787"
         },
         "Total amount of sessions": {
             "type": "bar",
-            "description": "Shows the grand total of available imaging sessions",
+            "description": "Shows the grand total of available imaging sessions.",
             "visibility": ["admin", "superuser"],
             "color":"#55D3DB"
         },
@@ -46,7 +46,7 @@
         },
         "Scan Types": {
             "type": "bar",
-            "description": "Different scan types present and there count",
+            "description": "Shows the types of scans present in the project.",
             "visibility": ["admin", "superuser"],
             "color":"#DBC256"
         },
@@ -64,13 +64,13 @@
         },
         "Version Distribution": {
             "type": "pie",
-            "description": "Different versions of Archiving validator for each sessions",
+            "description": "Different versions of Archiving validator for each session.",
             "visibility": ["admin"],
             "color":""
         },
         "BBRC validators": {
             "type": "stacked_bar",
-            "description": "Shows the percentage of validators across all available sessions with BBRC validator resource",
+            "description": "Shows the percentage of validators across all available sessions with BBRC validator resource.",
             "visibility": ["admin"],
             "color":""
         },
@@ -82,19 +82,19 @@
         },
         "Dates difference (Acquisition date - Insertion date)": {
             "type": "bar",
-            "description": "Difference between insertion dates and acquisition dates per session, if acquisition date present in session test",
+            "description": "Difference between insertion dates and acquisition dates per session, if acquisition date present in session test.",
             "visibility": ["admin"],
             "color":"#16ffeb"
         },
         "Sessions per subject":{
             "type": "pie",
-            "description": "Shows numbers of sessions per subject (in proportions)",
+            "description": "Shows numbers of sessions per subject (in proportions).",
             "visibility": ["admin", "superuser"],
             "color":"#16ffeb"
         },
         "Scans per subject":{
             "type": "pie",
-            "description": "Graph shows how many subjects have 1, 2 or n number of scans",
+            "description": "Shows number of scans per subject.",
             "visibility": ["admin", "superuser"],
             "color":"#16ffeb"
         },
