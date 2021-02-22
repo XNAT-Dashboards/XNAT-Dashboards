@@ -46,9 +46,6 @@
                 </div>
                 &nbsp&nbsp&nbsp
                 <div class="navbar-collapse">
-                    <div class = "navbar-brand">
-                        <a href="/dashboard/stats/"> &nbsp Overview Dashboard </a>
-                    </div>
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item hidden-sm-up"> <a class="nav-link nav-toggler waves-effect waves-light" href="javascript:void(0)"><i class="fa fa-bars"></i></a></li>
                     </ul>
@@ -77,6 +74,7 @@
             <div class="scroll-sidebar">
                 <nav class="sidebar-nav">
                     <ul id="sidebarnav">
+                        <li id="overviews"> <a class="waves-effect waves-dark" href="/dashboard/stats/" aria-expanded="false"><i class="fa fa-list"></i><span class="hide-menu">Overview</span></a></li>
                         <li id="project"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-eye"></i><span class="hide-menu">Project</span></a></li>
                         {% if test_grid[0]|length > 0%}
                             <li id="tests_grid"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-table"></i><span class="hide-menu">Tests Grid</span></a></li>
