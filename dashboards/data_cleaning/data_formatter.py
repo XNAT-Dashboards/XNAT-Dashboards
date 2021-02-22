@@ -583,6 +583,7 @@ class FormatterPP(Formatter):
 
         # Using code from the parent class for processing
         experiments_details = super().get_experiments_details(experiments)
+        del experiments_details['Imaging sessions']
 
         return experiments_details
 
