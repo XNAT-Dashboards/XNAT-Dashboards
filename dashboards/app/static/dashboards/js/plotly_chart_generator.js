@@ -57,17 +57,12 @@ function chart_generator(json){
 }  
 
 // Code for generating random values for RGB
-function getRandomColor() {
+function getRandomColor(n) {
 
-    min = Math.ceil(0);
-    max = Math.floor(255);
-
-    r = Math.floor(Math.random() * (max - min + 1)) + min;
-    g = Math.floor(Math.random() * (max - min + 1)) + min;
-    b = Math.floor(Math.random() * (max - min + 1)) + min;
-
-    color = 'rgb('+r+','+g+','+b+')';
-    return color;
+    color_list = ["#00b33c","#c299ff", "#660066"]
+    //c = color_list.slice(0, n)
+    c = color_list[Math.floor(Math.random() * n)];
+    return c;
 }
 
 // Code for barchart
@@ -159,6 +154,11 @@ function stacked_barchart_generator(graph_name, graph_info, id, color, id_type){
         };
         data.push(trace);
     }
+     if (data.length > color.length) {
+            n = data.length - color.length;
+            new_color = getRandomColor(n)
+            color = color.concat(new_color);
+     }
 
     var layout = {
             title: graph_name,
@@ -215,6 +215,7 @@ function scatterchart_generator(graph_name, graph_info, id, color, id_type){
 function piechart_generator(graph_name, graph_info){
     x_axis = [];
     y_axis = [];
+
     for (x in graph_info['count']){
 
             x_axis.push(x);
@@ -229,7 +230,11 @@ function piechart_generator(graph_name, graph_info){
           type: 'pie',
         }
       ];
-
+      if (x_axis.length > color.length) {
+            n = x_axis.length - color.length;
+            new_color = getRandomColor(n)
+            color = color.concat(new_color);
+      }
       var layout = {
         title: graph_name,
         colorway: color
@@ -269,6 +274,11 @@ function linechart_generator(graph_name, graph_info, id, color, id_type){
             type: 'scatter',
         };
         data.push(trace);
+    }
+    if (data.length > color.length) {
+            n = data.length - color.length;
+            new_color = getRandomColor(n)
+            color = color.concat(new_color);
     }
 
     var layout = {
