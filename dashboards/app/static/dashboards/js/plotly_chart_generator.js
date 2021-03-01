@@ -59,7 +59,9 @@ function chart_generator(json){
 // Code for generating random values for RGB
 function getRandomColor(n) {
 
-    color_list = ["#00b33c","#c299ff", "#660066"]
+    color_list = ["#00b33c","#c299ff", "#660066", "#0033cc", " #009999",
+    "#cccc00", "#ff0066", "#996633", " #ffaa80", "#99cc00", "#cc00ff",
+    "#ffff99", "#666699", "#000099"]
     //c = color_list.slice(0, n)
     c = color_list[Math.floor(Math.random() * color_list.length)];
     return c;
