@@ -63,7 +63,11 @@ function getRandomColor(n) {
     "#cccc00", "#ff0066", "#996633", " #ffaa80", "#99cc00", "#cc00ff",
     "#ffff99", "#666699", "#000099"]
     //c = color_list.slice(0, n)
-    c = color_list[Math.floor(Math.random() * color_list.length)];
+    c = []
+    for(i=0; i<n; i++){
+        cl = color_list[Math.floor(Math.random() * color_list.length)];
+        c.push(cl);
+    }
     return c;
 }
 
