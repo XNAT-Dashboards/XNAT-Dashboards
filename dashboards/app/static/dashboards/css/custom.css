@@ -385,7 +385,7 @@ thead td:first-child {
 
 .table-responsive{
   overflow-y: auto;
-  height: 500px;
+  height: auto;
 }
 
 .stick {
