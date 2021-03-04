@@ -28,17 +28,6 @@ def logout():
 
 @dashboard.route('/stats/', methods=['GET'])
 def stats():
-    """This is the overview dashboard route.
-
-    First we check whether pickle file have same server details
-    if same server details exists we load the pickle data.
-    Then sends the data processed from graph generator file
-    to the frontend.
-
-    Returns:
-        route: The jinja html templates to frontend
-    """
-
     # Load pickle and check server
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
     if p['server'] != session['server']:
@@ -46,7 +35,6 @@ def stats():
               % (p['server'], session['server'])
         raise Exception(msg)
 
-    # Calling plot generator
     plot = gg.GraphGenerator(session['username'], session['role'],
                              p, session['projects'])
     overview = plot.get_overview()

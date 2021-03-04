@@ -6,38 +6,22 @@ fp = op.join(op.dirname(dashboards.__file__), '..', 'whitelist.xlsx')
 
 
 class DataFilter:
-    """
-    It first filter out the data based on project ids
-    that should not be visible to user based on role.
 
-    It then sends the data to data formatter which
-    format the data, then ordering is done using the
-    DataFilter
+    def __init__(self, username, p, role, visible_projects,
+                 resources):
 
-    Args:
-        username (str): Username
-        data (list): list of project, subjects, exp., scans
-        role (str): role of the user.
-        project_visible (list): list of projects that is visible
-            by default it will show no project details.
-        resources (list, optional): List of resources and by default
-            it will be skipped and no graph of resources will be added.
-    """
-    def __init__(self, username, data, role, project_visible,
-                 resources, longitudinal_data={}):
-
-        self.project_visible = project_visible
+        self.visible_projects = visible_projects
         self.username = username
-        self.longitudinal_data = longitudinal_data
+        self.longitudinal_data = p['longitudinal_data']
 
-        projects = [p for p in data['projects'] if p['id'] in self.project_visible
-                    or "*" in self.project_visible]
-        experiments = [e for e in data['experiments'] if e['project'] in self.project_visible
-                       or "*" in self.project_visible]
-        scans = [s for s in data['scans'] if s['project'] in self.project_visible
-                 or "*" in self.project_visible]
-        subjects = [s for s in data['subjects'] if s['project'] in self.project_visible
-                    or "*" in self.project_visible]
+        projects = [pr for pr in p['projects'] if pr['id'] in visible_projects
+                    or "*" in visible_projects]
+        experiments = [e for e in p['experiments'] if e['project'] in visible_projects
+                       or "*" in visible_projects]
+        scans = [s for s in p['scans'] if s['project'] in visible_projects
+                 or "*" in visible_projects]
+        subjects = [s for s in p['subjects'] if s['project'] in visible_projects
+                    or "*" in visible_projects]
 
         self.data = {}
         self.data['projects'] = projects
@@ -51,8 +35,7 @@ class DataFilter:
         if resources is not None:
             for resource in resources:
                 project = resource[0]
-                if project not in self.project_visible\
-                        or "*" in self.project_visible:
+                if project not in visible_projects or "*" in visible_projects:
                     resources_list.append(resource)
 
         self.resources = resources_list
@@ -601,13 +584,13 @@ class DataFilterPP(DataFilter):
             it will be skipped and no graph of resources will be added.
     """
 
-    def __init__(self, username, data, project_id, role,
+    def __init__(self, username, p, project_id, role,
                  project_visible, resources=None):
 
         # self.formatter_object_per_project = dfo.FormatterPP(
         #     project_id)
         self.project_id = project_id
-        self.data = data
+        self.data = p
         self.project_visible = project_visible
         self.resources = resources
         self.username = username

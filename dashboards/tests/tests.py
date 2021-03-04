@@ -29,7 +29,7 @@ def test_001_pickle_save():  # should be run first
     assert isinstance(data, dict)
     assert data['server'] == "https://devxnat.barcelonabeta.org"
     assert data['verify'] == 1
-    assert isinstance(data['info'], dict)
+    assert isinstance(data, dict)
     assert isinstance(data['resources'], list)
     assert isinstance(data['longitudinal_data'], dict)
 
@@ -37,7 +37,7 @@ def test_001_pickle_save():  # should be run first
 # def test_002_get_projects_details():
 #     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
 #
-#     projects = p['info']['projects']
+#     projects = p['projects']
 #     project_details = dfo.Formatter().get_projects_details(projects)
 #
 #     assert isinstance(project_details['Number of Projects'], int)
@@ -50,8 +50,8 @@ def test_001_pickle_save():  # should be run first
 # def test_003_get_projects_details_PP():
 #     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
 #
-#     projects = p['info']['projects']
-#     project = p['info']['projects'][0]
+#     projects = p['projects']
+#     project = p['projects'][0]
 #     project_id = project['id']
 #     project_details = dfo.FormatterPP(project_id).get_projects_details(projects)
 #
@@ -70,7 +70,7 @@ def test_001_pickle_save():  # should be run first
 # def test_004_get_projects_details_specific():
 #     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
 #
-#     projects = p['info']['projects']
+#     projects = p['projects']
 #     project_details_specific = dfo.Formatter().get_projects_details_specific(projects)
 #
 #     assert isinstance(project_details_specific, dict)
@@ -80,7 +80,7 @@ def test_001_pickle_save():  # should be run first
 # def test_005_get_subjects_details():
 #     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
 #
-#     subjects = p['info']['subjects']
+#     subjects = p['subjects']
 #     subject_details = dfo.Formatter().get_subjects_details(subjects)
 #
 #     assert isinstance(subject_details['Number of Subjects'], int)
@@ -93,8 +93,8 @@ def test_001_pickle_save():  # should be run first
 # def test_006_get_subjects_details_PP():
 #     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
 #
-#     subjects = p['info']['subjects']
-#     project = p['info']['projects'][0]
+#     subjects = p['subjects']
+#     project = p['projects'][0]
 #     project_id = project['id']
 #     subject_details = dfo.FormatterPP(project_id).get_subjects_details(subjects)
 #
@@ -105,7 +105,7 @@ def test_001_pickle_save():  # should be run first
 # def test_007_get_experiments_details():
 #     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
 #
-#     experiments = p['info']['experiments']
+#     experiments = p['experiments']
 #     experiments_details = dfo.Formatter().get_experiments_details(experiments)
 #
 #     assert isinstance(experiments_details['Number of Experiments'], int)
@@ -118,8 +118,8 @@ def test_001_pickle_save():  # should be run first
 # def test_008_get_experiments_details_PP():
 #     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
 #
-#     experiments = p['info']['experiments']
-#     project = p['info']['projects'][0]
+#     experiments = p['experiments']
+#     project = p['projects'][0]
 #     project_id = project['id']
 #     experiments_details = dfo.FormatterPP(project_id).get_experiments_details(experiments)
 #
@@ -140,7 +140,7 @@ def test_001_pickle_save():  # should be run first
 #         elif len(e) > 4:
 #             bbrc_resources.append(e)
 #
-#     scans = p['info']['scans']
+#     scans = p['scans']
 #     scans_details = dfo.Formatter().get_scans_details(scans)
 #
 #     assert isinstance(scans_details['Number of Scans'], int)
@@ -155,8 +155,8 @@ def test_001_pickle_save():  # should be run first
 # def test_010_get_scans_details_PP():
 #     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
 #
-#     scans = p['info']['scans']
-#     project = p['info']['projects'][0]
+#     scans = p['scans']
+#     project = p['projects'][0]
 #     project_id = project['id']
 #     scans_details = dfo.FormatterPP(project_id).get_scans_details(scans)
 #
@@ -196,7 +196,7 @@ def test_001_pickle_save():  # should be run first
 #         elif len(e) > 4:
 #             bbrc_resources.append(e)
 #
-#     project = p['info']['projects'][0]
+#     project = p['projects'][0]
 #     project_id = project['id']
 #     resource_details = dfo.FormatterPP(project_id).get_resources_details(resources)
 #
@@ -238,8 +238,8 @@ def test_013_get_get_longitudinal_data():
 #             resources.append(e)
 #         elif len(e) > 4:
 #             bbrc_resources.append(e)
-#     #experiments = p['info']['experiments']
-#     project = p['info']['projects'][0]
+#     #experiments = p['experiments']
+#     project = p['projects'][0]
 #     project_id = project['id']
 #     dict_diff_dates = dfo_bbrc.Formatter().diff_dates(bbrc_resources, project_id)
 #
@@ -258,7 +258,7 @@ def test_013_get_get_longitudinal_data():
 #         elif len(e) > 4:
 #             bbrc_resources.append(e)
 #
-#     project = p['info']['projects'][0]
+#     project = p['projects'][0]
 #     project_id = project['id']
 #     test_grid = dfo_bbrc.Formatter().generate_test_grid_bbrc(bbrc_resources, project_id)
 #
@@ -275,10 +275,10 @@ def test_017_get_project_list():
             resources.append(e)
         elif len(e) > 4:
             bbrc_resources.append(e)
-    info = p['info']
 
-    filtered = dfi.DataFilter('testUser', info, 'admin', [], resources, {})
-    projects = filtered.get_project_list()
+    filtered = dfi.DataFilter('testUser', p, 'admin', [], resources)
+    #projects = filtered.get_project_list()
+    projects = filtered.get_projects_details_specific(filtered.data['projects'])
 
     assert isinstance(projects, dict)
     assert isinstance(projects['project_list'], list)
@@ -293,9 +293,8 @@ def test_019_reorder_graphs():
             resources.append(e)
         elif len(e) > 4:
             bbrc_resources.append(e)
-    info = p['info']
 
-    filtered = dfi.DataFilter('testUser', info, 'admin', [], resources, {})
+    filtered = dfi.DataFilter('testUser', p, 'admin', [], resources)
     ordered_graphs = filtered.reorder_graphs()
 
     assert isinstance(ordered_graphs, dict)
@@ -312,11 +311,10 @@ def test_020_reorder_graphs_PP():
         elif len(e) > 4:
             bbrc_resources.append(e)
 
-    info = p['info']
-    project = p['info']['projects'][0]
+    project = p['projects'][0]
     project_id = project['id']
     role = 'admin'
-    filtered = dfi.DataFilterPP('testUser', info, project_id, role,
+    filtered = dfi.DataFilterPP('testUser', p, project_id, role,
                                 {role: [project_id]}, resources)
     ordered_graphs = filtered.reorder_graphs_pp()
     assert isinstance(ordered_graphs, dict)
@@ -350,8 +348,8 @@ def test_023_reorder_graphs_bbrc_PP():
         elif len(e) > 4:
             bbrc_resources.append(e)
 
-    experiments = p['info']['experiments']
-    project = p['info']['projects'][0]
+    experiments = p['experiments']
+    project = p['projects'][0]
     project_id = project['id']
     role = 'admin'
     filtered = dfib.DataFilterPP(experiments, project_id,
@@ -364,7 +362,7 @@ def test_023_reorder_graphs_bbrc_PP():
 def test_024_get_overview():
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
 
-    project = p['info']['projects'][0]
+    project = p['projects'][0]
     project_id = project['id']
     role = 'admin'
     graph_object = gg.GraphGenerator(['testUser'], role, p, {role: [project_id]})
@@ -378,7 +376,7 @@ def test_024_get_overview():
 def test_025_get_project_view():
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
 
-    project = p['info']['projects'][0]
+    project = p['projects'][0]
     project_id = project['id']
     role = 'admin'
     graph_object = gg.GraphGeneratorPP(['testUser'], project_id, role, p,

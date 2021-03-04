@@ -8,7 +8,7 @@ class GraphGenerator:
 
     l_data = {}
 
-    def __init__(self, username, role, p, project_visible):
+    def __init__(self, username, role, p, projects):
 
         self.counter_id = 0
         self.role = role
@@ -20,15 +20,15 @@ class GraphGenerator:
             elif len(e) > 4:
                 bbrc_resources.append(e)
 
-        self.filtered = df.DataFilter(username, p['info'],
-                                      role, project_visible,
-                                      resources,
-                                      p['longitudinal_data'])
-        projects = self.filtered.get_project_list()
+        self.filtered = df.DataFilter(username, p,
+                                      role, projects,
+                                      resources)
+        #projects = self.filtered.get_project_list()
+        projects = self.filtered.get_projects_details_specific(self.filtered.data['projects'])
         self.projects = projects['project_list']
         self.ordered_graphs = self.filtered.reorder_graphs()
 
-        res = dfb.BBRCDataFilter(role, project_visible, bbrc_resources)
+        res = dfb.BBRCDataFilter(role, projects, bbrc_resources)
         self.ordered_graphs.update(res.reorder_graphs())
 
     def add_graph_fields(self, graphs):
@@ -203,7 +203,7 @@ class GraphGeneratorPP(GraphGenerator):
             elif len(e) > 4:
                 bbrc_resources.append(e)
 
-        filtered = df.DataFilterPP(username, p['info'], project_id,
+        filtered = df.DataFilterPP(username, p, project_id,
                                    role, project_visible,
                                    resources)
 
@@ -212,7 +212,7 @@ class GraphGeneratorPP(GraphGenerator):
         self.role = role
         self.ordered_graphs = filtered.reorder_graphs_pp()
 
-        dfpp = dfb.DataFilterPP(p['info']['experiments'],
+        dfpp = dfb.DataFilterPP(p['experiments'],
                                 project_id, role,
                                 project_visible,
                                 bbrc_resources)

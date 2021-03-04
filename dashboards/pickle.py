@@ -118,10 +118,9 @@ def save(x, fp):
         print('Prior pickle found at %s. Backing up at %s.bak.' % (fp, fp))
         pickle.dump(p, open('%s.bak' % fp, 'wb'))
 
-    details = get_instance_details(x)
-
     resources = get_resources(x)
 
+    # Monitors
     res = ['FREESURFER6', 'FREESURFER6_HIRES', 'ASHS', 'BAMOS',
            'SPM12_SEGMENT']
     long_data = {}
@@ -145,9 +144,14 @@ def save(x, fp):
 
     resources2.extend(bbrc_resources)
 
+    details = get_instance_details(x)
+
     d = {'server': x._server,
          'verify': x._verify,
-         'info': details,
+         'projects': details['projects'],
+         'subjects': details['subjects'],
+         'experiments': details['experiments'],
+         'scans': details['scans'],
          'resources': resources2,
          #'extra_resources': bbrc_resources,
          'longitudinal_data': long_data}
@@ -156,21 +160,3 @@ def save(x, fp):
     # Save all the data to pickle
     pickle.dump(p, open(fp, 'wb'))
     print('Pickle file successfully saved at', fp)
-
-
-def load(server):
-    """Opens pickle file to be used the the dashboard
-    controller.
-
-    Args:
-        server (str): URL of the server where user is
-            is registered.
-
-    Returns:
-        dict/None: If server details are mistaching it returns
-        None else returns the details from pickle as a dict.
-    """
-
-
-
-    return user_data
