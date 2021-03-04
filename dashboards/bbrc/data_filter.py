@@ -1,4 +1,4 @@
-from dashboards.bbrc import data_formatter
+from dashboards.bbrc import data_formatter as dfo
 
 
 class DataFilter:
@@ -17,39 +17,21 @@ class DataFilter:
         resources_bbrc (list, optional): List of BBRC resources and by default
             it will be skipped and no graph of BBRC resources will be added.
     """
-    def __init__(
-            self, role, project_visible=[], resources_bbrc=None):
+    def __init__(self, role, project_visible, resources_bbrc):
 
-        self.formatter_object = data_formatter.Formatter()
-        if project_visible != []:
-            self.project_visible = project_visible[role]
-        else:
-            self.project_visible = []
-        self.filter_projects(resources_bbrc)
-
-    def filter_projects(self, resources_bbrc):
-        """
-        This is used to filter resources and bbrc resources
-        using project ids based on roles assigned to user.
-        Args:
-            resources_bbrc (list): list of bbrc resources
-        Returns:
-            dict: bbrc resources that belongs to the
-            project that should be visible as per role and user.
-        """
+        self.formatter_object = dfo.Formatter()
+        self.project_visible = project_visible
         self.resources_bbrc = {}
         resources_bbrc_list = []
 
         # Loop through each resources and resources bbrc and check its project
         # id present for the role or role containting *
 
-        if resources_bbrc is not None:
-
-            for resource in resources_bbrc:
-                project = resource[0]
-                if project not in self.project_visible\
-                        or "*" in self.project_visible:
-                    resources_bbrc_list.append(resource)
+        for resource in resources_bbrc:
+            project = resource[0]
+            if project not in self.project_visible\
+                    or "*" in self.project_visible:
+                resources_bbrc_list.append(resource)
 
         self.resources_bbrc = resources_bbrc_list
 
@@ -66,8 +48,7 @@ class DataFilter:
 
         ordered_graphs = {}
 
-        resources = data_formatter.Formatter().get_resource_details(
-            self.resources_bbrc)
+        resources = dfo.Formatter().get_resource_details(self.resources_bbrc)
         del resources['Version Distribution']
 
         if resources is not None and\
@@ -100,17 +81,11 @@ class DataFilterPP(DataFilter):
             it will be skipped and no graph of resources will be added.
     """
 
-    def __init__(
-            self,
-            experiments, project_id, role, project_visible=[],
-            resources_bbrc=None):
+    def __init__(self, experiments, project_id, role, project_visible,
+                 resources_bbrc=None):
 
-        self.formatter_object_per_project = data_formatter.Formatter()
-        if project_visible != []:
-            self.project_visible = project_visible[role]
-        else:
-            self.project_visible = []
-
+        self.formatter_object_per_project = dfo.Formatter()
+        self.project_visible = project_visible
         self.project_id = project_id
         self.resources_bbrc = resources_bbrc
 
@@ -152,8 +127,4 @@ class DataFilterPP(DataFilter):
 
         ordered_graphs.update({'test_grid': test_grid})
 
-        if self.project_id in self.project_visible\
-                or "*" in self.project_visible:
-            return ordered_graphs
-        else:
-            return None
+        return ordered_graphs

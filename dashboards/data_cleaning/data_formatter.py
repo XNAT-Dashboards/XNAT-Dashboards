@@ -210,8 +210,7 @@ class Formatter:
 
         return list_data
 
-    def get_resources_details(
-            self, resources=None, project_id=None):
+    def get_resources_details(self, resources, project_id=None):
         """Resource processing
 
         This method process the resources that are saved as in pickle file.
@@ -232,19 +231,14 @@ class Formatter:
             {"count": {"x": "y"}, "list": {"x": "list"}}
         """
 
-        if resources is None:
-            return None
-
-        df = pd.DataFrame(
-            resources,
-            columns=['project', 'session', 'resource', 'label'])
+        df = pd.DataFrame(resources,
+                          columns=['project', 'session', 'resource', 'label'])
 
         # Resource types
         resource_types = self.dict_generator_resources(df, 'label', 'session')
         resource_types['id_type'] = 'experiment'
 
-        resource_type_ps = self.dict_generator_resources(
-            df, 'label', 'session')
+        resource_type_ps = self.dict_generator_resources(df, 'label', 'session')
         resource_type_ps['id_type'] = 'experiment'
 
         # Code for number of experiments having common
@@ -252,8 +246,7 @@ class Formatter:
 
         pro_exp_list = [[item[0], item[1]] for item in resources]
 
-        pro_exp_df = pd.DataFrame(
-            pro_exp_list, columns=['project', 'session'])
+        pro_exp_df = pd.DataFrame(pro_exp_list, columns=['project', 'session'])
 
         # Create a Dataframe that have 3 columns where
         # 1st column: project_x will have projects

@@ -1,8 +1,8 @@
 # Import flask dependencies
-from flask import Blueprint, render_template, session,\
-    redirect, url_for
-from dashboards.data_cleaning import graph_generator
-from dashboards.app.dashboards import model
+from flask import Blueprint, render_template, session, redirect, url_for
+from dashboards.data_cleaning import graph_generator as gg
+import pickle
+from dashboards import config
 
 # Define the blueprint: 'dashboard', set its url prefix: app.url/dashboard
 dashboard = Blueprint('dashboard', __name__, url_prefix='/dashboard')
@@ -17,15 +17,11 @@ def logout():
         route: Redirect to login page.
     """
     # Delete session keys if exist
-    if 'username' in session:
-        del session['username']
-    if 'server' in session:
-        del session['server']
-    if 'project_visible' in session:
-        del session['project_visible']
-    if 'role_exist' in session:
-        del session['role_exist']
-
+    fields = ['username', 'server', 'project_visible', 'project_visible',
+              'role']
+    for e in fields:
+        if e in session:
+            del session[e]
     session['error'] = -1
 
     return redirect(url_for('auth.login'))
@@ -43,50 +39,26 @@ def stats():
     Returns:
         route: The jinja html templates to frontend
     """
-    # If server key doesn't exist return to login page
 
-    if 'server' not in session:
-        return redirect(url_for('auth.login'))
+    # Load pickle and check server
+    p = pickle.load(open(config.PICKLE_PATH, 'rb'))
+    if p['server'] != session['server']:
+        msg = 'Pickle does not match with current server (%s/%s)'\
+              % (p['server'], session['server'])
+        raise Exception(msg)
 
-    pickle_data = model.load_users_data(session['server'])
+    # Calling plot generator
+    plot = gg.GraphGenerator(session['username'], session['role'],
+                             p, session['project_visible'])
+    overview = plot.get_overview()
 
-    # Check if pickle data is of correct server
-    if pickle_data is not None:
-
-        # Calling plot generator
-        plotting_object = graph_generator.\
-            GraphGenerator(
-                session['username'],
-                session['role_exist'],
-                pickle_data,
-                session['project_visible'])
-
-        overview = plotting_object.get_overview()
-
-        project_lists = plotting_object.get_project_list()
-    else:
-        # If mismatch between login server url and pickle server url
-        # add error message in session
-        session['error'] = 'Wrong server url of pickle or data'
-        'not downloaded'
-
-    # If error message in session redirect to login page else render the data
-    if 'error' in session:
-        return redirect(url_for('auth.login'))
-
-    else:
-        project_list = project_lists[0]
-        graphs = overview[0]
-        stats = overview[1]
-
-        return render_template(
-            'dashboards/stats_dashboards.html',
-            graph_data=graphs,
-            project_list=project_list,
-            stats_data=stats,
-            username=session['username'].capitalize(),
-            server=session['server'],
-            db=True)
+    return render_template(
+        'dashboards/stats_dashboards.html',
+        graph_data=overview[0],
+        stats_data=overview[1],
+        project_list=plot.get_project_list(),
+        username=session['username'].capitalize(),
+        server=session['server'])
 
 
 # this route give the details of the project
@@ -100,33 +72,31 @@ def project(id):
     Returns:
         route: Project details
     """
-    if session['role_exist'] == '':
-        return redirect(url_for('auth.login'))
 
-    pickle_data = model.load_users_data(session['server'])
+    # Load pickle and check server
+    p = pickle.load(open(config.PICKLE_PATH, 'rb'))
+    if p['server'] != session['server']:
+        msg = 'Pickle does not match with current server (%s/%s)'\
+              % (p['server'], session['server'])
+        raise Exception(msg)
 
     # Get the details for plotting
-    per_project_view = graph_generator.GraphGeneratorPP(
-        session['username'], id, session['role_exist'],
-        pickle_data, session['project_visible']
-    ).get_project_view()
+    ggpp = gg.GraphGeneratorPP(session['username'], id,
+                               session['role'],
+                               p, session['project_visible'])
+    per_project_view = ggpp.get_project_view()
 
     # If no data found redirect to login page else render the data
     # with template
     if per_project_view is None:
-
         return render_template('dashboards/stats_dashboards.html')
-
-    graphs = per_project_view[0]
-    stats = per_project_view[1]
 
     return render_template(
         'dashboards/stats_dashboards_pp.html',
-        graph_data=graphs,
-        stats_data=stats,
+        graph_data=per_project_view[0],
+        stats_data=per_project_view[1],
         username=session['username'].capitalize(),
         server=session['server'],
-        db=True,
-        test_grid=per_project_view[3],
         data_array=per_project_view[2],
+        test_grid=per_project_view[3],
         id=id)

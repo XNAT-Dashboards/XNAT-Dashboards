@@ -225,9 +225,6 @@ class Formatter:
             list: Generates a list where each session have a all
             test details and version information
         """
-        if resources_bbrc is None:
-            return [[], []]
-
         tests_list = []
         extra = ['version', 'experiment_id', 'generated']
         tests_union = []

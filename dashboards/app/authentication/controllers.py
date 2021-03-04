@@ -1,7 +1,8 @@
 # Import flask dependencies
 from flask import Blueprint, render_template, session, request, redirect,\
     url_for
-from dashboards.app.authentication import model
+from dashboards import config as cfg
+import json
 
 
 # Define the blueprint: 'auth', set its url prefix: app.url/auth
@@ -27,7 +28,8 @@ def login():
 
     """
 
-    pickle_data = model.pickle_data()
+    import pickle
+    p = pickle.load(open(cfg.PICKLE_PATH, 'rb'))
 
     if request.method == 'GET':
 
@@ -51,46 +53,49 @@ def login():
 
     else:
 
-        # Fetch details from form
-
-        user_details = request.form
-
-        username = user_details['username']
-        password = user_details['password']
-        server_url = pickle_data['server']
-        ssl = pickle_data['verify']
-
+        form = request.form
+        username = form['username']
         # Check from API whether user exist in the XNAT instance
-        exists = model.user_exists(username, password, server_url, ssl)
+        import pyxnat
+        x = pyxnat.Interface(user=username,
+                             password=form['password'],
+                             server=p['server'],
+                             verify=p['verify'])
+        exists = len(x.select.projects().get()) != 0
 
-        if type(exists) == int:
+        if exists:
             # If exist check whether the XNAT instance is same
-            config = model.user_role_config(username)
+            config = json.load(open(cfg.DASHBOARD_CONFIG_PATH))
+            roles = config['roles']
 
-            # If same xnat instance check role assign to user
-            if config:
-                # If no role assigned to a user then guest is set
-                # as default role
-                if username in config['user roles']:
-                    session['role_exist'] = config['user roles'][username]
-                else:
-                    session['role_exist'] = 'guest'
-
-                # Add data to session
-                session['username'] = username
-                session['server'] = server_url
-                session['project_visible'] = config['project_visible']
-
-                # Redirect to dashboard
-                return redirect(url_for('dashboard.stats'))
-            else:
-
-                # User is forbiden to login
-                session['error'] = "User role assigned is "
-                "forbidden login not allowed"
+            if username in roles['forbidden']['users']:
+                # User is forbiden
+                session['error'] = 'User role assigned is '\
+                                   'forbidden login not allowed'
                 return redirect(url_for('auth.login'))
-        else:
 
+            role = []
+            for each in list(roles.keys()):
+                if username in roles[each]['users']:
+                    role.append(each)
+            if len(role) != 1:
+                raise Exception('%s exists in multiple roles' % str(role))
+            elif len(role) == 0:
+                role = 'guest'  # no role found, guest by default
+            else:
+                role = role[0]
+
+
+            # Add data to session
+            session['username'] = username
+            session['server'] = p['server']
+            session['role'] = role
+            session['project_visible'] = roles[role]['projects']
+
+            # Redirect to dashboard
+            return redirect(url_for('dashboard.stats'))
+
+        else:
             # Wrong password or username
-            session['error'] = "Wrong Password or Username"
+            session['error'] = 'Wrong Password or Username'
             return redirect(url_for('auth.login'))

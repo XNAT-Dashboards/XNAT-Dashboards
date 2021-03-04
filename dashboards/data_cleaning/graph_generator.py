@@ -1,6 +1,6 @@
 import json
-from dashboards.data_cleaning import data_filter
-from dashboards.bbrc import data_filter as data_filter_b
+from dashboards.data_cleaning import data_filter as df
+from dashboards.bbrc import data_filter as dfb
 from dashboards import config
 
 
@@ -32,28 +32,32 @@ class GraphGenerator:
     project_list = []
     l_data = {}
 
-    def __init__(
-            self, username, role, pickle_data, project_visible=[]):
-
-        self.filtered = data_filter.DataFilter(
-            username, pickle_data['info'],
-            role, project_visible, pickle_data['resources'], pickle_data['longitudinal_data'])
-
-        projects_data_dict = self.filtered.get_project_list()
+    def __init__(self, username, role, p, project_visible):
 
         self.counter_id = 0
         self.role = role
+
+        # resources, bbrc_resources = [], []
+        # for e in p['resources']:
+        #     if len(e) == 4:
+        #         resources.append(e)
+        #     elif len(e) > 4:
+        #         bbrc_resources.append(e)
+        resources = p['resources']
+        bbrc_resources = p['extra_resources']
+
+        self.filtered = df.DataFilter(username, p['info'],
+                                      role, project_visible,
+                                      resources,
+                                      p['longitudinal_data'])
+        projects_data_dict = self.filtered.get_project_list()
+        self.project_list = projects_data_dict['project_list']
+
         self.ordered_graphs = self.filtered.reorder_graphs()
 
         # Check whether extra resources are present in the pickle_data
-        if 'extra_resources' in pickle_data\
-                and pickle_data['extra_resources'] is not None:
-            self.ordered_graphs.update(
-                data_filter_b.DataFilter(
-                    role, project_visible,
-                    pickle_data['extra_resources']).reorder_graphs())
-
-        self.project_list = projects_data_dict['project_list']
+        res = dfb.DataFilter(role, project_visible, bbrc_resources)
+        self.ordered_graphs.update(res.reorder_graphs())
 
     def add_graph_fields(self, graphs):
         """It pre process the data received from DataFilter.
@@ -72,9 +76,9 @@ class GraphGenerator:
             dict: Data to frontend.
         """
 
-        # Opens the dashboard_config.json file
-        with open(config.DASHBOARD_CONFIG_PATH) as json_file:
-            self.graph_config = json.load(json_file)['graph_config']
+        # Load configuration
+        j = json.load(open(config.DASHBOARD_CONFIG_PATH))
+        self.graph_config = j['graph_config']
 
         if not isinstance(graphs, dict):
             return graphs
@@ -179,10 +183,10 @@ class GraphGenerator:
             project_list_2d (list): The id of project based in a 2dArray
             To be processed by frontend
         """
+        counter = 0
         length_check = 0
         project_list_2d = []
         project_list_1d = []
-        counter = 0
 
         # List of projects
         project_list = self.project_list
@@ -214,7 +218,7 @@ class GraphGenerator:
                 ]
         '''
 
-        return [project_list_2d]
+        return project_list_2d
 
 
 class GraphGeneratorPP(GraphGenerator):
@@ -239,31 +243,33 @@ class GraphGeneratorPP(GraphGenerator):
             visible to the user.
     """
 
-    def __init__(
-            self,
-            username,
-            project_id, role, pickle_data, project_visible=None):
+    def __init__(self, username, project_id, role, p, project_visible=None):
 
-        if 'resources' not in pickle_data:
-            pickle_data['resources'] = None
+        # resources, bbrc_resources = [], []
+        # for e in p['resources']:
+        #     if len(e) == 4:
+        #         resources.append(e)
+        #     elif len(e) > 4:
+        #         bbrc_resources.append(e)
+        resources = p['resources']
+        bbrc_resources = p['extra_resources']
 
-        filtered = data_filter.DataFilterPP(
-            username, pickle_data['info'], project_id, role, project_visible,
-            pickle_data['resources'])
+        filtered = df.DataFilterPP(username, p['info'], project_id,
+                                   role, project_visible,
+                                   resources)
 
         self.project_id = ''
         self.counter_id = 0
         self.role = role
         self.ordered_graphs = filtered.reorder_graphs_pp()
 
-        if 'extra_resources' in pickle_data and\
-                pickle_data['extra_resources'] is not None:
+        dfpp = dfb.DataFilterPP(p['info']['experiments'],
+                                project_id, role,
+                                project_visible,
+                                bbrc_resources)
+        dfpp = dfpp.reorder_graphs_pp()
 
-            self.ordered_graphs.update(
-                data_filter_b.DataFilterPP(
-                    pickle_data['info']['experiments'], project_id, role,
-                    project_visible,
-                    pickle_data['extra_resources']).reorder_graphs_pp())
+        self.ordered_graphs.update(dfpp)
 
     def get_project_view(self):
 
