@@ -3,6 +3,8 @@ from flask import Blueprint, render_template, session, request, redirect,\
     url_for
 from dashboards import config as cfg
 import json
+import pyxnat
+import pickle
 
 
 # Define the blueprint: 'auth', set its url prefix: app.url/auth
@@ -13,22 +15,6 @@ auth = Blueprint('auth', __name__, url_prefix='/auth')
 @auth.route('/login/', methods=['GET', 'POST'])
 def login():
 
-    """
-    This is the login route. Uses authentication model for checking
-    the user details.
-
-    User Exist function checks whether user exist on the XNAT instance.
-    If user exist we proceed further.
-    Then this checks user roles whether user role is assigned, If user
-    roles isn't assigned we set it as guest.
-
-    Returns:
-        route: It routes to dashboard if user details are correct
-        else reloads the page
-
-    """
-
-    import pickle
     p = pickle.load(open(cfg.PICKLE_PATH, 'rb'))
 
     if request.method == 'GET':
@@ -42,21 +28,18 @@ def login():
             else:
                 display_error = session['error']
                 del session['error']
-            return render_template(
-                'authentication/login.html',
-                error=display_error)
+            return render_template('authentication/login.html',
+                                   error=display_error)
         else:
             # If there is no error meaning the user is called login
             # page using browser instead of a redirect
-            return render_template(
-                'authentication/login.html')
+            return render_template('authentication/login.html')
 
     else:
 
         form = request.form
         username = form['username']
         # Check from API whether user exist in the XNAT instance
-        import pyxnat
         x = pyxnat.Interface(user=username,
                              password=form['password'],
                              server=p['server'],
@@ -70,8 +53,8 @@ def login():
 
             if username in roles['forbidden']['users']:
                 # User is forbiden
-                session['error'] = 'User role assigned is '\
-                                   'forbidden login not allowed'
+                msg = 'User role assigned is forbidden login not allowed'
+                session['error'] = msg
                 return redirect(url_for('auth.login'))
 
             role = []
@@ -85,12 +68,11 @@ def login():
             else:
                 role = role[0]
 
-
             # Add data to session
             session['username'] = username
             session['server'] = p['server']
             session['role'] = role
-            session['project_visible'] = roles[role]['projects']
+            session['projects'] = roles[role]['projects']
 
             # Redirect to dashboard
             return redirect(url_for('dashboard.stats'))

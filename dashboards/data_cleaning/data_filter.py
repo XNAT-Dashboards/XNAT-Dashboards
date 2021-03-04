@@ -1,4 +1,3 @@
-from dashboards.data_cleaning import data_formatter as dfo
 import pandas as pd
 import os.path as op
 from collections import OrderedDict
@@ -27,7 +26,6 @@ class DataFilter:
     def __init__(self, username, data, role, project_visible,
                  resources, longitudinal_data={}):
 
-        self.formatter_object = dfo.Formatter()
         self.project_visible = project_visible
         self.username = username
         self.longitudinal_data = longitudinal_data
@@ -606,8 +604,8 @@ class DataFilterPP(DataFilter):
     def __init__(self, username, data, project_id, role,
                  project_visible, resources=None):
 
-        self.formatter_object_per_project = dfo.FormatterPP(
-            project_id)
+        # self.formatter_object_per_project = dfo.FormatterPP(
+        #     project_id)
         self.project_id = project_id
         self.data = data
         self.project_visible = project_visible

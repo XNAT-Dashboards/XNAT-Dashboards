@@ -1,219 +1,111 @@
 {
   "roles": {
     "admin": {
-      "users": [
-        "testadmin",
-        "asif",
-        "mgarcia",
-        "mgarciabbrc",
-        "goperto"
-      ],
-      "projects": [
-        "*"
-      ]
+      "users": ["testadmin", "asif", "mgarcia", "mgarciabbrc", "goperto"],
+      "projects": ["*"]
     },
-    "superuser": {
-      "users": ["testuser"],
-      "projects": [
-        "*"
-      ]
-    },
-    "guest": {
-      "users": ["testguest"],
-      "projects": [
-        "*"
-      ]
-    },
-    "forbidden": {
-      "users": [
-        "noUser"
-      ]
-    }
+    "superuser": {"users": ["testuser"], "projects": ["*"]},
+    "guest": {"users": ["testguest"], "projects": ["*"]},
+    "forbidden": {"users": ["noUser"]}
   },
-  "graph_config": {
+  "graphs": {
     "Projects": {
       "type": "bar",
       "description": "Shows available projects (and their accessibility).",
-      "visibility": [
-        "admin",
-        "superuser",
-        "guest"
-      ],
+      "visibility": ["admin", "superuser", "guest"],
       "color": "#7394CB"
     },
     "Imaging sessions": {
       "type": "stacked_bar",
       "description": "Shows sessions per available project.",
-      "visibility": [
-        "admin",
-        "superuser",
-        "guest"
-      ],
-      "color": [
-        "#00cc99",
-        "#ff80ff"
-      ]
+      "visibility": ["admin", "superuser", "guest" ],
+      "color": ["#00cc99", "#ff80ff"]
     },
     "Subjects": {
       "type": "bar",
       "description": "Shows subjects per available project.",
-      "visibility": [
-        "admin",
-        "superuser"
-      ],
+      "visibility": ["admin", "superuser"],
       "color": "#f3cec9"
     },
     "Total amount of sessions": {
       "type": "bar",
       "description": "Shows the grand total of available imaging sessions.",
-      "visibility": [
-        "admin",
-        "superuser"
-      ],
+      "visibility": ["admin", "superuser"],
       "color": "#e60000"
     },
     "Scan quality": {
       "type": "pie",
       "description": "Shows proportions of scans marked as usable, unusable or questionable.",
-      "visibility": [
-        "admin",
-        "superuser"
-      ],
-      "color": [
-        "#cc0066",
-        "#cc66cc",
-        "#00ace6"
-      ]
+      "visibility": ["admin", "superuser"],
+      "color": ["#cc0066","#cc66cc", "#00ace6"]
     },
     "Scan Types": {
       "type": "bar",
       "description": "Shows the types of scans present in the project.",
-      "visibility": [
-        "admin",
-        "superuser"
-      ],
+      "visibility": ["admin", "superuser"],
       "color": "#ffdb4d"
     },
     "Resources per type": {
       "type": "bar",
       "description": "Shows numbers of resources per type.",
-      "visibility": [
-        "admin"
-      ],
+      "visibility": ["admin"],
       "color": "#FB9A99"
     },
     "Sessions with usable T1": {
       "type": "pie",
       "description": "\"Shows proportions of sessions including a T1-weighted scan marked as usable. The test HasUsableT1, which is part of the ArchivingValidator process (bbrc-validator), determines if the session has a usable T1-weighted scan suited for further processing. This test passes either if there is one unique and valid sequence labelled as T1 or if, in case of multiple matches, only one of them is labelled as `usable`. Fails otherwise.\n\n`No data` refers to sessions for which the test has not been completed.\n\"",
-      "visibility": [
-        "admin"
-      ],
-      "color": [
-        "#ff66ff",
-        "#70db70",
-        "#ffb84d"
-      ]
+      "visibility": ["admin"],
+      "color": ["#ff66ff", "#70db70", "#ffb84d"]
     },
     "Version Distribution": {
       "type": "pie",
       "description": "Different versions of Archiving validator for each session.",
-      "visibility": [
-        "admin"
-      ],
-      "color": [
-        "#54a0ff",
-        "#00b894"
-      ]
+      "visibility": ["admin"],
+      "color": ["#54a0ff", "#00b894"]
     },
     "BBRC validators": {
       "type": "stacked_bar",
       "description": "Shows the percentage of validators across all available sessions with BBRC validator resource.",
-      "visibility": [
-        "admin"
-      ],
-      "color": [
-        "#ff9900",
-        "#1abc9c"
-      ]
+      "visibility": ["admin"],
+      "color": ["#ff9900", "#1abc9c"]
     },
     "Is acquisition data consistent across the whole session?": {
       "type": "pie",
       "description": "\"Displays percentages of sessions showing the same acquisition date (should be the normal case). Relies on test 'IsAcquisitionDateConsistent' which is part of ArchivingValidator.\nA session is composed of a set of scans (images) acquired at specific timepoints, usually (but not mandatorily) all on the same day.\nThis test checks whether the date of an imaging session is consistent across its scans, comparing the session `date` attribute (XNAT) with the `AcquisitionDate` field from the headers of the first DICOM file in each scan.\nThis test passes if dates match between session and scans. Fails otherwise.\n\n`No data` refers to cases where this test has not been completed.\"",
-      "visibility": [
-        "admin"
-      ],
-      "color": [
-        "#2ecc71",
-        "#3498db",
-        "#9b59b6"
-      ]
+      "visibility": ["admin"],
+      "color": ["#2ecc71", "#3498db", "#9b59b6"]
     },
     "Dates difference (Acquisition date - Insertion date)": {
       "type": "bar",
       "description": "Difference between insertion dates and acquisition dates per session, if acquisition date present in session test.",
-      "visibility": [
-        "admin"
-      ],
+      "visibility": ["admin"],
       "color": "#66ffff"
     },
     "Sessions per subject": {
       "type": "pie",
       "description": "Shows numbers of sessions per subject (in proportions).",
-      "visibility": [
-        "admin",
-        "superuser"
-      ],
-      "color": [
-        "#ccccff",
-        "#ffa31a",
-        "#ffff33"
-      ]
+      "visibility": ["admin", "superuser"],
+      "color": ["#ccccff", "#ffa31a", "#ffff33"]
     },
     "Scans per session": {
       "type": "bar",
       "description": "Shows number of scans per session.",
-      "visibility": [
-        "admin",
-        "superuser"
-      ],
+      "visibility": ["admin", "superuser"],
       "color": "#666699"
     },
     "Resources per session": {
       "type": "stacked_bar",
       "description": "Shows numbers of resources per session per project.",
-      "visibility": [
-        "admin"
-      ],
-      "color": [
-        "#33cccc",
-        "#5cd65c",
-        "#ff9900",
-        "#c44dff",
-        "#ff1a1a",
-        "#66a3ff",
-        "#cc9900",
-        "#c2c2d6",
-        "#00ffff",
-        "#993333",
-        "#336600",
-        "#660066"
-      ]
+      "visibility": ["admin"],
+      "color": ["#33cccc", "#5cd65c", "#ff9900", "#c44dff", "#ff1a1a",
+                "#66a3ff", "#cc9900", "#c2c2d6", "#00ffff", "#993333",
+                "#336600", "#660066"]
     },
     "Resources (over time)": {
       "type": "line",
       "description": "Shows the grand total of resources - among various types - day after day.",
-      "visibility": [
-        "admin",
-        "superuser",
-        "guest"
-      ],
-      "color": [
-        "#ffff1a",
-        "#ff4dff",
-        "#33cc33",
-        "#0099ff",
-        "#ff9900"
-      ]
+      "visibility": ["admin", "superuser", "guest"],
+      "color": ["#ffff1a", "#ff4dff", "#33cc33", "#0099ff", "#ff9900"]
     }
   }
 }

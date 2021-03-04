@@ -17,8 +17,7 @@ def logout():
         route: Redirect to login page.
     """
     # Delete session keys if exist
-    fields = ['username', 'server', 'project_visible', 'project_visible',
-              'role']
+    fields = ['username', 'server', 'projects', 'role']
     for e in fields:
         if e in session:
             del session[e]
@@ -49,7 +48,7 @@ def stats():
 
     # Calling plot generator
     plot = gg.GraphGenerator(session['username'], session['role'],
-                             p, session['project_visible'])
+                             p, session['projects'])
     overview = plot.get_overview()
 
     return render_template(
@@ -83,7 +82,7 @@ def project(id):
     # Get the details for plotting
     ggpp = gg.GraphGeneratorPP(session['username'], id,
                                session['role'],
-                               p, session['project_visible'])
+                               p, session['projects'])
     per_project_view = ggpp.get_project_view()
 
     # If no data found redirect to login page else render the data

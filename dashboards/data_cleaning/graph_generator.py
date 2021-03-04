@@ -5,31 +5,7 @@ from dashboards import config
 
 
 class GraphGenerator:
-    """Class for making final changes in data.
 
-    This class makes final changes that are then sent to frontend.
-    Which is then displayed using jinja.
-
-    The final changes includes addition of:
-    1. id to graphs.
-    2. graph description from the dashboard config file.
-    3. graph type from the dashboard config file.
-    4. default color to graph.
-
-    Then the graph is formatted in a 2D array structure where each
-    row contains 2 columns these 2 columns are filled with graphs.
-
-    Args:
-        username (list): Name of the user
-        info (str): project, subject, experiment and scan details.
-        project_visible (list, optional): list of project that should be
-            visible to the user by default it will show no project details.
-        role (str): Role assigned to user.
-        data (dict): Dict containing data of projects, subjects, exp.,
-            scans, resources, extra_resources
-    """
-    pickle_data = {}
-    project_list = []
     l_data = {}
 
     def __init__(self, username, role, p, project_visible):
@@ -44,40 +20,21 @@ class GraphGenerator:
             elif len(e) > 4:
                 bbrc_resources.append(e)
 
-
         self.filtered = df.DataFilter(username, p['info'],
                                       role, project_visible,
                                       resources,
                                       p['longitudinal_data'])
-        projects_data_dict = self.filtered.get_project_list()
-        self.project_list = projects_data_dict['project_list']
-
+        projects = self.filtered.get_project_list()
+        self.projects = projects['project_list']
         self.ordered_graphs = self.filtered.reorder_graphs()
 
-        # Check whether extra resources are present in the pickle_data
-        res = dfb.DataFilter(role, project_visible, bbrc_resources)
+        res = dfb.BBRCDataFilter(role, project_visible, bbrc_resources)
         self.ordered_graphs.update(res.reorder_graphs())
 
     def add_graph_fields(self, graphs):
-        """It pre process the data received from DataFilter.
-
-        Graph field addition add data regarding graph type ie.
-        bar, pie etc, graph description, graph color, graph id.
-
-        It also skip graph that should not be visible to user
-        as per role.
-
-        Args:
-            data (dict): Data of graphs and information that are not plotted
-            like Number of subjects, experiment etc from DataFilter.
-
-        Returns:
-            dict: Data to frontend.
-        """
-
         # Load configuration
         j = json.load(open(config.DASHBOARD_CONFIG_PATH))
-        self.graph_config = j['graph_config']
+        self.graph_config = j['graphs']
 
         if not isinstance(graphs, dict):
             return graphs
@@ -85,14 +42,9 @@ class GraphGenerator:
         # non_graph that don't require plotting
         non_graph = ['Stats', 'test_grid', 'Project details']
 
-        # Loop through each dict values and if it need to be plotted as
-        # graph add the required details from dashboard config file
-
         for graph in graphs:
             # Skip if key is not a graph
-            if graph in non_graph or\
-                self.role\
-                    not in self.graph_config[graph]['visibility']:
+            if graph in non_graph or self.role not in self.graph_config[graph]['visibility']:
                 continue
 
             # Addition of graph id, js need distinct graph id for each
@@ -188,7 +140,7 @@ class GraphGenerator:
         project_list_1d = []
 
         # List of projects
-        project_list = self.project_list
+        project_list = self.projects
 
         if isinstance(project_list, int):
             return project_list
