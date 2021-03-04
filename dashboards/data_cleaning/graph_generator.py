@@ -6,29 +6,20 @@ from dashboards import config
 
 class GraphGenerator:
 
-    l_data = {}
-
     def __init__(self, username, role, p, projects):
 
         self.counter_id = 0
         self.role = role
 
-        resources, bbrc_resources = [], []
-        for e in p['resources']:
-            if len(e) == 4:
-                resources.append(e)
-            elif len(e) > 4:
-                bbrc_resources.append(e)
+        self.filtered = df.DataFilter(username, p, role, projects)
+        
+        #projects = self.filtered.get_projects_details_specific(self.filtered.data['projects'])
+        self.projects = [e['id'] for e in self.filtered.data['projects']]
 
-        self.filtered = df.DataFilter(username, p,
-                                      role, projects,
-                                      resources)
-        #projects = self.filtered.get_project_list()
-        projects = self.filtered.get_projects_details_specific(self.filtered.data['projects'])
-        self.projects = projects['project_list']
+        res = dfb.BBRCDataFilter(p['resources'], role, self.projects)
+
         self.ordered_graphs = self.filtered.reorder_graphs()
 
-        res = dfb.BBRCDataFilter(role, projects, bbrc_resources)
         self.ordered_graphs.update(res.reorder_graphs())
 
     def add_graph_fields(self, graphs):
@@ -196,26 +187,16 @@ class GraphGeneratorPP(GraphGenerator):
 
     def __init__(self, username, project_id, role, p, project_visible=None):
 
-        resources, bbrc_resources = [], []
-        for e in p['resources']:
-            if len(e) == 4:
-                resources.append(e)
-            elif len(e) > 4:
-                bbrc_resources.append(e)
-
-        filtered = df.DataFilterPP(username, p, project_id,
-                                   role, project_visible,
-                                   resources)
+        filtered = df.DataFilterPP(username, p, project_id, role, project_visible)
 
         self.project_id = ''
         self.counter_id = 0
         self.role = role
         self.ordered_graphs = filtered.reorder_graphs_pp()
 
-        dfpp = dfb.DataFilterPP(p['experiments'],
+        dfpp = dfb.DataFilterPP(p['resources'], p['experiments'],
                                 project_id, role,
-                                project_visible,
-                                bbrc_resources)
+                                project_visible)
         dfpp = dfpp.reorder_graphs_pp()
 
         self.ordered_graphs.update(dfpp)

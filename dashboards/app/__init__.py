@@ -13,7 +13,7 @@ app.config.from_object('dashboards.config')
 
 # Set the redirecting route for dashboard
 @app.route('/')
-def stats():
+def overview():
     return redirect(url_for('auth.login'))
 
 

@@ -26,8 +26,8 @@ def logout():
     return redirect(url_for('auth.login'))
 
 
-@dashboard.route('/stats/', methods=['GET'])
-def stats():
+@dashboard.route('/overview/', methods=['GET'])
+def overview():
     # Load pickle and check server
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
     if p['server'] != session['server']:

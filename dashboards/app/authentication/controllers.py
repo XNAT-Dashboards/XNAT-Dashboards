@@ -75,7 +75,7 @@ def login():
             session['projects'] = roles[role]['projects']
 
             # Redirect to dashboard
-            return redirect(url_for('dashboard.stats'))
+            return redirect(url_for('dashboard.overview'))
 
         else:
             # Wrong password or username

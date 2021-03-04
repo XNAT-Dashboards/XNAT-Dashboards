@@ -6,19 +6,19 @@ from datetime import date
 
 class BBRCDataFilter(df.DataFilter):
 
-    def __init__(self, role, project_visible, resources_bbrc):
+    def __init__(self, resources, role, project_visible):
+
+        self.resources_bbrc = [e for e in resources if len(e) > 4]
 
         self.project_visible = project_visible
-        self.resources_bbrc = {}
         resources_bbrc_list = []
 
         # Loop through each resources and resources bbrc and check its project
         # id present for the role or role containting *
 
-        for resource in resources_bbrc:
+        for resource in self.resources_bbrc:
             project = resource[0]
-            if project not in self.project_visible\
-                    or "*" in self.project_visible:
+            if project not in self.project_visible or "*" in self.project_visible:
                 resources_bbrc_list.append(resource)
 
         self.resources_bbrc = resources_bbrc_list
@@ -156,7 +156,7 @@ class BBRCDataFilter(df.DataFilter):
         df = df[df['Acq date'] != 'No Data']
 
         # if DataFrame empty
-        if df.empty == True:
+        if df.empty:
             return {'count': {}, 'list': {}}
 
         # Create a dataframe with columns as Session, AcqDate and InsertDate
@@ -282,13 +282,11 @@ class DataFilterPP(BBRCDataFilter):
             it will be skipped and no graph of resources will be added.
     """
 
-    def __init__(self, experiments, project_id, role, project_visible,
-                 resources_bbrc=None):
+    def __init__(self, resources, experiments, project_id, role, project_visible):
 
-        #self.formatter_object_per_project = dfo.Formatter()
         self.project_visible = project_visible
         self.project_id = project_id
-        self.resources_bbrc = resources_bbrc
+        self.resources_bbrc = [e for e in resources if len(e) > 4]
 
     def reorder_graphs_pp(self):
 
@@ -311,17 +309,14 @@ class DataFilterPP(BBRCDataFilter):
 
         ordered_graphs = {}
 
-        resources = self.get_resource_details(
-            self.resources_bbrc, self.project_id)
+        resources = self.get_resource_details(self.resources_bbrc, self.project_id)
 
-        test_grid = self.generate_test_grid_bbrc(
-            self.resources_bbrc, self.project_id)
+        test_grid = self.generate_test_grid_bbrc(self.resources_bbrc, self.project_id)
 
         if not isinstance(resources, int) and resources is not None:
             ordered_graphs.update(resources)
 
-        diff_dates = self.diff_dates(
-            self.resources_bbrc, self.project_id)
+        diff_dates = self.diff_dates(self.resources_bbrc, self.project_id)
 
         if diff_dates is not None and diff_dates['count'] != {}:
             ordered_graphs.update({'Dates difference (Acquisition date - Insertion date)': diff_dates})

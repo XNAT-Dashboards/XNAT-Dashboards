@@ -2,13 +2,11 @@ import pandas as pd
 import os.path as op
 from collections import OrderedDict
 import dashboards
-fp = op.join(op.dirname(dashboards.__file__), '..', 'whitelist.xlsx')
 
 
 class DataFilter:
 
-    def __init__(self, username, p, role, visible_projects,
-                 resources):
+    def __init__(self, username, p, role, visible_projects):
 
         self.visible_projects = visible_projects
         self.username = username
@@ -23,33 +21,23 @@ class DataFilter:
         subjects = [s for s in p['subjects'] if s['project'] in visible_projects
                     or "*" in visible_projects]
 
+        resources = [e for e in p['resources'] if len(e) == 4]
+
         self.data = {}
         self.data['projects'] = projects
         self.data['subjects'] = subjects
         self.data['experiments'] = experiments
         self.data['scans'] = scans
 
-        self.resources = {}
-        resources_list = []
+        filtered_resources = []
+        for r in resources:
+            project = r[0]
+            if project not in visible_projects or "*" in visible_projects:
+                filtered_resources.append(r)
 
-        if resources is not None:
-            for resource in resources:
-                project = resource[0]
-                if project not in visible_projects or "*" in visible_projects:
-                    resources_list.append(resource)
-
-        self.resources = resources_list
+        self.data['resources'] = filtered_resources
 
     def reorder_graphs(self):
-
-        """
-        This reorder the data as per requirements ie.
-        if needed user can reorder and then return the dict.
-
-        Returns:
-            dict: information belonging to the
-            project that should be visible as per role and user.
-        """
 
         stats = {}
         ordered_graphs = {}
@@ -58,32 +46,26 @@ class DataFilter:
         projects_details = self.get_projects_details(self.data['projects'])
         # If some error in connection 1 will be returned and we will
         # not go further
-        if not isinstance(projects_details, int):
-            stats['Projects'] = projects_details['Number of Projects']
-            del projects_details['Number of Projects']
-        else:
-            return projects_details
+        stats['Projects'] = projects_details['Number of Projects']
+        del projects_details['Number of Projects']
 
         # Pre processing for subject details required
         subjects_details = self.get_subjects_details(self.data['subjects'])
-        if subjects_details != 1:
-            stats['Subjects'] = subjects_details['Number of Subjects']
-            del subjects_details['Number of Subjects']
+        stats['Subjects'] = subjects_details['Number of Subjects']
+        del subjects_details['Number of Subjects']
 
         # Pre processing experiment details
         experiments_details = self.get_experiments_details(self.data['experiments'])
 
-        if experiments_details != 1:
-            stats['Experiments'] = experiments_details['Number of Experiments']
-            del experiments_details['Number of Experiments']
+        stats['Experiments'] = experiments_details['Number of Experiments']
+        del experiments_details['Number of Experiments']
 
         # Pre processing scans details
         scans_details = self.get_scans_details(self.data['scans'])
-        if scans_details != 1:
-            stats['Scans'] = scans_details['Number of Scans']
-            del scans_details['Number of Scans']
-            del scans_details['Scans per session']
-            del scans_details['Scan Types']
+        stats['Scans'] = scans_details['Number of Scans']
+        del scans_details['Number of Scans']
+        del scans_details['Scans per session']
+        del scans_details['Scan Types']
 
         stat_final = {'Stats': stats}
 
@@ -93,25 +75,13 @@ class DataFilter:
         ordered_graphs.update(scans_details)
         ordered_graphs.update(stat_final)
 
-        resources = self.get_resources_details(self.resources)
-
-        if resources is not None and\
-                not isinstance(resources, int) and self.resources != []:
-
-            ordered_graphs.update(resources)
+        resources = self.get_resources_details(self.data['resources'])
+        ordered_graphs.update(resources)
 
         l_data = self.get_longitudinal_data(self.longitudinal_data)
         ordered_graphs.update(l_data)
 
         return ordered_graphs
-
-    def get_project_list(self):
-        """This is used for creating project list
-
-        Returns:
-            list: List of projects
-        """
-        return self.get_projects_details_specific(self.data['projects'])
 
     def get_projects_details(self, projects):
         """Method to process all details related to project
@@ -167,8 +137,6 @@ class DataFilter:
             "count" represent the count for the x_value and "list" represent
             "Different values" for x_values
         """
-        if isinstance(subjects_data, int):
-            return subjects_data
 
         subjects_details = {}
 
@@ -204,8 +172,6 @@ class DataFilter:
             "count" represent the count for the x_value and "list" represent
             "Different values" for x_values
         """
-        if isinstance(experiments, int):
-            return experiments
 
         experiments_details = {}
 
@@ -254,62 +220,34 @@ class DataFilter:
             "count" represent the count for the x_value and "list" represent
             "Different values" for x_values
         """
-        if isinstance(scans, int):
-            return scans
 
-        scan_quality = self.dict_generator_overview(
-            scans, 'xnat:imagescandata/quality', 'ID',
-            'quality', 'xnat:imagescandata/id')
+        columns = ['xnat:imagescandata/quality', 'ID', 'quality',
+                   'xnat:imagescandata/id']
+        scan_quality = self.dict_generator_overview(scans, *columns)
         scan_quality['id_type'] = 'experiment'
 
         # Scans type information
+        fp = op.join(op.dirname(dashboards.__file__), '..', 'whitelist.xlsx')
         excel = pd.read_excel(fp, engine='openpyxl')
         whitelist = list(excel['scan_type'])
-        filtered_scans = []
-        for s in scans:
-            if s['xnat:imagescandata/type'] in whitelist:
-                filtered_scans.append(s)
 
-        type_dict = self.dict_generator_overview(
-            filtered_scans, 'xnat:imagescandata/type',
-            'ID', 'type', 'xnat:imagescandata/id')
+        filtered_scans = [s for s in scans if s['xnat:imagescandata/type'] in whitelist]
+
+        columns = ['xnat:imagescandata/type', 'ID', 'type',
+                   'xnat:imagescandata/id']
+        type_dict = self.dict_generator_overview(filtered_scans, *columns)
         type_dict['id_type'] = 'experiment'
 
-        prop_scan = self.proportion_graphs(
-            scans, 'ID',
-            'xnat:imagescandata/id', '', ' scans')
+        prop_scan = self.proportion_graphs(scans, 'ID',
+                                           'xnat:imagescandata/id',
+                                           '', ' scans')
         prop_scan['id_type'] = 'subject'
 
-        scans_details = {}
-
-        scans_details['Scan quality'] = scan_quality
-        scans_details['Scan Types'] = type_dict
-        scans_details['Scans per session'] = prop_scan
-        scans_details['Number of Scans'] = len(scans)
-
+        scans_details = {'Scan quality': scan_quality,
+                         'Scan Types': type_dict,
+                         'Scans per session': prop_scan,
+                         'Number of Scans': len(scans)}
         return scans_details
-
-    def get_projects_details_specific(self, projects):
-        """This project process list of all projects.
-
-        This generate list of projects that are visible to user
-
-        Args:
-            projects (list): List of projects with there details
-
-        Returns:
-            list: List of projects which are visible to user.
-        """
-
-        if projects is None:
-            return 1
-
-        project_list_all = [project['id'] for project in projects]
-
-        list_data = {}
-        list_data['project_list'] = project_list_all
-
-        return list_data
 
     def get_resources_details(self, resources, project_id=None):
         """Resource processing
@@ -342,9 +280,6 @@ class DataFilter:
             df, 'label', 'session')
         resource_type_ps['id_type'] = 'experiment'
 
-        # Code for number of experiments having common
-        # number of resources for each project
-
         pro_exp_list = [[item[0], item[1]] for item in resources]
 
         pro_exp_df = pd.DataFrame(
@@ -371,9 +306,8 @@ class DataFilter:
         ordered_ = {a: {str(c)+' Resources/Session': d for c, d in b.items()} for a, b in ordered.items()}
         resource_count_dict_ordered = {'count': ordered_, 'list': resource_count_dict['list']}
 
-        return {
-            'Resources per type': resource_types,
-            'Resources per session': resource_count_dict_ordered}
+        return {'Resources per type': resource_types,
+                'Resources per session': resource_count_dict_ordered}
 
     def get_longitudinal_data(self, l_data):
         return {'Resources (over time)': {'count': l_data}}
@@ -455,21 +389,18 @@ class DataFilter:
                 if extra is None:
                     property_list.append([item[property_x], item[property_y]])
                 else:
-                    property_list.append(
-                        [
-                            item[property_x],
-                            item[property_y] + '/' + item[extra]])
+                    i = [item[property_x],
+                         item[property_y] + '/' + item[extra]]
+                    property_list.append(i)
             else:
                 if extra is None:
                     property_none.append(item[property_y])
                 else:
                     property_none.append(item[property_y] + '/' + item[extra])
 
-        property_df = pd.DataFrame(
-            property_list, columns=[x_new, 'count'])
+        property_df = pd.DataFrame(property_list, columns=[x_new, 'count'])
 
-        property_df_series = property_df.groupby(
-            x_new)['count'].apply(list)
+        property_df_series = property_df.groupby(x_new)['count'].apply(list)
         property_final_df = property_df.groupby(x_new).count()
         property_final_df['list'] = property_df_series
         property_dict = property_final_df.to_dict()
@@ -507,8 +438,7 @@ class DataFilter:
 
         return per_view
 
-    def dict_generator_per_view_stacked(
-            self, data, property_x, property_y, property_z):
+    def dict_generator_per_view_stacked(self, data, property_x, property_y, property_z):
         """Generate dict format that is used by plotly for stacked graphs view,
         data like project details, scan, experiments, subject as field
 
@@ -525,19 +455,15 @@ class DataFilter:
             list:{prop_x:{prop_y:prop_z_list}}
             }
         """
+
+        per_df = data
+
         if isinstance(data, list):
+            per_list = [[item[property_x], item[property_y], item[property_z]] for item in data]
+            columns = [property_x, property_y, property_z]
+            per_df = pd.DataFrame(per_list, columns=columns)
 
-            per_list = [[
-                item[property_x], item[property_y],
-                item[property_z]] for item in data]
-
-            per_df = pd.DataFrame(
-                per_list, columns=[property_x, property_y, property_z])
-        else:
-            per_df = data
-
-        per_df_series = per_df.groupby(
-            [property_x, property_y])[property_z].apply(list)
+        per_df_series = per_df.groupby([property_x, property_y])[property_z].apply(list)
 
         per_df = per_df.groupby([property_x, property_y]).count()
         per_df['list'] = per_df_series
@@ -549,8 +475,8 @@ class DataFilter:
             dict_output_list[item[0]] = {}
 
         for item in dict_tupled['list']:
-            dict_output_list[
-                item[0]].update({item[1]: dict_tupled['list'][item]})
+            d = {item[1]: dict_tupled['list'][item]}
+            dict_output_list[item[0]].update(d)
 
         dict_output_count = {}
 
@@ -558,63 +484,22 @@ class DataFilter:
             dict_output_count[item[0]] = {}
 
         for item in dict_tupled[property_z]:
-            dict_output_count[
-                item[0]].update({item[1]: dict_tupled[property_z][item]})
+            d = {item[1]: dict_tupled[property_z][item]}
+            dict_output_count[item[0]].update(d)
 
         return {'count': dict_output_count, 'list': dict_output_list}
 
 
 class DataFilterPP(DataFilter):
-    """DataFilterPP processes the for per project view.
+    def __init__(self, username, p, project_id, role, project_visible):
 
-    It first checks whether the project should be
-    visible to users.
-    Then sends the data to data formatter which
-    format the data then ordering is done using the
-    DataFilterPP
-
-    Args:
-        DataFilter (DataFilter): It inherits DataFilter.
-        username (str): Username
-        data (list): list of project, subjects, exp., scans
-        project_id (str): ID of project in per project view.
-        role (str): role of the user.
-        project_visible (list): list of projects that is visible
-        resources (list, optional): List of resources and by default
-            it will be skipped and no graph of resources will be added.
-    """
-
-    def __init__(self, username, p, project_id, role,
-                 project_visible, resources=None):
-
-        # self.formatter_object_per_project = dfo.FormatterPP(
-        #     project_id)
         self.project_id = project_id
         self.data = p
         self.project_visible = project_visible
-        self.resources = resources
         self.username = username
         self.project_id = project_id
 
     def reorder_graphs_pp(self):
-
-        """
-        This preprocessor makes the dictionary with each key being
-        used to create plots or other frontend stats.
-
-        This checks which information to be sent to frontend per project
-        view.
-
-        return:
-            dict: Data each key and value pair represent a graph.
-            If the key and value doesn't represent a graph further
-            processing will be done.
-
-            {Graph1_name : { count:{x_axis_values: y_axis_values},
-                            list:{x_axis_values: y_list} },
-            Data_name: {other project view data to be sent to frontend}}
-        """
-
         stats = {}
         ordered_graphs = {}
 
@@ -667,46 +552,42 @@ class DataFilterPP(DataFilter):
         """
         # Returns data for per project view
 
-        project_dict = {}
+        details = {}
 
-        for project in projects:
+        for p in projects:
+            if p['id'] == self.project_id:
+                project_dict = p
 
-            if project['id'] == self.project_id:
-                project_dict = project
-
-        project_details = {}
-
-        project_details['Owner(s)'] = project_dict['project_owners']\
+        details['Owner(s)'] = project_dict['project_owners']\
             .split('<br/>')
 
-        project_details['Collaborator(s)'] = project_dict['project_collabs']\
+        details['Collaborator(s)'] = project_dict['project_collabs']\
             .split('<br/>')
-        if project_details['Collaborator(s)'][0] == '':
-            project_details['Collaborator(s)'] = ['------']
+        if details['Collaborator(s)'][0] == '':
+            details['Collaborator(s)'] = ['------']
 
-        project_details['member(s)'] = project_dict['project_members']\
+        details['member(s)'] = project_dict['project_members']\
             .split('<br/>')
-        if project_details['member(s)'][0] == '':
-            project_details['member(s)'] = ['------']
+        if details['member(s)'][0] == '':
+            details['member(s)'] = ['------']
 
-        project_details['user(s)'] = project_dict['project_users']\
+        details['user(s)'] = project_dict['project_users']\
             .split('<br/>')
-        if project_details['user(s)'][0] == '':
-            project_details['user(s)'] = ['------']
+        if details['user(s)'][0] == '':
+            details['user(s)'] = ['------']
 
-        project_details['last_accessed(s)'] =\
+        details['last_accessed(s)'] =\
             project_dict['project_last_access'].split('<br/>')
 
-        project_details['insert_user(s)'] = project_dict['insert_user']
+        details['insert_user(s)'] = project_dict['insert_user']
 
-        project_details['insert_date'] = project_dict['insert_date']
-        project_details['access'] = project_dict['project_access']
-        project_details['name'] = project_dict['name']
+        details['insert_date'] = project_dict['insert_date']
+        details['access'] = project_dict['project_access']
+        details['name'] = project_dict['name']
 
-        project_details['last_workflow'] =\
-            project_dict['project_last_workflow']
+        details['last_workflow'] = project_dict['project_last_workflow']
 
-        return project_details
+        return details
 
     def get_subjects_details(self, subjects):
         """Calls the parent class method for processing the subjects
@@ -720,18 +601,14 @@ class DataFilterPP(DataFilter):
             {"count": {"x": "y"}, "list": {"x": "list"}}
         """
         subjects_data = []
+        for s in subjects:
+            if s['project'] == self.project_id:
+                subjects_data.append(s)
 
-        for subject in subjects:
-            if subject['project'] == self.project_id:
-                subjects_data.append(subject)
+        details = super().get_subjects_details(subjects_data)
+        del details['Subjects']
 
-        # Using code from the parent class for processing
-        subjects_details = super().get_subjects_details(subjects_data)
-        # Delete Subject/Project plot as this is present in counter of
-        # per project view
-        del subjects_details['Subjects']
-
-        return subjects_details
+        return details
 
     def get_experiments_details(self, experiments_data):
         """Calls the parent class method for processing the experiment
@@ -746,17 +623,17 @@ class DataFilterPP(DataFilter):
         """
         experiments = []
 
-        for experiment in experiments_data:
-            if experiment['project'] == self.project_id:
-                experiments.append(experiment)
+        for e in experiments_data:
+            if e['project'] == self.project_id:
+                experiments.append(e)
 
         # Using code from the parent class for processing
-        experiments_details = super().get_experiments_details(experiments)
-        del experiments_details['Imaging sessions']
+        details = super().get_experiments_details(experiments)
+        del details['Imaging sessions']
 
-        return experiments_details
+        return details
 
-    def get_scans_details(self, scans_data):
+    def get_scans_details(self, scans):
         """Calls the parent class method for processing the scan
         details and removing extra information for per project view.
 
@@ -767,13 +644,7 @@ class DataFilterPP(DataFilter):
             dict: For each graph this format is used
             {"count": {"x": "y"}, "list": {"x": "list"}}
         """
-        scans = []
-
-        for scan in scans_data:
-            if scan['project'] == self.project_id:
-                scans.append(scan)
-
-        # Using code from the parent class for processing
+        scans = [s for s in scans if s['project'] == self.project_id]
         scans_details = super().get_scans_details(scans)
 
         return scans_details

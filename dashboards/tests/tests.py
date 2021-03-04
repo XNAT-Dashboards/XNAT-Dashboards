@@ -266,22 +266,21 @@ def test_013_get_get_longitudinal_data():
 #     assert len(test_grid) != 0
 
 
-def test_017_get_project_list():
-    p = pickle.load(open(config.PICKLE_PATH, 'rb'))
-    # bbrc_resources = p['extra_resources']
-    resources, bbrc_resources = [], []
-    for e in p['resources']:
-        if len(e) == 4:
-            resources.append(e)
-        elif len(e) > 4:
-            bbrc_resources.append(e)
-
-    filtered = dfi.DataFilter('testUser', p, 'admin', [], resources)
-    #projects = filtered.get_project_list()
-    projects = filtered.get_projects_details_specific(filtered.data['projects'])
-
-    assert isinstance(projects, dict)
-    assert isinstance(projects['project_list'], list)
+# def test_017_get_project_list():
+#     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
+#     # bbrc_resources = p['extra_resources']
+#     resources, bbrc_resources = [], []
+#     for e in p['resources']:
+#         if len(e) == 4:
+#             resources.append(e)
+#         elif len(e) > 4:
+#             bbrc_resources.append(e)
+#
+#     filtered = dfi.DataFilter('testUser', p, 'admin', [])
+#     projects = filtered.get_projects_details_specific(filtered.data['projects'])
+#
+#     assert isinstance(projects, dict)
+#     assert isinstance(projects['project_list'], list)
 
 
 def test_019_reorder_graphs():
@@ -294,7 +293,7 @@ def test_019_reorder_graphs():
         elif len(e) > 4:
             bbrc_resources.append(e)
 
-    filtered = dfi.DataFilter('testUser', p, 'admin', [], resources)
+    filtered = dfi.DataFilter('testUser', p, 'admin', [])
     ordered_graphs = filtered.reorder_graphs()
 
     assert isinstance(ordered_graphs, dict)
@@ -303,19 +302,12 @@ def test_019_reorder_graphs():
 
 def test_020_reorder_graphs_PP():
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
-    # bbrc_resources = p['extra_resources']
-    resources, bbrc_resources = [], []
-    for e in p['resources']:
-        if len(e) == 4:
-            resources.append(e)
-        elif len(e) > 4:
-            bbrc_resources.append(e)
 
     project = p['projects'][0]
     project_id = project['id']
     role = 'admin'
     filtered = dfi.DataFilterPP('testUser', p, project_id, role,
-                                {role: [project_id]}, resources)
+                                {role: [project_id]})
     ordered_graphs = filtered.reorder_graphs_pp()
     assert isinstance(ordered_graphs, dict)
     assert len(ordered_graphs) != 0
@@ -323,15 +315,8 @@ def test_020_reorder_graphs_PP():
 
 def test_022_reorder_graphs_bbrc():
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
-    # bbrc_resources = p['extra_resources']
-    resources, bbrc_resources = [], []
-    for e in p['resources']:
-        if len(e) == 4:
-            resources.append(e)
-        elif len(e) > 4:
-            bbrc_resources.append(e)
 
-    filtered = dfib.BBRCDataFilter('admin', [], bbrc_resources)
+    filtered = dfib.BBRCDataFilter(p['resources'], 'admin', [])
     ordered_graphs = filtered.reorder_graphs()
 
     assert isinstance(ordered_graphs, dict)
@@ -341,19 +326,13 @@ def test_022_reorder_graphs_bbrc():
 def test_023_reorder_graphs_bbrc_PP():
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
     # bbrc_resources = p['extra_resources']
-    resources, bbrc_resources = [], []
-    for e in p['resources']:
-        if len(e) == 4:
-            resources.append(e)
-        elif len(e) > 4:
-            bbrc_resources.append(e)
 
     experiments = p['experiments']
     project = p['projects'][0]
     project_id = project['id']
     role = 'admin'
-    filtered = dfib.DataFilterPP(experiments, project_id,
-                                     role, {role: [project_id]}, bbrc_resources)
+    filtered = dfib.DataFilterPP(p['resources'], experiments, project_id,
+                                 role, {role: [project_id]})
     ordered_graphs = filtered.reorder_graphs_pp()
     assert isinstance(ordered_graphs, dict)
     assert len(ordered_graphs) != 0
@@ -411,5 +390,5 @@ def test_028_stats():
             sess['username'] = 'testUser'
             sess['projects'] = []
 
-    response_get_stats = c.get('dashboard/stats/').status_code
+    response_get_stats = c.get('dashboard/overview/').status_code
     assert response_get_stats == 200
