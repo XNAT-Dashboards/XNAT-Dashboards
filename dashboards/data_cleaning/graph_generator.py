@@ -37,14 +37,13 @@ class GraphGenerator:
         self.counter_id = 0
         self.role = role
 
-        # resources, bbrc_resources = [], []
-        # for e in p['resources']:
-        #     if len(e) == 4:
-        #         resources.append(e)
-        #     elif len(e) > 4:
-        #         bbrc_resources.append(e)
-        resources = p['resources']
-        bbrc_resources = p['extra_resources']
+        resources, bbrc_resources = [], []
+        for e in p['resources']:
+            if len(e) == 4:
+                resources.append(e)
+            elif len(e) > 4:
+                bbrc_resources.append(e)
+
 
         self.filtered = df.DataFilter(username, p['info'],
                                       role, project_visible,
@@ -245,14 +244,12 @@ class GraphGeneratorPP(GraphGenerator):
 
     def __init__(self, username, project_id, role, p, project_visible=None):
 
-        # resources, bbrc_resources = [], []
-        # for e in p['resources']:
-        #     if len(e) == 4:
-        #         resources.append(e)
-        #     elif len(e) > 4:
-        #         bbrc_resources.append(e)
-        resources = p['resources']
-        bbrc_resources = p['extra_resources']
+        resources, bbrc_resources = [], []
+        for e in p['resources']:
+            if len(e) == 4:
+                resources.append(e)
+            elif len(e) > 4:
+                bbrc_resources.append(e)
 
         filtered = df.DataFilterPP(username, p['info'], project_id,
                                    role, project_visible,

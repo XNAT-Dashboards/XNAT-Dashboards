@@ -37,10 +37,9 @@ def test_001_pickle_save():  # should be run first
 
 
 def test_002_get_projects_details():
-    with open(config.PICKLE_PATH, 'rb') as handle:
-        data = pickle.load(handle)
+    p = pickle.load(open(config.PICKLE_PATH, 'rb'))
 
-    projects = data['info']['projects']
+    projects = p['info']['projects']
     project_details = dfo.Formatter().get_projects_details(projects)
 
     assert isinstance(project_details['Number of Projects'], int)
@@ -51,11 +50,10 @@ def test_002_get_projects_details():
 
 
 def test_003_get_projects_details_PP():
-    with open(config.PICKLE_PATH, 'rb') as handle:
-        data = pickle.load(handle)
+    p = pickle.load(open(config.PICKLE_PATH, 'rb'))
 
-    projects = data['info']['projects']
-    project = data['info']['projects'][0]
+    projects = p['info']['projects']
+    project = p['info']['projects'][0]
     project_id = project['id']
     project_details = dfo.FormatterPP(project_id).get_projects_details(projects)
 
@@ -72,10 +70,9 @@ def test_003_get_projects_details_PP():
 
 
 def test_004_get_projects_details_specific():
-    with open(config.PICKLE_PATH, 'rb') as handle:
-        data = pickle.load(handle)
+    p = pickle.load(open(config.PICKLE_PATH, 'rb'))
 
-    projects = data['info']['projects']
+    projects = p['info']['projects']
     project_details_specific = dfo.Formatter().get_projects_details_specific(projects)
 
     assert isinstance(project_details_specific, dict)
@@ -83,10 +80,9 @@ def test_004_get_projects_details_specific():
 
 
 def test_005_get_subjects_details():
-    with open(config.PICKLE_PATH, 'rb') as handle:
-        data = pickle.load(handle)
+    p = pickle.load(open(config.PICKLE_PATH, 'rb'))
 
-    subjects = data['info']['subjects']
+    subjects = p['info']['subjects']
     subject_details = dfo.Formatter().get_subjects_details(subjects)
 
     assert isinstance(subject_details['Number of Subjects'], int)
@@ -97,11 +93,10 @@ def test_005_get_subjects_details():
 
 
 def test_006_get_subjects_details_PP():
-    with open(config.PICKLE_PATH, 'rb') as handle:
-        data = pickle.load(handle)
+    p = pickle.load(open(config.PICKLE_PATH, 'rb'))
 
-    subjects = data['info']['subjects']
-    project = data['info']['projects'][0]
+    subjects = p['info']['subjects']
+    project = p['info']['projects'][0]
     project_id = project['id']
     subject_details = dfo.FormatterPP(project_id).get_subjects_details(subjects)
 
@@ -110,10 +105,9 @@ def test_006_get_subjects_details_PP():
 
 
 def test_007_get_experiments_details():
-    with open(config.PICKLE_PATH, 'rb') as handle:
-        data = pickle.load(handle)
+    p = pickle.load(open(config.PICKLE_PATH, 'rb'))
 
-    experiments = data['info']['experiments']
+    experiments = p['info']['experiments']
     experiments_details = dfo.Formatter().get_experiments_details(experiments)
 
     assert isinstance(experiments_details['Number of Experiments'], int)
@@ -124,11 +118,10 @@ def test_007_get_experiments_details():
 
 
 def test_008_get_experiments_details_PP():
-    with open(config.PICKLE_PATH, 'rb') as handle:
-        data = pickle.load(handle)
+    p = pickle.load(open(config.PICKLE_PATH, 'rb'))
 
-    experiments = data['info']['experiments']
-    project = data['info']['projects'][0]
+    experiments = p['info']['experiments']
+    project = p['info']['projects'][0]
     project_id = project['id']
     experiments_details = dfo.FormatterPP(project_id).get_experiments_details(experiments)
 
@@ -140,10 +133,16 @@ def test_008_get_experiments_details_PP():
 
 
 def test_009_get_scans_details():
-    with open(config.PICKLE_PATH, 'rb') as handle:
-        data = pickle.load(handle)
+    p = pickle.load(open(config.PICKLE_PATH, 'rb'))
+    # bbrc_resources = p['extra_resources']
+    resources, bbrc_resources = [], []
+    for e in p['resources']:
+        if len(e) == 4:
+            resources.append(e)
+        elif len(e) > 4:
+            bbrc_resources.append(e)
 
-    scans = data['info']['scans']
+    scans = p['info']['scans']
     scans_details = dfo.Formatter().get_scans_details(scans)
 
     assert isinstance(scans_details['Number of Scans'], int)
@@ -156,11 +155,10 @@ def test_009_get_scans_details():
 
 
 def test_010_get_scans_details_PP():
-    with open(config.PICKLE_PATH, 'rb') as handle:
-        data = pickle.load(handle)
+    p = pickle.load(open(config.PICKLE_PATH, 'rb'))
 
-    scans = data['info']['scans']
-    project = data['info']['projects'][0]
+    scans = p['info']['scans']
+    project = p['info']['projects'][0]
     project_id = project['id']
     scans_details = dfo.FormatterPP(project_id).get_scans_details(scans)
 
@@ -175,7 +173,13 @@ def test_010_get_scans_details_PP():
 
 def test_011_get_resources_details():
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
-    resources = p['resources']
+    # bbrc_resources = p['extra_resources']
+    resources, bbrc_resources = [], []
+    for e in p['resources']:
+        if len(e) == 4:
+            resources.append(e)
+        elif len(e) > 4:
+            bbrc_resources.append(e)
 
     resource_details = dfo.Formatter().get_resources_details(resources)
 
@@ -186,7 +190,13 @@ def test_011_get_resources_details():
 def test_012_get_resources_details_PP():
 
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
-    resources = p['resources']
+    # bbrc_resources = p['extra_resources']
+    resources, bbrc_resources = [], []
+    for e in p['resources']:
+        if len(e) == 4:
+            resources.append(e)
+        elif len(e) > 4:
+            bbrc_resources.append(e)
 
     project = p['info']['projects'][0]
     project_id = project['id']
@@ -197,9 +207,9 @@ def test_012_get_resources_details_PP():
 
 
 def test_013_get_get_longitudinal_data():
-    with open(config.PICKLE_PATH, 'rb') as handle:
-        data = pickle.load(handle)
-    long_data = data['longitudinal_data']
+    p = pickle.load(open(config.PICKLE_PATH, 'rb'))
+
+    long_data = p['longitudinal_data']
 
     assert isinstance(long_data, dict)
     assert len(long_data) != 0
@@ -207,7 +217,14 @@ def test_013_get_get_longitudinal_data():
 
 def test_014_get_bbrc_resource_details():
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
-    bbrc_resources = p['extra_resources']
+    # bbrc_resources = p['extra_resources']
+    resources, bbrc_resources = [], []
+    for e in p['resources']:
+        if len(e) == 4:
+            resources.append(e)
+        elif len(e) > 4:
+            bbrc_resources.append(e)
+
     resource_bbrc_details = dfo_bbrc.Formatter().get_resource_details(bbrc_resources)
 
     assert isinstance(resource_bbrc_details, dict)
@@ -216,7 +233,13 @@ def test_014_get_bbrc_resource_details():
 
 def test_015_diff_dates():
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
-    bbrc_resources = p['extra_resources']
+    # bbrc_resources = p['extra_resources']
+    resources, bbrc_resources = [], []
+    for e in p['resources']:
+        if len(e) == 4:
+            resources.append(e)
+        elif len(e) > 4:
+            bbrc_resources.append(e)
     #experiments = p['info']['experiments']
     project = p['info']['projects'][0]
     project_id = project['id']
@@ -229,7 +252,13 @@ def test_015_diff_dates():
 def test_016_generate_test_grid_bbrc():
 
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
-    bbrc_resources = p['extra_resources']
+    # bbrc_resources = p['extra_resources']
+    resources, bbrc_resources = [], []
+    for e in p['resources']:
+        if len(e) == 4:
+            resources.append(e)
+        elif len(e) > 4:
+            bbrc_resources.append(e)
 
     project = p['info']['projects'][0]
     project_id = project['id']
@@ -241,8 +270,15 @@ def test_016_generate_test_grid_bbrc():
 
 def test_017_get_project_list():
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
+    # bbrc_resources = p['extra_resources']
+    resources, bbrc_resources = [], []
+    for e in p['resources']:
+        if len(e) == 4:
+            resources.append(e)
+        elif len(e) > 4:
+            bbrc_resources.append(e)
     info = p['info']
-    resources = p['resources']
+
     filtered = dfi.DataFilter('testUser', info, 'admin', [], resources, {})
     projects = filtered.get_project_list()
 
@@ -252,10 +288,15 @@ def test_017_get_project_list():
 
 def test_019_reorder_graphs():
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
-    resources = p['resources']
-
-
+    # bbrc_resources = p['extra_resources']
+    resources, bbrc_resources = [], []
+    for e in p['resources']:
+        if len(e) == 4:
+            resources.append(e)
+        elif len(e) > 4:
+            bbrc_resources.append(e)
     info = p['info']
+
     filtered = dfi.DataFilter('testUser', info, 'admin', [], resources, {})
     ordered_graphs = filtered.reorder_graphs()
 
@@ -264,12 +305,17 @@ def test_019_reorder_graphs():
 
 
 def test_020_reorder_graphs_PP():
-    with open(config.PICKLE_PATH, 'rb') as handle:
-        data = pickle.load(handle)
+    p = pickle.load(open(config.PICKLE_PATH, 'rb'))
+    # bbrc_resources = p['extra_resources']
+    resources, bbrc_resources = [], []
+    for e in p['resources']:
+        if len(e) == 4:
+            resources.append(e)
+        elif len(e) > 4:
+            bbrc_resources.append(e)
 
-    info = data['info']
-    resources = data['resources']
-    project = data['info']['projects'][0]
+    info = p['info']
+    project = p['info']['projects'][0]
     project_id = project['id']
     role = 'admin'
     filtered = dfi.DataFilterPP('testUser', info, project_id, role,
@@ -281,7 +327,13 @@ def test_020_reorder_graphs_PP():
 
 def test_022_reorder_graphs_bbrc():
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
-    bbrc_resources = p['extra_resources']
+    # bbrc_resources = p['extra_resources']
+    resources, bbrc_resources = [], []
+    for e in p['resources']:
+        if len(e) == 4:
+            resources.append(e)
+        elif len(e) > 4:
+            bbrc_resources.append(e)
 
     filtered = dfi_bbrc.DataFilter('admin', [], bbrc_resources)
     ordered_graphs = filtered.reorder_graphs()
@@ -292,7 +344,13 @@ def test_022_reorder_graphs_bbrc():
 
 def test_023_reorder_graphs_bbrc_PP():
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
-    bbrc_resources = p['extra_resources']
+    # bbrc_resources = p['extra_resources']
+    resources, bbrc_resources = [], []
+    for e in p['resources']:
+        if len(e) == 4:
+            resources.append(e)
+        elif len(e) > 4:
+            bbrc_resources.append(e)
 
     experiments = p['info']['experiments']
     project = p['info']['projects'][0]
@@ -320,13 +378,12 @@ def test_024_get_overview():
 
 
 def test_025_get_project_view():
-    with open(config.PICKLE_PATH, 'rb') as handle:
-        data = pickle.load(handle)
+    p = pickle.load(open(config.PICKLE_PATH, 'rb'))
 
-    project = data['info']['projects'][0]
+    project = p['info']['projects'][0]
     project_id = project['id']
     role = 'admin'
-    graph_object = gg.GraphGeneratorPP(['testUser'], project_id, role, data,
+    graph_object = gg.GraphGeneratorPP(['testUser'], project_id, role, p,
                                        {role: [project_id]})
 
     graph_list = graph_object.get_project_view()
@@ -358,6 +415,5 @@ def test_028_stats():
             sess['username'] = 'testUser'
             sess['project_visible'] = []
 
-    response_get_stats = c. \
-        get('dashboard/stats/').status_code
+    response_get_stats = c.get('dashboard/stats/').status_code
     assert response_get_stats == 200

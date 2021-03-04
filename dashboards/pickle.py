@@ -143,11 +143,13 @@ def save(x, fp):
         resources2.append(e[:4])
         bbrc_resources.append([e[0], e[1], e[-3], e[-2], e[-1]])
 
+    resources2.extend(bbrc_resources)
+
     d = {'server': x._server,
          'verify': x._verify,
          'info': details,
          'resources': resources2,
-         'extra_resources': bbrc_resources,
+         #'extra_resources': bbrc_resources,
          'longitudinal_data': long_data}
     p.update(d)
 
