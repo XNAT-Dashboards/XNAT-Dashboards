@@ -10,22 +10,16 @@ class GraphGenerator:
 
         self.counter_id = 0
         self.filtered = filtered  # df.DataFilter(p, projects)
-        print('filtered', self.filtered.data['projects'])
-        self.projects = [e['id'] for e in self.filtered.data['projects']]
-
-        res = dfb.BBRCDataFilter(p['resources'], self.projects)
 
         self.ordered_graphs = self.filtered.reorder_graphs()
-
+        projects = [e['id'] for e in self.filtered.data['projects']]
+        res = dfb.BBRCDataFilter(p['resources'], projects)
         self.ordered_graphs.update(res.reorder_graphs())
 
     def add_graph_fields(self, graphs, role):
         # Load configuration
         j = json.load(open(config.DASHBOARD_CONFIG_PATH))
         self.graphs = j['graphs']
-
-        if not isinstance(graphs, dict):
-            return graphs
 
         # non_graph that don't require plotting
         non_graph = ['Stats', 'test_grid', 'Project details']
@@ -64,9 +58,6 @@ class GraphGenerator:
         counter = 0
 
         overview = self.add_graph_fields(self.ordered_graphs, role)
-
-        if isinstance(overview, int):
-            return overview
 
         for graph in overview:
             if graph == 'Stats' or role not in self.graphs[graph]['visibility']:
@@ -211,9 +202,8 @@ class GraphGeneratorPP(GraphGenerator):
             ]
         '''
 
-        graph_stats_data = [
-            graphs_2d_list, project_view['Stats'],
-            project_view['Project details']]
+        graph_stats_data = [graphs_2d_list, project_view['Stats'],
+                            project_view['Project details']]
 
         # Test grid is a specific dashboard for BBRC XNATs
         # not visible to normal xnat instance
