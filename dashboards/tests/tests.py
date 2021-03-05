@@ -286,12 +286,8 @@ def test_013_get_get_longitudinal_data():
 def test_019_reorder_graphs():
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
     # bbrc_resources = p['extra_resources']
-    resources, bbrc_resources = [], []
-    for e in p['resources']:
-        if len(e) == 4:
-            resources.append(e)
-        elif len(e) > 4:
-            bbrc_resources.append(e)
+    resources = [e for e in p['resources'] if len(e) == 4]
+    bbrc_resources = [e for e in p['resources'] if len(e) > 4]
 
     filtered = dfi.DataFilter(p, [])
     ordered_graphs = filtered.reorder_graphs()
@@ -355,8 +351,7 @@ def test_025_get_project_view():
     project = p['projects'][0]
     project_id = project['id']
     role = 'admin'
-    g = gg.GraphGeneratorPP(project_id, role, p,
-                                       {role: [project_id]})
+    g = gg.GraphGeneratorPP(project_id, role, p, {role: [project_id]})
 
     graph_list = g.get_project_view()
 

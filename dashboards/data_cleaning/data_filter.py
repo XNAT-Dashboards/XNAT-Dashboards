@@ -208,14 +208,14 @@ class DataFilter:
         return {'Resources per type': resource_types,
                 'Resources per session': resource_count_dict_ordered}
 
-    def proportion_graphs(self, data, property_x, property_y, prefix, suffix):
+    def proportion_graphs(self, data, x, y, prefix, suffix):
 
-        data_list = [[item[property_x], item[property_y]] for item in data]
+        data_list = [[item[x], item[y]] for item in data]
 
         # Create a data frame
         df = pd.DataFrame(data_list, columns=['per_view', 'count'])
 
-        # Group by property property_x as per_view and count
+        # Group by property x as per_view and count
         df_proportion = df.groupby(
             'per_view', as_index=False).count().groupby('count').count()
 
@@ -245,15 +245,14 @@ class DataFilter:
 
         return data_dict
 
-    def dict_generator_overview(
-            self, data, property_x, property_y, x_new, extra=None):
+    def dict_generator_overview(self, data, x, y, x_new, extra=None):
         """Generate a dictionary from the data list of project, subjects,
         experiments and scans in the format required for graphs.
 
         Args:
             data (list): List of projects or subjects or exp or scans
-            property_x (str): The name which will be on X axis of graph
-            property_y (str): The name which will be on Y axis of graph
+            x (str): The name which will be on X axis of graph
+            y (str): The name which will be on Y axis of graph
             x_new (str): The new name which will be shown on X axis of graph
             extra (str, optional): Add another value to be concatenated
                 in x_axis, when click on graph occurs. Useful when
@@ -269,49 +268,46 @@ class DataFilter:
         property_none = []
 
         for item in data:
-            if item[property_x] != '':
-                if extra is None:
-                    property_list.append([item[property_x], item[property_y]])
-                else:
-                    i = [item[property_x],
-                         item[property_y] + '/' + item[extra]]
-                    property_list.append(i)
+            if item[x] != '':
+                i = [item[x], item[y]]
+                if extra is not None:
+                    i[1] += item[extra]
+                property_list.append(i)
             else:
-                if extra is None:
-                    property_none.append(item[property_y])
-                else:
-                    property_none.append(item[property_y] + '/' + item[extra])
+                i = item[y]
+                if extra is not None:
+                    i += '/' + item[extra]
+                property_none.append(i)
 
         property_df = pd.DataFrame(property_list, columns=[x_new, 'count'])
 
         property_df_series = property_df.groupby(x_new)['count'].apply(list)
         property_final_df = property_df.groupby(x_new).count()
         property_final_df['list'] = property_df_series
-        property_dict = property_final_df.to_dict()
+        d = property_final_df.to_dict()
 
         if len(property_none) != 0:
-            property_dict['count'].update({'No Data': len(property_none)})
-            property_dict['list'].update({'No Data': property_none})
+            d['count'].update({'No Data': len(property_none)})
+            d['list'].update({'No Data': property_none})
 
-        return property_dict
+        return d
 
-    def dict_generator_per_view(
-            self, data, property_x, property_y, x_new):
+    def dict_generator_per_view(self, data, x, y, x_new):
         """Generate a dictionary from the data list of subjects,
         experiments and scans in the format required for graphs.
         The generated data is only for single project.
 
         Args:
             data (list): List of projects or subjects or exp or scans
-            property_x (str): The name which will be on X axis of graph
-            property_y (str): The name which will be on Y axis of graph
+            x (str): The name which will be on X axis of graph
+            y (str): The name which will be on Y axis of graph
             x_new (str): The new name which will be shown on X axis of graph
 
         Returns:
              Dict: For each graph this format is used
                 {"count": {"x": "y"}, "list": {"x": "list"}}
         """
-        per_list = [[item[property_x], item[property_y]] for item in data]
+        per_list = [[item[x], item[y]] for item in data]
 
         per_df = pd.DataFrame(per_list, columns=[x_new, 'count'])
         per_df_series = per_df.groupby(x_new)['count'].apply(list)
@@ -322,17 +318,17 @@ class DataFilter:
 
         return per_view
 
-    def dict_generator_per_view_stacked(self, data, property_x, property_y, property_z):
+    def dict_generator_per_view_stacked(self, data, x, y, z):
         """Generate dict format that is used by plotly for stacked graphs view,
         data like project details, scan, experiments, subject as field
 
-        property_x and property_y are used to group by the pandas data frame
-        and both are used on x axis values while property_z is used on y axis.
+        x and y are used to group by the pandas data frame
+        and both are used on x axis values while z is used on y axis.
         Args:
             data (list): List of data project, subject, scan and experiments
-            property_x (str): The name which will be on X axis of graph
-            property_y (str): The name which will be on X axis of graph
-            property_z (str): The name which will be on Y axis of graph
+            x (str): The name which will be on X axis of graph
+            y (str): The name which will be on X axis of graph
+            z (str): The name which will be on Y axis of graph
 
         Returns:
             dict:{count:{prop_x:{prop_y:prop_z_count}},
@@ -343,13 +339,13 @@ class DataFilter:
         per_df = data
 
         if isinstance(data, list):
-            per_list = [[item[property_x], item[property_y], item[property_z]] for item in data]
-            columns = [property_x, property_y, property_z]
+            per_list = [[item[x], item[y], item[z]] for item in data]
+            columns = [x, y, z]
             per_df = pd.DataFrame(per_list, columns=columns)
 
-        per_df_series = per_df.groupby([property_x, property_y])[property_z].apply(list)
+        per_df_series = per_df.groupby([x, y])[z].apply(list)
 
-        per_df = per_df.groupby([property_x, property_y]).count()
+        per_df = per_df.groupby([x, y]).count()
         per_df['list'] = per_df_series
 
         dict_tupled = per_df.to_dict()
@@ -364,11 +360,11 @@ class DataFilter:
 
         dict_output_count = {}
 
-        for item in dict_tupled[property_z]:
+        for item in dict_tupled[z]:
             dict_output_count[item[0]] = {}
 
-        for item in dict_tupled[property_z]:
-            d = {item[1]: dict_tupled[property_z][item]}
+        for item in dict_tupled[z]:
+            d = {item[1]: dict_tupled[z][item]}
             dict_output_count[item[0]].update(d)
 
         return {'count': dict_output_count, 'list': dict_output_list}
