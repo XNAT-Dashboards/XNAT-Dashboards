@@ -9,7 +9,6 @@ class BBRCDataFilter(df.DataFilter):
     def __init__(self, resources, visible_projects):
 
         bbrc_resources = []
-
         for r in [e for e in resources if len(e) > 4]:
             project = r[0]
             if project not in visible_projects or "*" in visible_projects:
@@ -20,61 +19,60 @@ class BBRCDataFilter(df.DataFilter):
     def reorder_graphs(self):
 
         ordered_graphs = {}
-
         resources = self.get_resource_details(self.resources_bbrc)
         del resources['Version Distribution']
 
         ordered_graphs.update(resources)
-
         return ordered_graphs
 
     def generate_resource_df(self, resources_bbrc, test, value):
 
         resource_processing = []
         for resource in resources_bbrc:
-            project, exp_id, archiving_validator, bbrc_validators, insert_date = resource
+            project, exp_id, archiving_validator, bv, insert_date = resource
             if archiving_validator != 0:
                 if test in archiving_validator:
-                    resource_processing.append([
-                        project, exp_id, 'Exists',
-                        archiving_validator['version'], archiving_validator[test][value], bbrc_validators, insert_date])
+                    item = [project, exp_id, 'Exists',
+                            archiving_validator['version'],
+                            archiving_validator[test][value],
+                            bv, insert_date]
+                    resource_processing.append(item)
                 else:
-                    resource_processing.append([
-                        project, exp_id, 'Exists',
-                        archiving_validator['version'], 'No Data', bbrc_validators, insert_date])
+                    item = [project, exp_id, 'Exists',
+                            archiving_validator['version'], 'No Data',
+                            bv, insert_date]
+                    resource_processing.append(item)
             else:
-                resource_processing.append([
-                    project, exp_id, 'Missing',
-                    'No Data', 'No Data', bbrc_validators, insert_date])
+                item = [project, exp_id, 'Missing', 'No Data', 'No Data',
+                        bv, insert_date]
+                resource_processing.append(item)
 
         # Creates the dataframe from the list created
-        df = pd.DataFrame(
-            resource_processing,
-            columns=[
-                'Project', 'Session', 'Archiving Valid',
-                'version', test, 'BBRC_Validators', 'Insert date'])
-
+        columns = ['Project', 'Session', 'Archiving Valid', 'version', test,
+                   'BBRC_Validators', 'Insert date']
+        df = pd.DataFrame(resource_processing, columns=columns)
         return df
 
     def generate_bbrc_validators_dict(self, df):
 
-        bbrc_validators = {'count': {}, 'list': {}}
-        series = pd.Series([x for _list in df['BBRC_Validators'] for x in _list])
+        bv = {'count': {}, 'list': {}}
+        series = pd.Series([x for e in df['BBRC_Validators'] for x in e])
         series_dict = (series.value_counts()).to_dict()
         for k, v in series_dict.items():
-            bbrc_validators['count'][k] = {}
-            bbrc_validators['count'][k]['Sessions with Validator'] = v
+            bv['count'][k] = {}
+            bv['count'][k]['Sessions with Validator'] = v
             list_ = df[pd.DataFrame(df.BBRC_Validators.tolist()).isin([k]).any(1).values]
             ses = pd.Series([x for x in list_['Session']])
-            bbrc_validators['list'][k] = {}
-            bbrc_validators['list'][k]['Sessions with Validator'] = list(ses)
+            bv['list'][k] = {}
+            bv['list'][k]['Sessions with Validator'] = list(ses)
             missing_ses = []
             for s in df['Session']:
                 if s not in list(ses):
                     missing_ses.append(s)
-            bbrc_validators['count'][k]['Sessions without Validator'] = len(missing_ses)
-            bbrc_validators['list'][k]['Sessions without Validator'] = missing_ses
-        return bbrc_validators
+            bv['count'][k]['Sessions without Validator'] = len(missing_ses)
+            bv['list'][k]['Sessions without Validator'] = missing_ses
+
+        return bv
 
     def get_resource_details(self, resources_bbrc, project_id=None):
 
@@ -88,13 +86,9 @@ class BBRCDataFilter(df.DataFilter):
         df = pd.DataFrame(resources_bbrc, columns=columns)
 
         if project_id is not None:
-
-            try:
-                df_usable_t1 = df_usable_t1.groupby('Project').get_group(project_id)
-                df_con_acq_date = df_con_acq_date.groupby('Project').get_group(project_id)
-                df = df.groupby('Project').get_group(project_id)
-            except KeyError:
-                return -1
+            df_usable_t1 = df_usable_t1.groupby('Project').get_group(project_id)
+            df_con_acq_date = df_con_acq_date.groupby('Project').get_group(project_id)
+            df = df.groupby('Project').get_group(project_id)
 
         # Usable t1
         usable_t1 = self.dict_generator_resources(
@@ -112,10 +106,10 @@ class BBRCDataFilter(df.DataFilter):
         version['id_type'] = 'experiment'
 
         # BBRC Validators
-        bbrc_validators = self.generate_bbrc_validators_dict(df)
+        bv = self.generate_bbrc_validators_dict(df)
 
         return {'Sessions with usable T1': usable_t1,
-                'Version Distribution': version, 'BBRC validators': bbrc_validators,
+                'Version Distribution': version, 'BBRC validators': bv,
                 'Is acquisition data consistent across the whole session?': consistent_acq_date}
 
     def diff_dates(self, resources_bbrc, project_id):
@@ -135,13 +129,15 @@ class BBRCDataFilter(df.DataFilter):
 
         # Drop experiments with No Date information
         dates_acq_list = []
-        dates_acq_dict = df[
-            ['IsAcquisitionDateConsistent']].to_dict()['IsAcquisitionDateConsistent']
-        for date in dates_acq_dict:
-            if 'session_date' in dates_acq_dict[date]:
-                dates_acq_list.append(dates_acq_dict[date]['session_date'])
+        dates_acq_dict = df[['IsAcquisitionDateConsistent']].to_dict()['IsAcquisitionDateConsistent']
+
+        for d in dates_acq_dict:
+            if 'session_date' in dates_acq_dict[d]:
+                dates_acq_list.append(dates_acq_dict[d]['session_date'])
             else:
-                log.warning('Invalid IsAcquisitionDateConsistent value {}'.format(dates_acq_dict[date]))
+                dd = dates_acq_dict[d]
+                msg = 'Invalid IsAcquisitionDateConsistent value {}'.format(dd)
+                log.warning(msg)
                 dates_acq_list.append('No Data')
         df['Acq date'] = dates_acq_list
         df = df[df['Acq date'] != 'No Data']
@@ -186,9 +182,9 @@ class BBRCDataFilter(df.DataFilter):
         date_1_l = list(map(int, date_1.split('-')))
         date_2_l = list(map(int, date_2.split('-')))
 
-        diff = date(
-            date_1_l[0], date_1_l[1], date_1_l[2]) \
-               - date(date_2_l[0], date_2_l[1], date_2_l[2])
+        d1 = date(date_1_l[0], date_1_l[1], date_1_l[2])
+        d2 = date(date_2_l[0], date_2_l[1], date_2_l[2])
+        diff = d1 - d2
 
         return abs(diff.days)
 
@@ -210,8 +206,8 @@ class BBRCDataFilter(df.DataFilter):
         # Creates a tests_unions list which has all tests union
         # except the values present in extra list
         for resource in resources_bbrc:
-            project, exp_id, archiving_validator, bbrc_validators, insert_date = resource
-            if bbrc_validators and not isinstance(archiving_validator, int):
+            project, exp_id, archiving_validator, bv, insert_date = resource
+            if bv and not isinstance(archiving_validator, int):
 
                 for test in archiving_validator:
                     if test not in tests_union \
@@ -222,8 +218,8 @@ class BBRCDataFilter(df.DataFilter):
         # If bbrc_validator exists then further proceed
         # for archiving_validator which is a dict of tests
         for resource in resources_bbrc:
-            project, exp_id, archiving_validator, bbrc_validators, insert_date = resource
-            if bbrc_validators and not isinstance(archiving_validator, int):
+            project, exp_id, archiving_validator, bv, insert_date = resource
+            if bv and not isinstance(archiving_validator, int):
                 test_list = [exp_id, ['version', archiving_validator['version']]]
 
                 # Loop through each test if exists then add the details
@@ -252,27 +248,6 @@ class BBRCDataFilter(df.DataFilter):
 
 
 class DataFilterPP(BBRCDataFilter):
-    """DataFilterPP processes the for per project view.
-
-    It first checks whether the project should be
-    visible to users.
-    if it should be visible then further proceed else return
-    None.
-    Then sends the data to data formatter which
-    format the data then ordering is done using the
-    DataFilterPP
-
-    Args:
-        DataFilter (DataFilter): It inherits DataFilter.
-        experiments (list): List of experiments present in project.
-        project_id (str): ID of project in per project view.
-        role (str): role of the user.
-        project_visible (list): list of projects that is visible
-        resources_bbrc (list, optional): List of bbrc resources
-            and Default as None and by default
-            it will be skipped and no graph of resources will be added.
-    """
-
     def __init__(self, resources, project_id):
 
         self.project_id = project_id
@@ -280,37 +255,19 @@ class DataFilterPP(BBRCDataFilter):
 
     def reorder_graphs_pp(self):
 
-        """
-        This preprocessor makes the dictionary with each key being
-        used to create plots or other frontend stats.
-
-        This checks which information to be sent to frontend per project
-        view.
-
-        return:
-            dict: Data each key and value pair represent a graph.
-            If the key and value doesn't represent a graph further
-            processing will be done.
-
-            {Graph1_name : { count:{x_axis_values: y_axis_values},
-                            list:{x_axis_values: y_list} },
-            Data_name: {other information to be sent to frontend}}
-        """
-
         ordered_graphs = {}
 
-        resources = self.get_resource_details(self.resources_bbrc, self.project_id)
+        resources = self.get_resource_details(self.resources_bbrc,
+                                              self.project_id)
+        ordered_graphs.update(resources)
 
-        test_grid = self.generate_test_grid_bbrc(self.resources_bbrc, self.project_id)
-
-        if not isinstance(resources, int) and resources is not None:
-            ordered_graphs.update(resources)
-
-        diff_dates = self.diff_dates(self.resources_bbrc, self.project_id)
-
-        if diff_dates is not None and diff_dates['count'] != {}:
-            ordered_graphs.update({'Dates difference (Acquisition date - Insertion date)': diff_dates})
+        test_grid = self.generate_test_grid_bbrc(self.resources_bbrc,
+                                                 self.project_id)
 
         ordered_graphs.update({'test_grid': test_grid})
+
+        dd = self.diff_dates(self.resources_bbrc, self.project_id)
+        d = {'Dates difference (Acquisition date - Insertion date)': dd}
+        ordered_graphs.update(d)
 
         return ordered_graphs

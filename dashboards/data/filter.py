@@ -1,14 +1,12 @@
-import pandas as pd
+import json
 import os.path as op
 from collections import OrderedDict
 import dashboards
+import pandas as pd
 
 
 class DataFilter:
-
     def __init__(self, p, visible_projects):
-
-
         projects = [pr for pr in p['projects'] if pr['id'] in visible_projects
                     or "*" in visible_projects]
         experiments = [e for e in p['experiments'] if e['project'] in visible_projects
@@ -31,6 +29,7 @@ class DataFilter:
 
         self.data['longitudinal_data'] = p['longitudinal_data']
         self.data['resources'] = fr
+
 
     def reorder_graphs(self):
 
@@ -137,16 +136,15 @@ class DataFilter:
 
     def get_scans_details(self, scans):
 
-
         columns = ['xnat:imagescandata/quality', 'ID', 'quality',
                    'xnat:imagescandata/id']
         scan_quality = self.dict_generator_overview(scans, *columns)
         scan_quality['id_type'] = 'experiment'
 
         # Scans type information
-        fp = op.join(op.dirname(dashboards.__file__), '..', 'whitelist.xlsx')
-        excel = pd.read_excel(fp, engine='openpyxl')
-        whitelist = list(excel['scan_type'])
+        fp = op.join(op.dirname(dashboards.__file__), '..', 'data',
+                     'whitelist.json')
+        whitelist = json.load(open(fp))
 
         filtered_scans = [s for s in scans if s['xnat:imagescandata/type'] in whitelist]
 
@@ -175,14 +173,12 @@ class DataFilter:
         resource_types = self.dict_generator_resources(df, 'label', 'session')
         resource_types['id_type'] = 'experiment'
 
-        resource_type_ps = self.dict_generator_resources(
-            df, 'label', 'session')
+        resource_type_ps = self.dict_generator_resources(df, 'label', 'session')
         resource_type_ps['id_type'] = 'experiment'
 
         pro_exp_list = [[item[0], item[1]] for item in resources]
 
-        pro_exp_df = pd.DataFrame(
-            pro_exp_list, columns=['project', 'session'])
+        pro_exp_df = pd.DataFrame(pro_exp_list, columns=['project', 'session'])
 
         # Create a Dataframe that have 3 columns where
         # 1st column: project_x will have projects
@@ -201,7 +197,8 @@ class DataFilter:
         resource_count_dict = self.dict_generator_per_view_stacked(
             resource_count_df, 'project_x', 'project_y', 'session')
         resource_count_dict['id_type'] = 'experiment'
-        ordered = OrderedDict(sorted(resource_count_dict['count'].items(), key=lambda x: len(x[0]), reverse=True))
+        ordered = OrderedDict(sorted(resource_count_dict['count'].items(),
+                                     key=lambda x: len(x[0]), reverse=True))
         ordered_ = {a: {str(c)+' Resources/Session': d for c, d in b.items()} for a, b in ordered.items()}
         resource_count_dict_ordered = {'count': ordered_, 'list': resource_count_dict['list']}
 
