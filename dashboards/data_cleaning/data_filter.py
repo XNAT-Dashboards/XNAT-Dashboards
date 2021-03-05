@@ -390,7 +390,6 @@ class DataFilterPP(DataFilter):
 
     def reorder_graphs_pp(self, p, project_id):
         stats = {}
-        ordered_graphs = {}
 
         # Preprocessing required in project data for number of projects
         pd = self.get_projects_details(p['projects'], project_id)
@@ -417,6 +416,7 @@ class DataFilterPP(DataFilter):
         del scd['Number of Scans']
 
         stat_final = {'Stats': stats}
+        ordered_graphs = {}
 
         ordered_graphs.update({'Project details': pd})
         ordered_graphs.update(sd)
@@ -456,25 +456,15 @@ class DataFilterPP(DataFilter):
         return res
 
     def get_subjects_details(self, subjects, project_id):
-        subjects_data = []
-        for s in subjects:
-            if s['project'] == project_id:
-                subjects_data.append(s)
-
-        details = super().get_subjects_details(subjects_data)
+        d = [s for s in subjects if s['project'] == project_id]
+        details = super().get_subjects_details(d)
         del details['Subjects']
 
         return details
 
-    def get_experiments_details(self, experiments_data, project_id):
-        experiments = []
-
-        for e in experiments_data:
-            if e['project'] == project_id:
-                experiments.append(e)
-
-        # Using code from the parent class for processing
-        details = super().get_experiments_details(experiments)
+    def get_experiments_details(self, experiments, project_id):
+        d = [e for e in experiments if e['project'] == project_id]
+        details = super().get_experiments_details(d)
         del details['Imaging sessions']
 
         return details
@@ -486,12 +476,8 @@ class DataFilterPP(DataFilter):
         return scans_details
 
     def get_resources_details(self, resources, project_id):
+        r = super().get_resources_details(resources, project_id)
+        if 'Resources per session' in r:
+            del r['Resources per session']
 
-        # Using code from the parent class for processing
-        resources_out = super().get_resources_details(resources, project_id)
-
-        if not isinstance(resources_out, int):
-            if 'Resources per session' in resources_out:
-                del resources_out['Resources per session']
-
-        return resources_out
+        return r
