@@ -83,25 +83,6 @@ class DataFilter:
         return ordered_graphs
 
     def get_projects_details(self, projects):
-        """Method to process all details related to project
-
-        This method process all project details, that are present
-        in a list by looping through each project and formatting it.
-
-        Args:
-            projects (dict): A list of projects with different information
-                of project
-
-        Returns:
-            dict: A dict with keys of different keys corresponding to different
-            project related graphs, or metrics.
-
-            For each graph this format is used
-            {"count": {"x": "y"}, "list": {"x": "list"}}
-
-            "count" represent the count for the x_value and "list" represent
-            "Different values" for x_values
-        """
         if isinstance(projects, int):
             return projects
 
@@ -118,24 +99,6 @@ class DataFilter:
         return projects_details
 
     def get_subjects_details(self, subjects_data):
-        """Method to process all details related to Subject
-
-        This method process all subject details, that are present
-        in a list by looping through each subject and formatting it.
-
-        Args:
-            Subjects (dict): A list of each subject having
-                its age, ID, Project ID, handedness, gender.
-        Returns:
-            dict: A dict with keys of different keys corresponding to different
-            subject related graphs, or metrics.
-
-            For each graph this format is used
-            {"count": {"x": "y"}, "list": {"x": "list"}}
-
-            "count" represent the count for the x_value and "list" represent
-            "Different values" for x_values
-        """
 
         subjects_details = {}
 
@@ -152,25 +115,6 @@ class DataFilter:
         return subjects_details
 
     def get_experiments_details(self, experiments):
-        """Method to process all details related to Experiment
-
-        This method process all experiment details, that are present
-        in a list by looping through each experiment and formatting it.
-
-        Args:
-            experiments (dict): A list of experiment with each
-                having its ID, Project ID, experiment type
-
-        Returns:
-            dict: A dict with keys of different keys corresponding to different
-            experiment related graphs, or metrics.
-
-            For each graph this format is used
-            {"count": {"x": "y"}, "list": {"x": "list"}}
-
-            "count" represent the count for the x_value and "list" represent
-            "Different values" for x_values
-        """
 
         experiments_details = {}
 
@@ -199,26 +143,7 @@ class DataFilter:
         return experiments_details
 
     def get_scans_details(self, scans):
-        """Method to process all details related to scan
 
-        This method process all scan details, that are present
-        in a list by looping through each scan and formatting it.
-
-        Args:
-            scans (dict): A list of scans with each scan
-                having its project ID, scan ID, subject ID, experiment ID,
-                scan type and scan quality.
-
-        Returns:
-            dict: A dict with keys of different keys corresponding to different
-            scan related graphs, or metrics.
-
-            For each graph this format is used
-            {"count": {"x": "y"}, "list": {"x": "list"}}
-
-            "count" represent the count for the x_value and "list" represent
-            "Different values" for x_values
-        """
 
         columns = ['xnat:imagescandata/quality', 'ID', 'quality',
                    'xnat:imagescandata/id']
@@ -249,25 +174,7 @@ class DataFilter:
         return scans_details
 
     def get_resources_details(self, resources, project_id=None):
-        """Resource processing
 
-        This method process the resources that are saved as in pickle file.
-        it generates the required format for each plot.
-
-        Args:
-            resources ( list, optional): Each resource have its corresponding
-                ID, project ID, label and experiment id and by default
-            it will be skipped and no graph of resources will be added.
-            project_id (String, optional): For per project view, the project id
-                by default it will not return any project details.
-
-        Returns:
-            dict/int: If resource exist then a dict with the corresponding data
-                else -1.
-
-            For each graph this format is used
-            {"count": {"x": "y"}, "list": {"x": "list"}}
-        """
         df = pd.DataFrame(resources,
                           columns=['project', 'session', 'resource', 'label'])
 
@@ -336,18 +243,6 @@ class DataFilter:
         return df_proportion.rename(columns={'per_view': 'count'}).to_dict()
 
     def dict_generator_resources(self, df, x_name, y_name):
-        """Generate a dictionary from the data frame of resources
-        in the format required for graphs
-
-        Args:
-            df (Datafrmae): A dataframe of resources
-            x_name (Str): The name which will be on X axis of graph
-            y_name (Str): The name which will be on Y axis of graph
-
-        Returns:
-            Dict: For each graph this format is used
-            {"count": {"x": "y"}, "list": {"x": "list"}}
-        """
 
         data = df[df[y_name] != 'No Data'][[
             x_name, y_name]]
@@ -498,102 +393,73 @@ class DataFilterPP(DataFilter):
         ordered_graphs = {}
 
         # Preprocessing required in project data for number of projects
-        projects_details = self.get_projects_details(p['projects'], project_id)
+        pd = self.get_projects_details(p['projects'], project_id)
 
         # Pre processing for subject details required
-        subjects_details = self.get_subjects_details(p['subjects'], project_id)
+        sd = self.get_subjects_details(p['subjects'], project_id)
 
-        if subjects_details != 1:
-            stats['Subjects'] = subjects_details['Number of Subjects']
-            del subjects_details['Number of Subjects']
+        if sd != 1:
+
+            stats['Subjects'] = sd['Number of Subjects']
+            del sd['Number of Subjects']
 
         # Pre processing experiment details
-        experiments_details = self.get_experiments_details(p['experiments'], project_id)
+        ed = self.get_experiments_details(p['experiments'], project_id)
 
-        if experiments_details != 1:
-            stats['Experiments'] = experiments_details['Number of Experiments']
-            del experiments_details['Number of Experiments']
-            del experiments_details['Total amount of sessions']
-            if 'Sessions types/Project' in experiments_details:
-                del experiments_details['Sessions types/Project']
+        if ed != 1:
+            stats['Experiments'] = ed['Number of Experiments']
+            del ed['Number of Experiments']
+            del ed['Total amount of sessions']
+            if 'Sessions types/Project' in ed:
+                del ed['Sessions types/Project']
 
         # Pre processing scans details
-        scans_details = self.get_scans_details(p['scans'], project_id)
+        scd = self.get_scans_details(p['scans'], project_id)
 
-        if scans_details != 1:
-            stats['Scans'] = scans_details['Number of Scans']
-            del scans_details['Number of Scans']
+        if scd != 1:
+            stats['Scans'] = scd['Number of Scans']
+            del scd['Number of Scans']
 
         stat_final = {'Stats': stats}
 
-        ordered_graphs.update({'Project details': projects_details})
-        ordered_graphs.update(subjects_details)
-        ordered_graphs.update(experiments_details)
-        ordered_graphs.update(scans_details)
+        ordered_graphs.update({'Project details': pd})
+        ordered_graphs.update(sd)
+        ordered_graphs.update(ed)
+        ordered_graphs.update(scd)
         ordered_graphs.update(stat_final)
+        print(ordered_graphs)
 
         return ordered_graphs
 
     def get_projects_details(self, projects, project_id):
-        """Takes the project information and perform operation that
-        are required for displaying details specific to the project.
 
-        Args:
-            projects (list): List of projects
+        res = {}
 
-        Returns:
-            dict: Information of project formatted for better view.
-        """
-        # Returns data for per project view
+        p = [e for e in projects if e['id'] == project_id][0]
 
-        details = {}
+        res['Owner(s)'] = p['project_owners'].split('<br/>')
 
-        for p in projects:
-            if p['id'] == project_id:
-                project_dict = p
+        res['Collaborator(s)'] = p['project_collabs'].split('<br/>')
+        if res['Collaborator(s)'][0] == '':
+            res['Collaborator(s)'] = ['------']
 
-        details['Owner(s)'] = project_dict['project_owners']\
-            .split('<br/>')
+        res['Member(s)'] = p['project_members'].split('<br/>')
+        if res['Member(s)'][0] == '':
+            res['Member(s)'] = ['------']
 
-        details['Collaborator(s)'] = project_dict['project_collabs']\
-            .split('<br/>')
-        if details['Collaborator(s)'][0] == '':
-            details['Collaborator(s)'] = ['------']
+        res['User(s)'] = p['project_users'].split('<br/>')
+        if res['User(s)'][0] == '':
+            res['User(s)'] = ['------']
 
-        details['member(s)'] = project_dict['project_members']\
-            .split('<br/>')
-        if details['member(s)'][0] == '':
-            details['member(s)'] = ['------']
+        res['last_accessed'] = p['project_last_access'].split('<br/>')
 
-        details['user(s)'] = project_dict['project_users']\
-            .split('<br/>')
-        if details['user(s)'][0] == '':
-            details['user(s)'] = ['------']
+        for e in ['insert_user', 'insert_date', 'project_access', 'name',
+                  'project_last_workflow']:
+            res[e] = p[e]
 
-        details['last_accessed(s)'] =\
-            project_dict['project_last_access'].split('<br/>')
-
-        details['insert_user(s)'] = project_dict['insert_user']
-
-        details['insert_date'] = project_dict['insert_date']
-        details['access'] = project_dict['project_access']
-        details['name'] = project_dict['name']
-
-        details['last_workflow'] = project_dict['project_last_workflow']
-
-        return details
+        return res
 
     def get_subjects_details(self, subjects, project_id):
-        """Calls the parent class method for processing the subjects
-        details and removing extra information for per project view.
-
-        Args:
-            subjects (list): List of subjects.
-
-        Returns:
-            dict: For each graph this format is used
-            {"count": {"x": "y"}, "list": {"x": "list"}}
-        """
         subjects_data = []
         for s in subjects:
             if s['project'] == project_id:
@@ -605,16 +471,6 @@ class DataFilterPP(DataFilter):
         return details
 
     def get_experiments_details(self, experiments_data, project_id):
-        """Calls the parent class method for processing the experiment
-        details and removing extra information for per project view.
-
-        Args:
-            experiments_data (list): List of experiments.
-
-        Returns:
-            dict: For each graph this format is used
-            {"count": {"x": "y"}, "list": {"x": "list"}}
-        """
         experiments = []
 
         for e in experiments_data:
@@ -628,33 +484,12 @@ class DataFilterPP(DataFilter):
         return details
 
     def get_scans_details(self, scans, project_id):
-        """Calls the parent class method for processing the scan
-        details and removing extra information for per project view.
-
-        Args:
-            scans_data (list): List of experiments.
-
-        Returns:
-            dict: For each graph this format is used
-            {"count": {"x": "y"}, "list": {"x": "list"}}
-        """
         scans = [s for s in scans if s['project'] == project_id]
         scans_details = super().get_scans_details(scans)
 
         return scans_details
 
     def get_resources_details(self, resources, project_id):
-        """Calls the parent class method for processing the resource
-        details and removing extra information for per project view.
-
-        Args:
-            resources (list, optional): List of resources and by default
-            it will be skipped and no graph of resources will be added.
-        Returns:
-            dict/int: If no resource data present then return -1 else
-            For each graph this format is used
-            {"count": {"x": "y"}, "list": {"x": "list"}}
-        """
 
         # Using code from the parent class for processing
         resources_out = super().get_resources_details(resources, project_id)
