@@ -6,14 +6,14 @@ from dashboards import config
 
 class GraphGenerator:
 
-    def __init__(self, filtered, p):
+    def __init__(self, filtered, p, visible_projects):
 
         self.counter_id = 0
         self.filtered = filtered  # df.DataFilter(p, projects)
 
         self.ordered_graphs = self.filtered.reorder_graphs()
-        projects = [e['id'] for e in self.filtered.data['projects']]
-        res = dfb.BBRCDataFilter(p['resources'], projects)
+        #projects = [e['id'] for e in self.filtered.data['projects']]
+        res = dfb.BBRCDataFilter(p['resources'], visible_projects)
         self.ordered_graphs.update(res.reorder_graphs())
 
     def add_graph_fields(self, graphs, role):

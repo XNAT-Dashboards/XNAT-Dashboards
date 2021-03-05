@@ -40,7 +40,7 @@ def overview():
     role = session['role']
     projects = session['projects']
     filtered = df.DataFilter(p, projects)
-    plot = gg.GraphGenerator(filtered, p)
+    plot = gg.GraphGenerator(filtered, p, projects)
 
     overview = plot.get_overview(role)
 
