@@ -6,7 +6,7 @@ from datetime import date
 
 class BBRCDataFilter(df.DataFilter):
 
-    def __init__(self, resources, role, project_visible):
+    def __init__(self, resources, project_visible):
 
         self.resources_bbrc = [e for e in resources if len(e) > 4]
 
@@ -282,7 +282,7 @@ class DataFilterPP(BBRCDataFilter):
             it will be skipped and no graph of resources will be added.
     """
 
-    def __init__(self, resources, experiments, project_id, role, project_visible):
+    def __init__(self, resources, experiments, project_id, project_visible):
 
         self.project_visible = project_visible
         self.project_id = project_id

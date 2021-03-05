@@ -293,7 +293,7 @@ def test_019_reorder_graphs():
         elif len(e) > 4:
             bbrc_resources.append(e)
 
-    filtered = dfi.DataFilter('testUser', p, 'admin', [])
+    filtered = dfi.DataFilter(p, [])
     ordered_graphs = filtered.reorder_graphs()
 
     assert isinstance(ordered_graphs, dict)
@@ -305,9 +305,7 @@ def test_020_reorder_graphs_PP():
 
     project = p['projects'][0]
     project_id = project['id']
-    role = 'admin'
-    filtered = dfi.DataFilterPP('testUser', p, project_id, role,
-                                {role: [project_id]})
+    filtered = dfi.DataFilterPP(p, project_id)
     ordered_graphs = filtered.reorder_graphs_pp()
     assert isinstance(ordered_graphs, dict)
     assert len(ordered_graphs) != 0
@@ -316,7 +314,7 @@ def test_020_reorder_graphs_PP():
 def test_022_reorder_graphs_bbrc():
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
 
-    filtered = dfib.BBRCDataFilter(p['resources'], 'admin', [])
+    filtered = dfib.BBRCDataFilter(p['resources'], [])
     ordered_graphs = filtered.reorder_graphs()
 
     assert isinstance(ordered_graphs, dict)
@@ -332,7 +330,7 @@ def test_023_reorder_graphs_bbrc_PP():
     project_id = project['id']
     role = 'admin'
     filtered = dfib.DataFilterPP(p['resources'], experiments, project_id,
-                                 role, {role: [project_id]})
+                                 {role: [project_id]})
     ordered_graphs = filtered.reorder_graphs_pp()
     assert isinstance(ordered_graphs, dict)
     assert len(ordered_graphs) != 0
@@ -344,6 +342,7 @@ def test_024_get_overview():
     project = p['projects'][0]
     project_id = project['id']
     role = 'admin'
+    #filtered = df.DataFilter(username, p, role, projects)
     graph_object = gg.GraphGenerator(['testUser'], role, p, {role: [project_id]})
 
     graph_list = graph_object.get_overview()

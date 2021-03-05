@@ -1,6 +1,8 @@
 # Import flask dependencies
 from flask import Blueprint, render_template, session, redirect, url_for
 from dashboards.data_cleaning import graph_generator as gg
+from dashboards.data_cleaning import data_filter as df
+
 import pickle
 from dashboards import config
 
@@ -35,17 +37,25 @@ def overview():
               % (p['server'], session['server'])
         raise Exception(msg)
 
-    plot = gg.GraphGenerator(session['username'], session['role'],
-                             p, session['projects'])
+    username = session['username']
+    role = session['role']
+    projects = session['projects']
+    filtered = df.DataFilter(p, projects)
+    plot = gg.GraphGenerator(username, role, p, projects)
+
     overview = plot.get_overview()
 
-    return render_template(
-        'dashboards/stats_dashboards.html',
-        graph_data=overview[0],
-        stats_data=overview[1],
-        project_list=plot.get_project_list(),
-        username=session['username'].capitalize(),
-        server=session['server'])
+    n = 4
+    projects = [e['id'] for e in filtered.data['projects']]
+    projects_by_4 = [projects[i * n:(i + 1) * n]
+                for i in range((len(projects) + n - 1) // n )]  # split my_list in chunks of size 4
+
+    return render_template('dashboards/stats_dashboards.html',
+                           graph_data=overview[0],
+                           stats_data=overview[1],
+                           project_list=projects_by_4,
+                           username=session['username'].capitalize(),
+                           server=session['server'])
 
 
 # this route give the details of the project

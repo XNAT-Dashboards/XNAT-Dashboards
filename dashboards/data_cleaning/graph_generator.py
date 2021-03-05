@@ -10,13 +10,12 @@ class GraphGenerator:
 
         self.counter_id = 0
         self.role = role
-
-        self.filtered = df.DataFilter(username, p, role, projects)
-        
-        #projects = self.filtered.get_projects_details_specific(self.filtered.data['projects'])
+        print('projects', projects)
+        self.filtered = df.DataFilter(p, projects)
+        print('filtered', self.filtered.data['projects'])
         self.projects = [e['id'] for e in self.filtered.data['projects']]
 
-        res = dfb.BBRCDataFilter(p['resources'], role, self.projects)
+        res = dfb.BBRCDataFilter(p['resources'], projects)
 
         self.ordered_graphs = self.filtered.reorder_graphs()
 
@@ -25,7 +24,7 @@ class GraphGenerator:
     def add_graph_fields(self, graphs):
         # Load configuration
         j = json.load(open(config.DASHBOARD_CONFIG_PATH))
-        self.graph_config = j['graphs']
+        self.graphs = j['graphs']
 
         if not isinstance(graphs, dict):
             return graphs
@@ -35,7 +34,7 @@ class GraphGenerator:
 
         for graph in graphs:
             # Skip if key is not a graph
-            if graph in non_graph or self.role not in self.graph_config[graph]['visibility']:
+            if graph in non_graph or self.role not in self.graphs[graph]['visibility']:
                 continue
 
             # Addition of graph id, js need distinct graph id for each
@@ -44,14 +43,11 @@ class GraphGenerator:
             self.counter_id = self.counter_id + 1
 
             # Type of graph (bar, line, etc) from config file
-            graphs[graph]['graph_type'] =\
-                self.graph_config[graph]['type']
+            graphs[graph]['graph_type'] = self.graphs[graph]['type']
             # Description of graph from config file
-            graphs[graph]['graph descriptor'] =\
-                self.graph_config[graph]['description']
+            graphs[graph]['graph descriptor'] = self.graphs[graph]['description']
             # Graph color from config file
-            graphs[graph]['color'] =\
-                self.graph_config[graph]['color']
+            graphs[graph]['color'] = self.graphs[graph]['color']
 
         return graphs
 
@@ -77,7 +73,7 @@ class GraphGenerator:
         for graph in overview:
             if graph == 'Stats' or\
                 self.role\
-                    not in self.graph_config[graph]['visibility']:
+                    not in self.graphs[graph]['visibility']:
 
                 # Condition if last key is skipped then add
                 # the single column array in overview
@@ -117,51 +113,6 @@ class GraphGenerator:
 
         return [graphs_2d_list, overview['Stats']]
 
-    def get_project_list(self):
-        """
-        Process the project list for displaying the project id.
-
-        Returns:
-            project_list_2d (list): The id of project based in a 2dArray
-            To be processed by frontend
-        """
-        counter = 0
-        length_check = 0
-        project_list_2d = []
-        project_list_1d = []
-
-        # List of projects
-        project_list = self.projects
-
-        if isinstance(project_list, int):
-            return project_list
-
-        # Create a 2d array with each row containing 4 columns and each column
-        # will have single project id
-        if len(project_list) == 0:
-            project_list_2d = [[]]
-        else:
-            for project_id in project_list:
-                project_list_1d.append(project_id)
-                counter = counter + 1
-                if counter == 4 or length_check == len(project_list) - 1:
-                    counter = 0
-                    project_list_2d.append(project_list_1d)
-                    project_list_1d = []
-
-                length_check = length_check + 1
-
-        '''
-            Returns a nested list
-            [
-                array_list for all projects[
-                    [p1 ,p2, p3, p4]
-                    [p5 ,p6, p7, p8]
-                ]
-        '''
-
-        return project_list_2d
-
 
 class GraphGeneratorPP(GraphGenerator):
     """Class for making final changes in data for per project view.
@@ -187,7 +138,7 @@ class GraphGeneratorPP(GraphGenerator):
 
     def __init__(self, username, project_id, role, p, project_visible=None):
 
-        filtered = df.DataFilterPP(username, p, project_id, role, project_visible)
+        filtered = df.DataFilterPP(p, project_id)
 
         self.project_id = ''
         self.counter_id = 0
@@ -195,8 +146,7 @@ class GraphGeneratorPP(GraphGenerator):
         self.ordered_graphs = filtered.reorder_graphs_pp()
 
         dfpp = dfb.DataFilterPP(p['resources'], p['experiments'],
-                                project_id, role,
-                                project_visible)
+                                project_id, project_visible)
         dfpp = dfpp.reorder_graphs_pp()
 
         self.ordered_graphs.update(dfpp)
@@ -230,7 +180,7 @@ class GraphGeneratorPP(GraphGenerator):
         for graph in project_view:
             if graph in non_graph or\
                     self.role not in\
-                    self.graph_config[graph]['visibility']:
+                    self.graphs[graph]['visibility']:
 
                 # Condition if last key is skipped then add
                 # the single column array in project_view

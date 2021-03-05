@@ -6,10 +6,9 @@ import dashboards
 
 class DataFilter:
 
-    def __init__(self, username, p, role, visible_projects):
+    def __init__(self, p, visible_projects):
 
         self.visible_projects = visible_projects
-        self.username = username
         self.longitudinal_data = p['longitudinal_data']
 
         projects = [pr for pr in p['projects'] if pr['id'] in visible_projects
@@ -491,13 +490,10 @@ class DataFilter:
 
 
 class DataFilterPP(DataFilter):
-    def __init__(self, username, p, project_id, role, project_visible):
+    def __init__(self, p, project_id):
 
         self.project_id = project_id
         self.data = p
-        self.project_visible = project_visible
-        self.username = username
-        self.project_id = project_id
 
     def reorder_graphs_pp(self):
         stats = {}

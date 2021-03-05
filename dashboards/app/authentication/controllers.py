@@ -19,9 +19,7 @@ def login():
 
     if request.method == 'GET':
 
-        # Checks if there is a error key in session
         if 'error' in session:
-
             if session['error'] == -1:
                 display_error = "Logged out"
                 del session['error']
@@ -31,8 +29,6 @@ def login():
             return render_template('authentication/login.html',
                                    error=display_error)
         else:
-            # If there is no error meaning the user is called login
-            # page using browser instead of a redirect
             return render_template('authentication/login.html')
 
     else:
