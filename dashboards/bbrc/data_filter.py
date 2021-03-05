@@ -6,22 +6,16 @@ from datetime import date
 
 class BBRCDataFilter(df.DataFilter):
 
-    def __init__(self, resources, project_visible):
+    def __init__(self, resources, visible_projects):
 
-        self.resources_bbrc = [e for e in resources if len(e) > 4]
+        bbrc_resources = []
 
-        self.project_visible = project_visible
-        resources_bbrc_list = []
+        for r in [e for e in resources if len(e) > 4]:
+            project = r[0]
+            if project not in visible_projects or "*" in visible_projects:
+                bbrc_resources.append(r)
 
-        # Loop through each resources and resources bbrc and check its project
-        # id present for the role or role containting *
-
-        for resource in self.resources_bbrc:
-            project = resource[0]
-            if project not in self.project_visible or "*" in self.project_visible:
-                resources_bbrc_list.append(resource)
-
-        self.resources_bbrc = resources_bbrc_list
+        self.resources_bbrc = bbrc_resources
 
     def reorder_graphs(self):
 
@@ -30,10 +24,7 @@ class BBRCDataFilter(df.DataFilter):
         resources = self.get_resource_details(self.resources_bbrc)
         del resources['Version Distribution']
 
-        if resources is not None and\
-                not isinstance(resources, int):
-
-            ordered_graphs.update(resources)
+        ordered_graphs.update(resources)
 
         return ordered_graphs
 
@@ -282,9 +273,8 @@ class DataFilterPP(BBRCDataFilter):
             it will be skipped and no graph of resources will be added.
     """
 
-    def __init__(self, resources, experiments, project_id, project_visible):
+    def __init__(self, resources, project_id):
 
-        self.project_visible = project_visible
         self.project_id = project_id
         self.resources_bbrc = [e for e in resources if len(e) > 4]
 

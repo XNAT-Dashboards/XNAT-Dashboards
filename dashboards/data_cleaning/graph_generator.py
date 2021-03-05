@@ -6,15 +6,13 @@ from dashboards import config
 
 class GraphGenerator:
 
-    def __init__(self, filtered, p, visible_projects):
+    def __init__(self, filtered, bbrc_filtered, p):
 
         self.counter_id = 0
         self.filtered = filtered  # df.DataFilter(p, projects)
 
         self.ordered_graphs = self.filtered.reorder_graphs()
-        #projects = [e['id'] for e in self.filtered.data['projects']]
-        res = dfb.BBRCDataFilter(p['resources'], visible_projects)
-        self.ordered_graphs.update(res.reorder_graphs())
+        self.ordered_graphs.update(bbrc_filtered.reorder_graphs())
 
     def add_graph_fields(self, graphs, role):
         # Load configuration
@@ -130,22 +128,13 @@ class GraphGeneratorPP(GraphGenerator):
         filtered = df.DataFilterPP()
         self.ordered_graphs = filtered.reorder_graphs_pp(p, project_id)
 
-        dfpp = dfb.DataFilterPP(p['resources'], p['experiments'],
-                                project_id, project_visible)
+        dfpp = dfb.DataFilterPP(p['resources'], project_id)
         dfpp = dfpp.reorder_graphs_pp()
 
         self.ordered_graphs.update(dfpp)
 
     def get_project_view(self):
 
-        """This first process the data using graph preprocessor
-        of parent class.
-        Then create a 2D array that help in distribution of graph
-        in frontend. Where each row contains 2 graph.
-
-        Returns:
-            list: 2D array of graphs and other information.
-        """
         length_check = 0
         graphs_2d_list = []
         graphs_1d_list = []

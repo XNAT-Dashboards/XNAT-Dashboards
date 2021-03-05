@@ -2,6 +2,7 @@
 from flask import Blueprint, render_template, session, redirect, url_for
 from dashboards.data_cleaning import graph_generator as gg
 from dashboards.data_cleaning import data_filter as df
+from dashboards.bbrc import data_filter as dfb
 
 import pickle
 from dashboards import config
@@ -40,7 +41,8 @@ def overview():
     role = session['role']
     projects = session['projects']
     filtered = df.DataFilter(p, projects)
-    plot = gg.GraphGenerator(filtered, p, projects)
+    bbrc_filtered = dfb.BBRCDataFilter(p['resources'], projects)
+    plot = gg.GraphGenerator(filtered, bbrc_filtered, p)
 
     overview = plot.get_overview(role)
 

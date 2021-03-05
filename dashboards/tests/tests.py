@@ -286,8 +286,8 @@ def test_013_get_get_longitudinal_data():
 def test_019_reorder_graphs():
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
     # bbrc_resources = p['extra_resources']
-    resources = [e for e in p['resources'] if len(e) == 4]
-    bbrc_resources = [e for e in p['resources'] if len(e) > 4]
+    # resources = [e for e in p['resources'] if len(e) == 4]
+    # bbrc_resources = [e for e in p['resources'] if len(e) > 4]
 
     filtered = dfi.DataFilter(p, [])
     ordered_graphs = filtered.reorder_graphs()
@@ -325,8 +325,7 @@ def test_023_reorder_graphs_bbrc_PP():
     project = p['projects'][0]
     project_id = project['id']
     role = 'admin'
-    filtered = dfib.DataFilterPP(p['resources'], experiments, project_id,
-                                 {role: [project_id]})
+    filtered = dfib.DataFilterPP(p['resources'], project_id)
     ordered_graphs = filtered.reorder_graphs_pp()
     assert isinstance(ordered_graphs, dict)
     assert len(ordered_graphs) != 0
@@ -337,7 +336,8 @@ def test_024_get_overview():
 
     role = 'admin'
     filtered = dfi.DataFilter(p, p['projects'])
-    graph_object = gg.GraphGenerator(filtered, p)
+    bbrc_filtered = dfib.BBRCDataFilter(p['resources'], p['projects'])
+    graph_object = gg.GraphGenerator(filtered, bbrc_filtered, p)
 
     graph_list = graph_object.get_overview(role)
 
