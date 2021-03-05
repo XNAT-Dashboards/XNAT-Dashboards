@@ -8,8 +8,6 @@ class DataFilter:
 
     def __init__(self, p, visible_projects):
 
-        self.visible_projects = visible_projects
-        self.longitudinal_data = p['longitudinal_data']
 
         projects = [pr for pr in p['projects'] if pr['id'] in visible_projects
                     or "*" in visible_projects]
@@ -28,13 +26,11 @@ class DataFilter:
         self.data['experiments'] = experiments
         self.data['scans'] = scans
 
-        filtered_resources = []
-        for r in resources:
-            project = r[0]
-            if project not in visible_projects or "*" in visible_projects:
-                filtered_resources.append(r)
+        fr = [(project, a, b, c) for (project, a, b, c) in resources
+              if project not in visible_projects or "*" in visible_projects]
 
-        self.data['resources'] = filtered_resources
+        self.data['longitudinal_data'] = p['longitudinal_data']
+        self.data['resources'] = fr
 
     def reorder_graphs(self):
 
@@ -77,15 +73,12 @@ class DataFilter:
         resources = self.get_resources_details(self.data['resources'])
         ordered_graphs.update(resources)
 
-        l_data = self.get_longitudinal_data(self.longitudinal_data)
-        ordered_graphs.update(l_data)
+        d = {'Resources (over time)': {'count': self.data['longitudinal_data']}}
+        ordered_graphs.update(d)
 
         return ordered_graphs
 
     def get_projects_details(self, projects):
-        if isinstance(projects, int):
-            return projects
-
         projects_details = {}
 
         # key id_type is used by frontend to add appropriate urls in frontend
@@ -214,9 +207,6 @@ class DataFilter:
 
         return {'Resources per type': resource_types,
                 'Resources per session': resource_count_dict_ordered}
-
-    def get_longitudinal_data(self, l_data):
-        return {'Resources (over time)': {'count': l_data}}
 
     def proportion_graphs(self, data, property_x, property_y, prefix, suffix):
 
@@ -411,7 +401,6 @@ class DataFilterPP(DataFilter):
 
         # Pre processing scans details
         scd = self.get_scans_details(p['scans'], project_id)
-
         stats['Scans'] = scd['Number of Scans']
         del scd['Number of Scans']
 
@@ -457,27 +446,26 @@ class DataFilterPP(DataFilter):
 
     def get_subjects_details(self, subjects, project_id):
         d = [s for s in subjects if s['project'] == project_id]
-        details = super().get_subjects_details(d)
-        del details['Subjects']
+        res = super().get_subjects_details(d)
+        del res['Subjects']
 
-        return details
+        return res
 
     def get_experiments_details(self, experiments, project_id):
         d = [e for e in experiments if e['project'] == project_id]
-        details = super().get_experiments_details(d)
-        del details['Imaging sessions']
+        res = super().get_experiments_details(d)
+        del res['Imaging sessions']
 
-        return details
+        return res
 
     def get_scans_details(self, scans, project_id):
         scans = [s for s in scans if s['project'] == project_id]
-        scans_details = super().get_scans_details(scans)
-
-        return scans_details
+        res = super().get_scans_details(scans)
+        return res
 
     def get_resources_details(self, resources, project_id):
-        r = super().get_resources_details(resources, project_id)
-        if 'Resources per session' in r:
-            del r['Resources per session']
+        res = super().get_resources_details(resources, project_id)
+        if 'Resources per session' in res:
+            del res['Resources per session']
 
-        return r
+        return res
