@@ -31,7 +31,7 @@
         <div class="preloader">
             <div class="loader">
                 <div class="loader__figure"></div>
-                <p class="loader__label">Plotting Data</p>
+                <p class="loader__label">Plotting data</p>
             </div>
         </div>
         <!-- Preloader End -->
@@ -59,6 +59,18 @@
                         <li class="nav-item dropdown username">
                             {{username}}
                         </li>
+                        <li>
+                            &nbsp&nbsp&nbsp
+                        </li>
+                        <li>
+                            <i class="fa fa-sign-out logout" aria-hidden="true"></i>
+                        </li>
+                        <li>
+                            &nbsp&nbsp
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a href="{{url_for('dashboard.logout')}}" class="logout" > logout</a>
+                        </li>
                     </ul>
                 </div>
             </nav>
@@ -67,7 +79,7 @@
         <!-- Left sidebar start-->
         <aside class="left-sidebar">
             <div class="d-flex no-block nav-text-box align-items-center left_pane">
-                Dashboards
+                Menu
                 <a class="waves-effect waves-dark ml-auto hidden-sm-down" href="javascript:void(0)"><i class="fa fa-bars"></i></a>
                 <a class="nav-toggler waves-effect waves-dark ml-auto hidden-sm-up" href="javascript:void(0)"><i class="fa fa-bars"></i></a>
             </div>
@@ -77,8 +89,11 @@
                         <li id="overviews"> <a class="waves-effect waves-dark" href="/dashboard/overview/" aria-expanded="false"><i class="fa fa-list"></i><span class="hide-menu">Overview</span></a></li>
                         <li id="project"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-eye"></i><span class="hide-menu">Project</span></a></li>
                         {% if test_grid[0]|length > 0%}
-                            <li id="tests_grid"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-table"></i><span class="hide-menu">Tests Grid</span></a></li>
+                            <li id="tests_grid"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-table"></i><span class="hide-menu">Test Grid</span></a></li>
                         {% endif %}
+                        <div class="text-center m-t-30">
+                            <a href="{{url_for('dashboard.logout')}}" class="waves-effect waves-light btn btn-outline-danger"> logout </a>
+                        </div>
                     </ul>
                 </nav>
             </div>
@@ -94,7 +109,6 @@
                             <a href="{{server}}/app/action/DisplayItemAction/search_value/{{id}}//search_element/xnat:Data/search_field/xnat:projectData.ID" target="_blank">
                                 {{id}}
                             </a>
-                            Dashboard &nbsp&nbsp
                         </h4>
                     </div>
                     <div class="col-md-7 align-self-center text-right">
@@ -139,7 +153,7 @@
                                 <div class="card-body">
                                     <div class="d-flex">
                                         <div>
-                                            <h5 class="card-title">Project Overview</h5>
+                                            <h5 class="card-title">Project Details</h5>
                                         </div>
                                     </div>
                                 </div>
@@ -250,7 +264,7 @@
                 </div>
                 <!-- Start test grid addition -->
                     {% if test_grid[0]|length > 0 %}
-                        {% include  '/dashboards/bbrc/bbrc_test_grid.html'  %}
+                        {% include  '/dashboards/bbrc/test_grid.html'  %}
                     {% endif  %}
                 <!-- End test grid-->
             </div>

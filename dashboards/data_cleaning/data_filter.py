@@ -398,27 +398,23 @@ class DataFilterPP(DataFilter):
         # Pre processing for subject details required
         sd = self.get_subjects_details(p['subjects'], project_id)
 
-        if sd != 1:
-
-            stats['Subjects'] = sd['Number of Subjects']
-            del sd['Number of Subjects']
+        stats['Subjects'] = sd['Number of Subjects']
+        del sd['Number of Subjects']
 
         # Pre processing experiment details
         ed = self.get_experiments_details(p['experiments'], project_id)
 
-        if ed != 1:
-            stats['Experiments'] = ed['Number of Experiments']
-            del ed['Number of Experiments']
-            del ed['Total amount of sessions']
-            if 'Sessions types/Project' in ed:
-                del ed['Sessions types/Project']
+        stats['Experiments'] = ed['Number of Experiments']
+        del ed['Number of Experiments']
+        del ed['Total amount of sessions']
+        if 'Sessions types/Project' in ed:
+            del ed['Sessions types/Project']
 
         # Pre processing scans details
         scd = self.get_scans_details(p['scans'], project_id)
 
-        if scd != 1:
-            stats['Scans'] = scd['Number of Scans']
-            del scd['Number of Scans']
+        stats['Scans'] = scd['Number of Scans']
+        del scd['Number of Scans']
 
         stat_final = {'Stats': stats}
 
@@ -441,15 +437,15 @@ class DataFilterPP(DataFilter):
 
         res['Collaborator(s)'] = p['project_collabs'].split('<br/>')
         if res['Collaborator(s)'][0] == '':
-            res['Collaborator(s)'] = ['------']
+            res['Collaborator(s)'] = ['None']
 
         res['Member(s)'] = p['project_members'].split('<br/>')
         if res['Member(s)'][0] == '':
-            res['Member(s)'] = ['------']
+            res['Member(s)'] = ['None']
 
         res['User(s)'] = p['project_users'].split('<br/>')
         if res['User(s)'][0] == '':
-            res['User(s)'] = ['------']
+            res['User(s)'] = ['None']
 
         res['last_accessed'] = p['project_last_access'].split('<br/>')
 
