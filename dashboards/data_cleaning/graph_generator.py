@@ -6,22 +6,20 @@ from dashboards import config
 
 class GraphGenerator:
 
-    def __init__(self, username, role, p, projects):
+    def __init__(self, filtered, p):
 
         self.counter_id = 0
-        self.role = role
-        print('projects', projects)
-        self.filtered = df.DataFilter(p, projects)
+        self.filtered = filtered  # df.DataFilter(p, projects)
         print('filtered', self.filtered.data['projects'])
         self.projects = [e['id'] for e in self.filtered.data['projects']]
 
-        res = dfb.BBRCDataFilter(p['resources'], projects)
+        res = dfb.BBRCDataFilter(p['resources'], self.projects)
 
         self.ordered_graphs = self.filtered.reorder_graphs()
 
         self.ordered_graphs.update(res.reorder_graphs())
 
-    def add_graph_fields(self, graphs):
+    def add_graph_fields(self, graphs, role):
         # Load configuration
         j = json.load(open(config.DASHBOARD_CONFIG_PATH))
         self.graphs = j['graphs']
@@ -34,7 +32,7 @@ class GraphGenerator:
 
         for graph in graphs:
             # Skip if key is not a graph
-            if graph in non_graph or self.role not in self.graphs[graph]['visibility']:
+            if graph in non_graph or role not in self.graphs[graph]['visibility']:
                 continue
 
             # Addition of graph id, js need distinct graph id for each
@@ -51,7 +49,7 @@ class GraphGenerator:
 
         return graphs
 
-    def get_overview(self):
+    def get_overview(self, role):
         """This first process the data using graph preprocessor.
         Then create a 2D array that help in distribution of graph
         in frontend. Where each row contains 2 graph.
@@ -65,15 +63,13 @@ class GraphGenerator:
         graphs_1d_list = []
         counter = 0
 
-        overview = self.add_graph_fields(self.ordered_graphs)
+        overview = self.add_graph_fields(self.ordered_graphs, role)
 
         if isinstance(overview, int):
             return overview
 
         for graph in overview:
-            if graph == 'Stats' or\
-                self.role\
-                    not in self.graphs[graph]['visibility']:
+            if graph == 'Stats' or role not in self.graphs[graph]['visibility']:
 
                 # Condition if last key is skipped then add
                 # the single column array in overview
@@ -136,14 +132,12 @@ class GraphGeneratorPP(GraphGenerator):
             visible to the user.
     """
 
-    def __init__(self, username, project_id, role, p, project_visible=None):
+    def __init__(self, project_id, role, p, project_visible=None):
 
-        filtered = df.DataFilterPP(p, project_id)
-
-        self.project_id = ''
         self.counter_id = 0
         self.role = role
-        self.ordered_graphs = filtered.reorder_graphs_pp()
+        filtered = df.DataFilterPP()
+        self.ordered_graphs = filtered.reorder_graphs_pp(p, project_id)
 
         dfpp = dfb.DataFilterPP(p['resources'], p['experiments'],
                                 project_id, project_visible)
@@ -167,7 +161,7 @@ class GraphGeneratorPP(GraphGenerator):
         counter = 0
 
         # Do the required addition using field addition
-        project_view = self.add_graph_fields(self.ordered_graphs)
+        project_view = self.add_graph_fields(self.ordered_graphs, self.role)
 
         if isinstance(project_view, int) or project_view is None:
             return project_view

@@ -37,18 +37,17 @@ def overview():
               % (p['server'], session['server'])
         raise Exception(msg)
 
-    username = session['username']
     role = session['role']
     projects = session['projects']
     filtered = df.DataFilter(p, projects)
-    plot = gg.GraphGenerator(username, role, p, projects)
+    plot = gg.GraphGenerator(filtered, p)
 
-    overview = plot.get_overview()
+    overview = plot.get_overview(role)
 
-    n = 4
+    n = 4 # split projects in chunks of size 4
     projects = [e['id'] for e in filtered.data['projects']]
     projects_by_4 = [projects[i * n:(i + 1) * n]
-                for i in range((len(projects) + n - 1) // n )]  # split my_list in chunks of size 4
+                     for i in range((len(projects) + n - 1) // n )]
 
     return render_template('dashboards/stats_dashboards.html',
                            graph_data=overview[0],
@@ -78,9 +77,8 @@ def project(id):
         raise Exception(msg)
 
     # Get the details for plotting
-    ggpp = gg.GraphGeneratorPP(session['username'], id,
-                               session['role'],
-                               p, session['projects'])
+
+    ggpp = gg.GraphGeneratorPP(id, session['role'], p, session['projects'])
     per_project_view = ggpp.get_project_view()
 
     # If no data found redirect to login page else render the data

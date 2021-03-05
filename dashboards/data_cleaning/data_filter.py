@@ -490,27 +490,25 @@ class DataFilter:
 
 
 class DataFilterPP(DataFilter):
-    def __init__(self, p, project_id):
+    def __init__(self):
+        pass
 
-        self.project_id = project_id
-        self.data = p
-
-    def reorder_graphs_pp(self):
+    def reorder_graphs_pp(self, p, project_id):
         stats = {}
         ordered_graphs = {}
 
         # Preprocessing required in project data for number of projects
-        projects_details = self.get_projects_details(self.data['projects'])
+        projects_details = self.get_projects_details(p['projects'], project_id)
 
         # Pre processing for subject details required
-        subjects_details = self.get_subjects_details(self.data['subjects'])
+        subjects_details = self.get_subjects_details(p['subjects'], project_id)
 
         if subjects_details != 1:
             stats['Subjects'] = subjects_details['Number of Subjects']
             del subjects_details['Number of Subjects']
 
         # Pre processing experiment details
-        experiments_details = self.get_experiments_details(self.data['experiments'])
+        experiments_details = self.get_experiments_details(p['experiments'], project_id)
 
         if experiments_details != 1:
             stats['Experiments'] = experiments_details['Number of Experiments']
@@ -520,7 +518,7 @@ class DataFilterPP(DataFilter):
                 del experiments_details['Sessions types/Project']
 
         # Pre processing scans details
-        scans_details = self.get_scans_details(self.data['scans'])
+        scans_details = self.get_scans_details(p['scans'], project_id)
 
         if scans_details != 1:
             stats['Scans'] = scans_details['Number of Scans']
@@ -536,7 +534,7 @@ class DataFilterPP(DataFilter):
 
         return ordered_graphs
 
-    def get_projects_details(self, projects):
+    def get_projects_details(self, projects, project_id):
         """Takes the project information and perform operation that
         are required for displaying details specific to the project.
 
@@ -551,7 +549,7 @@ class DataFilterPP(DataFilter):
         details = {}
 
         for p in projects:
-            if p['id'] == self.project_id:
+            if p['id'] == project_id:
                 project_dict = p
 
         details['Owner(s)'] = project_dict['project_owners']\
@@ -585,7 +583,7 @@ class DataFilterPP(DataFilter):
 
         return details
 
-    def get_subjects_details(self, subjects):
+    def get_subjects_details(self, subjects, project_id):
         """Calls the parent class method for processing the subjects
         details and removing extra information for per project view.
 
@@ -598,7 +596,7 @@ class DataFilterPP(DataFilter):
         """
         subjects_data = []
         for s in subjects:
-            if s['project'] == self.project_id:
+            if s['project'] == project_id:
                 subjects_data.append(s)
 
         details = super().get_subjects_details(subjects_data)
@@ -606,7 +604,7 @@ class DataFilterPP(DataFilter):
 
         return details
 
-    def get_experiments_details(self, experiments_data):
+    def get_experiments_details(self, experiments_data, project_id):
         """Calls the parent class method for processing the experiment
         details and removing extra information for per project view.
 
@@ -620,7 +618,7 @@ class DataFilterPP(DataFilter):
         experiments = []
 
         for e in experiments_data:
-            if e['project'] == self.project_id:
+            if e['project'] == project_id:
                 experiments.append(e)
 
         # Using code from the parent class for processing
@@ -629,7 +627,7 @@ class DataFilterPP(DataFilter):
 
         return details
 
-    def get_scans_details(self, scans):
+    def get_scans_details(self, scans, project_id):
         """Calls the parent class method for processing the scan
         details and removing extra information for per project view.
 
@@ -640,12 +638,12 @@ class DataFilterPP(DataFilter):
             dict: For each graph this format is used
             {"count": {"x": "y"}, "list": {"x": "list"}}
         """
-        scans = [s for s in scans if s['project'] == self.project_id]
+        scans = [s for s in scans if s['project'] == project_id]
         scans_details = super().get_scans_details(scans)
 
         return scans_details
 
-    def get_resources_details(self, resources=None):
+    def get_resources_details(self, resources, project_id):
         """Calls the parent class method for processing the resource
         details and removing extra information for per project view.
 
@@ -657,12 +655,9 @@ class DataFilterPP(DataFilter):
             For each graph this format is used
             {"count": {"x": "y"}, "list": {"x": "list"}}
         """
-        if resources is None:
-            return None
 
         # Using code from the parent class for processing
-        resources_out = super().get_resources_details(
-            resources, self.project_id)
+        resources_out = super().get_resources_details(resources, project_id)
 
         if not isinstance(resources_out, int):
             if 'Resources per session' in resources_out:
