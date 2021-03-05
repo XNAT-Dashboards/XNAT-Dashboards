@@ -1,8 +1,8 @@
 # Import flask dependencies
 from flask import Blueprint, render_template, session, redirect, url_for
-from dashboards.data_cleaning import graph_generator as gg
-from dashboards.data_cleaning import data_filter as df
-from dashboards.bbrc import data_filter as dfb
+from dashboards.data import graph as gg
+from dashboards.data import filter as df
+from dashboards.data import bbrc as dfb
 
 import pickle
 from dashboards import config

@@ -1,4 +1,4 @@
-from dashboards.data_cleaning import data_filter as df
+from dashboards.data import filter as df
 import pandas as pd
 import logging as log
 from datetime import date

@@ -1,6 +1,6 @@
 import json
-from dashboards.data_cleaning import data_filter as df
-from dashboards.bbrc import data_filter as dfb
+from dashboards.data import filter as df
+from dashboards.data import bbrc as dfb
 from dashboards import config
 
 

@@ -1,6 +1,6 @@
-from dashboards.data_cleaning import data_filter as dfi
-from dashboards.bbrc import data_filter as dfib
-from dashboards.data_cleaning import graph_generator as gg
+from dashboards.data import filter as dfi
+from dashboards.data import bbrc as dfib
+from dashboards.data import graph as gg
 from dashboards.app import app
 from dashboards import config
 import os.path as op
