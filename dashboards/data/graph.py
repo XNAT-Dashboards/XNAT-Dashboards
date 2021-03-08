@@ -50,6 +50,7 @@ class GraphGenerator:
             list: 2D array of graphs and other information.
         """
 
+        # FIXME: this function looks like it can be improved
         length_check = 0
         graphs_2d_list = []
         graphs_1d_list = []

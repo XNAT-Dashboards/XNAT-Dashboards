@@ -30,7 +30,6 @@ class DataFilter:
         self.data['longitudinal_data'] = p['longitudinal_data']
         self.data['resources'] = fr
 
-
     def reorder_graphs(self):
 
         stats = {}
