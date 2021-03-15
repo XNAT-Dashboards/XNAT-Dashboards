@@ -189,62 +189,37 @@ class BBRCDataFilter(df.DataFilter):
         return abs(diff.days)
 
     def generate_test_grid_bbrc(self, resources_bbrc, project_id):
-        """This method is used to create the data for the
-        test grid.
 
-        Args:
-            resources_bbrc (list): BBRC resource for each experiments
-
-        Returns:
-            list: Generates a list where each session have a all
-            test details and version information
-        """
-        tests_list = []
-        extra = ['version', 'experiment_id', 'generated']
         tests_union = []
+        project, exp_id, archiving_validator, bv, insert_date = resources_bbrc[0]
+        for test in archiving_validator:
+            if test not in tests_union and test not in ['version', 'experiment_id', 'generated']:
+                    tests_union.append(test)
 
-        # Creates a tests_unions list which has all tests union
-        # except the values present in extra list
+        # Loop through each test
+        keyList = ['session', 'version'] + tests_union
+        info_dic = {key: [] for key in keyList}
+        cat_dic = {key: [] for key in keyList}
+        all_dic = {key: [] for key in keyList}
         for resource in resources_bbrc:
             project, exp_id, archiving_validator, bv, insert_date = resource
-            if bv and not isinstance(archiving_validator, int):
-
-                for test in archiving_validator:
-                    if test not in tests_union \
-                            and \
-                            test not in extra:
-                        tests_union.append(test)
-
-        # If bbrc_validator exists then further proceed
-        # for archiving_validator which is a dict of tests
-        for resource in resources_bbrc:
-            project, exp_id, archiving_validator, bv, insert_date = resource
-            if bv and not isinstance(archiving_validator, int):
-                test_list = [exp_id, ['version', archiving_validator['version']]]
-
-                # Loop through each test if exists then add the details
-                # in the tests_list or just add '' in the test_list
+            if bv and project == project_id:
+                info_dic['session'].append(exp_id)
+                info_dic['version'].append(archiving_validator['version'])
+                cat_dic['session'].append(exp_id)
+                cat_dic['version'].append(archiving_validator['version'])
+                all_dic['session'].append(exp_id)
+                all_dic['version'].append(archiving_validator['version'])
                 for test in tests_union:
-                    test_unit = ''
-
                     if test in archiving_validator:
-                        test_unit = [archiving_validator[test]['has_passed'],
-                                     archiving_validator[test]['data']]
-
-                    test_list.append(test_unit)
-
-                if project == project_id:
-                    tests_list.append(test_list)
-
-        # Create a list of different version of tests that are present
-        # this diff_version list is used in the filtering of test grid
-        diff_version = []
-
-        for td_v in tests_list:
-            if td_v[1][1] not in diff_version:
-                diff_version.append(td_v[1][1])
-
-        return [tests_union, tests_list, diff_version]
+                        info_dic[test].append(archiving_validator[test]['data'])
+                        cat_dic[test].append(archiving_validator[test]['has_passed'])
+                        all_data = [archiving_validator[test]['has_passed'], archiving_validator[test]['data'] ]
+                        all_dic[test].append(all_data)
+        df_info = pd.DataFrame(info_dic)
+        df_cat = pd.DataFrame(cat_dic)
+        df_all = pd.DataFrame(all_dic)
+        return df_all, df_info, df_cat
 
 
 class DataFilterPP(BBRCDataFilter):
