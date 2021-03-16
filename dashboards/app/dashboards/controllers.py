@@ -44,30 +44,29 @@ def overview():
     filtered = df.DataFilter(p, projects)
     bbrc_filtered = dfb.BBRCDataFilter(p['resources'], projects)
     plot = gg.GraphGenerator(filtered, bbrc_filtered, p)
-
     overview = plot.get_overview(role)
 
-    n = 4 # split projects in chunks of size 4
+    n = 4  # split projects in chunks of size 4
     projects = [e['id'] for e in filtered.data['projects']]
     projects_by_4 = [projects[i * n:(i + 1) * n]
-                     for i in range((len(projects) + n - 1) // n )]
+                     for i in range((len(projects) + n - 1) // n)]
 
-    return render_template('dashboards/stats_dashboards.html',
-                           graph_data=overview[0],
-                           stats_data=overview[1],
-                           project_list=projects_by_4,
-                           username=session['username'].capitalize(),
-                           server=session['server'])
+    data = {'graph_data': overview[0],
+            'stats_data': overview[1],
+            'project_list': projects_by_4,
+            'username': session['username'].capitalize(),
+            'server': session['server']}
+    return render_template('dashboards/overview.html', **data)
 
-def convert_from_df_to_html(test_grid):
+
+def from_df_to_html(test_grid):
     columns = test_grid.columns
     tests_union = list(columns[2:])
     diff_version = list(test_grid.version.unique())
+
     tests_list = []
     for index, row in test_grid.iterrows():
-        row_list = []
-        row_list.append(row['session'])
-        row_list.append(['version', row['version']])
+        row_list = [row['session'], 'version', row['version']]
         for test in tests_union:
             row_list.append(row[test])
         tests_list.append(row_list)
@@ -75,17 +74,8 @@ def convert_from_df_to_html(test_grid):
     return [tests_union, tests_list, diff_version]
 
 
-# this route give the details of the project
 @dashboard.route('project/<id>', methods=['GET'])
 def project(id):
-    """This is the per project dashboard view.
-
-    Args:
-        id (str): Id of the project we like to view.
-
-    Returns:
-        route: Project details
-    """
 
     # Load pickle and check server
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
@@ -97,22 +87,22 @@ def project(id):
     # Get the details for plotting
 
     ggpp = gg.GraphGeneratorPP(id, session['role'], p, session['projects'])
-    graph_data, stats_data, data_array, test_grid = ggpp.get_project_view()
-    per_project_view = [graph_data, stats_data, data_array, test_grid]
-    session['excel'] = test_grid[1], test_grid[2]
+    per_project_view = ggpp.get_project_view()
+    graph_data, stats_data, data_array, test_grid = per_project_view
+    tests_union, tests_list, diff_version = test_grid
 
-    test_grid_html = convert_from_df_to_html(test_grid[0])
+    session['excel'] = (tests_list, diff_version)
+
     # If no data found redirect to login page else render the data
     # with template
     if per_project_view is None:
-        return render_template('dashboards/stats_dashboards.html')
+        return render_template('dashboards/overview.html')
 
-    return render_template(
-        'dashboards/stats_dashboards_pp.html',
-        graph_data=graph_data,
-        stats_data=stats_data,
-        username=session['username'].capitalize(),
-        server=session['server'],
-        data_array=data_array,
-        test_grid=test_grid_html,
-        id=id)
+    data = {'graph_data': graph_data,
+            'stats_data': stats_data,
+            'data_array': data_array,
+            'test_grid': from_df_to_html(tests_union),
+            'username': session['username'].capitalize(),
+            'server': session['server'],
+            'id': id}
+    return render_template('dashboards/projectview.html', **data)
