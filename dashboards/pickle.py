@@ -54,7 +54,6 @@ def get_resources(x):
         tv = get_tests(bbrc_validator, 'ArchivingValidator')
 
         row.extend([tv[0], tv[1], insert_date])
-
         resources.append(row)
 
         # # -------------------- BBRC RESOURCES--------------------------------#
@@ -92,6 +91,7 @@ def resource_monitor(x, resources, resource_name):
     dt = now.strftime("%d/%m/%Y")
 
     # Count total number of resources
+    print(len(resources))
     n_res = 0
     for r in resources:
         label = r[3]
