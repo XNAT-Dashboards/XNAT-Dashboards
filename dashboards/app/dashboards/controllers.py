@@ -12,21 +12,15 @@ import pandas as pd
 dashboard = Blueprint('dashboard', __name__, url_prefix='/dashboard')
 
 
-# logout route
 @dashboard.route('/logout/', methods=['GET'])
 def logout():
-    """logout route here we delete all existing session variables
 
-    Returns:
-        route: Redirect to login page.
-    """
-    # Delete session keys if exist
     fields = ['username', 'server', 'projects', 'role']
     for e in fields:
         if e in session:
             del session[e]
-    session['error'] = -1
 
+    session['error'] = 'Logged out.'
     return redirect(url_for('auth.login'))
 
 

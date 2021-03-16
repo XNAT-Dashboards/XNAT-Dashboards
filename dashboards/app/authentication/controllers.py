@@ -6,49 +6,41 @@ import json
 import pyxnat
 import pickle
 
-
-# Define the blueprint: 'auth', set its url prefix: app.url/auth
 auth = Blueprint('auth', __name__, url_prefix='/auth')
 
 
-# Set the route and accepted methods
 @auth.route('/login/', methods=['GET', 'POST'])
 def login():
 
     p = pickle.load(open(cfg.PICKLE_PATH, 'rb'))
 
-    if request.method == 'GET':
-
+    # Form submission triggers POST request while other cases yield GET
+    method = request.method
+    if method == 'GET':
+        # First visit / logging out / login errors
         if 'error' in session:
-            if session['error'] == -1:
-                display_error = "Logged out"
-                del session['error']
-            else:
-                display_error = session['error']
-                del session['error']
+            error = session['error']
+            del session['error']
             return render_template('authentication/login.html',
-                                   error=display_error)
+                                   error=error)
         else:
             return render_template('authentication/login.html')
 
-    else:
-
+    elif method == 'POST':
         form = request.form
         username = form['username']
-        # Check from API whether user exist in the XNAT instance
         x = pyxnat.Interface(user=username,
                              password=form['password'],
                              server=p['server'],
                              verify=p['verify'])
-        exists = len(x.select.projects().get()) != 0
+        can_see_some_projects = len(x.select.projects().get()) != 0
 
-        if exists:
-            # If exist check whether the XNAT instance is same
+        if can_see_some_projects:
+
             config = json.load(open(cfg.DASHBOARD_CONFIG_PATH))
             roles = config['roles']
 
             if username in roles['forbidden']['users']:
-                # User is forbiden
                 msg = 'User role assigned is forbidden login not allowed'
                 session['error'] = msg
                 return redirect(url_for('auth.login'))
@@ -74,6 +66,5 @@ def login():
             return redirect(url_for('dashboard.overview'))
 
         else:
-            # Wrong password or username
-            session['error'] = 'Wrong Password or Username'
+            session['error'] = 'Wrong password/username'
             return redirect(url_for('auth.login'))
