@@ -195,7 +195,6 @@ class BBRCDataFilter(df.DataFilter):
         for test in archiving_validator:
             if test not in tests_union and test not in ['version', 'experiment_id', 'generated']:
                     tests_union.append(test)
-
         # Loop through each test
         keyList = ['session', 'version'] + tests_union
         info_dic = {key: [] for key in keyList}
@@ -203,19 +202,16 @@ class BBRCDataFilter(df.DataFilter):
         all_dic = {key: [] for key in keyList}
         for resource in resources_bbrc:
             project, exp_id, archiving_validator, bv, insert_date = resource
-            if bv and project == project_id:
-                info_dic['session'].append(exp_id)
-                info_dic['version'].append(archiving_validator['version'])
-                cat_dic['session'].append(exp_id)
-                cat_dic['version'].append(archiving_validator['version'])
-                all_dic['session'].append(exp_id)
-                all_dic['version'].append(archiving_validator['version'])
+            if bv and project == project_id and archiving_validator != 0:
+                for d in [info_dic, cat_dic, all_dic]:
+                    d['session'].append(exp_id)
+                    d['version'].append(archiving_validator['version'])
                 for test in tests_union:
                     if test in archiving_validator:
                         info_dic[test].append(archiving_validator[test]['data'])
                         cat_dic[test].append(archiving_validator[test]['has_passed'])
-                        all_data = [archiving_validator[test]['has_passed'], archiving_validator[test]['data'] ]
-                        all_dic[test].append(all_data)
+                        all_dic[test].append([archiving_validator[test]['has_passed'],
+                                              archiving_validator[test]['data']])
         df_info = pd.DataFrame(info_dic)
         df_cat = pd.DataFrame(cat_dic)
         df_all = pd.DataFrame(all_dic)
@@ -238,7 +234,6 @@ class DataFilterPP(BBRCDataFilter):
 
         test_grid = self.generate_test_grid_bbrc(self.resources_bbrc,
                                                  self.project_id)
-
         ordered_graphs.update({'test_grid': test_grid})
 
         dd = self.diff_dates(self.resources_bbrc, self.project_id)
