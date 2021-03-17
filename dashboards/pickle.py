@@ -51,11 +51,9 @@ def get_resources(x):
                 row = [exp['project'], exp['ID'],
                        r['xnat_abstractresource_id'], r['label']]
 
-        tv = get_tests(bbrc_validator, 'ArchivingValidator')
-
-        row.extend([tv[0], tv[1], insert_date])
-
-        resources.append(row)
+                tv = get_tests(bbrc_validator, 'ArchivingValidator')
+                row.extend([tv[0], tv[1], insert_date])
+                resources.append(row)
 
         # # -------------------- BBRC RESOURCES--------------------------------#
         # # BBRC_VALIDATOR
