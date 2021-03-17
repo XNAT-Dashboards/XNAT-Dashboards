@@ -188,7 +188,7 @@ class BBRCDataFilter(df.DataFilter):
 
         return abs(diff.days)
 
-    def generate_test_grid_bbrc(self, resources_bbrc, project_id):
+    def generate_test_grid_bbrc(self, resources_bbrc):
 
         tests_union = []
         project, exp_id, archiving_validator, bv, insert_date = resources_bbrc[0]
@@ -202,7 +202,7 @@ class BBRCDataFilter(df.DataFilter):
         all_dic = {key: [] for key in keyList}
         for resource in resources_bbrc:
             project, exp_id, archiving_validator, bv, insert_date = resource
-            if bv and project == project_id and archiving_validator != 0:
+            if bv and archiving_validator != 0:
                 for d in [info_dic, cat_dic, all_dic]:
                     d['session'].append(exp_id)
                     d['version'].append(archiving_validator['version'])
@@ -231,9 +231,13 @@ class DataFilterPP(BBRCDataFilter):
         resources = self.get_resource_details(self.resources_bbrc,
                                               self.project_id)
         ordered_graphs.update(resources)
-
-        test_grid = self.generate_test_grid_bbrc(self.resources_bbrc,
-                                                 self.project_id)
+        bbrc_resources = [e for e in self.resources_bbrc
+                          if e[0] == self.project_id]
+        project, exp_id, archiving_validator, bv, insert_date = bbrc_resources[0]
+        if archiving_validator == 0:
+            test_grid = ''
+        else:
+            test_grid = self.generate_test_grid_bbrc(bbrc_resources)
         ordered_graphs.update({'test_grid': test_grid})
 
         dd = self.diff_dates(self.resources_bbrc, self.project_id)

@@ -85,7 +85,7 @@ def project(id):
     graph_data, stats_data, data_array, test_grid = per_project_view
     tests_union, tests_list, diff_version = test_grid
 
-    session['excel'] = (tests_list, diff_version)
+    #session['excel'] = (tests_list, diff_version)
 
     # If no data found redirect to login page else render the data
     # with template
