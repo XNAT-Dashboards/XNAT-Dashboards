@@ -62,7 +62,6 @@ def get_resources(x):
         # insert_date = exp['insert_date'].split(' ')[0]
         # row = [exp['project'], exp['ID'], tv[0], tv[1], insert_date]
         # resources_bbrc.append(row)
-
     return resources
 
 

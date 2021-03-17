@@ -404,7 +404,6 @@ class DataFilterPP(DataFilter):
         ordered_graphs.update(ed)
         ordered_graphs.update(scd)
         ordered_graphs.update(stat_final)
-        print(ordered_graphs)
 
         return ordered_graphs
 

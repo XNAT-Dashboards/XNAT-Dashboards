@@ -6,6 +6,7 @@ from dashboards.data import bbrc as dfb
 
 import pickle
 from dashboards import config
+import pandas as pd
 
 # Define the blueprint: 'dashboard', set its url prefix: app.url/dashboard
 dashboard = Blueprint('dashboard', __name__, url_prefix='/dashboard')
@@ -58,6 +59,21 @@ def overview():
                            username=session['username'].capitalize(),
                            server=session['server'])
 
+def convert_from_df_to_html(test_grid):
+    columns = test_grid.columns
+    tests_union = list(columns[2:])
+    diff_version = list(test_grid.version.unique())
+    tests_list = []
+    for index, row in test_grid.iterrows():
+        row_list = []
+        row_list.append(row['session'])
+        row_list.append(['version', row['version']])
+        for test in tests_union:
+            row_list.append(row[test])
+        tests_list.append(row_list)
+
+    return [tests_union, tests_list, diff_version]
+
 
 # this route give the details of the project
 @dashboard.route('project/<id>', methods=['GET'])
@@ -81,8 +97,11 @@ def project(id):
     # Get the details for plotting
 
     ggpp = gg.GraphGeneratorPP(id, session['role'], p, session['projects'])
-    per_project_view = ggpp.get_project_view()
+    graph_data, stats_data, data_array, test_grid = ggpp.get_project_view()
+    per_project_view = [graph_data, stats_data, data_array, test_grid]
+    session['excel'] = test_grid[1], test_grid[2]
 
+    test_grid_html = convert_from_df_to_html(test_grid[0])
     # If no data found redirect to login page else render the data
     # with template
     if per_project_view is None:
@@ -90,10 +109,10 @@ def project(id):
 
     return render_template(
         'dashboards/stats_dashboards_pp.html',
-        graph_data=per_project_view[0],
-        stats_data=per_project_view[1],
+        graph_data=graph_data,
+        stats_data=stats_data,
         username=session['username'].capitalize(),
         server=session['server'],
-        data_array=per_project_view[2],
-        test_grid=per_project_view[3],
+        data_array=data_array,
+        test_grid=test_grid_html,
         id=id)
