@@ -5,458 +5,447 @@ import dashboards
 import pandas as pd
 
 
-class DataFilter:
-    def __init__(self, p, visible_projects):
-        projects = [pr for pr in p['projects'] if pr['id'] in visible_projects
-                    or "*" in visible_projects]
-        experiments = [e for e in p['experiments'] if e['project'] in visible_projects
-                       or "*" in visible_projects]
-        scans = [s for s in p['scans'] if s['project'] in visible_projects
-                 or "*" in visible_projects]
-        subjects = [s for s in p['subjects'] if s['project'] in visible_projects
-                    or "*" in visible_projects]
+def filter_data(p, visible_projects):
+    projects = [pr for pr in p['projects'] if pr['id'] in visible_projects
+                or "*" in visible_projects]
+    experiments = [e for e in p['experiments'] if e['project'] in visible_projects
+                   or "*" in visible_projects]
+    scans = [s for s in p['scans'] if s['project'] in visible_projects
+             or "*" in visible_projects]
+    subjects = [s for s in p['subjects'] if s['project'] in visible_projects
+                or "*" in visible_projects]
 
-        resources = [e for e in p['resources'] if len(e) == 4]
+    resources = [e for e in p['resources'] if len(e) == 4]
 
-        self.data = {}
-        self.data['projects'] = projects
-        self.data['subjects'] = subjects
-        self.data['experiments'] = experiments
-        self.data['scans'] = scans
+    data = {}
+    data['projects'] = projects
+    data['subjects'] = subjects
+    data['experiments'] = experiments
+    data['scans'] = scans
 
-        fr = [(project, a, b, c) for (project, a, b, c) in resources
-              if project not in visible_projects or "*" in visible_projects]
+    fr = [(project, a, b, c) for (project, a, b, c) in resources
+          if project not in visible_projects or "*" in visible_projects]
 
-        self.data['longitudinal_data'] = p['longitudinal_data']
-        self.data['resources'] = fr
+    data['longitudinal_data'] = p['longitudinal_data']
+    data['resources'] = fr
 
-    def reorder_graphs(self):
+    stats = {}
+    ordered_graphs = {}
 
-        stats = {}
-        ordered_graphs = {}
+    # Preprocessing required in project data for number of projects
+    projects_details = get_projects_details(data['projects'])
+    # If some error in connection 1 will be returned and we will
+    # not go further
+    stats['Projects'] = projects_details['Number of Projects']
+    del projects_details['Number of Projects']
 
-        # Preprocessing required in project data for number of projects
-        projects_details = self.get_projects_details(self.data['projects'])
-        # If some error in connection 1 will be returned and we will
-        # not go further
-        stats['Projects'] = projects_details['Number of Projects']
-        del projects_details['Number of Projects']
+    # Pre processing for subject details required
+    subjects_details = get_subjects_details(data['subjects'])
+    stats['Subjects'] = subjects_details['Number of Subjects']
+    del subjects_details['Number of Subjects']
 
-        # Pre processing for subject details required
-        subjects_details = self.get_subjects_details(self.data['subjects'])
-        stats['Subjects'] = subjects_details['Number of Subjects']
-        del subjects_details['Number of Subjects']
+    # Pre processing experiment details
+    experiments_details = get_experiments_details(data['experiments'])
 
-        # Pre processing experiment details
-        experiments_details = self.get_experiments_details(self.data['experiments'])
+    stats['Experiments'] = experiments_details['Number of Experiments']
+    del experiments_details['Number of Experiments']
 
-        stats['Experiments'] = experiments_details['Number of Experiments']
-        del experiments_details['Number of Experiments']
+    # Pre processing scans details
+    scans_details = get_scans_details(data['scans'])
+    stats['Scans'] = scans_details['Number of Scans']
+    del scans_details['Number of Scans']
+    del scans_details['Scans per session']
+    del scans_details['Scan Types']
 
-        # Pre processing scans details
-        scans_details = self.get_scans_details(self.data['scans'])
-        stats['Scans'] = scans_details['Number of Scans']
-        del scans_details['Number of Scans']
-        del scans_details['Scans per session']
-        del scans_details['Scan Types']
+    stat_final = {'Stats': stats}
 
-        stat_final = {'Stats': stats}
+    ordered_graphs.update(projects_details)
+    ordered_graphs.update(subjects_details)
+    ordered_graphs.update(experiments_details)
+    ordered_graphs.update(scans_details)
+    ordered_graphs.update(stat_final)
 
-        ordered_graphs.update(projects_details)
-        ordered_graphs.update(subjects_details)
-        ordered_graphs.update(experiments_details)
-        ordered_graphs.update(scans_details)
-        ordered_graphs.update(stat_final)
+    resources = get_resources_details(data['resources'])
+    ordered_graphs.update(resources)
 
-        resources = self.get_resources_details(self.data['resources'])
-        ordered_graphs.update(resources)
+    d = {'Resources (over time)': {'count': data['longitudinal_data']}}
+    ordered_graphs.update(d)
 
-        d = {'Resources (over time)': {'count': self.data['longitudinal_data']}}
-        ordered_graphs.update(d)
+    return ordered_graphs
 
-        return ordered_graphs
 
-    def get_projects_details(self, projects):
-        projects_details = {}
+def get_projects_details(projects):
+    projects_details = {}
 
-        # key id_type is used by frontend to add appropriate urls in frontend
-        project_acccess = self.dict_generator_overview(
-            projects, 'project_access', 'id', 'access')
-        project_acccess['id_type'] = 'project'
+    # key id_type is used by frontend to add appropriate urls in frontend
+    project_acccess = dict_generator_overview(projects, 'project_access', 'id', 'access')
+    project_acccess['id_type'] = 'project'
 
-        projects_details['Number of Projects'] = len(projects)
-        projects_details['Projects'] = project_acccess
+    projects_details['Number of Projects'] = len(projects)
+    projects_details['Projects'] = project_acccess
 
-        return projects_details
+    return projects_details
 
-    def get_subjects_details(self, subjects_data):
 
-        subjects_details = {}
+def get_subjects_details(subjects_data):
 
-        # Subjects per project information
+    subjects_details = {}
 
-        subjects_per_project = self.dict_generator_per_view(
-            subjects_data, 'project', 'ID', 'spp')
-        subjects_per_project['id_type'] = 'subject'
+    # Subjects per project information
 
-        # Number of subjects information
-        subjects_details['Number of Subjects'] = len(subjects_data)
-        subjects_details['Subjects'] = subjects_per_project
+    subjects_per_project = dict_generator_per_view(
+        subjects_data, 'project', 'ID', 'spp')
+    subjects_per_project['id_type'] = 'subject'
 
-        return subjects_details
+    # Number of subjects information
+    subjects_details['Number of Subjects'] = len(subjects_data)
+    subjects_details['Subjects'] = subjects_per_project
 
-    def get_experiments_details(self, experiments):
+    return subjects_details
 
-        experiments_details = {}
 
-        experiments_details['Number of Experiments'] = len(experiments)
+def get_experiments_details(experiments):
 
-        # Experiments type information
+    experiments_details = {}
 
-        experiment_type = self.dict_generator_overview(
-            experiments, 'xsiType', 'ID', 'xsiType')
-        experiment_type['id_type'] = 'experiment'
+    experiments_details['Number of Experiments'] = len(experiments)
 
-        experiments_types_per_project = self.dict_generator_per_view_stacked(
-            experiments, 'project', 'xsiType', 'ID')
-        experiments_types_per_project['id_type'] = 'experiment'
+    # Experiments type information
 
-        prop_exp = self.proportion_graphs(
-            experiments, 'subject_ID', 'ID', 'Subjects with ', ' experiment(s)')
-        prop_exp['id_type'] = 'subject'
+    experiment_type = dict_generator_overview(
+        experiments, 'xsiType', 'ID', 'xsiType')
+    experiment_type['id_type'] = 'experiment'
 
-        experiments_details['Imaging sessions'] =\
-            experiments_types_per_project
+    experiments_types_per_project = dict_generator_per_view_stacked(
+        experiments, 'project', 'xsiType', 'ID')
+    experiments_types_per_project['id_type'] = 'experiment'
 
-        experiments_details['Total amount of sessions'] = experiment_type
-        experiments_details['Sessions per subject'] = prop_exp
+    prop_exp = proportion_graphs(
+        experiments, 'subject_ID', 'ID', 'Subjects with ', ' experiment(s)')
+    prop_exp['id_type'] = 'subject'
 
-        return experiments_details
+    experiments_details['Imaging sessions'] =\
+        experiments_types_per_project
 
-    def get_scans_details(self, scans):
+    experiments_details['Total amount of sessions'] = experiment_type
+    experiments_details['Sessions per subject'] = prop_exp
 
-        columns = ['xnat:imagescandata/quality', 'ID', 'quality',
-                   'xnat:imagescandata/id']
-        scan_quality = self.dict_generator_overview(scans, *columns)
-        scan_quality['id_type'] = 'experiment'
+    return experiments_details
 
-        # Scans type information
-        fp = op.join(op.dirname(dashboards.__file__), '..', 'data',
-                     'whitelist.json')
-        whitelist = json.load(open(fp))
 
-        filtered_scans = [s for s in scans if s['xnat:imagescandata/type'] in whitelist]
+def get_scans_details(scans):
 
-        columns = ['xnat:imagescandata/type', 'ID', 'type',
-                   'xnat:imagescandata/id']
-        type_dict = self.dict_generator_overview(filtered_scans, *columns)
-        type_dict['id_type'] = 'experiment'
+    columns = ['xnat:imagescandata/quality', 'ID', 'quality',
+               'xnat:imagescandata/id']
+    scan_quality = dict_generator_overview(scans, *columns)
+    scan_quality['id_type'] = 'experiment'
 
-        prop_scan = self.proportion_graphs(scans, 'ID',
-                                           'xnat:imagescandata/id',
-                                           '', ' scans')
-        prop_scan['id_type'] = 'subject'
+    # Scans type information
+    fp = op.join(op.dirname(dashboards.__file__), '..', 'data',
+                 'whitelist.json')
+    whitelist = json.load(open(fp))
 
-        scans_details = {'Scan quality': scan_quality,
-                         'Scan Types': type_dict,
-                         'Scans per session': prop_scan,
-                         'Number of Scans': len(scans)}
-        return scans_details
+    filtered_scans = [s for s in scans if s['xnat:imagescandata/type'] in whitelist]
 
-    def get_resources_details(self, resources, project_id=None):
+    columns = ['xnat:imagescandata/type', 'ID', 'type',
+               'xnat:imagescandata/id']
+    type_dict = dict_generator_overview(filtered_scans, *columns)
+    type_dict['id_type'] = 'experiment'
 
-        df = pd.DataFrame(resources,
-                          columns=['project', 'session', 'resource', 'label'])
+    prop_scan = proportion_graphs(scans, 'ID',
+                                       'xnat:imagescandata/id',
+                                       '', ' scans')
+    prop_scan['id_type'] = 'subject'
 
-        # Resource types
-        resource_types = self.dict_generator_resources(df, 'label', 'session')
-        resource_types['id_type'] = 'experiment'
+    scans_details = {'Scan quality': scan_quality,
+                     'Scan Types': type_dict,
+                     'Scans per session': prop_scan,
+                     'Number of Scans': len(scans)}
+    return scans_details
 
-        resource_type_ps = self.dict_generator_resources(df, 'label', 'session')
-        resource_type_ps['id_type'] = 'experiment'
 
-        pro_exp_list = [[item[0], item[1]] for item in resources]
+def get_resources_details(resources, project_id=None):
 
-        pro_exp_df = pd.DataFrame(pro_exp_list, columns=['project', 'session'])
+    df = pd.DataFrame(resources,
+                      columns=['project', 'session', 'resource', 'label'])
 
-        # Create a Dataframe that have 3 columns where
-        # 1st column: project_x will have projects
-        # 2nd column: session will have session details
-        # 3rd column: project_y will have count of resources
-        pro_exp_count = pro_exp_df.groupby('session').count().reset_index()
-        project_session = pro_exp_df.drop_duplicates(subset="session")
-        resource_count_df = pd.merge(
-            project_session, pro_exp_count, on='session')
+    # Resource types
+    resource_types = dict_generator_resources(df, 'label', 'session')
+    resource_types['id_type'] = 'experiment'
 
-        resource_count_df['project_y'] = resource_count_df[
-            'project_y'].astype(int)
+    resource_type_ps = dict_generator_resources(df, 'label', 'session')
+    resource_type_ps['id_type'] = 'experiment'
 
-        # Send the above created data from to dict_generator_per_view_stacked
-        # This will create the format required for stacked plot
-        resource_count_dict = self.dict_generator_per_view_stacked(
-            resource_count_df, 'project_x', 'project_y', 'session')
-        resource_count_dict['id_type'] = 'experiment'
-        ordered = OrderedDict(sorted(resource_count_dict['count'].items(),
-                                     key=lambda x: len(x[0]), reverse=True))
-        ordered_ = {a: {str(c)+' Resources/Session': d for c, d in b.items()} for a, b in ordered.items()}
-        resource_count_dict_ordered = {'count': ordered_, 'list': resource_count_dict['list']}
+    pro_exp_list = [[item[0], item[1]] for item in resources]
 
-        return {'Resources per type': resource_types,
-                'Resources per session': resource_count_dict_ordered}
+    pro_exp_df = pd.DataFrame(pro_exp_list, columns=['project', 'session'])
 
-    def proportion_graphs(self, data, x, y, prefix, suffix):
+    # Create a Dataframe that have 3 columns where
+    # 1st column: project_x will have projects
+    # 2nd column: session will have session details
+    # 3rd column: project_y will have count of resources
+    pro_exp_count = pro_exp_df.groupby('session').count().reset_index()
+    project_session = pro_exp_df.drop_duplicates(subset="session")
+    resource_count_df = pd.merge(
+        project_session, pro_exp_count, on='session')
 
-        data_list = [[item[x], item[y]] for item in data]
+    resource_count_df['project_y'] = resource_count_df[
+        'project_y'].astype(int)
 
-        # Create a data frame
-        df = pd.DataFrame(data_list, columns=['per_view', 'count'])
+    # Send the above created data from to dict_generator_per_view_stacked
+    # This will create the format required for stacked plot
+    resource_count_dict = dict_generator_per_view_stacked(
+        resource_count_df, 'project_x', 'project_y', 'session')
+    resource_count_dict['id_type'] = 'experiment'
+    ordered = OrderedDict(sorted(resource_count_dict['count'].items(),
+                                 key=lambda x: len(x[0]), reverse=True))
+    ordered_ = {a: {str(c)+' Resources/Session': d for c, d in b.items()} for a, b in ordered.items()}
+    resource_count_dict_ordered = {'count': ordered_, 'list': resource_count_dict['list']}
 
-        # Group by property x as per_view and count
-        df_proportion = df.groupby(
-            'per_view', as_index=False).count().groupby('count').count()
+    return {'Resources per type': resource_types,
+            'Resources per session': resource_count_dict_ordered}
 
-        # Use count to group by property x
-        df_proportion['list'] = df.groupby(
-            'per_view', as_index=False).count().groupby(
-                'count')['per_view'].apply(list)
 
-        # Add prefix and suffix to count for easy understanding
-        # Eg. Number of subject with 1 experiments
-        # Here prefix is Number of subject with and suffix is experiments
-        # and count is 1
-        df_proportion.index = prefix + df_proportion.index.astype(str) + suffix
+def proportion_graphs(data, x, y, prefix, suffix):
 
-        return df_proportion.rename(columns={'per_view': 'count'}).to_dict()
+    data_list = [[item[x], item[y]] for item in data]
 
-    def dict_generator_resources(self, df, x_name, y_name):
+    # Create a data frame
+    df = pd.DataFrame(data_list, columns=['per_view', 'count'])
 
-        data = df[df[y_name] != 'No Data'][[
-            x_name, y_name]]
-        data = data.rename(columns={y_name: 'count'})
-        data_df = data.groupby(
-            x_name)['count'].apply(list)
-        data = data.groupby(x_name).count()
-        data['list'] = data_df
-        data_dict = data.to_dict()
+    # Group by property x as per_view and count
+    df_proportion = df.groupby(
+        'per_view', as_index=False).count().groupby('count').count()
 
-        return data_dict
+    # Use count to group by property x
+    df_proportion['list'] = df.groupby(
+        'per_view', as_index=False).count().groupby(
+            'count')['per_view'].apply(list)
 
-    def dict_generator_overview(self, data, x, y, x_new, extra=None):
-        """Generate a dictionary from the data list of project, subjects,
-        experiments and scans in the format required for graphs.
+    # Add prefix and suffix to count for easy understanding
+    # Eg. Number of subject with 1 experiments
+    # Here prefix is Number of subject with and suffix is experiments
+    # and count is 1
+    df_proportion.index = prefix + df_proportion.index.astype(str) + suffix
 
-        Args:
-            data (list): List of projects or subjects or exp or scans
-            x (str): The name which will be on X axis of graph
-            y (str): The name which will be on Y axis of graph
-            x_new (str): The new name which will be shown on X axis of graph
-            extra (str, optional): Add another value to be concatenated
-                in x_axis, when click on graph occurs. Useful when
-                the x_axis values are not unique and by default will not
-                be used for concatenation.
+    return df_proportion.rename(columns={'per_view': 'count'}).to_dict()
 
-        Returns:
-            Dict: For each graph this format is used
+
+def dict_generator_resources(df, x_name, y_name):
+
+    data = df[df[y_name] != 'No Data'][[x_name, y_name]]
+    data = data.rename(columns={y_name: 'count'})
+    data_df = data.groupby(x_name)['count'].apply(list)
+    data = data.groupby(x_name).count()
+    data['list'] = data_df
+    data_dict = data.to_dict()
+
+    return data_dict
+
+
+def dict_generator_overview(data, x, y, x_new, extra=None):
+    """Generate a dictionary from the data list of project, subjects,
+    experiments and scans in the format required for graphs.
+
+    Args:
+        data (list): List of projects or subjects or exp or scans
+        x (str): The name which will be on X axis of graph
+        y (str): The name which will be on Y axis of graph
+        x_new (str): The new name which will be shown on X axis of graph
+        extra (str, optional): Add another value to be concatenated
+            in x_axis, when click on graph occurs. Useful when
+            the x_axis values are not unique and by default will not
+            be used for concatenation.
+
+    Returns:
+        Dict: For each graph this format is used
+        {"count": {"x": "y"}, "list": {"x": "list"}}
+    """
+
+    property_list = []
+    property_none = []
+
+    for item in data:
+        if item[x] != '':
+            i = [item[x], item[y]]
+            if extra is not None:
+                i[1] += item[extra]
+            property_list.append(i)
+        else:
+            i = item[y]
+            if extra is not None:
+                i += '/' + item[extra]
+            property_none.append(i)
+
+    property_df = pd.DataFrame(property_list, columns=[x_new, 'count'])
+
+    property_df_series = property_df.groupby(x_new)['count'].apply(list)
+    property_final_df = property_df.groupby(x_new).count()
+    property_final_df['list'] = property_df_series
+    d = property_final_df.to_dict()
+
+    if len(property_none) != 0:
+        d['count'].update({'No Data': len(property_none)})
+        d['list'].update({'No Data': property_none})
+
+    return d
+
+
+def dict_generator_per_view(data, x, y, x_new):
+    """Generate a dictionary from the data list of subjects,
+    experiments and scans in the format required for graphs.
+    The generated data is only for single project.
+
+    Args:
+        data (list): List of projects or subjects or exp or scans
+        x (str): The name which will be on X axis of graph
+        y (str): The name which will be on Y axis of graph
+        x_new (str): The new name which will be shown on X axis of graph
+
+    Returns:
+         Dict: For each graph this format is used
             {"count": {"x": "y"}, "list": {"x": "list"}}
-        """
+    """
+    per_list = [[item[x], item[y]] for item in data]
 
-        property_list = []
-        property_none = []
+    per_df = pd.DataFrame(per_list, columns=[x_new, 'count'])
+    per_df_series = per_df.groupby(x_new)['count'].apply(list)
+    per_df = per_df.groupby(x_new).count()
+    per_df['list'] = per_df_series
 
-        for item in data:
-            if item[x] != '':
-                i = [item[x], item[y]]
-                if extra is not None:
-                    i[1] += item[extra]
-                property_list.append(i)
-            else:
-                i = item[y]
-                if extra is not None:
-                    i += '/' + item[extra]
-                property_none.append(i)
+    per_view = per_df.to_dict()
 
-        property_df = pd.DataFrame(property_list, columns=[x_new, 'count'])
-
-        property_df_series = property_df.groupby(x_new)['count'].apply(list)
-        property_final_df = property_df.groupby(x_new).count()
-        property_final_df['list'] = property_df_series
-        d = property_final_df.to_dict()
-
-        if len(property_none) != 0:
-            d['count'].update({'No Data': len(property_none)})
-            d['list'].update({'No Data': property_none})
-
-        return d
-
-    def dict_generator_per_view(self, data, x, y, x_new):
-        """Generate a dictionary from the data list of subjects,
-        experiments and scans in the format required for graphs.
-        The generated data is only for single project.
-
-        Args:
-            data (list): List of projects or subjects or exp or scans
-            x (str): The name which will be on X axis of graph
-            y (str): The name which will be on Y axis of graph
-            x_new (str): The new name which will be shown on X axis of graph
-
-        Returns:
-             Dict: For each graph this format is used
-                {"count": {"x": "y"}, "list": {"x": "list"}}
-        """
-        per_list = [[item[x], item[y]] for item in data]
-
-        per_df = pd.DataFrame(per_list, columns=[x_new, 'count'])
-        per_df_series = per_df.groupby(x_new)['count'].apply(list)
-        per_df = per_df.groupby(x_new).count()
-        per_df['list'] = per_df_series
-
-        per_view = per_df.to_dict()
-
-        return per_view
-
-    def dict_generator_per_view_stacked(self, data, x, y, z):
-        """Generate dict format that is used by plotly for stacked graphs view,
-        data like project details, scan, experiments, subject as field
-
-        x and y are used to group by the pandas data frame
-        and both are used on x axis values while z is used on y axis.
-        Args:
-            data (list): List of data project, subject, scan and experiments
-            x (str): The name which will be on X axis of graph
-            y (str): The name which will be on X axis of graph
-            z (str): The name which will be on Y axis of graph
-
-        Returns:
-            dict:{count:{prop_x:{prop_y:prop_z_count}},
-            list:{prop_x:{prop_y:prop_z_list}}
-            }
-        """
-
-        per_df = data
-
-        if isinstance(data, list):
-            per_list = [[item[x], item[y], item[z]] for item in data]
-            columns = [x, y, z]
-            per_df = pd.DataFrame(per_list, columns=columns)
-
-        per_df_series = per_df.groupby([x, y])[z].apply(list)
-
-        per_df = per_df.groupby([x, y]).count()
-        per_df['list'] = per_df_series
-
-        dict_tupled = per_df.to_dict()
-
-        dict_output_list = {}
-        for item in dict_tupled['list']:
-            dict_output_list[item[0]] = {}
-
-        for item in dict_tupled['list']:
-            d = {item[1]: dict_tupled['list'][item]}
-            dict_output_list[item[0]].update(d)
-
-        dict_output_count = {}
-
-        for item in dict_tupled[z]:
-            dict_output_count[item[0]] = {}
-
-        for item in dict_tupled[z]:
-            d = {item[1]: dict_tupled[z][item]}
-            dict_output_count[item[0]].update(d)
-
-        return {'count': dict_output_count, 'list': dict_output_list}
+    return per_view
 
 
-class DataFilterPP(DataFilter):
-    def __init__(self):
-        pass
+def dict_generator_per_view_stacked(data, x, y, z):
+    """Generate dict format that is used by plotly for stacked graphs view,
+    data like project details, scan, experiments, subject as field
 
-    def reorder_graphs_pp(self, p, project_id):
-        stats = {}
+    x and y are used to group by the pandas data frame
+    and both are used on x axis values while z is used on y axis.
+    Args:
+        data (list): List of data project, subject, scan and experiments
+        x (str): The name which will be on X axis of graph
+        y (str): The name which will be on X axis of graph
+        z (str): The name which will be on Y axis of graph
 
-        # Preprocessing required in project data for number of projects
-        pd = self.get_projects_details(p['projects'], project_id)
+    Returns:
+        dict:{count:{prop_x:{prop_y:prop_z_count}},
+        list:{prop_x:{prop_y:prop_z_list}}
+        }
+    """
 
-        # Pre processing for subject details required
-        sd = self.get_subjects_details(p['subjects'], project_id)
+    per_df = data
 
-        stats['Subjects'] = sd['Number of Subjects']
-        del sd['Number of Subjects']
+    if isinstance(data, list):
+        per_list = [[item[x], item[y], item[z]] for item in data]
+        columns = [x, y, z]
+        per_df = pd.DataFrame(per_list, columns=columns)
 
-        # Pre processing experiment details
-        ed = self.get_experiments_details(p['experiments'], project_id)
+    per_df_series = per_df.groupby([x, y])[z].apply(list)
 
-        stats['Experiments'] = ed['Number of Experiments']
-        del ed['Number of Experiments']
-        del ed['Total amount of sessions']
-        if 'Sessions types/Project' in ed:
-            del ed['Sessions types/Project']
+    per_df = per_df.groupby([x, y]).count()
+    per_df['list'] = per_df_series
 
-        # Pre processing scans details
-        scd = self.get_scans_details(p['scans'], project_id)
-        stats['Scans'] = scd['Number of Scans']
-        del scd['Number of Scans']
+    dict_tupled = per_df.to_dict()
 
-        stat_final = {'Stats': stats}
-        ordered_graphs = {}
+    dict_output_list = {}
+    for item in dict_tupled['list']:
+        dict_output_list[item[0]] = {}
 
-        ordered_graphs.update({'Project details': pd})
-        ordered_graphs.update(sd)
-        ordered_graphs.update(ed)
-        ordered_graphs.update(scd)
-        ordered_graphs.update(stat_final)
+    for item in dict_tupled['list']:
+        d = {item[1]: dict_tupled['list'][item]}
+        dict_output_list[item[0]].update(d)
 
-        return ordered_graphs
+    dict_output_count = {}
 
-    def get_projects_details(self, projects, project_id):
+    for item in dict_tupled[z]:
+        dict_output_count[item[0]] = {}
 
-        res = {}
+    for item in dict_tupled[z]:
+        d = {item[1]: dict_tupled[z][item]}
+        dict_output_count[item[0]].update(d)
 
-        p = [e for e in projects if e['id'] == project_id][0]
+    return {'count': dict_output_count, 'list': dict_output_list}
 
-        res['Owner(s)'] = p['project_owners'].split('<br/>')
 
-        res['Collaborator(s)'] = p['project_collabs'].split('<br/>')
-        if res['Collaborator(s)'][0] == '':
-            res['Collaborator(s)'] = ['None']
+def filter_data_per_project(p, project_id):
+    stats = {}
 
-        res['Member(s)'] = p['project_members'].split('<br/>')
-        if res['Member(s)'][0] == '':
-            res['Member(s)'] = ['None']
+    # Preprocessing required in project data for number of projects
 
-        res['User(s)'] = p['project_users'].split('<br/>')
-        if res['User(s)'][0] == '':
-            res['User(s)'] = ['None']
+    pd = get_projects_details_pp(p['projects'], project_id)
 
-        res['last_accessed'] = p['project_last_access'].split('<br/>')
+    # Pre processing for subject details required
+    d = [s for s in p['subjects'] if s['project'] == project_id]
+    sd = get_subjects_details(d)
+    del sd['Subjects']
 
-        for e in ['insert_user', 'insert_date', 'project_access', 'name',
-                  'project_last_workflow']:
-            res[e] = p[e]
+    stats['Subjects'] = sd['Number of Subjects']
+    del sd['Number of Subjects']
 
-        return res
+    # Pre processing experiment details
+    d = [e for e in p['experiments'] if e['project'] == project_id]
+    ed = get_experiments_details(d)
+    del ed['Imaging sessions']
 
-    def get_subjects_details(self, subjects, project_id):
-        d = [s for s in subjects if s['project'] == project_id]
-        res = super().get_subjects_details(d)
-        del res['Subjects']
+    stats['Experiments'] = ed['Number of Experiments']
+    del ed['Number of Experiments']
+    del ed['Total amount of sessions']
+    if 'Sessions types/Project' in ed:
+        del ed['Sessions types/Project']
 
-        return res
+    # Pre processing scans details
+    scans = [s for s in p['scans'] if s['project'] == project_id]
+    scd = get_scans_details(scans)
+    stats['Scans'] = scd['Number of Scans']
+    del scd['Number of Scans']
 
-    def get_experiments_details(self, experiments, project_id):
-        d = [e for e in experiments if e['project'] == project_id]
-        res = super().get_experiments_details(d)
-        del res['Imaging sessions']
+    stat_final = {'Stats': stats}
+    ordered_graphs = {}
 
-        return res
+    ordered_graphs.update({'Project details': pd})
+    ordered_graphs.update(sd)
+    ordered_graphs.update(ed)
+    ordered_graphs.update(scd)
+    ordered_graphs.update(stat_final)
 
-    def get_scans_details(self, scans, project_id):
-        scans = [s for s in scans if s['project'] == project_id]
-        res = super().get_scans_details(scans)
-        return res
+    return ordered_graphs
 
-    def get_resources_details(self, resources, project_id):
-        res = super().get_resources_details(resources, project_id)
-        if 'Resources per session' in res:
-            del res['Resources per session']
 
-        return res
+def get_projects_details_pp(projects, project_id):
+
+    res = {}
+
+    p = [e for e in projects if e['id'] == project_id][0]
+
+    res['Owner(s)'] = p['project_owners'].split('<br/>')
+
+    res['Collaborator(s)'] = p['project_collabs'].split('<br/>')
+    if res['Collaborator(s)'][0] == '':
+        res['Collaborator(s)'] = ['None']
+
+    res['Member(s)'] = p['project_members'].split('<br/>')
+    if res['Member(s)'][0] == '':
+        res['Member(s)'] = ['None']
+
+    res['User(s)'] = p['project_users'].split('<br/>')
+    if res['User(s)'][0] == '':
+        res['User(s)'] = ['None']
+
+    res['last_accessed'] = p['project_last_access'].split('<br/>')
+
+    for e in ['insert_user', 'insert_date', 'project_access', 'name',
+              'project_last_workflow']:
+        res[e] = p[e]
+
+    return res
+
+
+# def get_resources_details_pp(resources, project_id):
+#     res = get_resources_details(resources, project_id)
+#     if 'Resources per session' in res:
+#         del res['Resources per session']
+#
+#     return res

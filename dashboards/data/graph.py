@@ -6,16 +6,14 @@ from dashboards import config
 
 class GraphGenerator:
 
-    def __init__(self, filtered, bbrc_filtered, p):
+    def __init__(self, filtered, bbrc_filtered):
 
         self.counter_id = 0
-        self.filtered = filtered  # df.DataFilter(p, projects)
-
-        self.ordered_graphs = self.filtered.reorder_graphs()
-        self.ordered_graphs.update(bbrc_filtered.reorder_graphs())
+        self.ordered_graphs = filtered
+        self.ordered_graphs.update(bbrc_filtered)
 
     def add_graph_fields(self, graphs, role):
-        # Load configuration
+
         j = json.load(open(config.DASHBOARD_CONFIG_PATH))
         self.graphs = j['graphs']
 
@@ -42,13 +40,6 @@ class GraphGenerator:
         return graphs
 
     def get_overview(self, role):
-        """This first process the data using graph preprocessor.
-        Then create a 2D array that help in distribution of graph
-        in frontend. Where each row contains 2 graph.
-
-        Returns:
-            list: 2D array of graphs and other information.
-        """
 
         # FIXME: this function looks like it can be improved
         length_check = 0
@@ -101,37 +92,13 @@ class GraphGenerator:
 
 
 class GraphGeneratorPP(GraphGenerator):
-    """Class for making final changes in data for per project view.
-    Inherits GraphGenerator class.
-    This class makes final changes that are then sent to frontend.
-    Which is then displayed using jinja for per project view.
-
-    The final changes includes addition of:
-    1. Addition of ID to graphs.
-    2. Addition of graph description from the dashboard config file.
-    3. Addition of graph type from the dashboard config file.
-    4. Addition of default color to graph.
-
-    Args:
-        username (list): Name of the user
-        project_id (str): id of the project.
-        role (str): role assigned to the user.
-        data (dict): Dict containing data of projects, subjects, exp.,
-            scans, resources, extra_resources
-        project_visible (list, optional): list of project that should be
-            visible to the user.
-    """
 
     def __init__(self, project_id, role, p, project_visible=None):
 
         self.counter_id = 0
         self.role = role
-        filtered = df.DataFilterPP()
-        self.ordered_graphs = filtered.reorder_graphs_pp(p, project_id)
-
-        dfpp = dfb.DataFilterPP(p['resources'], project_id)
-        dfpp = dfpp.reorder_graphs_pp()
-
+        self.ordered_graphs = df.filter_data_per_project(p, project_id)
+        dfpp = dfb.filter_data_per_project(p['resources'], project_id)
         self.ordered_graphs.update(dfpp)
 
     def get_project_view(self):
@@ -176,21 +143,6 @@ class GraphGeneratorPP(GraphGenerator):
 
             length_check = length_check + 1
 
-        '''
-            Returns a nested list with dict inside
-            [
-                graphs_2d_list[
-                    [project1_info, project2_info]
-                    [project3_info, project4_info]
-                ]
-                project_view['Stats']{
-                    Projects: count
-                    Experiment: count
-                    Scans: count
-                    Subjects: count
-                }
-            ]
-        '''
 
         graph_stats_data = [graphs_2d_list, project_view['Stats'],
                             project_view['Project details']]
