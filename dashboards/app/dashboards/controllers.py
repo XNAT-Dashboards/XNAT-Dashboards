@@ -99,7 +99,6 @@ def project(id):
     ggpp = gg.GraphGeneratorPP(id, session['role'], p, session['projects'])
     graph_data, stats_data, data_array, test_grid = ggpp.get_project_view()
     per_project_view = [graph_data, stats_data, data_array, test_grid]
-    session['excel'] = test_grid[1], test_grid[2]
 
     test_grid_html = convert_from_df_to_html(test_grid[0])
     # If no data found redirect to login page else render the data
