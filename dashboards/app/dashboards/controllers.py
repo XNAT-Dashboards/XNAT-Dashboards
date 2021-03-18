@@ -79,8 +79,8 @@ def project(id):
         raise Exception(msg)
 
     # Get the details for plotting
-    ggpp = gg.GraphGeneratorPP(id, session['role'], p, session['projects'])
-    per_project_view = ggpp.get_project_view()
+    ggpp = gg.GraphGeneratorPP(id, p)
+    per_project_view = ggpp.get_project_view(session['role'])
     graph_data, stats_data, data_array, test_grid = per_project_view
     tests_union, tests_list, diff_version = test_grid
 

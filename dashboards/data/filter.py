@@ -16,152 +16,69 @@ def filter_data(p, visible_projects):
                 or "*" in visible_projects]
 
     resources = [e for e in p['resources'] if len(e) == 4]
-
-    data = {}
-    data['projects'] = projects
-    data['subjects'] = subjects
-    data['experiments'] = experiments
-    data['scans'] = scans
-
     fr = [(project, a, b, c) for (project, a, b, c) in resources
           if project not in visible_projects or "*" in visible_projects]
 
-    data['longitudinal_data'] = p['longitudinal_data']
-    data['resources'] = fr
-
-    stats = {}
-    ordered_graphs = {}
-
-    # Preprocessing required in project data for number of projects
-    projects_details = get_projects_details(data['projects'])
-    # If some error in connection 1 will be returned and we will
-    # not go further
-    stats['Projects'] = projects_details['Number of Projects']
-    del projects_details['Number of Projects']
-
-    # Pre processing for subject details required
-    subjects_details = get_subjects_details(data['subjects'])
-    stats['Subjects'] = subjects_details['Number of Subjects']
-    del subjects_details['Number of Subjects']
-
-    # Pre processing experiment details
-    experiments_details = get_experiments_details(data['experiments'])
-
-    stats['Experiments'] = experiments_details['Number of Experiments']
-    del experiments_details['Number of Experiments']
-
-    # Pre processing scans details
-    scans_details = get_scans_details(data['scans'])
-    stats['Scans'] = scans_details['Number of Scans']
-    del scans_details['Number of Scans']
-    del scans_details['Scans per session']
-    del scans_details['Scan Types']
-
-    stat_final = {'Stats': stats}
-
-    ordered_graphs.update(projects_details)
-    ordered_graphs.update(subjects_details)
-    ordered_graphs.update(experiments_details)
-    ordered_graphs.update(scans_details)
-    ordered_graphs.update(stat_final)
-
-    resources = get_resources_details(data['resources'])
-    ordered_graphs.update(resources)
-
-    d = {'Resources (over time)': {'count': data['longitudinal_data']}}
-    ordered_graphs.update(d)
-
-    return ordered_graphs
-
-
-def get_projects_details(projects):
-    projects_details = {}
-
-    # key id_type is used by frontend to add appropriate urls in frontend
     project_acccess = dict_generator_overview(projects, 'project_access', 'id', 'access')
     project_acccess['id_type'] = 'project'
+    projects_details = project_acccess
 
-    projects_details['Number of Projects'] = len(projects)
-    projects_details['Projects'] = project_acccess
-
-    return projects_details
-
-
-def get_subjects_details(subjects_data):
-
-    subjects_details = {}
-
-    # Subjects per project information
-
-    subjects_per_project = dict_generator_per_view(
-        subjects_data, 'project', 'ID', 'spp')
+    subjects_per_project = dict_generator_per_view(subjects, 'project', 'ID', 'spp')
     subjects_per_project['id_type'] = 'subject'
-
-    # Number of subjects information
-    subjects_details['Number of Subjects'] = len(subjects_data)
-    subjects_details['Subjects'] = subjects_per_project
-
-    return subjects_details
-
-
-def get_experiments_details(experiments):
+    subjects_details = subjects_per_project
 
     experiments_details = {}
-
-    experiments_details['Number of Experiments'] = len(experiments)
-
-    # Experiments type information
-
-    experiment_type = dict_generator_overview(
-        experiments, 'xsiType', 'ID', 'xsiType')
+    experiment_type = dict_generator_overview(experiments, 'xsiType', 'ID', 'xsiType')
     experiment_type['id_type'] = 'experiment'
-
-    experiments_types_per_project = dict_generator_per_view_stacked(
-        experiments, 'project', 'xsiType', 'ID')
+    experiments_types_per_project = dict_generator_per_view_stacked(experiments, 'project', 'xsiType', 'ID')
     experiments_types_per_project['id_type'] = 'experiment'
-
-    prop_exp = proportion_graphs(
-        experiments, 'subject_ID', 'ID', 'Subjects with ', ' experiment(s)')
+    prop_exp = proportion_graphs(experiments, 'subject_ID', 'ID', 'Subjects with ', ' experiment(s)')
     prop_exp['id_type'] = 'subject'
-
-    experiments_details['Imaging sessions'] =\
-        experiments_types_per_project
+    experiments_details['Imaging sessions'] = experiments_types_per_project
 
     experiments_details['Total amount of sessions'] = experiment_type
     experiments_details['Sessions per subject'] = prop_exp
-
-    return experiments_details
-
-
-def get_scans_details(scans):
 
     columns = ['xnat:imagescandata/quality', 'ID', 'quality',
                'xnat:imagescandata/id']
     scan_quality = dict_generator_overview(scans, *columns)
     scan_quality['id_type'] = 'experiment'
 
-    # Scans type information
-    fp = op.join(op.dirname(dashboards.__file__), '..', 'data',
-                 'whitelist.json')
-    whitelist = json.load(open(fp))
+    # # Scans type information
+    # fp = op.join(op.dirname(dashboards.__file__), '..', 'data',
+    #              'whitelist.json')
+    # whitelist = json.load(open(fp))
+    #
+    # filtered_scans = [s for s in scans if s['xnat:imagescandata/type'] in whitelist]
+    #
+    # columns = ['xnat:imagescandata/type', 'ID', 'type', 'xnat:imagescandata/id']
+    # type_dict = dict_generator_overview(filtered_scans, *columns)
+    # type_dict['id_type'] = 'experiment'
+    #
+    # prop_scan = proportion_graphs(scans, 'ID', 'xnat:imagescandata/id', '', ' scans')
+    # prop_scan['id_type'] = 'subject'
+    #
+    # scans_details = {'Scan quality': scan_quality,
+    #                  'Scan Types': type_dict,
+    #                  'Scans per session': prop_scan}
+    #
+    # del scans_details['Scans per session']
+    # del scans_details['Scan Types']
 
-    filtered_scans = [s for s in scans if s['xnat:imagescandata/type'] in whitelist]
+    stats = {'Projects': len(projects),
+             'Subjects': len(subjects),
+             'Experiments': len(experiments),
+             'Scans': len(scans)}
 
-    columns = ['xnat:imagescandata/type', 'ID', 'type',
-               'xnat:imagescandata/id']
-    type_dict = dict_generator_overview(filtered_scans, *columns)
-    type_dict['id_type'] = 'experiment'
+    ordered_graphs = {'Projects': projects_details,
+                      'Subjects': subjects_details,
+                      'Stats': stats,
+                      'Resources (over time)': {'count': p['longitudinal_data']}}
 
-    prop_scan = proportion_graphs(scans, 'ID',
-                                       'xnat:imagescandata/id',
-                                       '', ' scans')
-    prop_scan['id_type'] = 'subject'
-
-    scans_details = {'Scan quality': scan_quality,
-                     'Scan Types': type_dict,
-                     'Scans per session': prop_scan,
-                     'Number of Scans': len(scans)}
-    return scans_details
+    ordered_graphs.update(experiments_details)
+    # ordered_graphs.update(scans_details)
+    ordered_graphs.update(get_resources_details(fr))
+    return ordered_graphs
 
 
 def get_resources_details(resources, project_id=None):
@@ -373,43 +290,63 @@ def dict_generator_per_view_stacked(data, x, y, z):
 def filter_data_per_project(p, project_id):
     stats = {}
 
-    # Preprocessing required in project data for number of projects
-
     pd = get_projects_details_pp(p['projects'], project_id)
 
     # Pre processing for subject details required
-    d = [s for s in p['subjects'] if s['project'] == project_id]
-    sd = get_subjects_details(d)
-    del sd['Subjects']
-
-    stats['Subjects'] = sd['Number of Subjects']
-    del sd['Number of Subjects']
+    subjects = [s for s in p['subjects'] if s['project'] == project_id]
+    sd = dict_generator_per_view(subjects, 'project', 'ID', 'spp')
+    sd['id_type'] = 'subject'
 
     # Pre processing experiment details
-    d = [e for e in p['experiments'] if e['project'] == project_id]
-    ed = get_experiments_details(d)
+    experiments = [e for e in p['experiments'] if e['project'] == project_id]
+    ed = {}
+    experiment_type = dict_generator_overview(experiments, 'xsiType', 'ID', 'xsiType')
+    experiment_type['id_type'] = 'experiment'
+    experiments_types_per_project = dict_generator_per_view_stacked(experiments, 'project', 'xsiType', 'ID')
+    experiments_types_per_project['id_type'] = 'experiment'
+    prop_exp = proportion_graphs(experiments, 'subject_ID', 'ID', 'Subjects with ', ' experiment(s)')
+    prop_exp['id_type'] = 'subject'
+    ed['Imaging sessions'] = experiments_types_per_project
     del ed['Imaging sessions']
-
-    stats['Experiments'] = ed['Number of Experiments']
-    del ed['Number of Experiments']
-    del ed['Total amount of sessions']
     if 'Sessions types/Project' in ed:
         del ed['Sessions types/Project']
 
     # Pre processing scans details
     scans = [s for s in p['scans'] if s['project'] == project_id]
-    scd = get_scans_details(scans)
-    stats['Scans'] = scd['Number of Scans']
-    del scd['Number of Scans']
+    # Scans type information
+    fp = op.join(op.dirname(dashboards.__file__), '..', 'data',
+                 'whitelist.json')
+    whitelist = json.load(open(fp))
 
-    stat_final = {'Stats': stats}
-    ordered_graphs = {}
+    filtered_scans = [s for s in scans if s['xnat:imagescandata/type'] in whitelist]
 
-    ordered_graphs.update({'Project details': pd})
-    ordered_graphs.update(sd)
-    ordered_graphs.update(ed)
+    columns = ['xnat:imagescandata/type', 'ID', 'type', 'xnat:imagescandata/id']
+    type_dict = dict_generator_overview(filtered_scans, *columns)
+    type_dict['id_type'] = 'experiment'
+
+    prop_scan = proportion_graphs(scans, 'ID', 'xnat:imagescandata/id', '', ' scans')
+    prop_scan['id_type'] = 'subject'
+
+    columns = ['xnat:imagescandata/quality', 'ID', 'quality',
+               'xnat:imagescandata/id']
+    scan_quality = dict_generator_overview(scans, *columns)
+    scan_quality['id_type'] = 'experiment'
+
+    scd = {'Scan quality': scan_quality,
+           'Scan Types': type_dict,
+           'Scans per session': prop_scan}
+
+    stats = {'Subjects': len(subjects),
+             'Experiments': len(experiments),
+             'Scans': len(scans)}
+
+    ordered_graphs = {'Project details': pd,
+                      'Stats': stats}
+                      #'Subject details': sd,
+                      #'Experiment details': ed}
+    # ordered_graphs.update(sd)
+    # ordered_graphs.update(ed)
     ordered_graphs.update(scd)
-    ordered_graphs.update(stat_final)
 
     return ordered_graphs
 

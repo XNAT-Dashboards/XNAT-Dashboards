@@ -25,8 +25,7 @@ class GraphGenerator:
             if graph in non_graph or role not in self.graphs[graph]['visibility']:
                 continue
 
-            # Addition of graph id, js need distinct graph id for each
-            # graphs
+            # Addition of graph id, js need distinct graph id for each graphs
             graphs[graph]['id'] = self.counter_id
             self.counter_id = self.counter_id + 1
 
@@ -93,15 +92,14 @@ class GraphGenerator:
 
 class GraphGeneratorPP(GraphGenerator):
 
-    def __init__(self, project_id, role, p, project_visible=None):
+    def __init__(self, project_id, p):
 
         self.counter_id = 0
-        self.role = role
         self.ordered_graphs = df.filter_data_per_project(p, project_id)
         dfpp = dfb.filter_data_per_project(p['resources'], project_id)
         self.ordered_graphs.update(dfpp)
 
-    def get_project_view(self):
+    def get_project_view(self, role):
 
         length_check = 0
         graphs_2d_list = []
@@ -109,7 +107,7 @@ class GraphGeneratorPP(GraphGenerator):
         counter = 0
 
         # Do the required addition using field addition
-        project_view = self.add_graph_fields(self.ordered_graphs, self.role)
+        project_view = self.add_graph_fields(self.ordered_graphs, role)
 
         if isinstance(project_view, int) or project_view is None:
             return project_view
@@ -120,9 +118,7 @@ class GraphGeneratorPP(GraphGenerator):
         # graph 2d array where each row have 2 columns and each
         # columns contains single graph
         for graph in project_view:
-            if graph in non_graph or\
-                    self.role not in\
-                    self.graphs[graph]['visibility']:
+            if graph in non_graph or role not in self.graphs[graph]['visibility']:
 
                 # Condition if last key is skipped then add
                 # the single column array in project_view
@@ -142,7 +138,6 @@ class GraphGeneratorPP(GraphGenerator):
                 graphs_1d_list = []
 
             length_check = length_check + 1
-
 
         graph_stats_data = [graphs_2d_list, project_view['Stats'],
                             project_view['Project details']]
