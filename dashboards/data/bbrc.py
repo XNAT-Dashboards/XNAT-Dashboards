@@ -57,15 +57,14 @@ def generate_bbrc_validators_dict(df):
         bv['count'][k] = {}
         bv['count'][k]['Sessions with Validator'] = v
         list_ = df[pd.DataFrame(df.BBRC_Validators.tolist()).isin([k]).any(1).values]
-        ses = pd.Series([x for x in list_['Session']])
+        ses = [x for x in list_['Session']]
         bv['list'][k] = {}
-        bv['list'][k]['Sessions with Validator'] = list(ses)
-        missing_ses = []
-        for s in df['Session']:
-            if s not in list(ses):
-                missing_ses.append(s)
-        bv['count'][k]['Sessions without Validator'] = len(missing_ses)
-        bv['list'][k]['Sessions without Validator'] = missing_ses
+        bv['list'][k]['Sessions with Validator'] = ses
+        df2 = df.set_index('Session')
+        df_missing_ses = df2.loc[set(df2.index).difference(ses)].sort_index()
+        df_missing_ses = df_missing_ses.reset_index()
+        bv['count'][k]['Sessions without Validator'] = len(df_missing_ses['Session'])
+        bv['list'][k]['Sessions without Validator'] = list(df_missing_ses['Session'])
 
     return bv
 
@@ -201,6 +200,10 @@ def generate_test_grid_bbrc(resources_bbrc):
                     cat_dic[test].append(archiving_validator[test]['has_passed'])
                     all_dic[test].append([archiving_validator[test]['has_passed'],
                                           archiving_validator[test]['data']])
+                else:
+                    info_dic[test].append('')
+                    cat_dic[test].append('')
+                    all_dic[test].append(['', ''])
     df_info = pd.DataFrame(info_dic)
     df_cat = pd.DataFrame(cat_dic)
     df_all = pd.DataFrame(all_dic)

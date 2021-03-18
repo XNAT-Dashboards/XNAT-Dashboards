@@ -34,6 +34,7 @@ def get_resources(x):
     experiments = x.array.experiments(columns=['subject_ID', 'date', 'insert_date'],
                                       experiment_type='').data
     resources = []
+    resources_bbrc = []
 
     # For each experiments fetch all the resources associated with it
     for exp in tqdm(experiments[:n_max]):
@@ -51,18 +52,13 @@ def get_resources(x):
                 row = [exp['project'], exp['ID'],
                        r['xnat_abstractresource_id'], r['label']]
 
-                tv = get_tests(bbrc_validator, 'ArchivingValidator')
-                row.extend([tv[0], tv[1], insert_date])
+                # tv = get_tests(bbrc_validator, 'ArchivingValidator')
+                # row.extend([tv[0], tv[1], insert_date])
                 resources.append(row)
-
-        # # -------------------- BBRC RESOURCES--------------------------------#
-        # # BBRC_VALIDATOR
-        # e = x.select.experiment(exp['ID'])
-        # bbrc_validator = e.resource('BBRC_VALIDATOR')
-        # insert_date = exp['insert_date'].split(' ')[0]
-        # row = [exp['project'], exp['ID'], tv[0], tv[1], insert_date]
-        # resources_bbrc.append(row)
-    return resources
+        tv = get_tests(bbrc_validator, 'ArchivingValidator')
+        row = [exp['project'], exp['ID'], tv[0], tv[1], insert_date]
+        resources_bbrc.append(row)
+    return resources, resources_bbrc
 
 
 def get_tests(resource, validator_name):
@@ -115,7 +111,7 @@ def save(x, fp):
         print('Prior pickle found at %s. Backing up at %s.bak.' % (fp, fp))
         pickle.dump(p, open('%s.bak' % fp, 'wb'))
 
-    resources = get_resources(x)
+    resources, bbrc_resources = get_resources(x)
 
     # Monitors
     res = ['FREESURFER6', 'FREESURFER6_HIRES', 'ASHS', 'BAMOS',
@@ -133,13 +129,12 @@ def save(x, fp):
         else:
             long_data[resource_name] = {dt: n_res}
 
-    bbrc_resources = []
-    resources2 = []
-    for e in resources:
-        resources2.append(e[:4])
-        bbrc_resources.append([e[0], e[1], e[-3], e[-2], e[-1]])
-
-    resources2.extend(bbrc_resources)
+    # bbrc_resources = []
+    #resources = []
+    # for e in resources:
+    #     resources2.append(e[:4])
+    #     bbrc_resources.append([e[0], e[1], e[-3], e[-2], e[-1]])
+    resources.extend(bbrc_resources)
 
     details = get_instance_details(x)
 
@@ -149,7 +144,7 @@ def save(x, fp):
          'subjects': details['subjects'],
          'experiments': details['experiments'],
          'scans': details['scans'],
-         'resources': resources2,
+         'resources': resources,
          #'extra_resources': bbrc_resources,
          'longitudinal_data': long_data}
     p.update(d)
