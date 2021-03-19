@@ -12,31 +12,27 @@ class GraphGenerator:
         if fp == '':
             fp = '/home/grg/git/XNAT-Dashboards/config.json'
         j = json.load(open(fp))
+        cfg = j['graphs']
 
-        self.graphs = j['graphs']
+        for i, graph in enumerate(list(graphs.keys())):
+            cg = cfg[graph]
 
-        # non_graph that don't require plotting
-        non_graph = ['Stats', 'test_grid', 'Project details']
-
-        for i, graph in enumerate(graphs):
-            # Skip if key is not a graph
-            if graph in non_graph or role not in self.graphs[graph]['visibility']:
-                continue
-
-            # Addition of graph id, js need distinct graph id for each graphs
             graphs[graph]['id'] = i
-            # self.counter_id = self.counter_id + 1
 
-            # Type of graph (bar, line, etc) from config file
-            graphs[graph]['graph_type'] = self.graphs[graph]['type']
-            # Description of graph from config file
-            graphs[graph]['graph descriptor'] = self.graphs[graph]['description']
-            # Graph color from config file
-            graphs[graph]['color'] = self.graphs[graph]['color']
+            # get details from configuration file
+            graphs[graph]['graph_type'] = cg['type']
+            graphs[graph]['graph descriptor'] = cg['description']
+            graphs[graph]['color'] = cg['color']
 
         return graphs
 
-    def get_overview(self, overview, role):
+    def get_overview(self, graphs, role):
+
+        fp = config.DASHBOARD_CONFIG_PATH
+        if fp == '':
+            fp = '/home/grg/git/XNAT-Dashboards/config.json'
+        j = json.load(open(fp))
+        cfg = j['graphs']
 
         # FIXME: this function looks like it can be improved
         length_check = 0
@@ -44,23 +40,23 @@ class GraphGenerator:
         graphs_1d_list = []
         counter = 0
 
-        for graph in overview:
-            if graph == 'Stats' or role not in self.graphs[graph]['visibility']:
+        for graph in list(graphs.keys()):
+            if role not in cfg[graph]['visibility']:
 
                 # Condition if last key is skipped then add
                 # the single column array in overview
-                if length_check == len(overview) - 1:
+                if length_check == len(graphs) - 1:
                     graphs_2d_list.append(graphs_1d_list)
 
                 length_check = length_check + 1
                 continue
 
-            graphs_1d_list.append({graph: overview[graph]})
+            graphs_1d_list.append({graph: graphs[graph]})
             counter = counter + 1
 
             # Check if we have filled 2 columns or are at the end
             # of the graphs list
-            if counter == 2 or length_check == len(overview) - 1:
+            if counter == 2 or length_check == len(graphs) - 1:
                 counter = 0
                 graphs_2d_list.append(graphs_1d_list)
                 graphs_1d_list = []
@@ -91,54 +87,41 @@ class GraphGeneratorPP(GraphGenerator):
     def __init__(self):
         self.counter_id = 0
 
-    def get_project_view(self, project_view, role):
+    def get_project_view(self, graphs, role):
+        fp = config.DASHBOARD_CONFIG_PATH
+        if fp == '':
+            fp = '/home/grg/git/XNAT-Dashboards/config.json'
+        j = json.load(open(fp))
+        cfg = j['graphs']
 
         length_check = 0
         graphs_2d_list = []
         graphs_1d_list = []
         counter = 0
 
-        # Do the required addition using field addition
-
-        if isinstance(project_view, int) or project_view is None:
-            return project_view
-
-        non_graph = ['Stats', 'test_grid', 'Project details']
-
         # Loop through each graph field and add it into
         # graph 2d array where each row have 2 columns and each
         # columns contains single graph
-        for graph in project_view:
-            if graph in non_graph or role not in self.graphs[graph]['visibility']:
+        for graph in list(graphs.keys()):
+            if role not in cfg[graph]['visibility']:
 
                 # Condition if last key is skipped then add
-                # the single column array in project_view
-                if length_check == len(project_view) - 1:
+                # the single column array in graphs
+                if length_check == len(graphs) - 1:
                     graphs_2d_list.append(graphs_1d_list)
                 length_check = length_check + 1
                 continue
 
-            graphs_1d_list.append({graph: project_view[graph]})
+            graphs_1d_list.append({graph: graphs[graph]})
             counter = counter + 1
 
             # Check if we have filled 2 columns or are at the end
             # of the graphs list
-            if counter == 2 or length_check == len(project_view) - 1:
+            if counter == 2 or length_check == len(graphs) - 1:
                 counter = 0
                 graphs_2d_list.append(graphs_1d_list)
                 graphs_1d_list = []
 
             length_check = length_check + 1
-
-        # graph_stats_data = [graphs_2d_list, project_view['Stats'],
-        #                     project_view['Project details']]
-
-        # Test grid is a specific dashboard for BBRC XNATs
-        # not visible to normal xnat instance
-        # if 'test_grid' in project_view:
-        #     graph_stats_data.append(project_view['test_grid'])
-        # else:
-        #     graph_stats_data.append([[], [], []])
-
 
         return graphs_2d_list

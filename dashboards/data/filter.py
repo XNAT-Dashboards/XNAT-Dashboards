@@ -44,27 +44,6 @@ def filter_data(p, visible_projects='*'):
     scan_quality = dict_generator_overview(scans, *columns)
     scan_quality['id_type'] = 'experiment'
 
-    # # Scans type information
-    # fp = op.join(op.dirname(dashboards.__file__), '..', 'data',
-    #              'whitelist.json')
-    # whitelist = json.load(open(fp))
-    #
-    # filtered_scans = [s for s in scans if s['xnat:imagescandata/type'] in whitelist]
-    #
-    # columns = ['xnat:imagescandata/type', 'ID', 'type', 'xnat:imagescandata/id']
-    # type_dict = dict_generator_overview(filtered_scans, *columns)
-    # type_dict['id_type'] = 'experiment'
-    #
-    # prop_scan = proportion_graphs(scans, 'ID', 'xnat:imagescandata/id', '', ' scans')
-    # prop_scan['id_type'] = 'subject'
-    #
-    # scans_details = {'Scan quality': scan_quality,
-    #                  'Scan Types': type_dict,
-    #                  'Scans per session': prop_scan}
-    #
-    # del scans_details['Scans per session']
-    # del scans_details['Scan Types']
-
     stats = {'Projects': len(projects),
              'Subjects': len(subjects),
              'Experiments': len(experiments),
