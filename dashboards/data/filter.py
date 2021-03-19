@@ -306,10 +306,7 @@ def filter_data_per_project(p, project_id):
     experiments_types_per_project['id_type'] = 'experiment'
     prop_exp = proportion_graphs(experiments, 'subject_ID', 'ID', 'Subjects with ', ' experiment(s)')
     prop_exp['id_type'] = 'subject'
-    ed['Imaging sessions'] = experiments_types_per_project
-    del ed['Imaging sessions']
-    if 'Sessions types/Project' in ed:
-        del ed['Sessions types/Project']
+    ed['Sessions per subject'] = prop_exp
 
     # Pre processing scans details
     scans = [s for s in p['scans'] if s['project'] == project_id]
@@ -345,7 +342,7 @@ def filter_data_per_project(p, project_id):
                       #'Subject details': sd,
                       #'Experiment details': ed}
     # ordered_graphs.update(sd)
-    # ordered_graphs.update(ed)
+    ordered_graphs.update(ed)
     ordered_graphs.update(scd)
 
     return ordered_graphs
