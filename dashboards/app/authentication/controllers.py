@@ -60,6 +60,9 @@ def login():
             session['username'] = username
             session['server'] = p['server']
             session['role'] = role
+            session['graphs'] = [k for k, v in config['graphs'].items()
+                                 if role in v['visibility']]
+
             session['projects'] = roles[role]['projects']
 
             # Redirect to dashboard

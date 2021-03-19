@@ -84,9 +84,10 @@ def test_024_get_overview():
     bbrc_filtered = dfb.filter_data(p['resources'], p['projects'])
     data.update(bbrc_filtered)
     g = gg.GraphGenerator()
+    stats = data.pop('Stats')
     overview = g.add_graph_fields(data, role)
-    stats = overview['Stats']
-    graph_list = g.get_overview(overview, role)
+
+    graph_list = g.get_overview(overview)
 
     assert isinstance(graph_list, list)
     assert len(graph_list) != 0
@@ -102,10 +103,11 @@ def test_025_get_project_view():
     dfpp = dfb.filter_data_per_project(p['resources'], project_id)
     data_pp.update(dfpp)
     g = gg.GraphGeneratorPP()
-    project_view = g.add_graph_fields(data_pp, role)    
-    stats_data = project_view['Stats']
-    data_array = project_view['Project details']
-    graph_list = g.get_project_view(project_view, role)
+    stats = data_pp.pop('Stats')
+    project_details = data_pp.pop('Project details')
+    data_pp.pop('test_grid')
+    project_view = g.add_graph_fields(data_pp, role)
+    graph_list = g.get_project_view(project_view)
 
     assert isinstance(graph_list, list)
     assert len(graph_list) != 0
@@ -133,6 +135,7 @@ def test_028_stats():
             sess['role'] = 'guest'
             sess['username'] = 'testUser'
             sess['projects'] = []
+            sess['graphs'] = []
 
     response_get_stats = c.get('dashboard/overview/').status_code
     assert response_get_stats == 200

@@ -38,12 +38,13 @@ def overview():
     data = df.filter_data(p, projects)
     bbrc_filtered = dfb.filter_data(p['resources'], projects)
     data.update(bbrc_filtered)
-
     stats = data.pop('Stats')
+
+    data = {k: v for k, v in data.items() if k in session['graphs']}
 
     g = gg.GraphGenerator()
     graph_fields = g.add_graph_fields(data, role)
-    overview = g.get_overview(graph_fields, role)
+    overview = g.get_overview(graph_fields)
 
     n = 4  # split projects in chunks of size 4
     projects = [pr['id'] for pr in p['projects'] if pr['id'] in projects
@@ -102,9 +103,11 @@ def project(project_id):
         html = from_df_to_html(tests_union)
         data.pop('test_grid')
 
+    data = {k: v for k, v in data.items() if k in session['graphs']}
+
     graph_fields_pp = g.add_graph_fields(data, role)
 
-    project_view = g.get_project_view(graph_fields_pp, role)
+    project_view = g.get_project_view(graph_fields_pp)
 
 
     #session['excel'] = (tests_list, diff_version)
