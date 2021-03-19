@@ -1,6 +1,6 @@
 # Import flask dependencies
 from flask import Blueprint, render_template, session, redirect, url_for
-from dashboards.data import graph as gg
+from dashboards.data import graph as g
 from dashboards.data import filter as df
 from dashboards.data import bbrc as dfb
 
@@ -42,9 +42,8 @@ def overview():
 
     data = {k: v for k, v in data.items() if k in session['graphs']}
 
-    g = gg.GraphGenerator()
     graph_fields = g.add_graph_fields(data, role)
-    overview = g.get_overview(graph_fields)
+    overview = g.split_by_2(graph_fields)
 
     n = 4  # split projects in chunks of size 4
     projects = [pr['id'] for pr in p['projects'] if pr['id'] in projects
@@ -92,7 +91,6 @@ def project(project_id):
 
     role = session['role']
 
-    g = gg.GraphGeneratorPP()
     stats = data.pop('Stats')
     project_details = data.pop('Project details')
     test_grid = data.get('test_grid')
@@ -106,9 +104,7 @@ def project(project_id):
     data = {k: v for k, v in data.items() if k in session['graphs']}
 
     graph_fields_pp = g.add_graph_fields(data, role)
-
-    project_view = g.get_project_view(graph_fields_pp)
-
+    project_view = g.split_by_2(graph_fields_pp)
 
     #session['excel'] = (tests_list, diff_version)
 

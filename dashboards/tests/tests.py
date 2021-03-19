@@ -1,6 +1,6 @@
 from dashboards.data import filter as df
 from dashboards.data import bbrc as dfb
-from dashboards.data import graph as gg
+from dashboards.data import graph as g
 from dashboards.app import app
 from dashboards import config
 import os.path as op
@@ -83,11 +83,9 @@ def test_024_get_overview():
     data = df.filter_data(p, p['projects'])
     bbrc_filtered = dfb.filter_data(p['resources'], p['projects'])
     data.update(bbrc_filtered)
-    g = gg.GraphGenerator()
     stats = data.pop('Stats')
     overview = g.add_graph_fields(data, role)
-
-    graph_list = g.get_overview(overview)
+    graph_list = g.split_by_2(overview)
 
     assert isinstance(graph_list, list)
     assert len(graph_list) != 0
@@ -102,12 +100,11 @@ def test_025_get_project_view():
     data_pp = df.filter_data_per_project(p, project_id)
     dfpp = dfb.filter_data_per_project(p['resources'], project_id)
     data_pp.update(dfpp)
-    g = gg.GraphGeneratorPP()
     stats = data_pp.pop('Stats')
     project_details = data_pp.pop('Project details')
     data_pp.pop('test_grid')
     project_view = g.add_graph_fields(data_pp, role)
-    graph_list = g.get_project_view(project_view)
+    graph_list = g.split_by_2(project_view)
 
     assert isinstance(graph_list, list)
     assert len(graph_list) != 0
