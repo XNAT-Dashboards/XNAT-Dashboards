@@ -6,35 +6,35 @@ from dashboards import config
 
 class GraphGenerator:
 
-    def __init__(self, filtered, bbrc_filtered):
+    def __init__(self, filtered, bbrc_filtered, role):
 
         self.counter_id = 0
         self.ordered_graphs = filtered
         self.ordered_graphs.update(bbrc_filtered)
 
-    def add_graph_fields(self, graphs, role):
-
-        j = json.load(open(config.DASHBOARD_CONFIG_PATH))
-        self.graphs = j['graphs']
-
-        # non_graph that don't require plotting
+        fp = '/home/grg/git/XNAT-Dashboards/config.json'
+        config.DASHBOARD_CONFIG_PATH = fp
+        j = json.load(open(fp))
         non_graph = ['Stats', 'test_grid', 'Project details']
+        self.graphs = {k: v for k, v in j['graphs'].items()
+                           if k not in non_graph
+                           and role in j['graphs'][k]['visibility']}
 
-        for graph in graphs:
-            # Skip if key is not a graph
-            if graph in non_graph or role not in self.graphs[graph]['visibility']:
-                continue
+    def add_graph_fields(self):
+
+        graphs = []
+        for k, v in self.graphs.items():
 
             # Addition of graph id, js need distinct graph id for each graphs
-            graphs[graph]['id'] = self.counter_id
+            g = {}
+            g['id'] = self.counter_id
             self.counter_id = self.counter_id + 1
 
-            # Type of graph (bar, line, etc) from config file
-            graphs[graph]['graph_type'] = self.graphs[graph]['type']
-            # Description of graph from config file
-            graphs[graph]['graph descriptor'] = self.graphs[graph]['description']
-            # Graph color from config file
-            graphs[graph]['color'] = self.graphs[graph]['color']
+            # Get graph details from configuration file
+            g['graph_type'] = v['type']
+            g['graph descriptor'] = v['description']
+            g['color'] = v['color']
+            graphs.append(g)
 
         return graphs
 
@@ -46,7 +46,7 @@ class GraphGenerator:
         graphs_1d_list = []
         counter = 0
 
-        overview = self.add_graph_fields(self.ordered_graphs, role)
+        overview = self.add_graph_fields()
 
         for graph in overview:
             if graph == 'Stats' or role not in self.graphs[graph]['visibility']:
@@ -92,14 +92,22 @@ class GraphGenerator:
 
 class GraphGeneratorPP(GraphGenerator):
 
-    def __init__(self, project_id, p):
+    def __init__(self, project_id, p, role):
 
         self.counter_id = 0
         self.ordered_graphs = df.filter_data_per_project(p, project_id)
         dfpp = dfb.filter_data_per_project(p['resources'], project_id)
         self.ordered_graphs.update(dfpp)
 
-    def get_project_view(self, role):
+        fp = '/home/grg/git/XNAT-Dashboards/config.json'
+        config.DASHBOARD_CONFIG_PATH = fp
+        j = json.load(open(fp))
+        non_graph = ['Stats', 'test_grid', 'Project details']
+        self.graphs = [e for e in list(j['graphs'].keys())
+                       if e not in non_graph
+                       and role in self.graphs[e]['visibility']]
+
+    def get_project_view(self):
 
         length_check = 0
         graphs_2d_list = []
@@ -107,17 +115,17 @@ class GraphGeneratorPP(GraphGenerator):
         counter = 0
 
         # Do the required addition using field addition
-        project_view = self.add_graph_fields(self.ordered_graphs, role)
+        graphs_per_project_view = self.add_graph_fields()
 
-        if isinstance(project_view, int) or project_view is None:
-            return project_view
+        if isinstance(graphs_per_project_view, int) or graphs_per_project_view is None:
+            return graphs_per_project_view
 
         non_graph = ['Stats', 'test_grid', 'Project details']
 
         # Loop through each graph field and add it into
         # graph 2d array where each row have 2 columns and each
         # columns contains single graph
-        for graph in project_view:
+        for graph in graphs_per_project_view:
             if graph in non_graph or role not in self.graphs[graph]['visibility']:
 
                 # Condition if last key is skipped then add

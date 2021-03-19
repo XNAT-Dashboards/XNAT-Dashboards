@@ -5,7 +5,7 @@ import dashboards
 import pandas as pd
 
 
-def filter_data(p, visible_projects):
+def filter_data(p, visible_projects='*'):
     projects = [pr for pr in p['projects'] if pr['id'] in visible_projects
                 or "*" in visible_projects]
     experiments = [e for e in p['experiments'] if e['project'] in visible_projects

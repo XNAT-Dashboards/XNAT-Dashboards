@@ -36,8 +36,8 @@ def overview():
     projects = session['projects']
     filtered = df.filter_data(p, projects)
     bbrc_filtered = dfb.filter_data(p['resources'], projects)
-    plot = gg.GraphGenerator(filtered, bbrc_filtered)
-    graphs, stats = plot.get_overview(role)
+    g = gg.GraphGenerator(filtered, bbrc_filtered, role)
+    graphs, stats = g.get_overview(role)
 
     n = 4  # split projects in chunks of size 4
     projects = [pr['id'] for pr in p['projects'] if pr['id'] in projects
