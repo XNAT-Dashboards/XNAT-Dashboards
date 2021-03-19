@@ -38,8 +38,10 @@ def overview():
     data = df.filter_data(p, projects)
     bbrc_filtered = dfb.filter_data(p['resources'], projects)
     data.update(bbrc_filtered)
-    plot = gg.GraphGenerator()
-    graphs, stats = plot.get_overview(data, role)
+    g = gg.GraphGenerator()
+    overview = g.add_graph_fields(data, role)
+    stats = overview['Stats']
+    graphs = g.get_overview(overview, role)
 
     n = 4  # split projects in chunks of size 4
     projects = [pr['id'] for pr in p['projects'] if pr['id'] in projects
@@ -85,16 +87,19 @@ def project(project_id):
     dfpp = dfb.filter_data_per_project(p['resources'], project_id)
     data.update(dfpp)
 
-    ggpp = gg.GraphGeneratorPP()
-    per_project_view = ggpp.get_project_view(data, session['role'])
-    graph_data, stats_data, data_array = per_project_view[:3]
+    role = session['role']
+
+    g = gg.GraphGeneratorPP()
+    project_view = g.add_graph_fields(data, role)
+    graph_data = g.get_project_view(project_view, role)
+    stats_data = project_view['Stats']
+    data_array = project_view['Project details']
 
     html = [], [], []
-    if len(per_project_view) == 4:
-        test_grid = per_project_view[3]
+    test_grid = data.get('test_grid')
+    if test_grid:
         tests_union, tests_list, diff_version = test_grid
         html = from_df_to_html(tests_union)
-
 
     #session['excel'] = (tests_list, diff_version)
 

@@ -35,16 +35,13 @@ class GraphGenerator:
 
         return graphs
 
-    def get_overview(self, data, role):
+    def get_overview(self, overview, role):
 
         # FIXME: this function looks like it can be improved
         length_check = 0
         graphs_2d_list = []
         graphs_1d_list = []
         counter = 0
-
-        overview = self.add_graph_fields(data, role)
-
 
         for graph in overview:
             if graph == 'Stats' or role not in self.graphs[graph]['visibility']:
@@ -85,7 +82,7 @@ class GraphGenerator:
             ]
         '''
 
-        return [graphs_2d_list, overview['Stats']]
+        return graphs_2d_list
 
 
 class GraphGeneratorPP(GraphGenerator):
@@ -93,7 +90,7 @@ class GraphGeneratorPP(GraphGenerator):
     def __init__(self):
         self.counter_id = 0
 
-    def get_project_view(self, data, role):
+    def get_project_view(self, project_view, role):
 
         length_check = 0
         graphs_2d_list = []
@@ -101,7 +98,6 @@ class GraphGeneratorPP(GraphGenerator):
         counter = 0
 
         # Do the required addition using field addition
-        project_view = self.add_graph_fields(data, role)
 
         if isinstance(project_view, int) or project_view is None:
             return project_view
@@ -133,8 +129,8 @@ class GraphGeneratorPP(GraphGenerator):
 
             length_check = length_check + 1
 
-        graph_stats_data = [graphs_2d_list, project_view['Stats'],
-                            project_view['Project details']]
+        # graph_stats_data = [graphs_2d_list, project_view['Stats'],
+        #                     project_view['Project details']]
 
         # Test grid is a specific dashboard for BBRC XNATs
         # not visible to normal xnat instance
@@ -142,7 +138,6 @@ class GraphGeneratorPP(GraphGenerator):
         #     graph_stats_data.append(project_view['test_grid'])
         # else:
         #     graph_stats_data.append([[], [], []])
-        if 'test_grid' in data.keys():
-            graph_stats_data.append(data['test_grid'])
 
-        return graph_stats_data
+
+        return graphs_2d_list

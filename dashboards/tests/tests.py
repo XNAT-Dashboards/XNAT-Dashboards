@@ -83,9 +83,10 @@ def test_024_get_overview():
     data = df.filter_data(p, p['projects'])
     bbrc_filtered = dfb.filter_data(p['resources'], p['projects'])
     data.update(bbrc_filtered)
-    graph_object = gg.GraphGenerator()
-
-    graph_list = graph_object.get_overview(data, role)
+    g = gg.GraphGenerator()
+    overview = g.add_graph_fields(data, role)
+    stats = overview['Stats']
+    graph_list = g.get_overview(overview, role)
 
     assert isinstance(graph_list, list)
     assert len(graph_list) != 0
@@ -101,7 +102,10 @@ def test_025_get_project_view():
     dfpp = dfb.filter_data_per_project(p['resources'], project_id)
     data_pp.update(dfpp)
     g = gg.GraphGeneratorPP()
-    graph_list = g.get_project_view(data_pp, role)
+    project_view = g.add_graph_fields(data_pp, role)    
+    stats_data = project_view['Stats']
+    data_array = project_view['Project details']
+    graph_list = g.get_project_view(project_view, role)
 
     assert isinstance(graph_list, list)
     assert len(graph_list) != 0
