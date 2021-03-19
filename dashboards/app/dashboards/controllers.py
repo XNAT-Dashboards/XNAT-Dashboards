@@ -68,8 +68,8 @@ def from_df_to_html(test_grid):
     return [tests_union, tests_list, diff_version]
 
 
-@dashboard.route('project/<id>', methods=['GET'])
-def project(id):
+@dashboard.route('project/<project_id>', methods=['GET'])
+def project(project_id):
 
     # Load pickle and check server
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
@@ -79,7 +79,7 @@ def project(id):
         raise Exception(msg)
 
     # Get the details for plotting
-    ggpp = gg.GraphGeneratorPP(id, p)
+    ggpp = gg.GraphGeneratorPP(project_id, p)
     per_project_view = ggpp.get_project_view(session['role'])
     graph_data, stats_data, data_array, test_grid = per_project_view
     tests_union, tests_list, diff_version = test_grid
@@ -92,5 +92,5 @@ def project(id):
             'test_grid': from_df_to_html(tests_union),
             'username': session['username'].capitalize(),
             'server': session['server'],
-            'id': id}
+            'id': project_id}
     return render_template('dashboards/projectview.html', **data)
