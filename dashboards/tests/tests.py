@@ -80,11 +80,12 @@ def test_024_get_overview():
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
 
     role = 'admin'
-    filtered = df.filter_data(p, p['projects'])
+    data = df.filter_data(p, p['projects'])
     bbrc_filtered = dfb.filter_data(p['resources'], p['projects'])
-    graph_object = gg.GraphGenerator(filtered, bbrc_filtered)
+    data.update(bbrc_filtered)
+    graph_object = gg.GraphGenerator()
 
-    graph_list = graph_object.get_overview(role)
+    graph_list = graph_object.get_overview(data, role)
 
     assert isinstance(graph_list, list)
     assert len(graph_list) != 0
@@ -96,9 +97,11 @@ def test_025_get_project_view():
     project = p['projects'][0]
     project_id = project['id']
     role = 'admin'
-    g = gg.GraphGeneratorPP(project_id, p)
-
-    graph_list = g.get_project_view(role)
+    data_pp = df.filter_data_per_project(p, project_id)
+    dfpp = dfb.filter_data_per_project(p['resources'], project_id)
+    data_pp.update(dfpp)
+    g = gg.GraphGeneratorPP()
+    graph_list = g.get_project_view(data_pp, role)
 
     assert isinstance(graph_list, list)
     assert len(graph_list) != 0

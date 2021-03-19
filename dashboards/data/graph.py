@@ -1,44 +1,41 @@
 import json
-from dashboards.data import filter as df
-from dashboards.data import bbrc as dfb
 from dashboards import config
 
 
 class GraphGenerator:
 
-    def __init__(self, filtered, bbrc_filtered, role):
-
+    def __init__(self):
         self.counter_id = 0
-        self.ordered_graphs = filtered
-        self.ordered_graphs.update(bbrc_filtered)
 
+    def add_graph_fields(self, graphs, role):
+        fp = config.DASHBOARD_CONFIG_PATH
         fp = '/home/grg/git/XNAT-Dashboards/config.json'
-        config.DASHBOARD_CONFIG_PATH = fp
         j = json.load(open(fp))
+
+        self.graphs = j['graphs']
+
+        # non_graph that don't require plotting
         non_graph = ['Stats', 'test_grid', 'Project details']
-        self.graphs = {k: v for k, v in j['graphs'].items()
-                           if k not in non_graph
-                           and role in j['graphs'][k]['visibility']}
 
-    def add_graph_fields(self):
-
-        graphs = []
-        for k, v in self.graphs.items():
+        for graph in graphs:
+            # Skip if key is not a graph
+            if graph in non_graph or role not in self.graphs[graph]['visibility']:
+                continue
 
             # Addition of graph id, js need distinct graph id for each graphs
-            g = {}
-            g['id'] = self.counter_id
+            graphs[graph]['id'] = self.counter_id
             self.counter_id = self.counter_id + 1
 
-            # Get graph details from configuration file
-            g['graph_type'] = v['type']
-            g['graph descriptor'] = v['description']
-            g['color'] = v['color']
-            graphs.append(g)
+            # Type of graph (bar, line, etc) from config file
+            graphs[graph]['graph_type'] = self.graphs[graph]['type']
+            # Description of graph from config file
+            graphs[graph]['graph descriptor'] = self.graphs[graph]['description']
+            # Graph color from config file
+            graphs[graph]['color'] = self.graphs[graph]['color']
 
         return graphs
 
-    def get_overview(self, role):
+    def get_overview(self, data, role):
 
         # FIXME: this function looks like it can be improved
         length_check = 0
@@ -46,7 +43,8 @@ class GraphGenerator:
         graphs_1d_list = []
         counter = 0
 
-        overview = self.add_graph_fields()
+        overview = self.add_graph_fields(data, role)
+
 
         for graph in overview:
             if graph == 'Stats' or role not in self.graphs[graph]['visibility']:
@@ -92,22 +90,10 @@ class GraphGenerator:
 
 class GraphGeneratorPP(GraphGenerator):
 
-    def __init__(self, project_id, p, role):
-
+    def __init__(self):
         self.counter_id = 0
-        self.ordered_graphs = df.filter_data_per_project(p, project_id)
-        dfpp = dfb.filter_data_per_project(p['resources'], project_id)
-        self.ordered_graphs.update(dfpp)
 
-        fp = '/home/grg/git/XNAT-Dashboards/config.json'
-        config.DASHBOARD_CONFIG_PATH = fp
-        j = json.load(open(fp))
-        non_graph = ['Stats', 'test_grid', 'Project details']
-        self.graphs = [e for e in list(j['graphs'].keys())
-                       if e not in non_graph
-                       and role in self.graphs[e]['visibility']]
-
-    def get_project_view(self):
+    def get_project_view(self, data, role):
 
         length_check = 0
         graphs_2d_list = []
@@ -115,17 +101,17 @@ class GraphGeneratorPP(GraphGenerator):
         counter = 0
 
         # Do the required addition using field addition
-        graphs_per_project_view = self.add_graph_fields()
+        project_view = self.add_graph_fields(data, role)
 
-        if isinstance(graphs_per_project_view, int) or graphs_per_project_view is None:
-            return graphs_per_project_view
+        if isinstance(project_view, int) or project_view is None:
+            return project_view
 
         non_graph = ['Stats', 'test_grid', 'Project details']
 
         # Loop through each graph field and add it into
         # graph 2d array where each row have 2 columns and each
         # columns contains single graph
-        for graph in graphs_per_project_view:
+        for graph in project_view:
             if graph in non_graph or role not in self.graphs[graph]['visibility']:
 
                 # Condition if last key is skipped then add
@@ -152,9 +138,11 @@ class GraphGeneratorPP(GraphGenerator):
 
         # Test grid is a specific dashboard for BBRC XNATs
         # not visible to normal xnat instance
-        if 'test_grid' in project_view:
-            graph_stats_data.append(project_view['test_grid'])
-        else:
-            graph_stats_data.append([[], [], []])
+        # if 'test_grid' in project_view:
+        #     graph_stats_data.append(project_view['test_grid'])
+        # else:
+        #     graph_stats_data.append([[], [], []])
+        if 'test_grid' in data.keys():
+            graph_stats_data.append(data['test_grid'])
 
         return graph_stats_data

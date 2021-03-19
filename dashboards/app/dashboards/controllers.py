@@ -34,10 +34,12 @@ def overview():
 
     role = session['role']
     projects = session['projects']
-    filtered = df.filter_data(p, projects)
+
+    data = df.filter_data(p, projects)
     bbrc_filtered = dfb.filter_data(p['resources'], projects)
-    g = gg.GraphGenerator(filtered, bbrc_filtered, role)
-    graphs, stats = g.get_overview(role)
+    data.update(bbrc_filtered)
+    plot = gg.GraphGenerator()
+    graphs, stats = plot.get_overview(data, role)
 
     n = 4  # split projects in chunks of size 4
     projects = [pr['id'] for pr in p['projects'] if pr['id'] in projects
@@ -79,17 +81,27 @@ def project(project_id):
         raise Exception(msg)
 
     # Get the details for plotting
-    ggpp = gg.GraphGeneratorPP(project_id, p)
-    per_project_view = ggpp.get_project_view(session['role'])
-    graph_data, stats_data, data_array, test_grid = per_project_view
-    tests_union, tests_list, diff_version = test_grid
+    data = df.filter_data_per_project(p, project_id)
+    dfpp = dfb.filter_data_per_project(p['resources'], project_id)
+    data.update(dfpp)
+
+    ggpp = gg.GraphGeneratorPP()
+    per_project_view = ggpp.get_project_view(data, session['role'])
+    graph_data, stats_data, data_array = per_project_view[:3]
+
+    html = [], [], []
+    if len(per_project_view) == 4:
+        test_grid = per_project_view[3]
+        tests_union, tests_list, diff_version = test_grid
+        html = from_df_to_html(tests_union)
+
 
     #session['excel'] = (tests_list, diff_version)
 
     data = {'graph_data': graph_data,
             'stats_data': stats_data,
             'data_array': data_array,
-            'test_grid': from_df_to_html(tests_union),
+            'test_grid': html,
             'username': session['username'].capitalize(),
             'server': session['server'],
             'id': project_id}

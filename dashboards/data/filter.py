@@ -339,9 +339,6 @@ def filter_data_per_project(p, project_id):
 
     ordered_graphs = {'Project details': pd,
                       'Stats': stats}
-                      #'Subject details': sd,
-                      #'Experiment details': ed}
-    # ordered_graphs.update(sd)
     ordered_graphs.update(ed)
     ordered_graphs.update(scd)
 

@@ -219,11 +219,9 @@ def filter_data_per_project(resources, project_id):
     ordered_graphs.update(resources)
     bbrc_resources = [e for e in resources_bbrc if e[0] == project_id]
     project, exp_id, archiving_validator, bv, insert_date = bbrc_resources[0]
-    if archiving_validator == 0:
-        test_grid = ''
-    else:
+    if archiving_validator != 0:
         test_grid = generate_test_grid_bbrc(bbrc_resources)
-    ordered_graphs.update({'test_grid': test_grid})
+        ordered_graphs['test_grid'] = test_grid
 
     dd = diff_dates(resources_bbrc, project_id)
     d = {'Dates difference (Acquisition date - Insertion date)': dd}
