@@ -114,13 +114,13 @@
                     <div class="col-md-7 align-self-center text-right">
                         <div class="d-flex justify-content-end align-items-center">
                             <h4>
-                                {% if data_array['access'] == 'private'%}
+                                {% if project['access'] == 'private'%}
                                 <span class="badge badge-danger">Private Project</span>
                                 {% endif %}
-                                {% if data_array['access'] == 'protected'%}
+                                {% if project['access'] == 'protected'%}
                                 <span class="badge badge-warning">Protected Project</span>
                                 {% endif %}
-                                {% if data_array['access'] == 'public'%}
+                                {% if project['access'] == 'public'%}
                                 <span class="badge badge-success">Public Project</span>
                                 {% endif %}
 
@@ -134,10 +134,10 @@
                     <div class = "card">
                         <div class="card-body">
                                 <div class="row">
-                                    {% for key in stats_data %}
+                                    {% for key in stats %}
                                     <div class="col">
                                         <div class="counter">
-                                            <h2 class="timer count-title count-number" data-to="{{stats_data[key]}}" data-speed="1000"></h2>
+                                            <h2 class="timer count-title count-number" data-to="{{stats[key]}}" data-speed="1000"></h2>
                                             <p class="count-text ">{{key}}</p>
                                         </div>
                                     </div>
@@ -162,7 +162,7 @@
                                         <tbody>
                                             <tr>
                                                 <td ><b>Project Name</b></td>
-                                                <td class="text-center">{{data_array['name']}}</td>
+                                                <td class="text-center">{{project['name']}}</td>
                                             </tr>
                                             <tr>
                                                 <td ><b>Project ID</td>
@@ -171,32 +171,32 @@
                                             <tr>
                                                 <td><b>Project Owner(s)</b></td>
                                                 <td class="text-center">
-                                                    {% for user in data_array['Owner(s)']%}
+                                                    {% for user in project['Owner(s)']%}
                                                     {{user}}&nbsp
                                                     {%endfor%}
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td><b>Inserted on </b></td>
-                                                <td class="text-center">{{data_array['insert_date']}}</td>
+                                                <td class="text-center">{{project['insert_date']}}</td>
                                             </tr>
                                             <tr>
                                                 <td><b>Inserted By</b></td>
-                                                <td class="text-center">{{data_array['insert_user']}}</td>
+                                                <td class="text-center">{{project['insert_user']}}</td>
                                             </tr>
                                             <tr>
                                                 <td><b>Last Workflow</b></td>
-                                                <td class="text-center">{{data_array['project_last_workflow']}}</td>
+                                                <td class="text-center">{{project['project_last_workflow']}}</td>
                                             </tr>
                                             <tr>
                                                 <td><b>Project Collaborators</b></td><td class="text-center">
-                                                {% for user in data_array['Collaborator(s)']%}
+                                                {% for user in project['Collaborator(s)']%}
                                                 {{user}}&nbsp
                                                 {%endfor%}</td>
                                             </tr>
                                             <tr>
                                                 <td><b>Project Members</b></td><td class="text-center">
-                                                {% for user in data_array['Member(s)']%}
+                                                {% for user in project['Member(s)']%}
                                                 {{user}}&nbsp
                                                 {% endfor%}
                                             </td>
@@ -205,7 +205,7 @@
                                             <tr>
                                                 <td ><b>Project Users</b></td>
                                                 <td class="text-center">
-                                                    {% for user in data_array['User(s)']%}
+                                                    {% for user in project['User(s)']%}
                                                     {{user}}&nbsp
                                                     {%endfor%}
                                                 </td>
@@ -213,7 +213,7 @@
                                             <tr>
                                                 <td ><b>Last Accessed By</b></td>
                                                 <td class="text-center">
-                                                {% for user in  data_array['last_accessed']%}
+                                                {% for user in  project['last_accessed']%}
                                                 {{user}}&nbsp
                                                 {% endfor %}
                                             </td>
@@ -225,7 +225,7 @@
                         </div>
                     </div>
                     <!-- Graph plotting Start -->
-                    {% for row in graph_data %}
+                    {% for row in project_view %}
                     <div class="row">
                         {% for col in row %}
                         {% for key in col %}
@@ -289,7 +289,7 @@
         server_o = '{{server}}';
     </script>
     <script src="/static/dashboards/js/plotly_chart_generator.js"></script>
-    {% for row in graph_data%}
+    {% for row in project_view%}
         {% for graph_column in row%}
             <script>
                 chart_generator({{ graph_column | tojson}});

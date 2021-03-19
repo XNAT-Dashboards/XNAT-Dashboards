@@ -39,9 +39,9 @@ def overview():
     bbrc_filtered = dfb.filter_data(p['resources'], projects)
     data.update(bbrc_filtered)
     g = gg.GraphGenerator()
-    overview = g.add_graph_fields(data, role)
-    stats = overview['Stats']
-    graphs = g.get_overview(overview, role)
+    graph_fields = g.add_graph_fields(data, role)
+    stats = graph_fields['Stats']
+    overview = g.get_overview(graph_fields, role)
 
     n = 4  # split projects in chunks of size 4
     projects = [pr['id'] for pr in p['projects'] if pr['id'] in projects
@@ -49,9 +49,9 @@ def overview():
     projects_by_4 = [projects[i * n:(i + 1) * n]
                      for i in range((len(projects) + n - 1) // n)]
 
-    data = {'graph_data': graphs,
-            'stats_data': stats,
-            'project_list': projects_by_4,
+    data = {'overview': overview,
+            'stats': stats,
+            'projects': projects_by_4,
             'username': session['username'].capitalize(),
             'server': session['server']}
     return render_template('dashboards/overview.html', **data)
@@ -90,10 +90,11 @@ def project(project_id):
     role = session['role']
 
     g = gg.GraphGeneratorPP()
-    project_view = g.add_graph_fields(data, role)
-    graph_data = g.get_project_view(project_view, role)
-    stats_data = project_view['Stats']
-    data_array = project_view['Project details']
+    graph_fields_pp = g.add_graph_fields(data, role)
+    stats = graph_fields_pp['Stats']
+    project_details = graph_fields_pp['Project details']
+
+    project_view = g.get_project_view(graph_fields_pp, role)
 
     html = [], [], []
     test_grid = data.get('test_grid')
@@ -103,9 +104,9 @@ def project(project_id):
 
     #session['excel'] = (tests_list, diff_version)
 
-    data = {'graph_data': graph_data,
-            'stats_data': stats_data,
-            'data_array': data_array,
+    data = {'project_view': project_view,
+            'stats': stats,
+            'project': project_details,
             'test_grid': html,
             'username': session['username'].capitalize(),
             'server': session['server'],

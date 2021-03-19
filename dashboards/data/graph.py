@@ -9,7 +9,8 @@ class GraphGenerator:
 
     def add_graph_fields(self, graphs, role):
         fp = config.DASHBOARD_CONFIG_PATH
-        fp = '/home/grg/git/XNAT-Dashboards/config.json'
+        if fp == '':
+            fp = '/home/grg/git/XNAT-Dashboards/config.json'
         j = json.load(open(fp))
 
         self.graphs = j['graphs']
@@ -17,14 +18,14 @@ class GraphGenerator:
         # non_graph that don't require plotting
         non_graph = ['Stats', 'test_grid', 'Project details']
 
-        for graph in graphs:
+        for i, graph in enumerate(graphs):
             # Skip if key is not a graph
             if graph in non_graph or role not in self.graphs[graph]['visibility']:
                 continue
 
             # Addition of graph id, js need distinct graph id for each graphs
-            graphs[graph]['id'] = self.counter_id
-            self.counter_id = self.counter_id + 1
+            graphs[graph]['id'] = i
+            # self.counter_id = self.counter_id + 1
 
             # Type of graph (bar, line, etc) from config file
             graphs[graph]['graph_type'] = self.graphs[graph]['type']
