@@ -6,33 +6,46 @@ import pandas as pd
 
 
 def filter_data(p, visible_projects='*'):
-    projects = [pr for pr in p['projects'] if pr['id'] in visible_projects
-                or "*" in visible_projects]
-    experiments = [e for e in p['experiments'] if e['project'] in visible_projects
-                   or "*" in visible_projects]
-    scans = [s for s in p['scans'] if s['project'] in visible_projects
-             or "*" in visible_projects]
-    subjects = [s for s in p['subjects'] if s['project'] in visible_projects
-                or "*" in visible_projects]
+    p['projects'] = [e for e in p['projects'] if e['id'] in visible_projects
+                     or "*" in visible_projects]
+    p['experiments'] = [e for e in p['experiments']
+                        if e['project'] in visible_projects
+                        or "*" in visible_projects]
+    p['scans'] = [e for e in p['scans'] if e['project'] in visible_projects
+                  or "*" in visible_projects]
+    p['subjects'] = [e for e in p['subjects'] if e['project'] in visible_projects
+                     or "*" in visible_projects]
 
     resources = [e for e in p['resources'] if len(e) == 4]
-    fr = [(project, a, b, c) for (project, a, b, c) in resources
-          if project not in visible_projects or "*" in visible_projects]
+    p['resources'] = [(project, a, b, c) for (project, a, b, c) in resources
+                      if project not in visible_projects
+                      or "*" in visible_projects]
 
-    project_acccess = dict_generator_overview(projects, 'project_access', 'id', 'access')
+
+def get_stats(p):
+    stats = {'Projects': len(p['projects']),
+             'Subjects': len(p['subjects']),
+             'Experiments': len(p['experiments']),
+             'Scans': len(p['scans'])}
+    return stats
+
+
+def get_graphs(p):
+
+    project_acccess = dict_generator_overview(p['projects'], 'project_access', 'id', 'access')
     project_acccess['id_type'] = 'project'
     projects_details = project_acccess
 
-    subjects_per_project = dict_generator_per_view(subjects, 'project', 'ID', 'spp')
+    subjects_per_project = dict_generator_per_view(p['subjects'], 'project', 'ID', 'spp')
     subjects_per_project['id_type'] = 'subject'
     subjects_details = subjects_per_project
 
     experiments_details = {}
-    experiment_type = dict_generator_overview(experiments, 'xsiType', 'ID', 'xsiType')
+    experiment_type = dict_generator_overview(p['experiments'], 'xsiType', 'ID', 'xsiType')
     experiment_type['id_type'] = 'experiment'
-    experiments_types_per_project = dict_generator_per_view_stacked(experiments, 'project', 'xsiType', 'ID')
+    experiments_types_per_project = dict_generator_per_view_stacked(p['experiments'], 'project', 'xsiType', 'ID')
     experiments_types_per_project['id_type'] = 'experiment'
-    prop_exp = proportion_graphs(experiments, 'subject_ID', 'ID', 'Subjects with ', ' experiment(s)')
+    prop_exp = proportion_graphs(p['experiments'], 'subject_ID', 'ID', 'Subjects with ', ' experiment(s)')
     prop_exp['id_type'] = 'subject'
     experiments_details['Imaging sessions'] = experiments_types_per_project
 
@@ -41,22 +54,16 @@ def filter_data(p, visible_projects='*'):
 
     columns = ['xnat:imagescandata/quality', 'ID', 'quality',
                'xnat:imagescandata/id']
-    scan_quality = dict_generator_overview(scans, *columns)
+    scan_quality = dict_generator_overview(p['scans'], *columns)
     scan_quality['id_type'] = 'experiment'
-
-    stats = {'Projects': len(projects),
-             'Subjects': len(subjects),
-             'Experiments': len(experiments),
-             'Scans': len(scans)}
 
     ordered_graphs = {'Projects': projects_details,
                       'Subjects': subjects_details,
-                      'Stats': stats,
                       'Resources (over time)': {'count': p['longitudinal_data']}}
 
     ordered_graphs.update(experiments_details)
     # ordered_graphs.update(scans_details)
-    ordered_graphs.update(get_resources_details(fr))
+    ordered_graphs.update(get_resources_details(p['resources']))
     return ordered_graphs
 
 

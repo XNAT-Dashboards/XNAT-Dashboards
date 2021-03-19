@@ -36,14 +36,11 @@ def test_001_pickle_save():  # should be run first
 
 def test_019_reorder_graphs():
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
-    # bbrc_resources = p['extra_resources']
-    # resources = [e for e in p['resources'] if len(e) == 4]
-    # bbrc_resources = [e for e in p['resources'] if len(e) > 4]
+    df.filter_data(p, [])
+    graphs = df.get_graphs(p)
 
-    filtered = df.filter_data(p, [])
-
-    assert isinstance(filtered, dict)
-    assert len(filtered) != 0
+    assert isinstance(graphs, dict)
+    assert len(graphs) != 0
 
 
 def test_020_reorder_graphs_PP():
@@ -80,10 +77,12 @@ def test_024_get_overview():
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
 
     role = 'admin'
-    data = df.filter_data(p, p['projects'])
+    df.filter_data(p, p['projects'])
+    data = df.get_graphs(p)
     bbrc_filtered = dfb.filter_data(p['resources'], p['projects'])
     data.update(bbrc_filtered)
-    stats = data.pop('Stats')
+    stats = df.get_stats(p)
+
     overview = g.add_graph_fields(data, role)
     graph_list = g.split_by_2(overview)
 

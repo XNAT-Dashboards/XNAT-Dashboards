@@ -32,16 +32,16 @@ def overview():
               % (p['server'], session['server'])
         raise Exception(msg)
 
-    role = session['role']
     projects = session['projects']
-
-    data = df.filter_data(p, projects)
+    df.filter_data(p, projects)
+    graphs = df.get_graphs(p)
+    stats = df.get_stats(p)
     bbrc_filtered = dfb.filter_data(p['resources'], projects)
-    data.update(bbrc_filtered)
-    stats = data.pop('Stats')
+    graphs.update(bbrc_filtered)
 
-    data = {k: v for k, v in data.items() if k in session['graphs']}
+    data = {k: v for k, v in graphs.items() if k in session['graphs']}
 
+    role = session['role']
     graph_fields = g.add_graph_fields(data, role)
     overview = g.split_by_2(graph_fields)
 
@@ -106,7 +106,7 @@ def project(project_id):
     graph_fields_pp = g.add_graph_fields(data, role)
     project_view = g.split_by_2(graph_fields_pp)
 
-    #session['excel'] = (tests_list, diff_version)
+    # session['excel'] = (tests_list, diff_version)
 
     data = {'project_view': project_view,
             'stats': stats,
