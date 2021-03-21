@@ -190,33 +190,26 @@ def res_df_to_stacked(df, x, y, z):
 
 def get_graphs_per_project(p):
 
-    sd = dict_generator_per_view(p['subjects'], 'project', 'ID')
-    sd['id_type'] = 'subject'
-
-    # Pre processing experiment details
+    # Graph 0
     ed = {}
-    experiment_type = dict_generator_overview(p['experiments'], 'xsiType', 'ID')
-    experiment_type['id_type'] = 'experiment'
-    experiments_types_per_project = res_df_to_stacked(p['experiments'], 'project', 'xsiType', 'ID')
-    experiments_types_per_project['id_type'] = 'experiment'
     prop_exp = proportion_graphs(p['experiments'], 'subject_ID', 'ID', 'Subjects with ', ' experiment(s)')
     prop_exp['id_type'] = 'subject'
     ed['Sessions per subject'] = prop_exp
 
-    # Scans type information
+    # Graph #1
     fp = op.join(op.dirname(dashboards.__file__),
                  '..', 'data', 'whitelist.json')
     whitelist = json.load(open(fp))
-
     filtered_scans = [s for s in p['scans'] if s['xnat:imagescandata/type'] in whitelist]
-
     columns = ['xnat:imagescandata/type', 'ID', 'xnat:imagescandata/id']
     type_dict = dict_generator_overview(filtered_scans, *columns)
     type_dict['id_type'] = 'experiment'
 
+    # Graph #2
     prop_scan = proportion_graphs(p['scans'], 'ID', 'xnat:imagescandata/id', '', ' scans')
     prop_scan['id_type'] = 'subject'
 
+    # Graph #3
     columns = ['xnat:imagescandata/quality', 'ID', 'xnat:imagescandata/id']
     scan_quality = dict_generator_overview(p['scans'], *columns)
     scan_quality['id_type'] = 'experiment'
