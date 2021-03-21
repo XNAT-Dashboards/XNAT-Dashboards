@@ -36,7 +36,9 @@ def overview():
     df.filter_data(p, projects)
     graphs = df.get_graphs(p)
     stats = df.get_stats(p)
-    bbrc_filtered = dfb.filter_data(p['resources'], projects)
+
+    resources = [e for e in p['resources'] if len(e) > 4]
+    bbrc_filtered = dfb.filter_data(resources, projects)
     graphs.update(bbrc_filtered)
 
     data = {k: v for k, v in graphs.items() if k in session['graphs']}
@@ -85,14 +87,18 @@ def project(project_id):
         raise Exception(msg)
 
     # Get the details for plotting
-    data = df.filter_data_per_project(p, project_id)
-    dfpp = dfb.filter_data_per_project(p['resources'], project_id)
+    df.filter_data(p, [project_id])
+    project_details = df.get_projects_details_pp(p, project_id)
+    stats = df.get_stats(p)
+    stats.pop('Projects')
+    data = df.get_graphs_per_project(p)
+
+    resources = [e for e in p['resources'] if len(e) > 4]
+    dfpp = dfb.filter_data_per_project(resources, project_id)
     data.update(dfpp)
 
     role = session['role']
 
-    stats = data.pop('Stats')
-    project_details = data.pop('Project details')
     test_grid = data.get('test_grid')
     html = [], [], []
 

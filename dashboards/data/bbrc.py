@@ -3,20 +3,7 @@ import logging as log
 from datetime import date
 
 
-def filter_data(resources, visible_projects):
 
-    bbrc_resources = []
-    for r in [e for e in resources if len(e) > 4]:
-        project = r[0]
-        if project not in visible_projects or "*" in visible_projects:
-            bbrc_resources.append(r)
-
-    ordered_graphs = {}
-    resources = get_resource_details(bbrc_resources)
-    del resources['Version Distribution']
-
-    ordered_graphs.update(resources)
-    return ordered_graphs
 
 
 def generate_resource_df(resources_bbrc, test, value):
@@ -157,14 +144,7 @@ def diff_dates(resources_bbrc, project_id):
 
 
 def dates_diff_calc(date_1, date_2):
-    """This method calculates different between 2 dates strings.
-    Args:
-        date_1 (str): Date string of date 1.
-        date_2 (str): Date string of date 2.
-
-    Returns:
-        int: Difference in days.
-    """
+    """This method returns the difference in days between 2 date strings."""
     # Calculates difference between 2 dates
     date_1_l = list(map(int, date_1.split('-')))
     date_2_l = list(map(int, date_2.split('-')))
@@ -210,21 +190,34 @@ def generate_test_grid_bbrc(resources_bbrc):
     return df_all, df_info, df_cat
 
 
-def filter_data_per_project(resources, project_id):
-    resources_bbrc = [e for e in resources if len(e) > 4]
+def filter_data(resources, visible_projects):
+
+    bbrc_resources = []
+    for r in [e for e in resources if len(e) > 4]:
+        project = r[0]
+        if project in visible_projects or "*" in visible_projects:
+            bbrc_resources.append(r)
+    print('BBRC', len(bbrc_resources))
 
     ordered_graphs = {}
+    resources = get_resource_details(bbrc_resources)
+    del resources['Version Distribution']
 
-    resources = get_resource_details(resources_bbrc, project_id)
     ordered_graphs.update(resources)
+    return ordered_graphs
+
+
+def filter_data_per_project(resources, project_id):
+
+    resources_bbrc = [e for e in resources if len(e) > 4]
+    graphs = get_resource_details(resources_bbrc, project_id)
     bbrc_resources = [e for e in resources_bbrc if e[0] == project_id]
     project, exp_id, archiving_validator, bv, insert_date = bbrc_resources[0]
     if archiving_validator != 0:
         test_grid = generate_test_grid_bbrc(bbrc_resources)
-        ordered_graphs['test_grid'] = test_grid
+        graphs['test_grid'] = test_grid
 
     dd = diff_dates(resources_bbrc, project_id)
-    d = {'Dates difference (Acquisition date - Insertion date)': dd}
-    ordered_graphs.update(d)
+    graphs['Dates difference (Acquisition date - Insertion date)'] = dd
 
-    return ordered_graphs
+    return graphs
