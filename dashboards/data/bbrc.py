@@ -85,15 +85,15 @@ def get_resource_details(resources_bbrc, project_id=None):
 
     # Usable t1
     from dashboards.data import filter
-    usable_t1 = filter.dict_generator_resources(df_usable_t1, 'HasUsableT1', 'Session')
+    usable_t1 = filter.res_df_to_dict(df_usable_t1, 'HasUsableT1', 'Session')
     usable_t1['id_type'] = 'experiment'
 
     # consisten_acq_date
-    consistent_acq_date = filter.dict_generator_resources(df_con_acq_date, 'IsAcquisitionDateConsistent', 'Session')
+    consistent_acq_date = filter.res_df_to_dict(df_con_acq_date, 'IsAcquisitionDateConsistent', 'Session')
     consistent_acq_date['id_type'] = 'experiment'
 
     # Version Distribution
-    version = filter.dict_generator_resources(df_usable_t1, 'version', 'Session')
+    version = filter.res_df_to_dict(df_usable_t1, 'version', 'Session')
     version['id_type'] = 'experiment'
 
     # BBRC Validators

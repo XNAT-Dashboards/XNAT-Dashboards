@@ -43,7 +43,7 @@ def get_graphs(p):
     experiments_details = {}
     experiment_type = dict_generator_overview(p['experiments'], 'xsiType', 'ID', 'xsiType')
     experiment_type['id_type'] = 'experiment'
-    experiments_types_per_project = dict_generator_per_view_stacked(p['experiments'], 'project', 'xsiType', 'ID')
+    experiments_types_per_project = res_df_to_stacked(p['experiments'], 'project', 'xsiType', 'ID')
     experiments_types_per_project['id_type'] = 'experiment'
     prop_exp = proportion_graphs(p['experiments'], 'subject_ID', 'ID', 'Subjects with ', ' experiment(s)')
     prop_exp['id_type'] = 'subject'
@@ -62,51 +62,37 @@ def get_graphs(p):
                       'Resources (over time)': {'count': p['longitudinal_data']}}
 
     ordered_graphs.update(experiments_details)
-    # ordered_graphs.update(scans_details)
-    ordered_graphs.update(get_resources_details(p['resources']))
+
+    ordered_graphs['Resources per type'] = get_nres_per_type(p['resources'])
+    ordered_graphs['Resources per session'] = get_nres_per_session(p['resources'])
+
     return ordered_graphs
 
 
-def get_resources_details(resources, project_id=None):
-
-    df = pd.DataFrame(resources,
-                      columns=['project', 'session', 'resource', 'label'])
-
+def get_nres_per_type(resources):
+    columns = ['project', 'session', 'resource', 'label']
+    df = pd.DataFrame(resources, columns=columns)
     # Resource types
-    resource_types = dict_generator_resources(df, 'label', 'session')
+    resource_types = res_df_to_dict(df, 'label', 'session')
     resource_types['id_type'] = 'experiment'
+    return resource_types
 
-    resource_type_ps = dict_generator_resources(df, 'label', 'session')
-    resource_type_ps['id_type'] = 'experiment'
 
-    pro_exp_list = [[item[0], item[1]] for item in resources]
+def get_nres_per_session(resources):
+    columns = ['project', 'session', 'abstract_id', 'resource_name']
+    df = pd.DataFrame(resources, columns=columns)
+    df2 = df[['session', 'project']].set_index('session')
+    counts = df[['session', 'resource_name']].groupby('session').count()
+    counts = counts.rename(columns={'resource_name': 'nres'})
+    df2 = df2.join(counts).reset_index().drop_duplicates()
 
-    pro_exp_df = pd.DataFrame(pro_exp_list, columns=['project', 'session'])
-
-    # Create a Dataframe that have 3 columns where
-    # 1st column: project_x will have projects
-    # 2nd column: session will have session details
-    # 3rd column: project_y will have count of resources
-    pro_exp_count = pro_exp_df.groupby('session').count().reset_index()
-    project_session = pro_exp_df.drop_duplicates(subset="session")
-    resource_count_df = pd.merge(
-        project_session, pro_exp_count, on='session')
-
-    resource_count_df['project_y'] = resource_count_df[
-        'project_y'].astype(int)
-
-    # Send the above created data from to dict_generator_per_view_stacked
-    # This will create the format required for stacked plot
-    resource_count_dict = dict_generator_per_view_stacked(
-        resource_count_df, 'project_x', 'project_y', 'session')
-    resource_count_dict['id_type'] = 'experiment'
-    ordered = OrderedDict(sorted(resource_count_dict['count'].items(),
+    res_count = res_df_to_stacked(df2, 'project', 'nres', 'session')
+    res_count['id_type'] = 'experiment'
+    ordered = OrderedDict(sorted(res_count['count'].items(),
                                  key=lambda x: len(x[0]), reverse=True))
     ordered_ = {a: {str(c)+' Resources/Session': d for c, d in b.items()} for a, b in ordered.items()}
-    resource_count_dict_ordered = {'count': ordered_, 'list': resource_count_dict['list']}
-
-    return {'Resources per type': resource_types,
-            'Resources per session': resource_count_dict_ordered}
+    resource_count_dict_ordered = {'count': ordered_, 'list': res_count['list']}
+    return resource_count_dict_ordered
 
 
 def proportion_graphs(data, x, y, prefix, suffix):
@@ -134,16 +120,13 @@ def proportion_graphs(data, x, y, prefix, suffix):
     return df_proportion.rename(columns={'per_view': 'count'}).to_dict()
 
 
-def dict_generator_resources(df, x_name, y_name):
+def res_df_to_dict(df, x, y):
 
-    data = df[df[y_name] != 'No Data'][[x_name, y_name]]
-    data = data.rename(columns={y_name: 'count'})
-    data_df = data.groupby(x_name)['count'].apply(list)
-    data = data.groupby(x_name).count()
-    data['list'] = data_df
-    data_dict = data.to_dict()
+    df = df[[x, y]].query('%s != "No Data"' % y)
+    lists = df.groupby(x)[y].apply(list)
 
-    return data_dict
+    counts = df.apply(lambda row: len(row))
+    return pd.DataFrame({'list': lists, 'count': counts}).to_dict()
 
 
 def dict_generator_overview(data, x, y, x_new, extra=None):
@@ -221,56 +204,24 @@ def dict_generator_per_view(data, x, y, x_new):
     return per_view
 
 
-def dict_generator_per_view_stacked(data, x, y, z):
-    """Generate dict format that is used by plotly for stacked graphs view,
-    data like project details, scan, experiments, subject as field
+def res_df_to_stacked(df, x, y, z):
 
-    x and y are used to group by the pandas data frame
-    and both are used on x axis values while z is used on y axis.
-    Args:
-        data (list): List of data project, subject, scan and experiments
-        x (str): The name which will be on X axis of graph
-        y (str): The name which will be on X axis of graph
-        z (str): The name which will be on Y axis of graph
+    if isinstance(df, list):
+        per_list = [[e[x], e[y], e[z]] for e in df]
+        df = pd.DataFrame(per_list, columns=[x, y, z])
 
-    Returns:
-        dict:{count:{prop_x:{prop_y:prop_z_count}},
-        list:{prop_x:{prop_y:prop_z_list}}
-        }
-    """
+    series = df.groupby([x, y])[z].apply(list)
+    data = df.groupby([x, y]).count()
+    data['list'] = series
+    counts, lists = {}, {}
 
-    per_df = data
+    for (p, n), row in data.iterrows():
+        lists.setdefault(p, {})
+        counts.setdefault(p, {})
+        lists[p][n] = row.list
+        counts[p][n] = row[z]
 
-    if isinstance(data, list):
-        per_list = [[item[x], item[y], item[z]] for item in data]
-        columns = [x, y, z]
-        per_df = pd.DataFrame(per_list, columns=columns)
-
-    per_df_series = per_df.groupby([x, y])[z].apply(list)
-
-    per_df = per_df.groupby([x, y]).count()
-    per_df['list'] = per_df_series
-
-    dict_tupled = per_df.to_dict()
-
-    dict_output_list = {}
-    for item in dict_tupled['list']:
-        dict_output_list[item[0]] = {}
-
-    for item in dict_tupled['list']:
-        d = {item[1]: dict_tupled['list'][item]}
-        dict_output_list[item[0]].update(d)
-
-    dict_output_count = {}
-
-    for item in dict_tupled[z]:
-        dict_output_count[item[0]] = {}
-
-    for item in dict_tupled[z]:
-        d = {item[1]: dict_tupled[z][item]}
-        dict_output_count[item[0]].update(d)
-
-    return {'count': dict_output_count, 'list': dict_output_list}
+    return {'count': counts, 'list': lists}
 
 
 def filter_data_per_project(p, project_id):
@@ -288,7 +239,7 @@ def filter_data_per_project(p, project_id):
     ed = {}
     experiment_type = dict_generator_overview(experiments, 'xsiType', 'ID', 'xsiType')
     experiment_type['id_type'] = 'experiment'
-    experiments_types_per_project = dict_generator_per_view_stacked(experiments, 'project', 'xsiType', 'ID')
+    experiments_types_per_project = res_df_to_stacked(experiments, 'project', 'xsiType', 'ID')
     experiments_types_per_project['id_type'] = 'experiment'
     prop_exp = proportion_graphs(experiments, 'subject_ID', 'ID', 'Subjects with ', ' experiment(s)')
     prop_exp['id_type'] = 'subject'
