@@ -48,9 +48,10 @@ def test_020_reorder_graphs_PP():
 
     project = p['projects'][0]
     project_id = project['id']
-    filtered = df.filter_data_per_project(p, project_id)
-    assert isinstance(filtered, dict)
-    assert len(filtered) != 0
+    df.filter_data(p, project_id)
+    graphs = df.get_graphs_per_project(p)
+    assert isinstance(graphs, dict)
+    assert len(graphs) != 0
 
 
 def test_022_reorder_graphs_bbrc():
@@ -67,7 +68,7 @@ def test_023_reorder_graphs_bbrc_PP():
 
     project = p['projects'][0]
     project_id = project['id']
-    filtered = dfb.filter_data_per_project(p['resources'], project_id)
+    filtered = dfb.filter_data(p['resources'], project_id)
 
     assert isinstance(filtered, dict)
     assert len(filtered) != 0
@@ -79,6 +80,7 @@ def test_024_get_overview():
     role = 'admin'
     df.filter_data(p, p['projects'])
     data = df.get_graphs(p)
+    #resources = [e for e in p['resources'] if len(e) > 4]
     bbrc_filtered = dfb.filter_data(p['resources'], p['projects'])
     data.update(bbrc_filtered)
     stats = df.get_stats(p)
@@ -96,11 +98,13 @@ def test_025_get_project_view():
     project = p['projects'][0]
     project_id = project['id']
     role = 'admin'
-    data_pp = df.filter_data_per_project(p, project_id)
-    dfpp = dfb.filter_data_per_project(p['resources'], project_id)
+    df.filter_data(p, project_id)
+    data_pp = df.get_graphs_per_project(p)
+    resources = [e for e in p['resources'] if len(e) > 4]
+    dfpp = dfb.filter_data_per_project(resources, project_id)
     data_pp.update(dfpp)
-    stats = data_pp.pop('Stats')
-    project_details = data_pp.pop('Project details')
+    stats = df.get_stats(p)
+    project_details = df.get_projects_details_pp(p, project_id)
     data_pp.pop('test_grid')
     project_view = g.add_graph_fields(data_pp, role)
     graph_list = g.split_by_2(project_view)

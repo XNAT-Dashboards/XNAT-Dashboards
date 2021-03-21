@@ -2,10 +2,6 @@ import pandas as pd
 import logging as log
 from datetime import date
 
-
-
-
-
 def generate_resource_df(resources_bbrc, test, value):
 
     resource_processing = []
@@ -192,19 +188,14 @@ def generate_test_grid_bbrc(resources_bbrc):
 
 def filter_data(resources, visible_projects):
 
-    bbrc_resources = []
-    for r in [e for e in resources if len(e) > 4]:
-        project = r[0]
-        if project in visible_projects or "*" in visible_projects:
-            bbrc_resources.append(r)
-    print('BBRC', len(bbrc_resources))
+    bbrc_resources = [e for e in resources
+                      if len(e) > 4 and
+                      (e[0] in visible_projects or '*' in visible_projects)]
 
-    ordered_graphs = {}
     resources = get_resource_details(bbrc_resources)
     del resources['Version Distribution']
 
-    ordered_graphs.update(resources)
-    return ordered_graphs
+    return resources
 
 
 def filter_data_per_project(resources, project_id):

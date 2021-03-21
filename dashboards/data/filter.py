@@ -29,16 +29,16 @@ def get_stats(p):
 
 def get_graphs(p):
 
-    project_acccess = dict_generator_overview(p['projects'], 'project_access', 'id', 'access')
+    project_acccess = dict_generator_overview(p['projects'], 'project_access', 'id')
     project_acccess['id_type'] = 'project'
     projects_details = project_acccess
 
-    subjects_per_project = dict_generator_per_view(p['subjects'], 'project', 'ID', 'spp')
+    subjects_per_project = dict_generator_per_view(p['subjects'], 'project', 'ID')
     subjects_per_project['id_type'] = 'subject'
     subjects_details = subjects_per_project
 
     experiments_details = {}
-    experiment_type = dict_generator_overview(p['experiments'], 'xsiType', 'ID', 'xsiType')
+    experiment_type = dict_generator_overview(p['experiments'], 'xsiType', 'ID')
     experiment_type['id_type'] = 'experiment'
     experiments_types_per_project = res_df_to_stacked(p['experiments'], 'project', 'xsiType', 'ID')
     experiments_types_per_project['id_type'] = 'experiment'
@@ -49,8 +49,7 @@ def get_graphs(p):
     experiments_details['Total amount of sessions'] = experiment_type
     experiments_details['Sessions per subject'] = prop_exp
 
-    columns = ['xnat:imagescandata/quality', 'ID', 'quality',
-               'xnat:imagescandata/id']
+    columns = ['xnat:imagescandata/quality', 'ID', 'xnat:imagescandata/id']
     scan_quality = dict_generator_overview(p['scans'], *columns)
     scan_quality['id_type'] = 'experiment'
 
@@ -96,7 +95,6 @@ def proportion_graphs(data, x, y, prefix, suffix):
 
     data_list = [[item[x], item[y]] for item in data]
 
-    # Create a data frame
     df = pd.DataFrame(data_list, columns=['per_view', 'count'])
 
     # Group by property x as per_view and count
@@ -108,10 +106,6 @@ def proportion_graphs(data, x, y, prefix, suffix):
         'per_view', as_index=False).count().groupby(
             'count')['per_view'].apply(list)
 
-    # Add prefix and suffix to count for easy understanding
-    # Eg. Number of subject with 1 experiments
-    # Here prefix is Number of subject with and suffix is experiments
-    # and count is 1
     df_proportion.index = prefix + df_proportion.index.astype(str) + suffix
 
     return df_proportion.rename(columns={'per_view': 'count'}).to_dict()
@@ -121,12 +115,11 @@ def res_df_to_dict(df, x, y):
 
     df = df[[x, y]].query('%s != "No Data"' % y)
     lists = df.groupby(x)[y].apply(list)
-
-    counts = df.apply(lambda row: len(row))
+    counts = lists.apply(lambda row: len(row))
     return pd.DataFrame({'list': lists, 'count': counts}).to_dict()
 
 
-def dict_generator_overview(data, x, y, x_new, extra=None):
+def dict_generator_overview(data, x, y, extra=None):
     """Generate a dictionary from the data list of project, subjects,
     experiments and scans in the format required for graphs.
 
@@ -160,13 +153,8 @@ def dict_generator_overview(data, x, y, x_new, extra=None):
                 i += '/' + item[extra]
             property_none.append(i)
 
-    property_df = pd.DataFrame(property_list, columns=[x_new, 'count'])
-
-    property_df_series = property_df.groupby(x_new)['count'].apply(list)
-    property_final_df = property_df.groupby(x_new).count()
-    property_final_df['list'] = property_df_series
-    d = property_final_df.to_dict()
-
+    df = pd.DataFrame(property_list, columns=[x, y])[[y, x]]
+    d = res_df_to_dict(df, x, y)
     if len(property_none) != 0:
         d['count'].update({'No Data': len(property_none)})
         d['list'].update({'No Data': property_none})
@@ -174,31 +162,10 @@ def dict_generator_overview(data, x, y, x_new, extra=None):
     return d
 
 
-def dict_generator_per_view(data, x, y, x_new):
-    """Generate a dictionary from the data list of subjects,
-    experiments and scans in the format required for graphs.
-    The generated data is only for single project.
-
-    Args:
-        data (list): List of projects or subjects or exp or scans
-        x (str): The name which will be on X axis of graph
-        y (str): The name which will be on Y axis of graph
-        x_new (str): The new name which will be shown on X axis of graph
-
-    Returns:
-         Dict: For each graph this format is used
-            {"count": {"x": "y"}, "list": {"x": "list"}}
-    """
-    per_list = [[item[x], item[y]] for item in data]
-
-    per_df = pd.DataFrame(per_list, columns=[x_new, 'count'])
-    per_df_series = per_df.groupby(x_new)['count'].apply(list)
-    per_df = per_df.groupby(x_new).count()
-    per_df['list'] = per_df_series
-
-    per_view = per_df.to_dict()
-
-    return per_view
+def dict_generator_per_view(data, x, y):
+    pl = [[item[x], item[y]] for item in data]
+    df = pd.DataFrame(pl, columns=[x, y])
+    return res_df_to_dict(df, x, y)
 
 
 def res_df_to_stacked(df, x, y, z):
@@ -223,12 +190,12 @@ def res_df_to_stacked(df, x, y, z):
 
 def get_graphs_per_project(p):
 
-    sd = dict_generator_per_view(p['subjects'], 'project', 'ID', 'spp')
+    sd = dict_generator_per_view(p['subjects'], 'project', 'ID')
     sd['id_type'] = 'subject'
 
     # Pre processing experiment details
     ed = {}
-    experiment_type = dict_generator_overview(p['experiments'], 'xsiType', 'ID', 'xsiType')
+    experiment_type = dict_generator_overview(p['experiments'], 'xsiType', 'ID')
     experiment_type['id_type'] = 'experiment'
     experiments_types_per_project = res_df_to_stacked(p['experiments'], 'project', 'xsiType', 'ID')
     experiments_types_per_project['id_type'] = 'experiment'
@@ -243,15 +210,14 @@ def get_graphs_per_project(p):
 
     filtered_scans = [s for s in p['scans'] if s['xnat:imagescandata/type'] in whitelist]
 
-    columns = ['xnat:imagescandata/type', 'ID', 'type', 'xnat:imagescandata/id']
+    columns = ['xnat:imagescandata/type', 'ID', 'xnat:imagescandata/id']
     type_dict = dict_generator_overview(filtered_scans, *columns)
     type_dict['id_type'] = 'experiment'
 
     prop_scan = proportion_graphs(p['scans'], 'ID', 'xnat:imagescandata/id', '', ' scans')
     prop_scan['id_type'] = 'subject'
 
-    columns = ['xnat:imagescandata/quality', 'ID', 'quality',
-               'xnat:imagescandata/id']
+    columns = ['xnat:imagescandata/quality', 'ID', 'xnat:imagescandata/id']
     scan_quality = dict_generator_overview(p['scans'], *columns)
     scan_quality['id_type'] = 'experiment'
 
@@ -259,10 +225,9 @@ def get_graphs_per_project(p):
            'Scan Types': type_dict,
            'Scans per session': prop_scan}
 
-    ordered_graphs = ed
-    ordered_graphs.update(scd)
+    ed.update(scd)
 
-    return ordered_graphs
+    return ed
 
 
 def get_projects_details_pp(p, project_id):
