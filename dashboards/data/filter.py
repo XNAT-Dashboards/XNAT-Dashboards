@@ -29,13 +29,13 @@ def get_stats(p):
 
 def get_graphs(p):
 
-    project_acccess = dict_generator_overview(p['projects'], 'project_access', 'id')
-    project_acccess['id_type'] = 'project'
-    projects_details = project_acccess
+    projects_details = dict_generator_overview(p['projects'], 'project_access', 'id')
+    projects_details['id_type'] = 'project'
 
-    subjects_per_project = dict_generator_per_view(p['subjects'], 'project', 'ID')
-    subjects_per_project['id_type'] = 'subject'
-    subjects_details = subjects_per_project
+    x, y = 'project', 'ID'
+    df = pd.DataFrame([[e[x], e[y]] for e in p['subjects']], columns=[x, y])
+    subjects_details = res_df_to_dict(df, x, y)
+    subjects_details['id_type'] = 'subject'
 
     experiments_details = {}
     experiment_type = dict_generator_overview(p['experiments'], 'xsiType', 'ID')
@@ -53,16 +53,23 @@ def get_graphs(p):
     scan_quality = dict_generator_overview(p['scans'], *columns)
     scan_quality['id_type'] = 'experiment'
 
-    ordered_graphs = {'Projects': projects_details,
-                      'Subjects': subjects_details,
-                      'Resources (over time)': {'count': p['longitudinal_data']}}
+    graphs = {'Projects': projects_details,
+              'Subjects': subjects_details,
+              'Resources (over time)': {'count': p['longitudinal_data']}}
 
-    ordered_graphs.update(experiments_details)
+    graphs.update(experiments_details)
     resources = [e for e in p['resources'] if len(e) == 4]
-    ordered_graphs['Resources per type'] = get_nres_per_type(resources)
-    ordered_graphs['Resources per session'] = get_nres_per_session(resources)
+    graphs['Resources per type'] = get_nres_per_type(resources)
+    graphs['Resources per session'] = get_nres_per_session(resources)
 
-    return ordered_graphs
+    br = [e for e in p['resources'] if len(e) > 4]
+
+    from dashboards.data import bbrc
+    resources = bbrc.get_resource_details(br)
+    del resources['Version Distribution']
+    graphs.update(resources)
+
+    return graphs
 
 
 def get_nres_per_type(resources):
@@ -84,11 +91,11 @@ def get_nres_per_session(resources):
 
     res_count = res_df_to_stacked(df2, 'project', 'nres', 'session')
     res_count['id_type'] = 'experiment'
-    ordered = OrderedDict(sorted(res_count['count'].items(),
-                                 key=lambda x: len(x[0]), reverse=True))
-    ordered_ = {a: {str(c)+' Resources/Session': d for c, d in b.items()} for a, b in ordered.items()}
-    resource_count_dict_ordered = {'count': ordered_, 'list': res_count['list']}
-    return resource_count_dict_ordered
+    od = OrderedDict(sorted(res_count['count'].items(),
+                            key=lambda x: len(x[0]), reverse=True))
+    ordered_ = {a: {str(c) + ' Resources/Session': d for c, d in b.items()}
+                for a, b in od.items()}
+    return {'count': ordered_, 'list': res_count['list']}
 
 
 def proportion_graphs(data, x, y, prefix, suffix):
@@ -117,6 +124,28 @@ def res_df_to_dict(df, x, y):
     lists = df.groupby(x)[y].apply(list)
     counts = lists.apply(lambda row: len(row))
     return pd.DataFrame({'list': lists, 'count': counts}).to_dict()
+
+
+
+
+def res_df_to_stacked(df, x, y, z):
+
+    if isinstance(df, list):
+        per_list = [[e[x], e[y], e[z]] for e in df]
+        df = pd.DataFrame(per_list, columns=[x, y, z])
+
+    series = df.groupby([x, y])[z].apply(list)
+    data = df.groupby([x, y]).count()
+    data['list'] = series
+    counts, lists = {}, {}
+
+    for (p, n), row in data.iterrows():
+        lists.setdefault(p, {})
+        counts.setdefault(p, {})
+        lists[p][n] = row.list
+        counts[p][n] = row[z]
+
+    return {'count': counts, 'list': lists}
 
 
 def dict_generator_overview(data, x, y, extra=None):
@@ -160,32 +189,6 @@ def dict_generator_overview(data, x, y, extra=None):
         d['list'].update({'No Data': property_none})
 
     return d
-
-
-def dict_generator_per_view(data, x, y):
-    pl = [[item[x], item[y]] for item in data]
-    df = pd.DataFrame(pl, columns=[x, y])
-    return res_df_to_dict(df, x, y)
-
-
-def res_df_to_stacked(df, x, y, z):
-
-    if isinstance(df, list):
-        per_list = [[e[x], e[y], e[z]] for e in df]
-        df = pd.DataFrame(per_list, columns=[x, y, z])
-
-    series = df.groupby([x, y])[z].apply(list)
-    data = df.groupby([x, y]).count()
-    data['list'] = series
-    counts, lists = {}, {}
-
-    for (p, n), row in data.iterrows():
-        lists.setdefault(p, {})
-        counts.setdefault(p, {})
-        lists[p][n] = row.list
-        counts[p][n] = row[z]
-
-    return {'count': counts, 'list': lists}
 
 
 def get_graphs_per_project(p):
@@ -249,11 +252,3 @@ def get_projects_details_pp(p, project_id):
         res[e] = p[e]
 
     return res
-
-
-# def get_resources_details_pp(resources, project_id):
-#     res = get_resources_details(resources, project_id)
-#     if 'Resources per session' in res:
-#         del res['Resources per session']
-#
-#     return res

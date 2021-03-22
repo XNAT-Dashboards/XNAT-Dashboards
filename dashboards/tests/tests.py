@@ -54,24 +54,24 @@ def test_020_reorder_graphs_PP():
     assert len(graphs) != 0
 
 
-def test_022_reorder_graphs_bbrc():
-    p = pickle.load(open(config.PICKLE_PATH, 'rb'))
+# def test_022_reorder_graphs_bbrc():
+#     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
+#
+#     df.filter_data(p, '*')
+#     assert isinstance(filtered, dict)
+#     assert len(filtered) != 0
 
-    filtered = dfb.filter_data(p['resources'], [])
-    assert isinstance(filtered, dict)
-    assert len(filtered) != 0
 
-
-def test_023_reorder_graphs_bbrc_PP():
-    p = pickle.load(open(config.PICKLE_PATH, 'rb'))
-    # bbrc_resources = p['extra_resources']
-
-    project = p['projects'][0]
-    project_id = project['id']
-    filtered = dfb.filter_data(p['resources'], project_id)
-
-    assert isinstance(filtered, dict)
-    assert len(filtered) != 0
+# def test_023_reorder_graphs_bbrc_PP():
+#     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
+#     # bbrc_resources = p['extra_resources']
+#
+#     project = p['projects'][0]
+#     project_id = project['id']
+#     filtered = dfb.filter_data(p['resources'], project_id)
+#
+#     assert isinstance(filtered, dict)
+#     assert len(filtered) != 0
 
 
 def test_024_get_overview():
@@ -80,9 +80,6 @@ def test_024_get_overview():
     role = 'admin'
     df.filter_data(p, p['projects'])
     data = df.get_graphs(p)
-    #resources = [e for e in p['resources'] if len(e) > 4]
-    bbrc_filtered = dfb.filter_data(p['resources'], p['projects'])
-    data.update(bbrc_filtered)
     stats = df.get_stats(p)
 
     overview = g.add_graph_fields(data, role)

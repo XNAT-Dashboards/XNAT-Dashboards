@@ -37,10 +37,7 @@ def overview():
     graphs = df.get_graphs(p)
     stats = df.get_stats(p)
 
-    #resources = [e for e in p['resources'] if len(e) > 4]
-    bbrc_filtered = dfb.filter_data(p['resources'], projects)
-    graphs.update(bbrc_filtered)
-
+    # Select graphs based on access rights
     data = {k: v for k, v in graphs.items() if k in session['graphs']}
 
     role = session['role']
