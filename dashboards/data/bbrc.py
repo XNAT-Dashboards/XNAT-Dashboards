@@ -187,7 +187,6 @@ def generate_test_grid_bbrc(resources_bbrc):
     return df_all, df_info, df_cat
 
 
-
 def filter_data_per_project(resources, project_id):
 
     resources_bbrc = [e for e in resources if len(e) > 4]

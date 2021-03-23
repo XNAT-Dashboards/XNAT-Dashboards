@@ -29,38 +29,44 @@ def get_stats(p):
 
 def get_graphs(p):
 
-    projects_details = dict_generator_overview(p['projects'], 'project_access', 'id')
-    projects_details['id_type'] = 'project'
+    data, x, y = p['projects'], 'project_access', 'id'
+    df = pd.DataFrame([[e[x], e[y]] for e in data], columns=[x, y])
+    prd = res_df_to_dict(df, x, y)
+    prd['id_type'] = 'project'
 
-    x, y = 'project', 'ID'
-    df = pd.DataFrame([[e[x], e[y]] for e in p['subjects']], columns=[x, y])
-    subjects_details = res_df_to_dict(df, x, y)
-    subjects_details['id_type'] = 'subject'
+    data, x, y = p['subjects'], 'project', 'ID'
+    df = pd.DataFrame([[e[x], e[y]] for e in data], columns=[x, y])
+    sd = res_df_to_dict(df, x, y)
+    sd['id_type'] = 'subject'
 
-    experiments_details = {}
-    experiment_type = dict_generator_overview(p['experiments'], 'xsiType', 'ID')
-    experiment_type['id_type'] = 'experiment'
-    experiments_types_per_project = res_df_to_stacked(p['experiments'], 'project', 'xsiType', 'ID')
-    experiments_types_per_project['id_type'] = 'experiment'
+    data, x, y = p['experiments'], 'xsiType', 'ID'
+    df = pd.DataFrame([[e[x], e[y]] for e in data], columns=[x, y])
+    ed = res_df_to_dict(df, x, y)
+    ed['id_type'] = 'experiment'
+
+    edpp = res_df_to_stacked(p['experiments'], 'project', 'xsiType', 'ID')
+    edpp['id_type'] = 'experiment'
+
     prop_exp = proportion_graphs(p['experiments'], 'subject_ID', 'ID', 'Subjects with ', ' experiment(s)')
     prop_exp['id_type'] = 'subject'
-    experiments_details['Imaging sessions'] = experiments_types_per_project
-
-    experiments_details['Total amount of sessions'] = experiment_type
-    experiments_details['Sessions per subject'] = prop_exp
 
     columns = ['xnat:imagescandata/quality', 'ID', 'xnat:imagescandata/id']
-    scan_quality = dict_generator_overview(p['scans'], *columns)
+    x, y = columns[:2]
+    df = pd.DataFrame([[e[x], e[y]] for e in p['scans']], columns=columns[:2])
+    df[x].replace({'': 'No Data'}, inplace=True)
+    scan_quality = res_df_to_dict(df, x, y)
     scan_quality['id_type'] = 'experiment'
 
-    graphs = {'Projects': projects_details,
-              'Subjects': subjects_details,
-              'Resources (over time)': {'count': p['longitudinal_data']}}
-
-    graphs.update(experiments_details)
     resources = [e for e in p['resources'] if len(e) == 4]
-    graphs['Resources per type'] = get_nres_per_type(resources)
-    graphs['Resources per session'] = get_nres_per_session(resources)
+
+    graphs = {'Projects': prd,
+              'Subjects': sd,
+              'Imaging sessions': edpp,
+              'Total amount of sessions': ed,
+              'Sessions per subject': prop_exp,
+              'Resources per type': get_nres_per_type(resources),
+              'Resources per session': get_nres_per_session(resources),
+              'Resources (over time)': {'count': p['longitudinal_data']}}
 
     br = [e for e in p['resources'] if len(e) > 4]
 
@@ -126,8 +132,6 @@ def res_df_to_dict(df, x, y):
     return pd.DataFrame({'list': lists, 'count': counts}).to_dict()
 
 
-
-
 def res_df_to_stacked(df, x, y, z):
 
     if isinstance(df, list):
@@ -148,49 +152,6 @@ def res_df_to_stacked(df, x, y, z):
     return {'count': counts, 'list': lists}
 
 
-def dict_generator_overview(data, x, y, extra=None):
-    """Generate a dictionary from the data list of project, subjects,
-    experiments and scans in the format required for graphs.
-
-    Args:
-        data (list): List of projects or subjects or exp or scans
-        x (str): The name which will be on X axis of graph
-        y (str): The name which will be on Y axis of graph
-        x_new (str): The new name which will be shown on X axis of graph
-        extra (str, optional): Add another value to be concatenated
-            in x_axis, when click on graph occurs. Useful when
-            the x_axis values are not unique and by default will not
-            be used for concatenation.
-
-    Returns:
-        Dict: For each graph this format is used
-        {"count": {"x": "y"}, "list": {"x": "list"}}
-    """
-
-    property_list = []
-    property_none = []
-
-    for item in data:
-        if item[x] != '':
-            i = [item[x], item[y]]
-            if extra is not None:
-                i[1] += item[extra]
-            property_list.append(i)
-        else:
-            i = item[y]
-            if extra is not None:
-                i += '/' + item[extra]
-            property_none.append(i)
-
-    df = pd.DataFrame(property_list, columns=[x, y])[[y, x]]
-    d = res_df_to_dict(df, x, y)
-    if len(property_none) != 0:
-        d['count'].update({'No Data': len(property_none)})
-        d['list'].update({'No Data': property_none})
-
-    return d
-
-
 def get_graphs_per_project(p):
 
     # Graph 0
@@ -205,7 +166,10 @@ def get_graphs_per_project(p):
     whitelist = json.load(open(fp))
     filtered_scans = [s for s in p['scans'] if s['xnat:imagescandata/type'] in whitelist]
     columns = ['xnat:imagescandata/type', 'ID', 'xnat:imagescandata/id']
-    type_dict = dict_generator_overview(filtered_scans, *columns)
+    x, y = columns[:2]
+    df = pd.DataFrame([[e[x], e[y]] for e in filtered_scans],
+                      columns=columns[:2])
+    type_dict = res_df_to_dict(df, x, y)
     type_dict['id_type'] = 'experiment'
 
     # Graph #2
@@ -214,7 +178,10 @@ def get_graphs_per_project(p):
 
     # Graph #3
     columns = ['xnat:imagescandata/quality', 'ID', 'xnat:imagescandata/id']
-    scan_quality = dict_generator_overview(p['scans'], *columns)
+    x, y = columns[:2]
+    df = pd.DataFrame([[e[x], e[y]] for e in p['scans']], columns=columns[:2])
+    df[x].replace({'': 'No Data'}, inplace=True)
+    scan_quality = res_df_to_dict(df, x, y)
     scan_quality['id_type'] = 'experiment'
 
     scd = {'Scan quality': scan_quality,
