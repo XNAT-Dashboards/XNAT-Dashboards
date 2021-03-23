@@ -105,15 +105,11 @@ def diff_dates(resources_bbrc, project_id):
         print('ERROR DF EMPTY')
         return {'count': {}, 'list': {}}
 
-    # Create a dataframe with columns as Session, AcqDate and InsertDate
-    df_acq_insert_date = df[['Session', 'Acq date', 'Insert date']]
-
     # Calculates the time difference
-    df_acq_insert_date['Diff'] = df_acq_insert_date.apply(
-        lambda x: dates_diff_calc(x['Acq date'], x['Insert date']), axis=1)
+    df['Diff'] = df.apply(lambda x: dates_diff_calc(x['Acq date'], x['Insert date']), axis=1)
 
     # Create the dictionary: {"count": {"x": "y"}, "list": {"x": "list"}}
-    df_diff = df_acq_insert_date[['Session', 'Diff']].rename(
+    df_diff = df[['Session', 'Diff']].rename(
         columns={'Session': 'count'})
     cut = pd.cut(df_diff.Diff, [0, 2, 10, 100, 1000, 10000])
     df_series = df_diff.groupby(cut)['count'].apply(list)
