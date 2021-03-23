@@ -103,8 +103,8 @@ def project(project_id):
     html = [], [], []
 
     if test_grid:
-        tests_union, tests_list, diff_version = test_grid
-        html = from_df_to_html(tests_union)
+        df_all, df_info, df_cat = test_grid
+        html = from_df_to_html(df_all)
         data.pop('test_grid')
 
     data = {k: v for k, v in data.items() if k in session['graphs']}
