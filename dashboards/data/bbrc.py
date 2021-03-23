@@ -89,12 +89,11 @@ def diff_dates(resources_bbrc, project_id):
     dates_acq_list = []
     dates_acq_dict = df[['IsAcquisitionDateConsistent']].to_dict()['IsAcquisitionDateConsistent']
 
-    for d in dates_acq_dict:
-        if 'session_date' in dates_acq_dict[d]:
-            dates_acq_list.append(dates_acq_dict[d]['session_date'])
+    for k, v in dates_acq_dict.items():
+        if isinstance(v, dict) and 'session_date' in v:
+            dates_acq_list.append(v['session_date'])
         else:
-            dd = dates_acq_dict[d]
-            msg = 'Invalid IsAcquisitionDateConsistent value {}'.format(dd)
+            msg = 'Invalid IsAcquisitionDateConsistent value {}'.format(v)
             log.warning(msg)
             dates_acq_list.append('No Data')
     df['Acq date'] = dates_acq_list
