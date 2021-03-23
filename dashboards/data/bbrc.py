@@ -179,7 +179,7 @@ def generate_test_grid_bbrc(resources_bbrc):
                 else:
                     info_dic[test].append('')
                     cat_dic[test].append('')
-                    all_dic[test].append(['', ''])
+                    all_dic[test].append([False, ''])
     df_info = pd.DataFrame(info_dic)
     df_cat = pd.DataFrame(cat_dic)
     df_all = pd.DataFrame(all_dic)
