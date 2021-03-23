@@ -36,7 +36,7 @@ def test_001_pickle_save():  # should be run first
 
 def test_019_reorder_graphs():
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
-    df.filter_data(p, [])
+    df.filter_data(p, '*')
     graphs = df.get_graphs(p)
 
     assert isinstance(graphs, dict)
@@ -78,7 +78,8 @@ def test_024_get_overview():
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
 
     role = 'admin'
-    df.filter_data(p, p['projects'])
+    projects = [e['id'] for e in p['projects']]
+    df.filter_data(p, projects)
     data = df.get_graphs(p)
     stats = df.get_stats(p)
 
@@ -131,7 +132,7 @@ def test_028_stats():
             sess['server'] = 'https://devxnat.barcelonabeta.org'
             sess['role'] = 'guest'
             sess['username'] = 'testUser'
-            sess['projects'] = []
+            sess['projects'] = ['*']
             sess['graphs'] = []
 
     response_get_stats = c.get('dashboard/overview/').status_code
