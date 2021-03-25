@@ -14,46 +14,39 @@ dashboard = Blueprint('dashboard', __name__, url_prefix='/dashboard')
 @dashboard.route('/logout/', methods=['GET'])
 def logout():
 
-    fields = ['username', 'server', 'projects', 'role']
-    for e in fields:
-        if e in session:
-            del session[e]
-
+    session.clear()
     session['error'] = 'Logged out.'
     return redirect(url_for('auth.login'))
 
 
 @dashboard.route('/overview/', methods=['GET'])
 def overview():
+
     # Load pickle and check server
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
-    if p['server'] != session['server']:
-        msg = 'Pickle does not match with current server (%s/%s)'\
-              % (p['server'], session['server'])
-        raise Exception(msg)
 
     projects = session['projects']
-    df.filter_data(p, projects)
+    p = df.filter_data(p, projects)
     graphs = df.get_graphs(p)
     stats = df.get_stats(p)
 
     # Select graphs based on access rights
-    data = {k: v for k, v in graphs.items() if k in session['graphs']}
+    user_graphs = {k: v for k, v in graphs.items() if k in session['graphs']}
 
     role = session['role']
-    graph_fields = g.add_graph_fields(data, role)
-    overview = g.split_by_2(graph_fields)
+    graph_fields = g.add_graph_fields(user_graphs, role)
+    overview_data = g.split_by_2(graph_fields)
 
     n = 4  # split projects in chunks of size 4
-    projects = [pr['id'] for pr in p['projects'] if pr['id'] in projects
-                or "*" in projects]
+    projects = [pr['id'] for pr in p['projects']
+                if pr['id'] in projects or "*" in projects]
     projects_by_4 = [projects[i * n:(i + 1) * n]
                      for i in range((len(projects) + n - 1) // n)]
 
-    data = {'overview': overview,
+    data = {'overview': overview_data,
             'stats': stats,
             'projects': projects_by_4,
-            'username': session['username'].capitalize(),
+            'username': session['username'],
             'server': session['server']}
     return render_template('dashboards/overview.html', **data)
 
@@ -78,35 +71,29 @@ def project(project_id):
 
     # Load pickle and check server
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
-    if p['server'] != session['server']:
-        msg = 'Pickle does not match with current server (%s/%s)'\
-              % (p['server'], session['server'])
-        raise Exception(msg)
 
     # Get the details for plotting
-    df.filter_data(p, [project_id])
-    project_details = df.get_projects_details_pp(p, project_id)
+    p = df.filter_data(p, [project_id])
+    project_details = df.get_project_details(p, project_id)
     stats = df.get_stats(p)
     stats.pop('Projects')
-    data = df.get_graphs_per_project(p)
+    graphs = df.get_graphs_per_project(p)
 
     resources = [e for e in p['resources'] if len(e) > 4]
     dfpp = dfb.filter_data_per_project(resources, project_id)
-    data.update(dfpp)
+    graphs.update(dfpp)
 
-    role = session['role']
-
-    test_grid = data.get('test_grid')
-    html = [], [], []
+    test_grid = graphs.get('test_grid')
+    html = ([], [], [])
 
     if test_grid:
         df_all, df_info, df_cat = test_grid
         html = from_df_to_html(df_all)
-        data.pop('test_grid')
+        graphs.pop('test_grid')
 
-    data = {k: v for k, v in data.items() if k in session['graphs']}
+    user_graphs = {k: v for k, v in graphs.items() if k in session['graphs']}
 
-    graph_fields_pp = g.add_graph_fields(data, role)
+    graph_fields_pp = g.add_graph_fields(user_graphs, session['role'])
     project_view = g.split_by_2(graph_fields_pp)
 
     # session['excel'] = (tests_list, diff_version)
@@ -115,7 +102,7 @@ def project(project_id):
             'stats': stats,
             'project': project_details,
             'test_grid': html,
-            'username': session['username'].capitalize(),
+            'username': session['username'],
             'server': session['server'],
             'id': project_id}
     return render_template('dashboards/projectview.html', **data)
