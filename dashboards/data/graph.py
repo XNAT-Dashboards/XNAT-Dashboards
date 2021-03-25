@@ -3,8 +3,10 @@ from dashboards import config
 
 def add_graph_fields(graphs, role):
     fp = config.DASHBOARD_CONFIG_PATH
-    if fp == '':
-        fp = '/home/grg/git/XNAT-Dashboards/config.json'
+    if not fp:
+        import os.path as op
+        import dashboards
+        fp = op.join(op.dirname(op.dirname(dashboards.__file__)), 'config.json')
     import json
     j = json.load(open(fp))
     cfg = j['graphs']
@@ -24,7 +26,7 @@ def add_graph_fields(graphs, role):
 
 def split_by_2(graphs):
 
-    n = 2  # split projects in chunks of size 4
+    n = 2  # split projects in chunks of size 2
     items = list(graphs.items())
     graphs_by_2 = [[dict([e]) for e in items[i * n:(i + 1) * n]]
                    for i in range((len(items) + n - 1) // n)]
