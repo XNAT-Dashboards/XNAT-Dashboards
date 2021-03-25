@@ -6,17 +6,25 @@ import pandas as pd
 
 
 def filter_data(p, visible_projects='*'):
-    p['projects'] = [e for e in p['projects'] if e['id'] in visible_projects
-                     or "*" in visible_projects]
-    p['experiments'] = [e for e in p['experiments']
-                        if e['project'] in visible_projects
-                        or "*" in visible_projects]
-    p['scans'] = [e for e in p['scans'] if e['project'] in visible_projects
-                  or "*" in visible_projects]
-    p['subjects'] = [e for e in p['subjects'] if e['project'] in visible_projects
-                     or "*" in visible_projects]
-    p['resources'] = [e for e in p['resources'] if e[0] in visible_projects
-                      or "*" in visible_projects]
+    """Filter data from the pickle object based on the
+    provided list of accessible projects."""
+    p_filtered = p.copy()
+    p_filtered['projects'] = [e for e in p['projects']
+                              if e['id'] in visible_projects
+                              or "*" in visible_projects]
+    p_filtered['experiments'] = [e for e in p['experiments']
+                                 if e['project'] in visible_projects
+                                 or "*" in visible_projects]
+    p_filtered['scans'] = [e for e in p['scans']
+                           if e['project'] in visible_projects
+                           or "*" in visible_projects]
+    p_filtered['subjects'] = [e for e in p['subjects']
+                              if e['project'] in visible_projects
+                              or "*" in visible_projects]
+    p_filtered['resources'] = [e for e in p['resources']
+                               if e[0] in visible_projects
+                               or "*" in visible_projects]
+    return p_filtered
 
 
 def get_stats(p):
@@ -28,7 +36,6 @@ def get_stats(p):
 
 
 def get_graphs(p):
-
     data, x, y = p['projects'], 'project_access', 'id'
     df = pd.DataFrame([[e[x], e[y]] for e in data], columns=[x, y])
     prd = res_df_to_dict(df, x, y)
@@ -193,29 +200,26 @@ def get_graphs_per_project(p):
     return ed
 
 
-def get_projects_details_pp(p, project_id):
+def get_project_details(p, project_id):
+    """Extract from the pickle object detailed information about
+    a given project and parse it in a comprehensive dict structure."""
     res = {}
 
-    p = [e for e in p['projects'] if e['id'] == project_id][0]
+    p_item = [e for e in p['projects'] if e['id'] == project_id][0]
 
-    res['Owner(s)'] = p['project_owners'].split('<br/>')
+    fields = {'Owner(s)': 'project_owners',
+              'Member(s)': 'project_members',
+              'Collaborator(s)': 'project_collabs',
+              'User(s)': 'project_users',
+              'last_accessed': 'project_last_access'}
 
-    res['Collaborator(s)'] = p['project_collabs'].split('<br/>')
-    if res['Collaborator(s)'][0] == '':
-        res['Collaborator(s)'] = ['None']
-
-    res['Member(s)'] = p['project_members'].split('<br/>')
-    if res['Member(s)'][0] == '':
-        res['Member(s)'] = ['None']
-
-    res['User(s)'] = p['project_users'].split('<br/>')
-    if res['User(s)'][0] == '':
-        res['User(s)'] = ['None']
-
-    res['last_accessed'] = p['project_last_access'].split('<br/>')
+    for field, p_key in fields.items():
+        res[field] = p_item[p_key].strip().split(' <br/> ')
+        if res[field][0] == '':
+            res[field] = ['None']
 
     for e in ['insert_user', 'insert_date', 'project_access', 'name',
               'project_last_workflow']:
-        res[e] = p[e]
+        res[e] = p_item[e]
 
     return res
