@@ -1,6 +1,5 @@
 # Import flask dependencies
-from flask import Blueprint, render_template, session, request, redirect,\
-    url_for
+from flask import Blueprint, render_template, session, request, redirect, url_for
 from dashboards import config as cfg
 import json
 import pyxnat
@@ -19,8 +18,7 @@ def login():
     if method == 'GET':
         # First visit / logging out / login errors
         if 'error' in session:
-            error = session['error']
-            del session['error']
+            error = session.pop('error')
             return render_template('authentication/login.html',
                                    error=error)
         else:
@@ -33,28 +31,25 @@ def login():
                              password=form['password'],
                              server=p['server'],
                              verify=p['verify'])
-        can_see_some_projects = len(x.select.projects().get()) != 0
+        has_access = x.head('').ok
 
-        if can_see_some_projects:
+        if has_access:
 
             config = json.load(open(cfg.DASHBOARD_CONFIG_PATH))
             roles = config['roles']
 
             if username in roles['forbidden']['users']:
-                msg = 'User role assigned is forbidden login not allowed'
-                session['error'] = msg
+                session['error'] = 'Access denied.'
                 return redirect(url_for('auth.login'))
 
-            role = []
-            for each in list(roles.keys()):
-                if username in roles[each]['users']:
-                    role.append(each)
-            if len(role) != 1:
-                raise Exception('%s exists in multiple roles' % str(role))
-            elif len(role) == 0:
+            user_roles = [r for r in roles.keys()
+                          if username in roles[r]['users']]
+            if len(user_roles) > 1:
+                raise Exception('%s has multiple roles' % str(username))
+            elif len(user_roles) == 0:
                 role = 'guest'  # no role found, guest by default
             else:
-                role = role[0]
+                role = user_roles[0]
 
             # Add data to session
             session['username'] = username
@@ -62,12 +57,11 @@ def login():
             session['role'] = role
             session['graphs'] = [k for k, v in config['graphs'].items()
                                  if role in v['visibility']]
-
             session['projects'] = roles[role]['projects']
 
             # Redirect to dashboard
             return redirect(url_for('dashboard.overview'))
 
         else:
-            session['error'] = 'Wrong password/username'
+            session['error'] = 'Wrong password/username.'
             return redirect(url_for('auth.login'))
