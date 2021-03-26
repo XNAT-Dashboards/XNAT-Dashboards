@@ -132,38 +132,51 @@ def dates_diff_calc(date_1, date_2):
     return abs(diff.days)
 
 
-def generate_test_grid_bbrc(resources_bbrc):
+def generate_test_grid_bbrc(br):
 
-    tests_union = []
-    project, exp_id, archiving_validator, bv, insert_date = resources_bbrc[0]
-    for test in archiving_validator:
-        if test not in tests_union and test not in ['version', 'experiment_id', 'generated']:
-                tests_union.append(test)
-    # Loop through each test
-    keyList = ['session', 'version'] + tests_union
-    info_dic = {key: [] for key in keyList}
-    cat_dic = {key: [] for key in keyList}
-    all_dic = {key: [] for key in keyList}
-    for resource in resources_bbrc:
-        project, exp_id, archiving_validator, bv, insert_date = resource
-        if bv and archiving_validator != 0:
-            for d in [info_dic, cat_dic, all_dic]:
-                d['session'].append(exp_id)
-                d['version'].append(archiving_validator['version'])
-            for test in tests_union:
-                if test in archiving_validator:
-                    info_dic[test].append(archiving_validator[test]['data'])
-                    cat_dic[test].append(archiving_validator[test]['has_passed'])
-                    all_dic[test].append([archiving_validator[test]['has_passed'],
-                                          archiving_validator[test]['data']])
-                else:
-                    info_dic[test].append('')
-                    cat_dic[test].append('')
-                    all_dic[test].append([False, ''])
-    df_info = pd.DataFrame(info_dic)
-    df_cat = pd.DataFrame(cat_dic)
-    df_all = pd.DataFrame(all_dic)
-    return df_all, df_info, df_cat
+    project, exp_id, archiving_validator, bv, insert_date = br[0]
+    excluded = ['version', 'experiment_id', 'generated']
+
+    df = pd.DataFrame(br, columns=['project', 'exp_id', 'archiving_validator', 'bv', 'insert_date']).set_index('exp_id')
+    tests = set([e for e in archiving_validator if e not in excluded])
+    data = get_tests(df, tests, 'data')
+    has_passed = get_tests(df, tests)
+
+    tests = list(has_passed.columns[2:])
+    versions = list(has_passed.version.unique())
+
+    d = []
+    for eid, r in data.iterrows():
+        row = [eid, r['version']]
+        for test in tests:
+            item = [bool(has_passed.loc[eid][test]), r[test]]
+            row.append(item)
+        d.append(row)
+
+    return [tests, d, versions]
+    # # Loop through each test
+    # keyList = ['session', 'version'] + list(tests_union)
+    # info_dic = {key: [] for key in keyList}
+    # cat_dic = {key: [] for key in keyList}
+    # all_dic = {key: [] for key in keyList}
+    # for resource in resources_bbrc:
+    #     project, exp_id, archiving_validator, bv, insert_date = resource
+    #     if bv and archiving_validator != 0:
+    #         for d in [info_dic, cat_dic, all_dic]:
+    #             d['session'].append(exp_id)
+    #             d['version'].append(archiving_validator['version'])
+    #         for test in tests_union:
+    #             if test in archiving_validator:
+    #                 info_dic[test].append(archiving_validator[test]['data'])
+    #                 cat_dic[test].append(archiving_validator[test]['has_passed'])
+    #                 all_dic[test].append([archiving_validator[test]['has_passed'],
+    #                                       archiving_validator[test]['data']])
+    #             else:
+    #                 info_dic[test].append('')
+    #                 cat_dic[test].append('')
+    #                 all_dic[test].append([False, ''])
+    #
+    # return pd.DataFrame(all_dic), pd.DataFrame(info_dic), pd.DataFrame(cat_dic)
 
 
 def filter_data_per_project(resources, project_id):

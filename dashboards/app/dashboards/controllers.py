@@ -51,21 +51,6 @@ def overview():
     return render_template('dashboards/overview.html', **data)
 
 
-def from_df_to_html(test_grid):
-    columns = test_grid.columns
-    tests_union = list(columns[2:])
-    diff_version = list(test_grid.version.unique())
-
-    tests_list = []
-    for index, row in test_grid.iterrows():
-        row_list = [row['session'], 'version', row['version']]
-        for test in tests_union:
-            row_list.append(row[test])
-        tests_list.append(row_list)
-
-    return [tests_union, tests_list, diff_version]
-
-
 @dashboard.route('project/<project_id>', methods=['GET'])
 def project(project_id):
 
@@ -87,9 +72,7 @@ def project(project_id):
     html = ([], [], [])
 
     if test_grid:
-        df_all, df_info, df_cat = test_grid
-        html = from_df_to_html(df_all)
-        graphs.pop('test_grid')
+        html = data.pop('test_grid')
 
     user_graphs = {k: v for k, v in graphs.items() if k in session['graphs']}
 
