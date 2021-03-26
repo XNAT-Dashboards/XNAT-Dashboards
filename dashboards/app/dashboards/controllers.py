@@ -29,8 +29,8 @@ def overview():
 
     # Collect graphs and select them based on access rights
     graphs = df.get_graphs(p)
-    graphs = {k: v for k, v in graphs.items() if k in session['graphs']}
     graphs = g.add_graph_fields(graphs)
+    graphs = {k: v for k, v in graphs.items() if k in session['graphs']}
 
     data = {'overview': g.split_by_2(graphs),
             'stats': df.get_stats(p),
@@ -48,38 +48,27 @@ def project(project_id):
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
     p = df.filter_data(p, [project_id])
 
-
-    project_details = df.get_project_details(p, project_id)
-
-    stats = df.get_stats(p)
-    stats.pop('Projects')
-
     graphs = df.get_graphs_per_project(p)
 
     bbrc_resources = [e for e in p['resources'] if len(e) > 4]
-
     graphs.update(bbrc.get_resource_details(bbrc_resources, project_id))
-
-    archiving_validator = bbrc_resources[0][2]
-    test_grid = [], [], []
-    if archiving_validator != 0:
-        test_grid = bbrc.build_test_grid(bbrc_resources)
 
     dd = bbrc.diff_dates(bbrc_resources, project_id)
     graphs['Dates difference (Acquisition date - Insertion date)'] = dd
 
     # Filter graphs based on access rights
-    user_graphs = {k: v for k, v in graphs.items() if k in session['graphs']}
-
-    graph_fields_pp = g.add_graph_fields(user_graphs, session['role'])
-    project_view = g.split_by_2(graph_fields_pp)
+    graphs = {k: v for k, v in graphs.items() if k in session['graphs']}
+    graphs = g.add_graph_fields(graphs)
 
     # session['excel'] = (tests_list, diff_version)
 
-    data = {'project_view': project_view,
+    stats = df.get_stats(p)
+    stats.pop('Projects')
+
+    data = {'project_view': g.split_by_2(graphs),
             'stats': stats,
-            'project': project_details,
-            'test_grid': test_grid,
+            'project': df.get_project_details(p, project_id),
+            'test_grid': bbrc.build_test_grid(bbrc_resources),
             'username': session['username'],
             'server': session['server'],
             'id': project_id}

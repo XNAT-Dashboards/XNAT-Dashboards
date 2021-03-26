@@ -135,7 +135,13 @@ def dates_diff_calc(date_1, date_2):
 
 def build_test_grid(br):
 
-    project, exp_id, archiving_validator, bv, insert_date = br[0]
+    p, exp_id, archiving_validator, bv, insert_date = br[0]
+
+    if archiving_validator == 0:
+        msg = 'Project %s has no validators. Test grid not available.' % p
+        log.warning(msg)
+        return [], [], []
+
     excluded = ['version', 'experiment_id', 'generated']
     columns = ['project', 'exp_id', 'archiving_validator', 'bv', 'insert_date']
     df = pd.DataFrame(br, columns=columns).set_index('exp_id')
