@@ -146,7 +146,7 @@ def build_test_grid(br):
     columns = ['project', 'exp_id', 'archiving_validator', 'bv', 'insert_date']
     df = pd.DataFrame(br, columns=columns).set_index('exp_id')
     tests = sorted(set([e for e in list(archiving_validator.keys())
-                 if e not in excluded]))
+                        if e not in excluded]))
     data = get_tests(df, tests, 'data')
     has_passed = get_tests(df, tests)
 
