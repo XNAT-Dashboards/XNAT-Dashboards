@@ -22,30 +22,19 @@ def logout():
 @dashboard.route('/overview/', methods=['GET'])
 def overview():
 
-    # Load pickle and check server
+    # Load pickle and filter projects
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
-
     projects = session['projects']
     p = df.filter_data(p, projects)
+
+    # Collect graphs and select them based on access rights
     graphs = df.get_graphs(p)
-    stats = df.get_stats(p)
+    graphs = {k: v for k, v in graphs.items() if k in session['graphs']}
+    graphs = g.add_graph_fields(graphs)
 
-    # Select graphs based on access rights
-    user_graphs = {k: v for k, v in graphs.items() if k in session['graphs']}
-
-    role = session['role']
-    graph_fields = g.add_graph_fields(user_graphs, role)
-    overview_data = g.split_by_2(graph_fields)
-
-    n = 4  # split projects in chunks of size 4
-    projects = [pr['id'] for pr in p['projects']
-                if pr['id'] in projects or "*" in projects]
-    projects_by_4 = [projects[i * n:(i + 1) * n]
-                     for i in range((len(projects) + n - 1) // n)]
-
-    data = {'overview': overview_data,
-            'stats': stats,
-            'projects': projects_by_4,
+    data = {'overview': g.split_by_2(graphs),
+            'stats': df.get_stats(p),
+            'projects': g.get_projects_by_4(p),
             'username': session['username'],
             'server': session['server']}
     return render_template('dashboards/overview.html', **data)
@@ -54,27 +43,32 @@ def overview():
 @dashboard.route('project/<project_id>', methods=['GET'])
 def project(project_id):
 
-    # Load pickle and check server
+    # Load pickle and filter one project
+    # (Do we check that user is allowed to see it?)
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
-
-    # Get the details for plotting
     p = df.filter_data(p, [project_id])
+
+
     project_details = df.get_project_details(p, project_id)
+
     stats = df.get_stats(p)
     stats.pop('Projects')
+
     graphs = df.get_graphs_per_project(p)
 
     bbrc_resources = [e for e in p['resources'] if len(e) > 4]
+
     graphs.update(bbrc.get_resource_details(bbrc_resources, project_id))
-    project, exp_id, archiving_validator, bv, insert_date = bbrc_resources[0]
+
+    archiving_validator = bbrc_resources[0][2]
+    test_grid = [], [], []
     if archiving_validator != 0:
-        test_grid = bbrc.generate_test_grid_bbrc(bbrc_resources)
-    else:
-        test_grid = [], [], []
+        test_grid = bbrc.build_test_grid(bbrc_resources)
 
     dd = bbrc.diff_dates(bbrc_resources, project_id)
     graphs['Dates difference (Acquisition date - Insertion date)'] = dd
 
+    # Filter graphs based on access rights
     user_graphs = {k: v for k, v in graphs.items() if k in session['graphs']}
 
     graph_fields_pp = g.add_graph_fields(user_graphs, session['role'])

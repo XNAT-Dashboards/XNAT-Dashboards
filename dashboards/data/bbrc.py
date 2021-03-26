@@ -133,7 +133,7 @@ def dates_diff_calc(date_1, date_2):
     return abs(diff.days)
 
 
-def generate_test_grid_bbrc(br):
+def build_test_grid(br):
 
     project, exp_id, archiving_validator, bv, insert_date = br[0]
     excluded = ['version', 'experiment_id', 'generated']

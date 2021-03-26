@@ -57,13 +57,12 @@ def test_020_reorder_graphs_PP():
 def test_024_get_overview():
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
 
-    role = 'admin'
     projects = [e['id'] for e in p['projects']]
     p = f.filter_data(p, projects)
     data = f.get_graphs(p)
     stats = f.get_stats(p)
 
-    overview = g.add_graph_fields(data, role)
+    overview = g.add_graph_fields(data)
     graph_list = g.split_by_2(overview)
 
     assert isinstance(graph_list, list)
@@ -75,11 +74,10 @@ def test_025_get_project_view():
 
     project = p['projects'][0]
     project_id = project['id']
-    role = 'admin'
     p = f.filter_data(p, project_id)
     data_pp = f.get_graphs_per_project(p)
     project_details = f.get_project_details(p, project_id)
-    project_view = g.add_graph_fields(data_pp, role)
+    project_view = g.add_graph_fields(data_pp)
     graph_list = g.split_by_2(project_view)
 
     resources_bbrc = [e for e in p['resources'] if len(e) > 4]
@@ -89,7 +87,7 @@ def test_025_get_project_view():
     dd = bbrc.diff_dates(resources_bbrc, project_id)
 
     if archiving_validator != 0:
-        test_grid = bbrc.generate_test_grid_bbrc(bbrc_resources)
+        test_grid = bbrc.build_test_grid(bbrc_resources)
     assert isinstance(graph_list, list)
     assert len(graph_list) != 0
 
