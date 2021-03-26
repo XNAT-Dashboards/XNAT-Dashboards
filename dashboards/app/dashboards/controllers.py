@@ -64,20 +64,16 @@ def project(project_id):
     stats.pop('Projects')
     graphs = df.get_graphs_per_project(p)
 
-    resources_bbrc = [e for e in p['resources'] if len(e) > 4]
-    graphs = bbrc.get_resource_details(resources_bbrc, project_id)
-    bbrc_resources = [e for e in resources_bbrc if e[0] == project_id]
+    bbrc_resources = [e for e in p['resources'] if len(e) > 4]
+    graphs.update(bbrc.get_resource_details(bbrc_resources, project_id))
     project, exp_id, archiving_validator, bv, insert_date = bbrc_resources[0]
     if archiving_validator != 0:
         test_grid = bbrc.generate_test_grid_bbrc(bbrc_resources)
     else:
         test_grid = [], [], []
 
-    dd = bbrc.diff_dates(resources_bbrc, project_id)
+    dd = bbrc.diff_dates(bbrc_resources, project_id)
     graphs['Dates difference (Acquisition date - Insertion date)'] = dd
-    data.update(graphs)
-
-    role = session['role']
 
     user_graphs = {k: v for k, v in graphs.items() if k in session['graphs']}
 

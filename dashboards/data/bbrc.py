@@ -137,8 +137,8 @@ def generate_test_grid_bbrc(br):
 
     project, exp_id, archiving_validator, bv, insert_date = br[0]
     excluded = ['version', 'experiment_id', 'generated']
-
-    df = pd.DataFrame(br, columns=['project', 'exp_id', 'archiving_validator', 'bv', 'insert_date']).set_index('exp_id')
+    columns = ['project', 'exp_id', 'archiving_validator', 'bv', 'insert_date']
+    df = pd.DataFrame(br, columns=columns).set_index('exp_id')
     tests = set([e for e in archiving_validator if e not in excluded])
     data = get_tests(df, tests, 'data')
     has_passed = get_tests(df, tests)
