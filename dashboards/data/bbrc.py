@@ -4,8 +4,10 @@ from datetime import date
 
 
 def get_tests(df, tests, value='has_passed'):
-    print(tests)
     archiving = df[['archiving_validator']].query('archiving_validator != 0')
+    if archiving.empty:
+        log.warning('No tests found.')
+        return None
     archiving['version'] = archiving.apply(lambda row: row['archiving_validator']['version'], axis=1)
     for t in tests:
         archiving[t] = archiving.apply(lambda row: row['archiving_validator'].get(t, {value: 'No Data'})[value], axis=1)
@@ -14,25 +16,31 @@ def get_tests(df, tests, value='has_passed'):
     return archiving[columns]
 
 
-def generate_bbrc_validators_dict(df):
+def which_sessions_have_validators(br):
 
-    bv = {'count': {}, 'list': {}}
-    series = pd.Series([x for e in df['BBRC_Validators'] for x in e])
-    series_dict = (series.value_counts()).to_dict()
-    for k, v in series_dict.items():
-        bv['count'][k] = {}
-        bv['count'][k]['Sessions with Validator'] = v
-        list_ = df[pd.DataFrame(df.BBRC_Validators.tolist()).isin([k]).any(1).values]
-        ses = [x for x in list_['Session']]
-        bv['list'][k] = {}
-        bv['list'][k]['Sessions with Validator'] = ses
-        df2 = df.set_index('Session')
-        df_missing_ses = df2.loc[set(df2.index).difference(ses)].sort_index()
-        df_missing_ses = df_missing_ses.reset_index()
-        bv['count'][k]['Sessions without Validator'] = len(df_missing_ses['Session'])
-        bv['list'][k]['Sessions without Validator'] = list(df_missing_ses['Session'])
+    # make a list of all existing validators
+    validators = set()
+    for r in br:
+        if r[2] != 0:
+            for e in r[3]:
+                validators.add(e)
 
-    return bv
+    vl, count = {}, {}
+
+    # for each validator make a list of sessions having it
+    for v in validators:
+        has_val, has_not_val = [], []
+        for r in br:
+            if v in r[3]:
+                has_val.append(r[0])
+            else:
+                has_not_val.append(r[0])
+        vl[v] = {'Sessions with Validator': has_val,
+                 'Sessions without Validator': has_not_val}
+        count[v] = {'Sessions with Validator': len(has_val),
+                    'Sessions without Validator': len(has_not_val)}
+
+    return {'count': count, 'list': vl}
 
 
 def get_resource_details(resources, project_id=None):
@@ -62,7 +70,7 @@ def get_resource_details(resources, project_id=None):
 
     d = {'Sessions with usable T1': usable_t1,
          'Version Distribution': version,
-         'BBRC validators': generate_bbrc_validators_dict(data),
+         'BBRC validators': which_sessions_have_validators(data),
          'Is acquisition data consistent across the whole session?': cad}
     return d
 
