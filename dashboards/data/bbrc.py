@@ -145,16 +145,16 @@ def build_test_grid(br):
     excluded = ['version', 'experiment_id', 'generated']
     columns = ['project', 'exp_id', 'archiving_validator', 'bv', 'insert_date']
     df = pd.DataFrame(br, columns=columns).set_index('exp_id')
-    tests = set([e for e in archiving_validator if e not in excluded])
+    tests = sorted(set([e for e in list(archiving_validator.keys())
+                 if e not in excluded]))
     data = get_tests(df, tests, 'data')
     has_passed = get_tests(df, tests)
 
-    tests = sorted(has_passed.columns[2:])
     versions = list(has_passed.version.unique())
 
     d = []
     for eid, r in data.iterrows():
-        row = [eid, r['version']]
+        row = [eid, ['version', r['version']]]
         for test in tests:
             item = [bool(has_passed.loc[eid][test]), r[test]]
             row.append(item)
