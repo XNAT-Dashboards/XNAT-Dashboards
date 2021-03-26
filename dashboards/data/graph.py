@@ -37,9 +37,9 @@ def get_projects_by_4(p):
     """ The frontend displays a list of projects in 4 columns. This function
     splits the list of the projects visible by the user in chunks of size 4
     and returns it."""
-    
+
     # Split the list of visible projects by chunks of size 4
-    projects = [e['id'] for e in p['projects']]
+    projects = sorted([e['id'] for e in p['projects']])
     n = 4  # split projects in chunks of size 4
     projects_by_4 = [projects[i * n:(i + 1) * n]
                      for i in range((len(projects) + n - 1) // n)]

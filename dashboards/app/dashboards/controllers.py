@@ -61,7 +61,7 @@ def project(project_id):
 
     data = {'project_view': g.split_by_2(graphs),
             'stats': stats,
-            'project': df.get_project_details(p, project_id),
+            'project': df.get_project_details(p),
             'test_grid': bbrc.build_test_grid(p),
             'username': session['username'],
             'server': session['server'],

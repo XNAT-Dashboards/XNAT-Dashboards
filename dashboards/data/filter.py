@@ -71,6 +71,7 @@ def get_graphs(p):
               'Imaging sessions': edpp,
               'Total amount of sessions': ed,
               'Sessions per subject': prop_exp,
+              'Scan quality': scan_quality,
               'Resources per type': get_nres_per_type(resources),
               'Resources per session': get_nres_per_session(resources),
               'Resources (over time)': {'count': p['longitudinal_data']}}
@@ -200,17 +201,22 @@ def get_graphs_per_project(p):
 
     ed.update(scd)
 
+    # Validators
     from dashboards.data import bbrc
     resources = [e for e in p['resources'] if len(e) > 4]
     columns = ['Project', 'Session', 'archiving_validator', 'BBRC_Validators',
                'Insert date']
     data = pd.DataFrame(resources, columns=columns).set_index('Session')
-    print(data)
-    br = bbrc.get_resource_details(data)
-    ed.update(br)
+    archiving = data.query('archiving_validator != 0')
 
-    dd = bbrc.diff_dates(data)
-    ed['Dates difference (Acquisition date - Insertion date)'] = dd
+    # NOTE: this assumes projects with validators always ArchivingValidators
+    # and inversely
+    if not archiving.empty:
+        br = bbrc.get_resource_details(data)
+        ed.update(br)
+
+        dd = bbrc.diff_dates(data)
+        ed['Dates difference (Acquisition date - Insertion date)'] = dd
 
     return ed
 
