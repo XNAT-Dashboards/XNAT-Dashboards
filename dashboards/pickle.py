@@ -78,18 +78,17 @@ def get_tests(resource, validator_name):
         return av, val
 
 
-def resource_monitor(x, resources, resource_name):
+def resource_monitor(resources):
 
     # Get current time
     now = datetime.now()
     dt = now.strftime("%d/%m/%Y")
 
     # Count total number of resources
-    n_res = 0
-    for r in resources:
-        label = r[3]
-        if label == resource_name:
-            n_res = n_res + 1
+    import pandas as pd
+    columns = ['project', 'eid', 'xnat_abstractresource_id', 'label']
+    df = pd.DataFrame(resources, columns=columns)[['project', 'label']]
+    n_res = df.groupby('label').count().to_dict()['project']
 
     return dt, n_res
 
@@ -114,23 +113,18 @@ def save(x, fp):
     resources, bbrc_resources = get_resources(x)
 
     # Monitors
-    res = ['FREESURFER6', 'FREESURFER6_HIRES', 'ASHS', 'BAMOS',
-           'SPM12_SEGMENT']
-    long_data = {}
+    # res = ['FREESURFER6', 'FREESURFER6_HIRES', 'ASHS', 'BAMOS',
+    #       'SPM12_SEGMENT']
 
-    for resource_name in res:
-        dt, n_res = resource_monitor(x, resources, resource_name)
+    dt, n_res = resource_monitor(resources)
+    long_data = p.get('longitudinal_data', {})
 
-        if 'longitudinal_data' in p.keys():
-            long_data = p['longitudinal_data']
-            if resource_name not in long_data:
-                long_data[resource_name] = {dt: n_res}
-            long_data[resource_name][dt] = n_res
-        else:
-            long_data[resource_name] = {dt: n_res}
+    for resource_name in list(n_res.keys()):
+        long_data.setdefault(resource_name, {})
+        long_data[resource_name][dt] = n_res[resource_name]
 
     # bbrc_resources = []
-    #resources = []
+    # resources = []
     # for e in resources:
     #     resources2.append(e[:4])
     #     bbrc_resources.append([e[0], e[1], e[-3], e[-2], e[-1]])
