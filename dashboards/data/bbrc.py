@@ -142,7 +142,7 @@ def generate_test_grid_bbrc(br):
     data = get_tests(df, tests, 'data')
     has_passed = get_tests(df, tests)
 
-    tests = list(has_passed.columns[2:])
+    tests = sorted(has_passed.columns[2:])
     versions = list(has_passed.version.unique())
 
     d = []
@@ -154,42 +154,3 @@ def generate_test_grid_bbrc(br):
         d.append(row)
 
     return [tests, d, versions]
-    # # Loop through each test
-    # keyList = ['session', 'version'] + list(tests_union)
-    # info_dic = {key: [] for key in keyList}
-    # cat_dic = {key: [] for key in keyList}
-    # all_dic = {key: [] for key in keyList}
-    # for resource in resources_bbrc:
-    #     project, exp_id, archiving_validator, bv, insert_date = resource
-    #     if bv and archiving_validator != 0:
-    #         for d in [info_dic, cat_dic, all_dic]:
-    #             d['session'].append(exp_id)
-    #             d['version'].append(archiving_validator['version'])
-    #         for test in tests_union:
-    #             if test in archiving_validator:
-    #                 info_dic[test].append(archiving_validator[test]['data'])
-    #                 cat_dic[test].append(archiving_validator[test]['has_passed'])
-    #                 all_dic[test].append([archiving_validator[test]['has_passed'],
-    #                                       archiving_validator[test]['data']])
-    #             else:
-    #                 info_dic[test].append('')
-    #                 cat_dic[test].append('')
-    #                 all_dic[test].append([False, ''])
-    #
-    # return pd.DataFrame(all_dic), pd.DataFrame(info_dic), pd.DataFrame(cat_dic)
-
-
-def filter_data_per_project(resources, project_id):
-
-    resources_bbrc = [e for e in resources if len(e) > 4]
-    graphs = get_resource_details(resources_bbrc, project_id)
-    bbrc_resources = [e for e in resources_bbrc if e[0] == project_id]
-    project, exp_id, archiving_validator, bv, insert_date = bbrc_resources[0]
-    if archiving_validator != 0:
-        test_grid = generate_test_grid_bbrc(bbrc_resources)
-        graphs['test_grid'] = test_grid
-
-    dd = diff_dates(resources_bbrc, project_id)
-    graphs['Dates difference (Acquisition date - Insertion date)'] = dd
-
-    return graphs

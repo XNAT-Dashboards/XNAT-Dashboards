@@ -2,7 +2,7 @@
 from flask import Blueprint, render_template, session, redirect, url_for
 from dashboards.data import graph as g
 from dashboards.data import filter as df
-from dashboards.data import bbrc as dfb
+from dashboards.data import bbrc
 
 import pickle
 from dashboards import config
@@ -64,15 +64,20 @@ def project(project_id):
     stats.pop('Projects')
     graphs = df.get_graphs_per_project(p)
 
-    resources = [e for e in p['resources'] if len(e) > 4]
-    dfpp = dfb.filter_data_per_project(resources, project_id)
-    graphs.update(dfpp)
+    resources_bbrc = [e for e in p['resources'] if len(e) > 4]
+    graphs = bbrc.get_resource_details(resources_bbrc, project_id)
+    bbrc_resources = [e for e in resources_bbrc if e[0] == project_id]
+    project, exp_id, archiving_validator, bv, insert_date = bbrc_resources[0]
+    if archiving_validator != 0:
+        test_grid = bbrc.generate_test_grid_bbrc(bbrc_resources)
+    else:
+        test_grid = [], [], []
 
-    test_grid = graphs.get('test_grid')
-    html = ([], [], [])
+    dd = bbrc.diff_dates(resources_bbrc, project_id)
+    graphs['Dates difference (Acquisition date - Insertion date)'] = dd
+    data.update(graphs)
 
-    if test_grid:
-        html = data.pop('test_grid')
+    role = session['role']
 
     user_graphs = {k: v for k, v in graphs.items() if k in session['graphs']}
 
@@ -84,7 +89,7 @@ def project(project_id):
     data = {'project_view': project_view,
             'stats': stats,
             'project': project_details,
-            'test_grid': html,
+            'test_grid': test_grid,
             'username': session['username'],
             'server': session['server'],
             'id': project_id}
