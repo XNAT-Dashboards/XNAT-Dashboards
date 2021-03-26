@@ -70,6 +70,7 @@ def get_resource_details(resources, project_id=None):
 def diff_dates(resources_bbrc, project_id):
 
     if resources_bbrc is None:
+        print('RESOURCES_BBRC is NONE')
         return None
 
     # Generate a dataframe of TestAcquisitionDate and its InsertDate

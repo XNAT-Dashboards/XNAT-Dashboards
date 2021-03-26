@@ -1,5 +1,5 @@
-from dashboards.data import filter as df
-from dashboards.data import bbrc as dfb
+from dashboards.data import filter as f
+from dashboards.data import bbrc
 from dashboards.data import graph as g
 from dashboards.app import app
 from dashboards import config
@@ -36,8 +36,8 @@ def test_001_pickle_save():  # should be run first
 
 def test_019_reorder_graphs():
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
-    p = df.filter_data(p, '*')
-    graphs = df.get_graphs(p)
+    p = f.filter_data(p, '*')
+    graphs = f.get_graphs(p)
 
     assert isinstance(graphs, dict)
     assert len(graphs) != 0
@@ -48,30 +48,10 @@ def test_020_reorder_graphs_PP():
 
     project = p['projects'][0]
     project_id = project['id']
-    p = df.filter_data(p, project_id)
-    graphs = df.get_graphs_per_project(p)
+    p = f.filter_data(p, project_id)
+    graphs = f.get_graphs_per_project(p)
     assert isinstance(graphs, dict)
     assert len(graphs) != 0
-
-
-# def test_022_reorder_graphs_bbrc():
-#     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
-#
-#     p = df.filter_data(p, '*')
-#     assert isinstance(filtered, dict)
-#     assert len(filtered) != 0
-
-
-# def test_023_reorder_graphs_bbrc_PP():
-#     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
-#     # bbrc_resources = p['extra_resources']
-#
-#     project = p['projects'][0]
-#     project_id = project['id']
-#     filtered = dfb.filter_data(p['resources'], project_id)
-#
-#     assert isinstance(filtered, dict)
-#     assert len(filtered) != 0
 
 
 def test_024_get_overview():
@@ -79,9 +59,9 @@ def test_024_get_overview():
 
     role = 'admin'
     projects = [e['id'] for e in p['projects']]
-    p = df.filter_data(p, projects)
-    data = df.get_graphs(p)
-    stats = df.get_stats(p)
+    p = f.filter_data(p, projects)
+    data = f.get_graphs(p)
+    stats = f.get_stats(p)
 
     overview = g.add_graph_fields(data, role)
     graph_list = g.split_by_2(overview)
@@ -96,17 +76,20 @@ def test_025_get_project_view():
     project = p['projects'][0]
     project_id = project['id']
     role = 'admin'
-    p = df.filter_data(p, project_id)
-    data_pp = df.get_graphs_per_project(p)
-    resources = [e for e in p['resources'] if len(e) > 4]
-    dfpp = dfb.filter_data_per_project(resources, project_id)
-    data_pp.update(dfpp)
-    stats = df.get_stats(p)
-    project_details = df.get_project_details(p, project_id)
-    data_pp.pop('test_grid')
+    p = f.filter_data(p, project_id)
+    data_pp = f.get_graphs_per_project(p)
+    project_details = f.get_project_details(p, project_id)
     project_view = g.add_graph_fields(data_pp, role)
     graph_list = g.split_by_2(project_view)
 
+    resources_bbrc = [e for e in p['resources'] if len(e) > 4]
+    graphs = bbrc.get_resource_details(resources_bbrc, project_id)
+    bbrc_resources = [e for e in resources_bbrc if e[0] == project_id]
+    project, exp_id, archiving_validator, bv, insert_date = bbrc_resources[0]
+    dd = bbrc.diff_dates(resources_bbrc, project_id)
+
+    if archiving_validator != 0:
+        test_grid = bbrc.generate_test_grid_bbrc(bbrc_resources)
     assert isinstance(graph_list, list)
     assert len(graph_list) != 0
 
