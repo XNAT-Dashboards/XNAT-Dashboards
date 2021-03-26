@@ -50,12 +50,6 @@ def project(project_id):
 
     graphs = df.get_graphs_per_project(p)
 
-    bbrc_resources = [e for e in p['resources'] if len(e) > 4]
-    graphs.update(bbrc.get_resource_details(bbrc_resources, project_id))
-
-    dd = bbrc.diff_dates(bbrc_resources, project_id)
-    graphs['Dates difference (Acquisition date - Insertion date)'] = dd
-
     # Filter graphs based on access rights
     graphs = {k: v for k, v in graphs.items() if k in session['graphs']}
     graphs = g.add_graph_fields(graphs)
@@ -68,7 +62,7 @@ def project(project_id):
     data = {'project_view': g.split_by_2(graphs),
             'stats': stats,
             'project': df.get_project_details(p, project_id),
-            'test_grid': bbrc.build_test_grid(bbrc_resources),
+            'test_grid': bbrc.build_test_grid(p),
             'username': session['username'],
             'server': session['server'],
             'id': project_id}

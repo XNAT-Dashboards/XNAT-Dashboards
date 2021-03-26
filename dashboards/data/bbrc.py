@@ -8,6 +8,7 @@ def get_tests(df, tests, value='has_passed'):
     if archiving.empty:
         log.warning('No tests found.')
         return None
+
     archiving['version'] = archiving.apply(lambda row: row['archiving_validator']['version'], axis=1)
     for t in tests:
         archiving[t] = archiving.apply(lambda row: row['archiving_validator'].get(t, {value: 'No Data'})[value], axis=1)
@@ -43,17 +44,10 @@ def which_sessions_have_validators(br):
     return {'count': count, 'list': vl}
 
 
-def get_resource_details(resources, project_id=None):
+def get_resource_details(data):
 
-    # Generating specifc resource type
-    columns = ['Project', 'Session', 'archiving_validator', 'BBRC_Validators',
-               'Insert date']
-    data = pd.DataFrame(resources, columns=columns).set_index('Session')
     tests = get_tests(data, ['HasUsableT1', 'IsAcquisitionDateConsistent'])
     data = data.join(tests).reset_index()
-
-    if project_id is not None:
-        data = data.groupby('Project').get_group(project_id)
 
     # Usable t1
     from dashboards.data import filter
@@ -75,24 +69,11 @@ def get_resource_details(resources, project_id=None):
     return d
 
 
-def diff_dates(resources_bbrc, project_id):
-
-    if resources_bbrc is None:
-        print('RESOURCES_BBRC is NONE')
-        return None
+def diff_dates(df):
 
     # Generate a dataframe of TestAcquisitionDate and its InsertDate
-    columns = ['Project', 'Session', 'archiving_validator', 'bv', 'Insert date']
-    df = pd.DataFrame(resources_bbrc, columns=columns).set_index('Session')
     tests = get_tests(df, ['IsAcquisitionDateConsistent'], 'data')
     df = df.join(tests).reset_index()
-
-    # Filter by project_id
-    try:
-        df = df.groupby(['Project']).get_group(project_id)
-    except KeyError:
-        print('ERROR', project_id)
-        return {'count': {}, 'list': {}}
 
     # Drop experiments with No Date information
     dates_acq_list = []
@@ -141,20 +122,21 @@ def dates_diff_calc(date_1, date_2):
     return abs(diff.days)
 
 
-def build_test_grid(br):
+def build_test_grid(p):
+    columns = ['Project', 'Session', 'archiving_validator', 'BBRC_Validators',
+               'Insert date']
+    resources = [e for e in p['resources'] if len(e) > 4]
+    df = pd.DataFrame(resources, columns=columns).set_index('Session')
 
-    p, exp_id, archiving_validator, bv, insert_date = br[0]
-
-    if archiving_validator == 0:
-        msg = 'Project %s has no validators. Test grid not available.' % p
+    if df[['archiving_validator']].query('archiving_validator != 0').empty:
+        msg = 'Project has no ArchivingValidators. Test grid not available.'
         log.warning(msg)
         return [], [], []
 
     excluded = ['version', 'experiment_id', 'generated']
-    columns = ['project', 'exp_id', 'archiving_validator', 'bv', 'insert_date']
-    df = pd.DataFrame(br, columns=columns).set_index('exp_id')
-    tests = sorted(set([e for e in list(archiving_validator.keys())
-                        if e not in excluded]))
+    tests = set(df.iloc[0]['archiving_validator']).difference(excluded)
+    tests = sorted(tests)
+
     data = get_tests(df, tests, 'data')
     has_passed = get_tests(df, tests)
 

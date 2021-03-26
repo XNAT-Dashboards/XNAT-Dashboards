@@ -76,18 +76,22 @@ def test_025_get_project_view():
     project_id = project['id']
     p = f.filter_data(p, project_id)
     data_pp = f.get_graphs_per_project(p)
-    project_details = f.get_project_details(p, project_id)
+    project_details = f.get_project_details(p)
     project_view = g.add_graph_fields(data_pp)
     graph_list = g.split_by_2(project_view)
 
-    resources_bbrc = [e for e in p['resources'] if len(e) > 4]
-    graphs = bbrc.get_resource_details(resources_bbrc, project_id)
-    bbrc_resources = [e for e in resources_bbrc if e[0] == project_id]
-    project, exp_id, archiving_validator, bv, insert_date = bbrc_resources[0]
-    dd = bbrc.diff_dates(resources_bbrc, project_id)
+    br = [e for e in p['resources'] if len(e) > 4]
 
-    if archiving_validator != 0:
-        test_grid = bbrc.build_test_grid(bbrc_resources)
+    import pandas as pd
+    columns = ['Project', 'Session', 'archiving_validator', 'BBRC_Validators',
+               'Insert date']
+    data = pd.DataFrame(br, columns=columns).set_index('Session')
+    graphs = bbrc.get_resource_details(data)
+
+    dd = bbrc.diff_dates(data)
+
+    if br[0][3] != 0:  # archiving_validator
+        test_grid = bbrc.build_test_grid(p)
     assert isinstance(graph_list, list)
     assert len(graph_list) != 0
 

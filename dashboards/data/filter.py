@@ -78,7 +78,10 @@ def get_graphs(p):
     br = [e for e in p['resources'] if len(e) > 4]
 
     from dashboards.data import bbrc
-    resources = bbrc.get_resource_details(br)
+    columns = ['Project', 'Session', 'archiving_validator', 'BBRC_Validators',
+               'Insert date']
+    data = pd.DataFrame(br, columns=columns).set_index('Session')
+    resources = bbrc.get_resource_details(data)
     del resources['Version Distribution']
     graphs.update(resources)
 
@@ -197,15 +200,27 @@ def get_graphs_per_project(p):
 
     ed.update(scd)
 
+    from dashboards.data import bbrc
+    resources = [e for e in p['resources'] if len(e) > 4]
+    columns = ['Project', 'Session', 'archiving_validator', 'BBRC_Validators',
+               'Insert date']
+    data = pd.DataFrame(resources, columns=columns).set_index('Session')
+    print(data)
+    br = bbrc.get_resource_details(data)
+    ed.update(br)
+
+    dd = bbrc.diff_dates(data)
+    ed['Dates difference (Acquisition date - Insertion date)'] = dd
+
     return ed
 
 
-def get_project_details(p, project_id):
+def get_project_details(p):
     """Extract from the pickle object detailed information about
     a given project and parse it in a comprehensive dict structure."""
-    res = {}
 
-    p_item = [e for e in p['projects'] if e['id'] == project_id][0]
+    res = {}
+    project = p['projects'][0]
 
     fields = {'Owner(s)': 'project_owners',
               'Member(s)': 'project_members',
@@ -213,13 +228,13 @@ def get_project_details(p, project_id):
               'User(s)': 'project_users',
               'last_accessed': 'project_last_access'}
 
-    for field, p_key in fields.items():
-        res[field] = p_item[p_key].strip().split(' <br/> ')
-        if res[field][0] == '':
-            res[field] = ['None']
+    for k, v in fields.items():
+        res[k] = project[v].strip().split(' <br/> ')
+        if res[k][0] == '':
+            res[k] = ['None']
 
     for e in ['insert_user', 'insert_date', 'project_access', 'name',
               'project_last_workflow']:
-        res[e] = p_item[e]
+        res[e] = project[e]
 
     return res
