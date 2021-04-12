@@ -105,7 +105,7 @@ def diff_dates(df):
     # Create the dictionary: {"count": {"x": "y"}, "list": {"x": "list"}}
     df_diff = df[['Session', 'Diff']].rename(
         columns={'Session': 'count'})
-    cut = pd.cut(df_diff.Diff, [0, 2, 10, 100, 1000, 10000])
+    cut = pd.cut(df_diff.Diff, [0, 2, 10, 100, 1000, 10000], include_lowest=True)
     df_series = df_diff.groupby(cut)['count'].apply(list)
     df_diff = df_diff.groupby(cut).count()
     df_diff['list'] = df_series
