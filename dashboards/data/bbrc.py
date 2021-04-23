@@ -1,7 +1,7 @@
 import pandas as pd
 import logging as log
 from datetime import date
-
+from collections import OrderedDict
 
 def get_tests(df, tests, value='has_passed'):
     archiving = df[['archiving_validator']].query('archiving_validator != 0')
@@ -21,27 +21,31 @@ def which_sessions_have_validators(br):
 
     # make a list of all existing validators
     validators = set()
-    for r in br:
-        if r[2] != 0:
-            for e in r[3]:
-                validators.add(e)
+    for r in list(br['BBRC_Validators']):
+        for e in r:
+            validators.add(e)
 
     vl, count = {}, {}
 
     # for each validator make a list of sessions having it
     for v in validators:
         has_val, has_not_val = [], []
-        for r in br:
-            if v in r[3]:
-                has_val.append(r[0])
+        for r, s in zip(br['BBRC_Validators'], br['Session']):
+            if v in r:
+                has_val.append(s)
             else:
-                has_not_val.append(r[0])
+                has_not_val.append(s)
         vl[v] = {'Sessions with Validator': has_val,
                  'Sessions without Validator': has_not_val}
         count[v] = {'Sessions with Validator': len(has_val),
                     'Sessions without Validator': len(has_not_val)}
-
-    return {'count': count, 'list': vl}
+    d = {'count': count, 'list': vl}
+    series = pd.Series([x for e in br['BBRC_Validators'] for x in e])
+    series_dict = (series.value_counts()).to_dict()
+    key_list = series_dict.keys()
+    d['list'] = OrderedDict((k, d['list'][k]) for k in key_list)
+    d['count'] = OrderedDict((k, d['count'][k]) for k in key_list)
+    return d
 
 
 def get_resource_details(data):
