@@ -109,8 +109,9 @@ def diff_dates(df):
     df_diff = df_diff.groupby(cut).count()
     df_diff['list'] = df_series
     df_diff.index = df_diff.index.astype(str) + ' days'
-
-    return df_diff.to_dict()
+    df_diff = df_diff.to_dict()
+    df_diff['id_type'] = 'experiment'
+    return df_diff
 
 
 def dates_diff_calc(date_1, date_2):
