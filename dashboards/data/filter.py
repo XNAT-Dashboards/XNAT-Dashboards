@@ -185,7 +185,7 @@ def get_graphs_per_project(p):
 
     # Graph #2
     prop_scan = proportion_graphs(p['scans'], 'ID', 'xnat:imagescandata/id', '', ' scans')
-    prop_scan['id_type'] = 'subject'
+    prop_scan['id_type'] = 'experiment'
 
     # Graph #3
     columns = ['xnat:imagescandata/quality', 'ID', 'xnat:imagescandata/id']
