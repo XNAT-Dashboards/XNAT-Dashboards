@@ -96,7 +96,7 @@ def diff_dates(df):
     # if DataFrame empty
     if df.empty:
         print('ERROR DF EMPTY')
-        return {'count': {}, 'list': {}}
+        return {}
 
     # Calculates the time difference
     df['Diff'] = df.apply(lambda x: dates_diff_calc(x['Acq date'], x['Insert date']), axis=1)
