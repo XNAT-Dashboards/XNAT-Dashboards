@@ -207,6 +207,7 @@ def get_graphs_per_project(p):
     columns = ['Project', 'Session', 'archiving_validator', 'BBRC_Validators',
                'Insert date']
     data = pd.DataFrame(resources, columns=columns).set_index('Session')
+    print('data', data)
     archiving = data.query('archiving_validator != 0')
 
     # NOTE: this assumes projects with validators always ArchivingValidators
@@ -217,6 +218,9 @@ def get_graphs_per_project(p):
 
         dd = bbrc.diff_dates(data)
         ed['Dates difference (Acquisition date - Insertion date)'] = dd
+    else:
+        br = {'BBRC validators': bbrc.which_sessions_have_validators(data.reset_index())}
+        ed.update(br)
 
     return ed
 
