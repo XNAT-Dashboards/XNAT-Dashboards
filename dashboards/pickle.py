@@ -65,7 +65,7 @@ def get_tests(resource, validator_name):
 
     import json
     val = []
-    av = 0
+    av = 'No Data'
     validators = [e for e in list(resource.files('*.json'))]
     if validators:
         for v in validators:

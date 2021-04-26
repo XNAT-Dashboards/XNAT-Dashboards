@@ -3,22 +3,25 @@ import logging as log
 from datetime import date
 from collections import OrderedDict
 
+
 def get_tests(df, tests, value='has_passed'):
-    archiving = df[['archiving_validator']].query('archiving_validator != 0')
+    archiving = df[['archiving_validator']].replace({0: 'No Data'})
     if archiving.empty:
         log.warning('No tests found.')
         return None
 
-    archiving['version'] = archiving.apply(lambda row: row['archiving_validator']['version'], axis=1)
+    archiving['version'] = archiving.apply(lambda row: row['archiving_validator']['version']
+    if row['archiving_validator'] != 'No Data' else row['archiving_validator'], axis=1)
     for t in tests:
-        archiving[t] = archiving.apply(lambda row: row['archiving_validator'].get(t, {value: 'No Data'})[value], axis=1)
+        archiving[t] = archiving.apply(lambda row: row['archiving_validator'].get(t, {value: 'No Data'})[value]
+        if row['archiving_validator'] != 'No Data' else row['archiving_validator'],
+        axis=1)
     columns = list(tests)
     columns.append('version')
     return archiving[columns]
 
 
 def which_sessions_have_validators(br):
-
     # make a list of all existing validators
     validators = set()
     for r in list(br['BBRC_Validators']):
@@ -49,7 +52,6 @@ def which_sessions_have_validators(br):
 
 
 def get_resource_details(data):
-
     tests = get_tests(data, ['HasUsableT1', 'IsAcquisitionDateConsistent'])
     data = data.join(tests).reset_index()
 
@@ -74,7 +76,6 @@ def get_resource_details(data):
 
 
 def diff_dates(df):
-
     # Generate a dataframe of TestAcquisitionDate and its InsertDate
     tests = get_tests(df, ['IsAcquisitionDateConsistent'], 'data')
     df = df.join(tests).reset_index()
