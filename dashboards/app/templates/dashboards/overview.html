@@ -113,10 +113,10 @@
                     <div class = "card">
                         <div class="card-body">
                             <div class="row">
-                                {% for key in stats_data %}
+                                {% for key in stats %}
                                 <div class="col">
                                     <div class="counter">
-                                        <h2 class="timer count-title count-number" data-to="{{stats_data[key]}}" data-speed="1000"></h2>
+                                        <h2 class="timer count-title count-number" data-to="{{stats[key]}}" data-speed="1000"></h2>
                                         <p class="count-text ">{{key}}</p>
                                     </div>
                                 </div>
@@ -126,7 +126,7 @@
                     </div>
                     <!-- Counter End -->
                     <!-- Graph plotting Start -->
-                    {% for row in graph_data %}
+                    {% for row in overview %}
                     <div class="row">
                         {% for col in row %}
                         {% for key in col %}
@@ -168,7 +168,7 @@
             <!-- Project List Start -->
             <!-- Project list for all visible projects Start -->
             <div class="project_part">
-                {% for row in project_list%}
+                {% for row in projects%}
                 <div class="row">
                     {% for col in row%}
                         <div class="col-lg-3">
@@ -203,7 +203,7 @@
     </script>
     <script src="/static/dashboards/js/plotly_chart_generator.js"></script>
 
-    {% for row in graph_data%}
+    {% for row in overview%}
         {% for graph_column in row%}
             <script>
                 chart_generator({{ graph_column | tojson}});

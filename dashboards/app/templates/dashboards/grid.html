@@ -29,86 +29,86 @@
                         <tr>
                             <td class="Stick">Sessions/Tests</td>
                             <td>Version</td>
-                            {% for data in test_grid[0]%}
-                            <td>{{data}}</td>
+                            {% for test in test_grid[0]%}
+                            <td>{{test}}</td>
                             {% endfor %}
                         </tr>
                 </thead>
                 <tbody>
                     <!-- Every row per session details -->
-                    {% for data_l in test_grid[1] %}
+                    {% for tests in test_grid[1] %}
                         <tr>
-                            {% for data in data_l %}
-                                {% if data[0] == true %}
+                            {% for test in tests %}
+                                {% if test[0] == true %}
                                 <td class="green_bg">
                                     <div style="display: none;">
                                         <!-- Loop throug each data present in dictionary or in jinja called mapping-->
-                                        {% if data[1] is mapping %}
-                                            {% for data_vi in data[1] %}
+                                        {% if test[1] is mapping %}
+                                            {% for data_vi in test[1] %}
                                             {{data_vi }} ->
-                                            {{data[1][data_vi]}} <br/>
+                                            {{test[1][data_vi]}} <br/>
                                             {% endfor %}
-                                        <!-- If data[1] is of type string just print it-->
-                                        {% elif data[1] is string %}
-                                            {{ data[1] }}
+                                        <!-- If test[1] is of type string just print it-->
+                                        {% elif test[1] is string %}
+                                            {{ test[1] }}
                                         <!-- Loop throug each data present in list -->
                                         {% else %}
-                                            {% for data_vi in data[1] %}
+                                            {% for data_vi in test[1] %}
                                                 {{data_vi }} <br/>
                                             {% endfor %}
                                         {% endif %}
                                     </div>
                                 </td>
-                                {% elif data[0] == false%}
+                                {% elif test[0] == false%}
                                 <td class="red_bg">
                                     <div style="display: none;">
                                         <!-- Loop throug each data present in dictionary or in jinja called mapping-->
-                                        {% if data[1] is mapping %}
-                                            {% for data_vi in data[1] %}
+                                        {% if test[1] is mapping %}
+                                            {% for data_vi in test[1] %}
                                             {{data_vi }} ->
-                                            {{data[1][data_vi]}} <br/>
+                                            {{test[1][data_vi]}} <br/>
                                             {% endfor %}
-                                        <!-- If data[1] is of type string just print it-->
-                                        {% elif data[1] is string %}
-                                            {{ data[1] }}
+                                        <!-- If test[1] is of type string just print it-->
+                                        {% elif test[1] is string %}
+                                            {{ test[1] }}
                                         <!-- Loop throug each data present in list -->
                                         {% else %}
-                                            {% for data_vi in data[1] %}
+                                            {% for data_vi in test[1] %}
                                                 {{data_vi }} <br/>
                                             {% endfor %}
                                         {% endif %}
                                     </div>
                                 </td>
-                                {% elif data[0] == None%}
+                                {% elif test[0] == None%}
                                 <td class="grey_bg">
                                     <div style="display: none;">
                                         <!-- Loop throug each data present in dictionary or in jinja called mapping-->
-                                        {% if data[1] is mapping %}
-                                            {% for data_vi in data[1] %}
+                                        {% if test[1] is mapping %}
+                                            {% for data_vi in test[1] %}
                                             {{data_vi }} ->
-                                            {{data[1][data_vi]}} <br/>
+                                            {{test[1][data_vi]}} <br/>
                                             {% endfor %}
-                                        <!-- If data[1] is of type string just print it-->
-                                        {% elif data[1] is string %}
-                                            {{ data[1] }}
+                                        <!-- If test[1] is of type string just print it-->
+                                        {% elif test[1] is string %}
+                                            {{ test[1] }}
                                         <!-- Loop throug each data present in list -->
                                         {% else %}
-                                            {% for data_vi in data[1] %}
+                                            {% for data_vi in test[1] %}
                                                 {{data_vi }} <br/>
                                             {% endfor %}
                                         {% endif %}
                                     </div>
                                 </td>
-                                {% elif data[0] == 'version' %}
+                                {% elif test[0] == 'version' %}
                                 <td>
-                                    {{data[1]}}
+                                    {{test[1]}}
                                 </td>
-                                {% elif data == '' %}
+                                {% elif test == '' %}
                                 <td class="black_bg"></td>
                                 {% else %}
                                 <td class="stick">
-                                    <a href="{{server}}/data/experiments/{{data}}?format=html" target="_blank">
-                                    {{data}}
+                                    <a href="{{server}}/data/experiments/{{test}}?format=html" target="_blank">
+                                    {{test}}
                                     </a>
                                 </td>
                                 {% endif %}
