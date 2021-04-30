@@ -1,84 +1,92 @@
-import pickle
-import os.path as op
-from tqdm import tqdm
 import os
-from datetime import datetime
+import os.path as op
+import logging as log
 
 n_max = 50 if os.environ.get('CI_TEST', None) else None
 
 
-def get_instance_details(x):
-
+def get_projects(x):
     projects = x.select('xnat:projectData').all().data
+    return projects
+
+
+def get_subjects(x):
     params = {'columns': 'ID,project,handedness,age,gender'}
     j = x.get('/data/subjects', params=params).json()
     subjects = j['ResultSet']['Result']
+    return subjects
 
-    experiments = x.array.experiments(columns=['subject_ID', 'date'],
-                                      experiment_type='').data
 
-    columns = ['xnat:imageScanData/quality',  'xnat:imageScanData/type']
+def get_experiments(x):
+    experiments = x.array.experiments(columns=['subject_ID', 'date']).data
+    return experiments
+
+
+def get_scans(x):
+    columns = ['xnat:imageScanData/quality', 'xnat:imageScanData/type']
     scans = x.array.scans(columns=columns).data
-
-    data = {}
-    data['projects'] = projects
-    data['subjects'] = subjects
-    data['experiments'] = experiments
-    data['scans'] = scans
-
-    return data
+    return scans
 
 
 def get_resources(x):
+    from tqdm import tqdm
 
-    experiments = x.array.experiments(columns=['subject_ID', 'date', 'insert_date'],
-                                      experiment_type='').data
     resources = []
-    resources_bbrc = []
 
+    experiments = x.array.experiments(columns=['ID', 'project']).data
     # For each experiments fetch all the resources associated with it
     for exp in tqdm(experiments[:n_max]):
+        j = x.get('{}/{}'.format(exp['URI'], 'resources')).json()
+        exp_res = j['ResultSet']['Result']
 
-        res = x._get_json('{}/{}'.format(exp['URI'], 'resources'))
+        if exp_res:
+            resources.extend([[exp['project'], exp['ID'],
+                               r['xnat_abstractresource_id'],
+                               r['label']] for r in exp_res])
+        else:
+            resources.append([exp['project'], exp['ID'],
+                              'No Data', 'No Data'])
+    return resources
 
-        e = x.select.experiment(exp['ID'])
-        bbrc_validator = e.resource('BBRC_VALIDATOR')
+
+def get_bbrc_resources(x):
+    from tqdm import tqdm
+
+    resources_bbrc = []
+    validator = 'ArchivingValidator'
+
+    cols = ['subject_ID', 'date', 'insert_date']
+    experiments = x.array.experiments(columns=cols).data
+    for exp in tqdm(experiments[:n_max]):
         insert_date = exp['insert_date'].split(' ')[0]
 
-        if len(res) == 0:
-            row = [exp['project'], exp['ID'], 'No Data', 'No Data']
-        else:
-            for r in res:
-                row = [exp['project'], exp['ID'],
-                       r['xnat_abstractresource_id'], r['label']]
+        r = x.select.experiment(exp['ID']).resource('BBRC_VALIDATOR')
+        val_results, val_list = get_bbrc_tests(r, validator)
 
-                # tv = get_tests(bbrc_validator, 'ArchivingValidator')
-                # row.extend([tv[0], tv[1], insert_date])
-                resources.append(row)
-        tv = get_tests(bbrc_validator, 'ArchivingValidator')
-        row = [exp['project'], exp['ID'], tv[0], tv[1], insert_date]
+        row = [exp['project'], exp['ID'], val_results, val_list, insert_date]
         resources_bbrc.append(row)
-    return resources, resources_bbrc
+
+    return resources_bbrc
 
 
-def get_tests(resource, validator_name):
+def get_bbrc_tests(resource, validator_name):
 
     import json
-    val = []
-    av = 'No Data'
+    val_list = []
+    val_result = 'No Data'
     validators = [e for e in list(resource.files('*.json'))]
     if validators:
         for v in validators:
             if validator_name in str(v):
-                av = json.loads(resource._intf.get(v._uri).text)
-            v = ((str(v).split('>')[1]).split('_')[0]).strip(' ')
-            val.append(v)
-        return av, val
-    else:
-        return av, val
+                val_result = json.loads(resource._intf.get(v._uri).text)
+            val_name = ((str(v).split('>')[1]).split('_')[0]).strip(' ')
+            val_list.append(val_name)
+
+    return val_result, val_list
 
 
-def resource_monitor(resources):
+def update_longitudinal_data(pickle_data, resources):
+    from datetime import datetime
 
     # Get current time
     now = datetime.now()
@@ -90,58 +98,54 @@ def resource_monitor(resources):
     df = pd.DataFrame(resources, columns=columns)[['project', 'label']]
     n_res = df.groupby('label').count().to_dict()['project']
 
-    return dt, n_res
+    # Update longitudinal resource data with additional timepoint
+    long_data = pickle_data.get('longitudinal_data', {})
+    for resource_name in list(n_res.keys()):
+        long_data.setdefault(resource_name, {})
+        long_data[resource_name][dt] = n_res[resource_name]
+
+    return long_data
+
+
+def get_data(x):
+    """Fetch XNAT data entities as a dictionary."""
+
+    data = dict()
+    data['server'] = x._server
+    data['verify'] = x._verify
+    data['projects'] = get_projects(x)
+    data['subjects'] = get_subjects(x)
+    data['experiments'] = get_experiments(x)
+    data['scans'] = get_scans(x)
+    data['resources'] = get_resources(x)
+    data['bbrc_resources'] = get_bbrc_resources(x)
+    return data
 
 
 def save(x, fp):
+    import pickle
 
     p = {}
 
     # Raise Exception if file exists with different server name
     if op.isfile(fp) and op.getsize(fp) > 0:
-
         p = pickle.load(open(fp, 'rb'))
-        if 'server' in p and x._server != p['server']:
+        if x._server != p.get('server'):
             msg = 'Pickle server mismatch %s %s %s'\
                   % (fp, p['server'], x._server)
             raise Exception(msg)
 
         # Backup pickle
-        print('Prior pickle found at %s. Backing up at %s.bak.' % (fp, fp))
+        log.warning('Backing up at %s.bak.' % fp)
         pickle.dump(p, open('%s.bak' % fp, 'wb'))
 
-    resources, bbrc_resources = get_resources(x)
-
-    # Monitors
-    # res = ['FREESURFER6', 'FREESURFER6_HIRES', 'ASHS', 'BAMOS',
-    #       'SPM12_SEGMENT']
-
-    dt, n_res = resource_monitor(resources)
-    long_data = p.get('longitudinal_data', {})
-    for resource_name in list(n_res.keys()):
-        long_data.setdefault(resource_name, {})
-        long_data[resource_name][dt] = n_res[resource_name]
-
-    # bbrc_resources = []
-    # resources = []
-    # for e in resources:
-    #     resources2.append(e[:4])
-    #     bbrc_resources.append([e[0], e[1], e[-3], e[-2], e[-1]])
-    resources.extend(bbrc_resources)
-
-    details = get_instance_details(x)
-
-    d = {'server': x._server,
-         'verify': x._verify,
-         'projects': details['projects'],
-         'subjects': details['subjects'],
-         'experiments': details['experiments'],
-         'scans': details['scans'],
-         'resources': resources,
-         #'extra_resources': bbrc_resources,
-         'longitudinal_data': long_data}
+    # Get XNAT data
+    d = get_data(x)
+    # TODO: fix this and keep resources/bbrc_resources separated
+    d['resources'] = d['resources'].extend(d['bbrc_resources'])
+    d['longitudinal_data'] = update_longitudinal_data(p, d['resources'])
     p.update(d)
 
     # Save all the data to pickle
     pickle.dump(p, open(fp, 'wb'))
-    print('Pickle file successfully saved at', fp)
+    log.info('Pickle file successfully saved at', fp)
