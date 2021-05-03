@@ -96,7 +96,7 @@ def test_006_pickle_resource_data():
 def test_007_pickle_bbrc_resource_data():
 
     bbrc_resources = pk.get_bbrc_resources(x)
-
+    bbrc_resources = [r for r in bbrc_resources if isinstance(r[2], dict)]
     r = bbrc_resources.pop()
     assert(len(r) == 5)
     assert(r[1] == r[2]['experiment_id'])

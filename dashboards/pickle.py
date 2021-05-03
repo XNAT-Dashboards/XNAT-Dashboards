@@ -148,4 +148,4 @@ def save(x, fp):
 
     # Save all the data to pickle
     pickle.dump(p, open(fp, 'wb'))
-    log.info('Pickle file successfully saved at', fp)
+    log.info('Pickle file successfully saved at %s' % fp)
