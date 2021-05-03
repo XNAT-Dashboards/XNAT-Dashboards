@@ -8,10 +8,11 @@ import dashboards
 import pyxnat
 from dashboards import pickle as pk
 import pickle
+import logging as log
 
 import tempfile
 fh, fp = tempfile.mkstemp(suffix='.pickle')
-print('Creating %s...' % fp)
+log.info('Creating %s...' % fp)
 config.PICKLE_PATH = fp
 
 fp = op.join(op.dirname(dashboards.__file__), '..', 'config.json')
