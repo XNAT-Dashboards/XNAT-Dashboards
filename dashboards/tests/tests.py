@@ -35,6 +35,82 @@ def test_001_pickle_save():  # should be run first
     assert isinstance(data['longitudinal_data'], dict)
 
 
+def test_002_pickle_project_data():
+
+    c = pyxnat.Interface(server='https://central.xnat.org', anonymous=True)
+    projects = pickle.get_projects(c)
+
+    p = projects.pop()
+    keys = sorted(['insert_date', 'insert_user', 'id', 'name', 'name_csv',
+                   'description', 'description_csv', 'secondary_id', 'keywords',
+                   'pi', 'project_invs', 'project_access', 'project_users',
+                   'project_owners', 'project_members', 'project_collabs',
+                   'project_last_workflow', 'project_last_access', 'project_fav',
+                   'proj_mr_count', 'proj_ct_count', 'proj_pet_count',
+                   'proj_ut_count'])
+    assert(sorted(p.keys()) == keys)
+
+
+def test_003_pickle_subject_data():
+
+    c = pyxnat.Interface(server='https://central.xnat.org', anonymous=True)
+    subjects = pickle.get_subjects(c)
+
+    s = subjects.pop()
+    keys = sorted(['gender', 'handedness', 'project', 'ID', 'URI', 'age'])
+    assert(sorted(s.keys()) == keys)
+
+
+def test_004_pickle_experiment_data():
+
+    c = pyxnat.Interface(server='https://central.xnat.org', anonymous=True)
+    experiments = pickle.get_experiments(c)
+
+    e = experiments.pop()
+    keys = sorted(['xnat:subjectassessordata/id', 'subject_ID', 'ID',
+                   'project', 'date', 'xsiType', 'URI'])
+    assert(sorted(e.keys()) == keys)
+
+
+def test_005_pickle_scan_data():
+
+    c = pyxnat.Interface(server='https://central.xnat.org', anonymous=True)
+    scans = pickle.get_scans(c)
+
+    s = scans.pop()
+    keys = sorted(['session_ID', 'xnat:imagesessiondata/subject_id', 'ID',
+                   'project', 'xsiType', 'xnat:imagescandata/id', 'URI',
+                   'xnat:imagescandata/quality', 'xnat:imagescandata/type'])
+    assert(sorted(s.keys()) == keys)
+
+
+def test_006_pickle_resource_data():
+
+    c = pyxnat.Interface(server='https://central.xnat.org', anonymous=True)
+    resources = pickle.get_resources(c)
+
+    r = resources.pop()
+    assert(len(r) == 4)
+
+
+def test_007_pickle_bbrc_resource_data():
+
+    bbrc_resources = pickle.get_bbrc_resources(x)
+
+    r = bbrc_resources.pop()
+    assert(len(r) == 5)
+    assert(r[1] == r[2]['experiment_id'])
+
+
+def test_008_pickle_bbrc_test_data():
+
+    r = x.select.experiment('BBRCDEV_E00375').resource('BBRC_VALIDATOR')
+    results, validators = pickle.get_bbrc_tests(r, 'ArchivingValidator')
+
+    assert(results['HasUsableT1'] == {'has_passed': True, 'data': ['301']})
+    assert(len(validators) == len(list(r.files()))/2)
+
+
 def test_019_reorder_graphs():
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
     p = f.filter_data(p, '*')
