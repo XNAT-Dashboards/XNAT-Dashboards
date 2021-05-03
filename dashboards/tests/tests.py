@@ -38,7 +38,7 @@ def test_001_pickle_save():  # should be run first
 def test_002_pickle_project_data():
 
     c = pyxnat.Interface(server='https://central.xnat.org', anonymous=True)
-    projects = pickle.get_projects(c)
+    projects = pk.get_projects(c)
 
     p = projects.pop()
     keys = sorted(['insert_date', 'insert_user', 'id', 'name', 'name_csv',
@@ -54,7 +54,7 @@ def test_002_pickle_project_data():
 def test_003_pickle_subject_data():
 
     c = pyxnat.Interface(server='https://central.xnat.org', anonymous=True)
-    subjects = pickle.get_subjects(c)
+    subjects = pk.get_subjects(c)
 
     s = subjects.pop()
     keys = sorted(['gender', 'handedness', 'project', 'ID', 'URI', 'age'])
@@ -64,7 +64,7 @@ def test_003_pickle_subject_data():
 def test_004_pickle_experiment_data():
 
     c = pyxnat.Interface(server='https://central.xnat.org', anonymous=True)
-    experiments = pickle.get_experiments(c)
+    experiments = pk.get_experiments(c)
 
     e = experiments.pop()
     keys = sorted(['xnat:subjectassessordata/id', 'subject_ID', 'ID',
@@ -75,7 +75,7 @@ def test_004_pickle_experiment_data():
 def test_005_pickle_scan_data():
 
     c = pyxnat.Interface(server='https://central.xnat.org', anonymous=True)
-    scans = pickle.get_scans(c)
+    scans = pk.get_scans(c)
 
     s = scans.pop()
     keys = sorted(['session_ID', 'xnat:imagesessiondata/subject_id', 'ID',
@@ -87,7 +87,7 @@ def test_005_pickle_scan_data():
 def test_006_pickle_resource_data():
 
     c = pyxnat.Interface(server='https://central.xnat.org', anonymous=True)
-    resources = pickle.get_resources(c)
+    resources = pk.get_resources(c)
 
     r = resources.pop()
     assert(len(r) == 4)
@@ -95,7 +95,7 @@ def test_006_pickle_resource_data():
 
 def test_007_pickle_bbrc_resource_data():
 
-    bbrc_resources = pickle.get_bbrc_resources(x)
+    bbrc_resources = pk.get_bbrc_resources(x)
 
     r = bbrc_resources.pop()
     assert(len(r) == 5)
@@ -105,7 +105,7 @@ def test_007_pickle_bbrc_resource_data():
 def test_008_pickle_bbrc_test_data():
 
     r = x.select.experiment('BBRCDEV_E00375').resource('BBRC_VALIDATOR')
-    results, validators = pickle.get_bbrc_tests(r, 'ArchivingValidator')
+    results, validators = pk.get_bbrc_tests(r, 'ArchivingValidator')
 
     assert(results['HasUsableT1'] == {'has_passed': True, 'data': ['301']})
     assert(len(validators) == len(list(r.files()))/2)
