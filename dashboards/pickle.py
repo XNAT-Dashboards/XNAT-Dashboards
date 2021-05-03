@@ -141,9 +141,9 @@ def save(x, fp):
 
     # Get XNAT data
     d = get_data(x)
-    # TODO: fix this and keep resources/bbrc_resources separated
-    d['resources'] = d['resources'].extend(d['bbrc_resources'])
     d['longitudinal_data'] = update_longitudinal_data(p, d['resources'])
+    # TODO: fix this and keep resources/bbrc_resources separated
+    d['resources'].extend(d['bbrc_resources'])
     p.update(d)
 
     # Save all the data to pickle
