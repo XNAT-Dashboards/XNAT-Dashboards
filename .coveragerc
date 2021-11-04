@@ -2,3 +2,4 @@
 omit =
   ./setup.py
   ./docs/*
+  ./dashboards/tests/fetch_config.py
