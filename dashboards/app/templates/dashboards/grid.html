@@ -11,7 +11,7 @@
                 &nbsp &nbsp<label for="version_list">Version: </label>
                 <select id="version_list" name="version_list" onchange="filterVersion()">
                     <option>All</option>
-                    {% for ver in test_grid[2]%}
+                    {% for ver in grid[2]%}
                     <option>{{ver}}</option>
                     {% endfor %}
                 </select>
@@ -29,14 +29,14 @@
                         <tr>
                             <td class="Stick">Sessions/Tests</td>
                             <td>Version</td>
-                            {% for test in test_grid[0]%}
+                            {% for test in grid[0]%}
                             <td>{{test}}</td>
                             {% endfor %}
                         </tr>
                 </thead>
                 <tbody>
                     <!-- Every row per session details -->
-                    {% for tests in test_grid[1] %}
+                    {% for tests in grid[1] %}
                         <tr>
                             {% for test in tests %}
                                 {% if test[0] == true %}

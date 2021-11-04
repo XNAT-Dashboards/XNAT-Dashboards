@@ -51,30 +51,6 @@ def which_sessions_have_validators(br):
     return d
 
 
-def get_resource_details(data):
-    tests = get_tests(data, ['HasUsableT1', 'IsAcquisitionDateConsistent'])
-    data = data.join(tests).reset_index()
-
-    # Usable t1
-    from dashboards.data import filter
-    usable_t1 = filter.res_df_to_dict(data, 'HasUsableT1', 'Session')
-    usable_t1['id_type'] = 'experiment'
-
-    # Version Distribution
-    version = filter.res_df_to_dict(data, 'version', 'Session')
-    version['id_type'] = 'experiment'
-
-    # consisten_acq_date
-    cad = filter.res_df_to_dict(data, 'IsAcquisitionDateConsistent', 'Session')
-    cad['id_type'] = 'experiment'
-
-    d = {'Sessions with usable T1': usable_t1,
-         'Version Distribution': version,
-         'BBRC validators': which_sessions_have_validators(data),
-         'Is acquisition data consistent across the whole session?': cad}
-    return d
-
-
 def diff_dates(df):
     # Generate a dataframe of TestAcquisitionDate and its InsertDate
     tests = get_tests(df, ['IsAcquisitionDateConsistent'], 'data')

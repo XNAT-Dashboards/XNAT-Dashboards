@@ -122,6 +122,52 @@ def get_data(x):
     return data
 
 
+def get_stats(p):
+    stats = {'Projects': len(p['projects']),
+             'Subjects': len(p['subjects']),
+             'Experiments': len(p['experiments']),
+             'Scans': len(p['scans'])}
+    return stats
+
+
+def get_projects_by_4(p):
+    """ The frontend displays a list of projects in 4 columns. This function
+    splits the list of the projects visible by the user in chunks of size 4
+    and returns it."""
+
+    # Split the list of visible projects by chunks of size 4
+    projects = sorted([e['id'] for e in p['projects']])
+    n = 4  # split projects in chunks of size 4
+    projects_by_4 = [projects[i * n:(i + 1) * n]
+                     for i in range((len(projects) + n - 1) // n)]
+    return projects_by_4
+
+
+def get_project_details(p):
+    """Extract from the pickle object detailed information about
+    a given project and parse it in a comprehensive dict structure."""
+
+    res = {}
+    project = p['projects'][0]
+
+    fields = {'Owner(s)': 'project_owners',
+              'Member(s)': 'project_members',
+              'Collaborator(s)': 'project_collabs',
+              'User(s)': 'project_users',
+              'last_accessed': 'project_last_access'}
+
+    for k, v in fields.items():
+        res[k] = project[v].strip().split(' <br/> ')
+        if res[k][0] == '':
+            res[k] = ['None']
+
+    for e in ['insert_user', 'insert_date', 'project_access', 'name',
+              'project_last_workflow']:
+        res[e] = project[e]
+
+    return res
+
+
 def save(x, fp):
     import pickle
 

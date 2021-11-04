@@ -114,21 +114,10 @@ def test_008_pickle_bbrc_test_data():
 def test_019_reorder_graphs():
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
     p = f.filter_data(p, '*')
-    graphs = f.get_graphs(p)
-
-    assert isinstance(graphs, dict)
-    assert len(graphs) != 0
-
-
-def test_020_reorder_graphs_PP():
-    p = pickle.load(open(config.PICKLE_PATH, 'rb'))
 
     project = p['projects'][0]
     project_id = project['id']
     p = f.filter_data(p, project_id)
-    graphs = f.get_graphs_per_project(p)
-    assert isinstance(graphs, dict)
-    assert len(graphs) != 0
 
 
 def test_024_get_overview():
@@ -136,14 +125,9 @@ def test_024_get_overview():
 
     projects = [e['id'] for e in p['projects']]
     p = f.filter_data(p, projects)
-    data = f.get_graphs(p)
-    stats = f.get_stats(p)
 
-    overview = g.add_graph_fields(data)
-    graph_list = g.split_by_2(overview)
-
-    assert isinstance(graph_list, list)
-    assert len(graph_list) != 0
+    import dashboards.pickle
+    dashboards.pickle.get_stats(p)
 
 
 def test_025_get_project_view():
@@ -152,10 +136,7 @@ def test_025_get_project_view():
     project = p['projects'][0]
     project_id = project['id']
     p = f.filter_data(p, project_id)
-    data_pp = f.get_graphs_per_project(p)
-    project_details = f.get_project_details(p)
-    project_view = g.add_graph_fields(data_pp)
-    graph_list = g.split_by_2(project_view)
+    project_details = pk.get_project_details(p)
 
     br = [e for e in p['resources'] if len(e) > 4]
 
@@ -163,14 +144,24 @@ def test_025_get_project_view():
     columns = ['Project', 'Session', 'archiving_validator', 'BBRC_Validators',
                'Insert date']
     data = pd.DataFrame(br, columns=columns).set_index('Session')
-    graphs = bbrc.get_resource_details(data)
 
     dd = bbrc.diff_dates(data)
 
     if br[0][3] != 0:  # archiving_validator
         test_grid = bbrc.build_test_grid(p)
-    assert isinstance(graph_list, list)
-    assert len(graph_list) != 0
+
+    graphs = [g.ProjectGraph, g.SubjectGraph, g.PerProjectSessionGraph,
+              g.SessionGraph, g.SessionsPerSubjectGraph, g.ScanQualityGraph,
+              g.ResourcePerTypeGraph, g.ResourcesPerSessionGraph,
+              g.UsableT1SessionGraph, g.ResourcesOverTimeGraph,
+              g.ValidatorGraph,
+              g.ConsistentAcquisitionDateGraph,
+              g.ScanTypeGraph, g.ScansPerSessionGraph,
+              g.VersionGraph,
+              g.DateDifferenceGraph]
+    # Collect graphs and select them based on access rights
+    graphs = [v() for v in graphs]
+    graphs = [e.get_chart(i, p) for i, e in enumerate(graphs)]
 
 
 def test_026_login():

@@ -3,10 +3,10 @@ from flask import Blueprint, render_template, session, redirect, url_for
 from dashboards.data import graph as g
 from dashboards.data import filter as df
 from dashboards.data import bbrc
-
+import dashboards.pickle
 import pickle
+import dashboards
 from dashboards import config
-import pandas as pd
 
 # Define the blueprint: 'dashboard', set its url prefix: app.url/dashboard
 dashboard = Blueprint('dashboard', __name__, url_prefix='/dashboard')
@@ -14,7 +14,6 @@ dashboard = Blueprint('dashboard', __name__, url_prefix='/dashboard')
 
 @dashboard.route('/logout/', methods=['GET'])
 def logout():
-
     session.clear()
     session['error'] = 'Logged out.'
     return redirect(url_for('auth.login'))
@@ -22,20 +21,26 @@ def logout():
 
 @dashboard.route('/overview/', methods=['GET'])
 def overview():
-
     # Load pickle and filter projects
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
     projects = session['projects']
     p = df.filter_data(p, projects)
 
-    # Collect graphs and select them based on access rights
-    graphs = df.get_graphs(p)
-    graphs = g.add_graph_fields(graphs)
-    graphs = {k: v for k, v in graphs.items() if k in session['graphs']}
+    graphs = [g.ProjectGraph, g.SubjectGraph, g.PerProjectSessionGraph,
+              g.SessionGraph, g.SessionsPerSubjectGraph, g.ScanQualityGraph,
+              g.ResourcePerTypeGraph, g.ResourcesPerSessionGraph,
+              g.UsableT1SessionGraph, g.ResourcesOverTimeGraph,
+              g.ValidatorGraph,
+              g.ConsistentAcquisitionDateGraph]
 
-    data = {'overview': g.split_by_2(graphs),
-            'stats': df.get_stats(p),
-            'projects': g.get_projects_by_4(p),
+    # Collect graphs and select them based on access rights
+    graphs = [v() for v in graphs]
+    graphs = [e for e in graphs if e.name in session['graphs']]
+    graphs = [e.get_chart(i, p) for i, e in enumerate(graphs)]
+
+    data = {'graphs': graphs,
+            'stats': dashboards.pickle.get_stats(p),
+            'projects': dashboards.pickle.get_projects_by_4(p),
             'username': session['username'],
             'server': session['server']}
     return render_template('dashboards/overview.html', **data)
@@ -43,27 +48,29 @@ def overview():
 
 @dashboard.route('project/<project_id>', methods=['GET'])
 def project(project_id):
-    # Load pickle and filter one project
-    # (Do we check that user is allowed to see it?)
+    # # Load pickle and filter one project
+    # # (Do we check that user is allowed to see it?)
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
     p = df.filter_data(p, [project_id])
-    graphs = df.get_graphs_per_project(p)
 
-    # Filter graphs based on access rights
-    graphs = {k: v for k, v in graphs.items() if k in session['graphs']}
-    graphs = g.add_graph_fields(graphs)
+    graphs = [g.SessionsPerSubjectGraph, g.ScanQualityGraph,
+              g.ScanTypeGraph, g.ScansPerSessionGraph,
+              g.UsableT1SessionGraph, g.VersionGraph,
+              g.ValidatorGraph, g.ConsistentAcquisitionDateGraph,
+              g.DateDifferenceGraph]
+    graphs = [v() for v in graphs]
+    graphs = [e for e in graphs if e.name in session['graphs']]
+    graphs = [e.get_chart(i, p) for i, e in enumerate(graphs)]
 
     # session['excel'] = (tests_list, diff_version)
-
-    stats = df.get_stats(p)
+    stats = dashboards.pickle.get_stats(p)
     stats.pop('Projects')
 
-    data = {'project_view': g.split_by_2(graphs),
+    data = {'graphs': graphs,
             'stats': stats,
-            'project': df.get_project_details(p),
-            'test_grid': bbrc.build_test_grid(p),
+            'project': dashboards.pickle.get_project_details(p),
+            'grid': bbrc.build_test_grid(p),
             'username': session['username'],
             'server': session['server'],
             'id': project_id}
-    return render_template('dashboards/projectview.html', **data)
-
+    return render_template('dashboards/project.html', **data)
