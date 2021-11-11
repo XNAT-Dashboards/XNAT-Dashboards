@@ -3,13 +3,10 @@
 
 <head>
   {% include  '/dashboards/head.html'  %}
-
 </head>
-
 
 <body class="skin-default-dark fixed-layout">
   <div id="main-wrapper">
-
 
     {% include  '/dashboards/navbar.html'  %}
 
@@ -22,8 +19,22 @@
       <div class="scroll-sidebar">
         <nav class="sidebar-nav">
           <ul id="sidebarnav">
-            <li id="overview"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-eye"></i><span class="hide-menu">Overview</span></a></li>
-            <li id="projects"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-list"></i><span class="hide-menu">Projects</span></a></li>
+
+            <li id="overview">
+              <a class="waves-effect waves-dark" href="#" aria-expanded="false">
+                <i class="fa fa-eye"></i>
+                <span class="hide-menu">
+                  General overview</span>
+              </a>
+            </li>
+
+            <li id="projects">
+              <a class="waves-effect waves-dark" href="#" aria-expanded="false">
+                <i class="fa fa-list"></i>
+                <span class="hide-menu">Projects</span>
+              </a>
+            </li>
+            
             <div class="text-center m-t-30">
               <a href="{{url_for('dashboard.logout')}}" class="waves-effect waves-light btn btn-outline-danger"> logout </a>
             </div>
@@ -93,10 +104,10 @@
 
   <script>
     $('document').ready(function() {
-        server = '{{server}}';
-        graphs = JSON.parse(`{{graphs |tojson}}`);
-        console.log(graphs);
-        show_graphs(graphs);
+      server = '{{server}}';
+      graphs = JSON.parse(`{{graphs |tojson}}`);
+      console.log(graphs);
+      show_graphs(graphs);
     });
   </script>
 </body>

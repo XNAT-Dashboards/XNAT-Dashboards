@@ -2,181 +2,197 @@
 <html lang="en">
 
 <head>
-
   {% include  '/dashboards/head.html'  %}
-
 </head>
+
 <body class="skin-default-dark fixed-layout">
-    <div id="main-wrapper" >
+  <div id="main-wrapper">
 
+    {% include  '/dashboards/navbar.html'  %}
 
-      {% include  '/dashboards/navbar.html'  %}
+    <aside class="left-sidebar">
+      <div class="d-flex no-block nav-text-box align-items-center left_pane">
+        Menu
+        <a class="waves-effect waves-dark ml-auto hidden-sm-down" href="javascript:void(0)"><i class="fa fa-bars"></i></a>
+        <a class="nav-toggler waves-effect waves-dark ml-auto hidden-sm-up" href="javascript:void(0)"><i class="fa fa-bars"></i></a>
+      </div>
+      <div class="scroll-sidebar">
+        <nav class="sidebar-nav">
+          <ul id="sidebarnav">
 
-        <aside class="left-sidebar">
-            <div class="d-flex no-block nav-text-box align-items-center left_pane">
-                Menu
-                <a class="waves-effect waves-dark ml-auto hidden-sm-down" href="javascript:void(0)"><i class="fa fa-bars"></i></a>
-                <a class="nav-toggler waves-effect waves-dark ml-auto hidden-sm-up" href="javascript:void(0)"><i class="fa fa-bars"></i></a>
+            <li id="overview">
+              <a class="waves-effect waves-dark" href="/dashboard/overview/" aria-expanded="false">
+                <i class="fa fa-list"></i>
+                <span class="hide-menu">General overview</span>
+              </a>
+            </li>
+            
+            <li id="project"> <a class="waves-effect waves-dark" href="#" aria-expanded="false">
+                <i class="fa fa-eye">
+                </i>
+                <span class="hide-menu">Project</span>
+              </a>
+            </li>
+
+            {% if grid[0]|length > 0%}
+            <li id="tests_grid">
+              <a class="waves-effect waves-dark" href="#" aria-expanded="false">
+                <i class="fa fa-table"></i>
+                <span class="hide-menu">Validation tests</span>
+              </a>
+            </li>
+            {% endif %}
+
+            <div class="text-center m-t-30">
+              <a href="{{url_for('dashboard.logout')}}" class="waves-effect waves-light btn btn-outline-danger"> logout </a>
             </div>
-            <div class="scroll-sidebar">
-                <nav class="sidebar-nav">
-                    <ul id="sidebarnav">
-                        <li id="overview"> <a class="waves-effect waves-dark" href="/dashboard/overview/" aria-expanded="false"><i class="fa fa-list"></i><span class="hide-menu">General overview</span></a></li>
-                        <li id="project"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-eye"></i><span class="hide-menu">Project</span></a></li>
-                        {% if grid[0]|length > 0%}
-                            <li id="tests_grid"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-table"></i><span class="hide-menu">Validation tests</span></a></li>
-                        {% endif %}
-                        <div class="text-center m-t-30">
-                            <a href="{{url_for('dashboard.logout')}}" class="waves-effect waves-light btn btn-outline-danger"> logout </a>
-                        </div>
-                    </ul>
-                </nav>
+          </ul>
+        </nav>
+      </div>
+    </aside>
+
+    <div class="page-wrapper">
+      <div class="container-fluid ">
+        <div class="row page-titles">
+          <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor overview_part">
+              Project
+              <a href="{{server}}/app/action/DisplayItemAction/search_value/{{id}}//search_element/xnat:Data/search_field/xnat:projectData.ID" target="_blank">
+                {{id}}
+              </a>
+            </h4>
+          </div>
+          <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+              <h4>
+                {% if project['access'] == 'private'%}
+                <span class="badge badge-danger">Private</span>
+                {% endif %}
+                {% if project['access'] == 'protected'%}
+                <span class="badge badge-warning">Protected</span>
+                {% endif %}
+                {% if project['access'] == 'public'%}
+                <span class="badge badge-success">Public</span>
+                {% endif %}
+
+                &nbsp&nbsp
+              </h4>
             </div>
-        </aside>
+          </div>
+        </div>
+        <div class="p_project_part">
+          {% include  '/dashboards/counters.html'  %}
 
-        <div class="page-wrapper">
-            <div class="container-fluid ">
-                <div class="row page-titles">
-                    <div class="col-md-5 align-self-center">
-                        <h4 class="text-themecolor overview_part">
-                            Project
-                            <a href="{{server}}/app/action/DisplayItemAction/search_value/{{id}}//search_element/xnat:Data/search_field/xnat:projectData.ID" target="_blank">
-                                {{id}}
-                            </a>
-                        </h4>
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-body">
+                  <div class="d-flex">
+                    <div>
+                      <h5 class="card-title">Project details</h5>
                     </div>
-                    <div class="col-md-7 align-self-center text-right">
-                        <div class="d-flex justify-content-end align-items-center">
-                            <h4>
-                                {% if project['access'] == 'private'%}
-                                <span class="badge badge-danger">Private</span>
-                                {% endif %}
-                                {% if project['access'] == 'protected'%}
-                                <span class="badge badge-warning">Protected</span>
-                                {% endif %}
-                                {% if project['access'] == 'public'%}
-                                <span class="badge badge-success">Public</span>
-                                {% endif %}
-
-                                &nbsp&nbsp
-                            </h4>
-                        </div>
-                    </div>
+                  </div>
                 </div>
-                <div class="p_project_part">
-                  {% include  '/dashboards/counters.html'  %}
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <tbody>
+                      <tr>
+                        <td><b>Project name (ID)</b></td>
+                        <td class="text-center">{{project['name']}} ({{id}})</td>
+                      </tr>
+                      <tr>
+                        <td><b>Owner(s)</b></td>
+                        <td class="text-center">
+                          {% for user in project['Owner(s)']%}
+                          {{user}}&nbsp
+                          {%endfor%}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td><b>Inserted on </b></td>
+                        <td class="text-center">{{project['insert_date']}} <b>by</b> {{project['insert_user']}}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Last workflow</b></td>
+                        <td class="text-center">{{project['project_last_workflow']}}</td>
+                      </tr>
+                      <tr>
+                        <td><b>Collaborators</b></td>
+                        <td class="text-center">
+                          {% for user in project['Collaborator(s)']%}
+                          {{user}}&nbsp
+                          {%endfor%}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td><b>Members</b></td>
+                        <td class="text-center">
+                          {% for user in project['Member(s)']%}
+                          {{user}}&nbsp
+                          {% endfor%}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td><b>Users</b></td>
+                        <td class="text-center">
+                          {% for user in project['User(s)']%}
+                          {{user}}&nbsp
+                          {%endfor%}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td><b>Last access</b></td>
+                        <td class="text-center">
+                          {% for user in  project['last_accessed']%}
+                          {{user}}&nbsp
+                          {% endfor %}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
 
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="d-flex">
-                                        <div>
-                                            <h5 class="card-title">Project details</h5>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="table-responsive">
-                                    <table class="table table-hover">
-                                        <tbody>
-                                            <tr>
-                                                <td ><b>Project name (ID)</b></td>
-                                                <td class="text-center">{{project['name']}} ({{id}})</td>
-                                            </tr>
-                                            <tr>
-                                                <td><b>Owner(s)</b></td>
-                                                <td class="text-center">
-                                                    {% for user in project['Owner(s)']%}
-                                                    {{user}}&nbsp
-                                                    {%endfor%}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td><b>Inserted on </b></td>
-                                                <td class="text-center">{{project['insert_date']}} <b>by</b> {{project['insert_user']}}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><b>Last workflow</b></td>
-                                                <td class="text-center">{{project['project_last_workflow']}}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><b>Collaborators</b></td><td class="text-center">
-                                                {% for user in project['Collaborator(s)']%}
-                                                {{user}}&nbsp
-                                                {%endfor%}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><b>Members</b></td><td class="text-center">
-                                                {% for user in project['Member(s)']%}
-                                                {{user}}&nbsp
-                                                {% endfor%}
-                                            </td>
+          <div id='graphs'>
+          </div>
 
-                                            </tr>
-                                            <tr>
-                                                <td ><b>Users</b></td>
-                                                <td class="text-center">
-                                                    {% for user in project['User(s)']%}
-                                                    {{user}}&nbsp
-                                                    {%endfor%}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td ><b>Last access</b></td>
-                                                <td class="text-center">
-                                                {% for user in  project['last_accessed']%}
-                                                {{user}}&nbsp
-                                                {% endfor %}
-                                            </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id='graphs'>
-                    </div>
-
-                    <div class="modal fade" id="drillDown" tabindex="-1" role="dialog" aria-labelledby="drillDownTile" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="drillDownTitle"></h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                        </button>
-                                </div>
-                                <div class="modal-body" id="modalBodyDrillDown">
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+          <div class="modal fade" id="drillDown" tabindex="-1" role="dialog" aria-labelledby="drillDownTile" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="drillDownTitle"></h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body" id="modalBodyDrillDown">
 
                 </div>
-
-                {% if grid[0]|length > 0 %}
-                    {% include  '/dashboards/grid.html'  %}
-                {% endif  %}
-
+              </div>
             </div>
+          </div>
+
         </div>
 
-        {% include  '/dashboards/footer.html'  %}
+        {% if grid[0]|length > 0 %}
+        {% include  '/dashboards/grid.html'  %}
+        {% endif  %}
 
+      </div>
     </div>
 
-    <script>
+    {% include  '/dashboards/footer.html'  %}
+
+  </div>
+
+  <script>
     $('document').ready(function() {
-        project_id = '{{id}}';
-        server = '{{server}}';
-        graphs = JSON.parse(`{{graphs |tojson}}`);
-        console.log(graphs);
-
-        show_graphs(graphs);
-
+      project_id = '{{id}}';
+      server = '{{server}}';
+      graphs = JSON.parse(`{{graphs |tojson}}`);
+      show_graphs(graphs);
     });
   </script>
 
