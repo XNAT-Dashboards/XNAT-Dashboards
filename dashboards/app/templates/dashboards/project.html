@@ -2,83 +2,15 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
 
-    <script>
-        window.history.forward();
-    </script>
-
-    <title> XNAT Dashboards</title>
-
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="icon" type="image/png" sizes="16x16" href="/static/common/images/logo.png">
-    <link href="/static/dashboards/css/custom.css" rel="stylesheet">
-    <link href="/static/dashboards/css/custom_bootstrap_overwrite.css" rel="stylesheet">
-    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel="icon" href="data:;base64,=">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/linways/table-to-excel@v1.0.4/dist/tableToExcel.js"></script>
-    <script src="/static/dashboards/js/graph.js"></script>
-    <script src="/static/dashboards/js/grid.js"></script>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <script src="/static/dashboards/js/nav.js"></script>
-
+  {% include  '/dashboards/head.html'  %}
 
 </head>
 <body class="skin-default-dark fixed-layout">
     <div id="main-wrapper" >
 
-        <div class="preloader">
-            <div class="loader">
-                <div class="loader__figure"></div>
-                <p class="loader__label">Plotting data</p>
-            </div>
-        </div>
 
-        <header class="topbar">
-            <nav class="navbar top-navbar navbar-expand-md navbar-dark">
-                <div class="navbar-header">
-                     <a class="navbar-brand" id="logo" href="#">
-                        <img src="/static/common/images/logo.png" class="logo">
-                        XNAT Dashboards
-                    </a>
-                </div>
-                &nbsp&nbsp&nbsp
-                <div class="navbar-collapse">
-                    <ul class="navbar-nav mr-auto">
-                        <li class="nav-item hidden-sm-up"> <a class="nav-link nav-toggler waves-effect waves-light" href="javascript:void(0)"><i class="fa fa-bars"></i></a></li>
-                    </ul>
-                    <ul class="navbar-nav my-lg-0">
-                        <li>
-                            <i class="fa fa-user username" aria-hidden="true"></i>
-                        </li>
-                        <li>
-                            &nbsp&nbsp&nbsp
-                        </li>
-                        <li class="nav-item dropdown username">
-                            {{username}}
-                        </li>
-                        <li>
-                            &nbsp&nbsp&nbsp
-                        </li>
-                        <li>
-                            <i class="fa fa-sign-out logout" aria-hidden="true"></i>
-                        </li>
-                        <li>
-                            &nbsp&nbsp
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a href="{{url_for('dashboard.logout')}}" class="logout" > logout</a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-        </header>
+      {% include  '/dashboards/navbar.html'  %}
 
         <aside class="left-sidebar">
             <div class="d-flex no-block nav-text-box align-items-center left_pane">
@@ -89,10 +21,10 @@
             <div class="scroll-sidebar">
                 <nav class="sidebar-nav">
                     <ul id="sidebarnav">
-                        <li id="overview"> <a class="waves-effect waves-dark" href="/dashboard/overview/" aria-expanded="false"><i class="fa fa-list"></i><span class="hide-menu">Overview</span></a></li>
+                        <li id="overview"> <a class="waves-effect waves-dark" href="/dashboard/overview/" aria-expanded="false"><i class="fa fa-list"></i><span class="hide-menu">General overview</span></a></li>
                         <li id="project"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-eye"></i><span class="hide-menu">Project</span></a></li>
                         {% if grid[0]|length > 0%}
-                            <li id="tests_grid"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-table"></i><span class="hide-menu">Test Grid</span></a></li>
+                            <li id="tests_grid"> <a class="waves-effect waves-dark" href="#" aria-expanded="false"><i class="fa fa-table"></i><span class="hide-menu">Validation tests</span></a></li>
                         {% endif %}
                         <div class="text-center m-t-30">
                             <a href="{{url_for('dashboard.logout')}}" class="waves-effect waves-light btn btn-outline-danger"> logout </a>
@@ -117,13 +49,13 @@
                         <div class="d-flex justify-content-end align-items-center">
                             <h4>
                                 {% if project['access'] == 'private'%}
-                                <span class="badge badge-danger">Private Project</span>
+                                <span class="badge badge-danger">Private</span>
                                 {% endif %}
                                 {% if project['access'] == 'protected'%}
-                                <span class="badge badge-warning">Protected Project</span>
+                                <span class="badge badge-warning">Protected</span>
                                 {% endif %}
                                 {% if project['access'] == 'public'%}
-                                <span class="badge badge-success">Public Project</span>
+                                <span class="badge badge-success">Public</span>
                                 {% endif %}
 
                                 &nbsp&nbsp
@@ -132,21 +64,7 @@
                     </div>
                 </div>
                 <div class="p_project_part">
-                    <!-- Counter Start -->
-                    <div class = "card">
-                        <div class="card-body">
-                                <div class="row">
-                                    {% for key in stats %}
-                                    <div class="col">
-                                        <div class="counter">
-                                            <h2 class="timer count-title count-number" data-to="{{stats[key]}}" data-speed="1000"></h2>
-                                            <p class="count-text ">{{key}}</p>
-                                        </div>
-                                    </div>
-                                    {% endfor %}
-                                </div>
-                        </div>
-                    </div>
+                  {% include  '/dashboards/counters.html'  %}
 
                     <div class="row">
                         <div class="col-12">
@@ -154,7 +72,7 @@
                                 <div class="card-body">
                                     <div class="d-flex">
                                         <div>
-                                            <h5 class="card-title">Project Details</h5>
+                                            <h5 class="card-title">Project details</h5>
                                         </div>
                                     </div>
                                 </div>
@@ -162,15 +80,11 @@
                                     <table class="table table-hover">
                                         <tbody>
                                             <tr>
-                                                <td ><b>Project Name</b></td>
-                                                <td class="text-center">{{project['name']}}</td>
+                                                <td ><b>Project name (ID)</b></td>
+                                                <td class="text-center">{{project['name']}} ({{id}})</td>
                                             </tr>
                                             <tr>
-                                                <td ><b>Project ID</td>
-                                                <td class="text-center">{{id}}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><b>Project Owner(s)</b></td>
+                                                <td><b>Owner(s)</b></td>
                                                 <td class="text-center">
                                                     {% for user in project['Owner(s)']%}
                                                     {{user}}&nbsp
@@ -179,24 +93,20 @@
                                             </tr>
                                             <tr>
                                                 <td><b>Inserted on </b></td>
-                                                <td class="text-center">{{project['insert_date']}}</td>
+                                                <td class="text-center">{{project['insert_date']}} <b>by</b> {{project['insert_user']}}</td>
                                             </tr>
                                             <tr>
-                                                <td><b>Inserted By</b></td>
-                                                <td class="text-center">{{project['insert_user']}}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><b>Last Workflow</b></td>
+                                                <td><b>Last workflow</b></td>
                                                 <td class="text-center">{{project['project_last_workflow']}}</td>
                                             </tr>
                                             <tr>
-                                                <td><b>Project Collaborators</b></td><td class="text-center">
+                                                <td><b>Collaborators</b></td><td class="text-center">
                                                 {% for user in project['Collaborator(s)']%}
                                                 {{user}}&nbsp
                                                 {%endfor%}</td>
                                             </tr>
                                             <tr>
-                                                <td><b>Project Members</b></td><td class="text-center">
+                                                <td><b>Members</b></td><td class="text-center">
                                                 {% for user in project['Member(s)']%}
                                                 {{user}}&nbsp
                                                 {% endfor%}
@@ -204,7 +114,7 @@
 
                                             </tr>
                                             <tr>
-                                                <td ><b>Project Users</b></td>
+                                                <td ><b>Users</b></td>
                                                 <td class="text-center">
                                                     {% for user in project['User(s)']%}
                                                     {{user}}&nbsp
@@ -212,7 +122,7 @@
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td ><b>Last Accessed By</b></td>
+                                                <td ><b>Last access</b></td>
                                                 <td class="text-center">
                                                 {% for user in  project['last_accessed']%}
                                                 {{user}}&nbsp
@@ -254,9 +164,7 @@
             </div>
         </div>
 
-        <footer class="footer">
-            © 2020 XNAT Dashboards
-        </footer>
+        {% include  '/dashboards/footer.html'  %}
 
     </div>
 

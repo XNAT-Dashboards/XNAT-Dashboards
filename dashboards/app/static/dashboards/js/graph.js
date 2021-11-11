@@ -46,6 +46,7 @@ function show_graphs(graphs) {
     id = graph[0];
     data = graph[1];
     layout = graph[2];
+    layout['font'] = {family: 'Poppins, sans-serif'}
     id_type = graph[3];
     desc = graph[4];
     name = graph[5];

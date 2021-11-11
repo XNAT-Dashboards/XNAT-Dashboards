@@ -29,7 +29,7 @@ class BarChart():
                  'y': y,
                  'type': 'bar',
                  'marker': {'color': g['color']}}]
-        layout = {'title': g['name'],
+        layout = {'title': g['name'],                  
                   'margin': {'l': 100, 'r': 100, 'b': 100, 't': 100}}
 
         drill = self.get_drill(g, data)

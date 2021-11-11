@@ -1,0 +1,14 @@
+<div class="card">
+  <div class="card-body">
+    <div class="row">
+      {% for key in stats %}
+      <div class="col">
+        <div class="counter">
+          <h2 class="timer count-title count-number" data-to="{{stats[key]}}" data-speed="1000"></h2>
+          <p class="count-text ">{{key}}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>

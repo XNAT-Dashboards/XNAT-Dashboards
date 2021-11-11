@@ -55,7 +55,7 @@
 .hide{
         display: none;
       }
-      
+
 .highlight{
         background: rgba(0, 0, 0, 0.3);
       }
@@ -74,7 +74,7 @@
       position: absolute;
       top: calc(50% - 3.5px);
       left: calc(50% - 3.5px); }
-  
+
   .loader,
   .loader__figure {
     position: absolute;
@@ -85,13 +85,13 @@
     -ms-transform: translate(-50%, -50%);
     -o-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%); }
-  
+
   .loader {
     overflow: visible;
     padding-top: 2em;
     height: 0;
     width: 2em; }
-  
+
   .loader__figure {
     height: 0;
     width: 0;
@@ -102,7 +102,7 @@
     -webkit-animation: loader-figure 1.15s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
     -moz-animation: loader-figure 1.15s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
     animation: loader-figure 1.15s infinite cubic-bezier(0.215, 0.61, 0.355, 1); }
-  
+
   .loader__label {
     float: left;
     margin-left: 50%;
@@ -120,7 +120,7 @@
     -webkit-animation: loader-label 1.15s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
     -moz-animation: loader-label 1.15s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
     animation: loader-label 1.15s infinite cubic-bezier(0.215, 0.61, 0.355, 1); }
-  
+
   @-webkit-keyframes loader-figure {
     0% {
       height: 0;
@@ -140,7 +140,7 @@
       border-width: 0;
       opacity: 0;
       background-color: transparent; } }
-  
+
   @-moz-keyframes loader-figure {
     0% {
       height: 0;
@@ -160,7 +160,7 @@
       border-width: 0;
       opacity: 0;
       background-color: transparent; } }
-  
+
   @keyframes loader-figure {
     0% {
       height: 0;
@@ -180,7 +180,7 @@
       border-width: 0;
       opacity: 0;
       background-color: transparent; } }
-  
+
   @-webkit-keyframes loader-label {
     0% {
       opacity: 0.25; }
@@ -188,7 +188,7 @@
       opacity: 1; }
     100% {
       opacity: 0.25; } }
-  
+
   @-moz-keyframes loader-label {
     0% {
       opacity: 0.25; }
@@ -196,7 +196,7 @@
       opacity: 1; }
     100% {
       opacity: 0.25; } }
-  
+
   @keyframes loader-label {
     0% {
       opacity: 0.25; }
@@ -204,7 +204,7 @@
       opacity: 1; }
     100% {
       opacity: 0.25; } }
-  
+
   .btn-circle {
     border-radius: 100%;
     width: 40px;
@@ -300,7 +300,7 @@ a.logout:hover{
        -o-box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.28);
         box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.28);
     }
-    
+
     /* This bridges the gap so you can mouse into the tooltip without it disappearing */
     .wrapper_tooltip .tooltip:before {
     bottom: -20px;
@@ -311,7 +311,7 @@ a.logout:hover{
     position: absolute;
     width: 100%;
     }
-    
+
     /* CSS Triangles */
     .wrapper_tooltip .tooltip:after {
     border-left: solid transparent 10px;
@@ -325,7 +325,7 @@ a.logout:hover{
     position: absolute;
     width: 0;
     }
-    
+
     .wrapper_tooltip:hover .tooltip {
     opacity: 1;
     pointer-events: auto;
@@ -335,12 +335,12 @@ a.logout:hover{
        -o-transform: translateY(0px);
         transform: translateY(0px);
     }
-    
+
     /* IE can just show/hide with no transition */
     .lte8 .wrapper_tooltip .tooltip {
     display: none;
     }
-    
+
     .lte8 .wrapper_tooltip:hover .tooltip {
     display: block;
     }

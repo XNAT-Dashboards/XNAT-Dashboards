@@ -1,0 +1,46 @@
+<div class="preloader">
+    <div class="loader">
+        <div class="loader__figure"></div>
+        <p class="loader__label">Data is getting prepared</p>
+    </div>
+</div>
+
+<header class="topbar">
+    <nav class="navbar top-navbar navbar-expand-md navbar-dark">
+        <div class="navbar-header">
+             <a class="navbar-brand" id="logo" href="#">
+                <img src="/static/common/images/logo.png" class="logo">&nbsp;
+                <span> Dashboards for XNAT</span>
+            </a>
+        </div>
+        &nbsp&nbsp&nbsp
+        <div class="navbar-collapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item hidden-sm-up"> <a class="nav-link nav-toggler waves-effect waves-light" href="javascript:void(0)"><i class="fa fa-bars"></i></a></li>
+            </ul>
+            <ul class="navbar-nav my-lg-0">
+                <li>
+                    <i class="fa fa-user username" aria-hidden="true"></i>
+                </li>
+                <li>
+                    &nbsp&nbsp&nbsp
+                </li>
+                <li class="nav-item dropdown username">
+                    {{username}}
+                </li>
+                <li>
+                    &nbsp&nbsp&nbsp
+                </li>
+                <li>
+                    <i class="fa fa-sign-out logout" aria-hidden="true"></i>
+                </li>
+                <li>
+                    &nbsp&nbsp
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="{{url_for('dashboard.logout')}}" class="logout" > logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
