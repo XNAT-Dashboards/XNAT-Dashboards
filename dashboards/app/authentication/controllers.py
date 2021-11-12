@@ -24,13 +24,13 @@ def __get_modules__(m):
     return modules
 
 
-def __find_all_commands__(m):
-    """Browses bx and looks for any class named as a Command"""
+def __find_all_graphs__(m):
+    """Browses module `m` and looks for any class named as a Graph"""
     import inspect
     modules = []
     classes = []
     modules = __get_modules__(m)
-    forbidden_classes = []  # Test, ScanTest, ExperimentTest]
+    forbidden_classes = []
     for m in modules:
         for name, obj in inspect.getmembers(m):
             if inspect.isclass(obj) and 'Graph' in name \
@@ -76,11 +76,8 @@ def login():
             else:
                 role = user_roles[0]
 
-            commands = __find_all_commands__(dsh)
-            commands = {e.__name__.split('.')[-1].lower()[:-5]: e for e in commands}
-
             # Collect graphs and select them based on access rights
-            graphs = [v() for e, v in commands.items()]
+            graphs = [graph() for graph in __find_all_graphs__(dsh)]
 
             # Add data to session
             session['username'] = username
