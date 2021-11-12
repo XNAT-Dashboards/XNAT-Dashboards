@@ -20,8 +20,8 @@
         <nav class="sidebar-nav">
           <ul id="sidebarnav">
 
-            <li id="overview">
-              <a class="waves-effect waves-dark" href="#" aria-expanded="false">
+            <li id="main">
+              <a class="waves-effect waves-dark" href="/dashboard/overview/" aria-expanded="false">
                 <i class="fa fa-eye"></i>
                 <span class="hide-menu">
                   General overview</span>
@@ -35,8 +35,8 @@
               </a>
             </li>
 
-            <li id="wiki">
-              <a class="waves-effect waves-dark" href="/dashboard/wiki/" aria-expanded="false">
+            <li id="overview">
+              <a class="waves-effect waves-dark" href="#" aria-expanded="false">
                 <i class="fa fa-database"></i>
                 <span class="hide-menu">Wiki</span>
               </a>
@@ -54,7 +54,7 @@
       <div class="container-fluid">
         <div class="row page-titles">
           <div class="col-md-5 align-self-center">
-            <h4 class="text-themecolor overview_part">General overview</h4>
+            <h4 class="text-themecolor overview_part">Wiki</h4>
             <h4 class="text-themecolor project_part">Projects</h4>
           </div>
           <div class="col-md-7 align-self-center text-right">
@@ -64,14 +64,17 @@
         </div>
 
         <div class="overview_part">
-          {% include  '/dashboards/counters.html'  %}
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="card">
+                <div class="card-body">
 
-          <div id='graphs'>
+
+                </div>
+              </div>
+            </div>
           </div>
-
         </div>
-
-        {% include  '/dashboards/drilldown.html'  %}
 
       </div>
 
@@ -83,13 +86,7 @@
 
   </div>
 
-  <script>
-    $('document').ready(function() {
-      server = '{{server}}';
-      graphs = JSON.parse(`{{graphs |tojson}}`);
-      show_graphs(graphs);
-    });
-  </script>
+
 </body>
 
 </html>

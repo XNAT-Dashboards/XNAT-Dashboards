@@ -7,17 +7,17 @@ import pickle
 import dashboards
 from dashboards import config
 
-dashboard = Blueprint('dashboard', __name__, url_prefix='/dashboard')
+db = Blueprint('dashboard', __name__, url_prefix='/dashboard')
 
 
-@dashboard.route('/logout/', methods=['GET'])
+@db.route('/logout/', methods=['GET'])
 def logout():
     session.clear()
     session['error'] = 'Logged out.'
     return redirect(url_for('auth.login'))
 
 
-@dashboard.route('/overview/', methods=['GET'])
+@db.route('/overview/', methods=['GET'])
 def overview():
     # Load pickle and filter projects
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
@@ -44,7 +44,7 @@ def overview():
     return render_template('dashboards/overview.html', **data)
 
 
-@dashboard.route('project/<project_id>', methods=['GET'])
+@db.route('project/<project_id>', methods=['GET'])
 def project(project_id):
     # # Load pickle and filter one project
     # # (Do we check that user is allowed to see it?)
@@ -77,3 +77,16 @@ def project(project_id):
             'server': session['server'],
             'id': project_id}
     return render_template('dashboards/project.html', **data)
+
+
+@db.route('/wiki/', methods=['GET'])
+def wiki():
+    # Load pickle and filter projects
+    p = pickle.load(open(config.PICKLE_PATH, 'rb'))
+    projects = session['projects']
+    p = df.filter_data(p, projects)
+    data = {'username': session['username'],
+            'projects': dashboards.pickle.get_projects_by_4(p),
+
+            'server': session['server']}
+    return render_template('dashboards/wiki.html', **data)

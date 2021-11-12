@@ -1,0 +1,17 @@
+<div class="project_part">
+  {% for row in projects%}
+  <div class="row">
+    {% for col in row%}
+    <div class="col-lg-3">
+      <a href="/dashboard/project/{{col}}">
+        <div class="card project">
+          <div class="card-body">
+            {{col}}
+          </div>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</div>
