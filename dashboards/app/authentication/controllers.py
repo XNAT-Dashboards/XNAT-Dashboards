@@ -45,10 +45,10 @@ def login():
     p = pickle.load(open(cfg.PICKLE_PATH, 'rb'))
 
     if request.method == 'GET':
-        error = ''
+        kwargs = {}
         if 'error' in session:
-            error = session.pop('error')
-        return render_template('authentication/login.html', error=error)
+            kwargs['error'] = session.pop('error')
+        return render_template('authentication/login.html', **kwargs)
 
     elif request.method == 'POST':
         username = request.form['username']

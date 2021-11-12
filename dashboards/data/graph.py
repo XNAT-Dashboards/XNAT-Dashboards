@@ -20,6 +20,8 @@ class BarChart():
         if g['name'] in ['Dates difference (Acquisition date - Insertion date)',
                          'Scans per session']:
             print('toto', g['name'])
+            if 'count' not in g.keys():
+                raise KeyError("'count' key missing")
             x, y = list(g['count'].keys()), list(g['count'].values())
         else:
             sd = OrderedDict(sorted({v: k for k, v in g['count'].items()}.items()))
@@ -29,7 +31,7 @@ class BarChart():
                  'y': y,
                  'type': 'bar',
                  'marker': {'color': g['color']}}]
-        layout = {'title': g['name'],                  
+        layout = {'title': g['name'],
                   'margin': {'l': 100, 'r': 100, 'b': 100, 't': 100}}
 
         drill = self.get_drill(g, data)

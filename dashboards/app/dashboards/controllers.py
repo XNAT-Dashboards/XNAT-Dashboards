@@ -1,4 +1,3 @@
-# Import flask dependencies
 from flask import Blueprint, render_template, session, redirect, url_for
 from dashboards.data import graph as g
 from dashboards.data import filter as df
@@ -8,7 +7,6 @@ import pickle
 import dashboards
 from dashboards import config
 
-# Define the blueprint: 'dashboard', set its url prefix: app.url/dashboard
 dashboard = Blueprint('dashboard', __name__, url_prefix='/dashboard')
 
 
@@ -53,14 +51,19 @@ def project(project_id):
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
     p = df.filter_data(p, [project_id])
 
-    graphs = [g.SessionsPerSubjectGraph, g.ScanQualityGraph,
+    all_graphs = [g.SessionsPerSubjectGraph, g.ScanQualityGraph,
               g.ScanTypeGraph, g.ScansPerSessionGraph,
               g.UsableT1SessionGraph, g.VersionGraph,
               g.ValidatorGraph, g.ConsistentAcquisitionDateGraph,
               g.DateDifferenceGraph]
-    graphs = [v() for v in graphs]
-    graphs = [e for e in graphs if e.name in session['graphs']]
-    graphs = [e.get_chart(i, p) for i, e in enumerate(graphs)]
+    all_graphs = [v() for v in all_graphs]
+    graphs = []
+    for i, e in enumerate(all_graphs):
+        if e.name in session['graphs']:
+            try:
+                graphs.append(e.get_chart(i, p))
+            except KeyError:
+                print('Skipping ' + e.name)
 
     # session['excel'] = (tests_list, diff_version)
     stats = dashboards.pickle.get_stats(p)
