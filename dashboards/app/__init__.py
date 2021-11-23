@@ -1,13 +1,12 @@
 # Import flask and template operators
 from flask import Flask, redirect, url_for
-from dashboards.app.dashboards.controllers import db
-from dashboards.app.authentication.controllers import auth
+from dashboards.app.controllers import auth, db
 
 
 # Define the WSGI application object
 app = Flask(__name__)
 
-# Configurations
+# Configuration
 app.config.from_object('dashboards.config')
 
 

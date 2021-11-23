@@ -1,10 +1,5 @@
 #!/usr/bin/env python
 
-import os.path as op
-# import sys
-# sys.path.insert(0, op.abspath('..'))
-
-
 def create_args():
     import argparse
     from argparse import RawTextHelpFormatter
@@ -31,6 +26,7 @@ if __name__ == "__main__":
 
     from dashboards import config
     from dashboards.app import app
+    import os.path as op
 
     config.DASHBOARD_CONFIG_PATH = op.abspath(args.config)
     config.PICKLE_PATH = op.abspath(args.pickle)

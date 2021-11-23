@@ -2,13 +2,13 @@
 <html lang="en">
 
 <head>
-  {% include  '/dashboards/head.html'  %}
+  {% include  'head.html'  %}
 </head>
 
 <body class="skin-default-dark fixed-layout">
   <div id="main-wrapper">
 
-    {% include  '/dashboards/navbar.html'  %}
+    {% include  'navbar.html'  %}
 
     <aside class="left-sidebar">
       <div class="d-flex no-block nav-text-box align-items-center left_pane">
@@ -64,25 +64,16 @@
         </div>
 
         <div class="overview_part">
-          <div class="row">
-            <div class="col-lg-12">
-              <div class="card">
-                <div class="card-body">
-
-
-                </div>
-              </div>
-            </div>
-          </div>
+          {{wiki|safe}}
         </div>
 
       </div>
 
-      {% include  '/dashboards/projects.html'  %}
+      {% include  'projects.html'  %}
 
     </div>
 
-    {% include  '/dashboards/footer.html'  %}
+    {% include  'footer.html'  %}
 
   </div>
 

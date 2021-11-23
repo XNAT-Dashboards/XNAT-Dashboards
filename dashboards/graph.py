@@ -1,10 +1,39 @@
-
 import pandas as pd
 from collections import OrderedDict
 import os.path as op
 import json
 import dashboards
-from dashboards.data import filter
+from dashboards import filter
+
+
+def __get_modules__(m):
+    import pkgutil
+    import logging as log
+    modules = []
+    prefix = m.__name__ + '.'
+    log.info('prefix : %s' % prefix)
+    for importer, modname, ispkg in pkgutil.iter_modules(m.__path__, prefix):
+        module = __import__(modname, fromlist='dummy')
+        if not ispkg:
+            modules.append(module)
+        else:
+            modules.extend(__get_modules__(module))
+    return modules
+
+
+def __find_all_commands__(m):
+    """Browses bx and looks for any class named as a Command"""
+    import inspect
+    modules = []
+    classes = []
+    modules = __get_modules__(m)
+    forbidden_classes = []  # Test, ScanTest, ExperimentTest]
+    for m in modules:
+        for name, obj in inspect.getmembers(m):
+            if inspect.isclass(obj) and 'Graph' in name \
+                    and obj not in forbidden_classes:
+                classes.append(obj)
+    return classes
 
 
 class BarChart():
@@ -339,7 +368,7 @@ class UsableT1SessionGraph(PieChart):
         self.id = id
         br = [e for e in p['resources'] if len(e) > 4]
 
-        from dashboards.data import bbrc
+        from dashboards import bbrc
         columns = ['Project', 'Session', 'archiving_validator', 'BBRC_Validators',
                    'Insert date']
         data = pd.DataFrame(br, columns=columns).set_index('Session')
@@ -368,7 +397,7 @@ class VersionGraph(PieChart):
         self.id = id
         br = [e for e in p['resources'] if len(e) > 4]
 
-        from dashboards.data import bbrc
+        from dashboards import bbrc
         columns = ['Project', 'Session', 'archiving_validator', 'BBRC_Validators',
                    'Insert date']
         data = pd.DataFrame(br, columns=columns).set_index('Session')
@@ -396,7 +425,7 @@ class ValidatorGraph(StackedBarChart):
         self.id = id
         br = [e for e in p['resources'] if len(e) > 4]
 
-        from dashboards.data import bbrc
+        from dashboards import bbrc
         columns = ['Project', 'Session', 'archiving_validator', 'BBRC_Validators',
                    'Insert date']
         data = pd.DataFrame(br, columns=columns).set_index('Session')
@@ -433,7 +462,7 @@ class ConsistentAcquisitionDateGraph(PieChart):
         self.id = id
         br = [e for e in p['resources'] if len(e) > 4]
 
-        from dashboards.data import bbrc
+        from dashboards import bbrc
         columns = ['Project', 'Session', 'archiving_validator', 'BBRC_Validators',
                    'Insert date']
         data = pd.DataFrame(br, columns=columns).set_index('Session')
@@ -461,7 +490,7 @@ class DateDifferenceGraph(BarChart):
     def get_data(self, id, p):
         self.id = id
 
-        from dashboards.data import bbrc
+        from dashboards import bbrc
         resources = [e for e in p['resources'] if len(e) > 4]
         columns = ['Project', 'Session', 'archiving_validator', 'BBRC_Validators',
                    'Insert date']

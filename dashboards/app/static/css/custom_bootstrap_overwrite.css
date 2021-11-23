@@ -460,6 +460,12 @@ ul.list-style-none li a:hover {
   margin-bottom: 20px;
 }
 
+.wiki {
+  margin:20px;
+  padding:5px;
+  width: 38rem;
+}
+
 .card .card-subtitle {
   font-weight: 300;
   margin-bottom: 15px;

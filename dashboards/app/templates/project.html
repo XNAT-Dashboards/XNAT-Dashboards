@@ -2,13 +2,13 @@
 <html lang="en">
 
 <head>
-  {% include  '/dashboards/head.html'  %}
+  {% include  'head.html'  %}
 </head>
 
 <body class="skin-default-dark fixed-layout">
   <div id="main-wrapper">
 
-    {% include  '/dashboards/navbar.html'  %}
+    {% include  'navbar.html'  %}
 
     <aside class="left-sidebar">
       <div class="d-flex no-block nav-text-box align-items-center left_pane">
@@ -89,7 +89,7 @@
           </div>
         </div>
         <div class="p_project_part">
-          {% include  '/dashboards/counters.html'  %}
+          {% include  'counters.html'  %}
 
           <div class="row">
             <div class="col-12">
@@ -166,18 +166,18 @@
           <div id='graphs'>
           </div>
 
-          {% include  '/dashboards/drilldown.html'  %}
+          {% include  'drilldown.html'  %}
 
         </div>
 
         {% if grid[0]|length > 0 %}
-        {% include  '/dashboards/grid.html'  %}
+        {% include  'grid.html'  %}
         {% endif  %}
 
       </div>
     </div>
 
-    {% include  '/dashboards/footer.html'  %}
+    {% include  'footer.html'  %}
 
   </div>
 
