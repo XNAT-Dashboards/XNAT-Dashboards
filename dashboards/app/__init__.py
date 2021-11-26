@@ -1,6 +1,6 @@
 # Import flask and template operators
 from flask import Flask, redirect, url_for
-from dashboards.app.controllers import auth, db
+from dashboards.app import controllers as c
 
 
 # Define the WSGI application object
@@ -13,8 +13,7 @@ app.config.from_object('dashboards.config')
 # Set the redirecting route for dashboard
 @app.route('/')
 def login():
-    return redirect(url_for('auth.login'))
+    return redirect(url_for('dashboards.login'))
 
 
-app.register_blueprint(db)
-app.register_blueprint(auth)
+app.register_blueprint(c.app)

@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, session, request, redirect, url_for
+from functools import wraps
 from dashboards import graph as g
 from dashboards import filter as df
 from dashboards import bbrc
@@ -7,18 +8,17 @@ import pickle
 import dashboards
 from dashboards import config
 
-db = Blueprint('dashboard', __name__, url_prefix='/dashboard')
-auth = Blueprint('auth', __name__, url_prefix='/auth')
+app = Blueprint('dashboards', __name__, url_prefix='/')
 
 
-@db.route('/logout/', methods=['GET'])
+@app.route('/logout/', methods=['GET'])
 def logout():
     session.clear()
     session['error'] = 'Logged out.'
-    return redirect(url_for('auth.login'))
+    return redirect(url_for('dashboards.login'))
 
 
-@db.route('/overview/', methods=['GET'])
+@app.route('/overview/', methods=['GET'])
 def overview():
     # Load pickle and filter projects
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
@@ -41,11 +41,12 @@ def overview():
             'stats': dashboards.pickle.get_stats(p),
             'projects': dashboards.pickle.get_projects_by_4(p),
             'username': session['username'],
+            'role': session['role'],
             'server': session['server']}
     return render_template('overview.html', **data)
 
 
-@db.route('project/<project_id>', methods=['GET'])
+@app.route('project/<project_id>', methods=['GET'])
 def project(project_id):
     # # Load pickle and filter one project
     # # (Do we check that user is allowed to see it?)
@@ -76,46 +77,52 @@ def project(project_id):
             'grid': bbrc.build_test_grid(p),
             'username': session['username'],
             'server': session['server'],
+            'role': session['role'],
             'id': project_id}
     return render_template('project.html', **data)
 
 
-@db.route('/wiki/', methods=['GET'])
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get('username') is None or session.get('if_logged') is None:
+            return redirect('/login', code=302)
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+@app.route('/protected/<path:filename>')
+@login_required
+def protected(filename):
+    import os.path as op
+    return send_from_directory(op.join(app.instance_path, 'protected'), filename)
+
+
+@app.route('/wiki/', methods=['GET'])
 def wiki():
     # Load pickle and filter projects
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
     projects = session['projects']
     p = df.filter_data(p, projects)
-    items = ['Raw MRI quality control (archiving)',
-             'Hippocampal subfield segmentation (ASHS)',
-             'White matter lesion segmentation (BAMOS)',
-             'Braak regions',
-             'Diffusion on cortical surface (DONSURF)',
-             'Landau signatures from PET-FDG',
-             'Cortical thickness (FreeSurfer v6.0)',
-             'Subcortical volumes (FreeSurfer v6.0)',
-             'Cortical thickness (FreeSurfer v7.1)',
-             'Subcortical volumes (FreeSurfer v7.1)'
-             'Centiloid scale from PET-FTM',
-             'Acquisition dates',
-             'Cortical AD signature (Jack et al.)',
-             'Cortical AD signature (Dickerson et al.)']
 
-    src = '' #/static/images/logo.png' #.jpg'
-    card_deco = '<div class="card wiki">'\
-        '<img class="card-img-top" src="{src}" alt="Card image cap">'\
-        '<div class="card-body"><h5 class="card-title">{body}</h5></div></div>'
-    wiki = ' '.join([card_deco.format(body=e, src=src) for e in items])
-    wiki = '<div class="row"> %s </div>' % wiki
+    items = [e() for e in g.__find_all_commands__(dashboards, pattern='Card')]
+
+    card_deco = '<div class="card wiki">{img}<div class="card-body">'\
+                '<h5 class="card-title">{title}</h5>{desc}<br>{links}</div></div>'
+
+    cards = [card_deco.format(**e.to_dict()) for e in items]
+
+    wiki = '<div class="row"> %s </div>' % ' '.join(cards)
 
     data = {'username': session['username'],
+            'role': session['role'],
             'projects': dashboards.pickle.get_projects_by_4(p),
             'wiki': wiki,
             'server': session['server']}
     return render_template('wiki.html', **data)
 
 
-@auth.route('/login/', methods=['GET', 'POST'])
+@app.route('/login/', methods=['GET', 'POST'])
 def login():
     p = pickle.load(open(config.PICKLE_PATH, 'rb'))
 
@@ -141,7 +148,7 @@ def login():
 
             if username in roles['forbidden']['users']:
                 session['error'] = 'Access denied.'
-                return redirect(url_for('auth.login'))
+                return redirect(url_for('dashboards.login'))
 
             user_roles = [r for r in roles.keys()
                           if username in roles[r]['users']]
@@ -166,8 +173,8 @@ def login():
             session['projects'] = roles[role]['projects']
 
             # Redirect to dashboard
-            return redirect(url_for('dashboard.overview'))
+            return redirect(url_for('dashboards.overview'))
 
         else:
             session['error'] = 'Wrong password/username.'
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('dashboards.login'))

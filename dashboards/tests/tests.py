@@ -1,6 +1,6 @@
-from dashboards.data import filter as f
-from dashboards.data import bbrc
-from dashboards.data import graph as g
+from dashboards import filter as f
+from dashboards import bbrc
+from dashboards import graph as g
 from dashboards.app import app
 from dashboards import config
 import os.path as op
@@ -165,14 +165,14 @@ def test_025_get_project_view():
 
 def test_026_login():
     # Login route test
-    respone_get = app.test_client().get('auth/login/')
+    respone_get = app.test_client().get('/login/')
     assert respone_get.status_code == 200
 
 
 def test_027_logout():
 
     # Checks if we are getting redirected to login if using logout
-    logout = app.test_client().get('dashboard/logout/',
+    logout = app.test_client().get('/logout/',
                                    follow_redirects=True).status_code
     assert logout == 200
 
@@ -187,5 +187,5 @@ def test_028_stats():
             sess['projects'] = ['*']
             sess['graphs'] = []
 
-    response_get_stats = c.get('dashboard/overview/').status_code
+    response_get_stats = c.get('/overview/').status_code
     assert response_get_stats == 200

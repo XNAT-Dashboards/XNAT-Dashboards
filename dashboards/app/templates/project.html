@@ -21,7 +21,7 @@
           <ul id="sidebarnav">
 
             <li id="overview">
-              <a class="waves-effect waves-dark" href="/dashboard/overview/" aria-expanded="false">
+              <a class="waves-effect waves-dark" href="/overview/" aria-expanded="false">
                 <i class="fa fa-list"></i>
                 <span class="hide-menu">General overview</span>
               </a>
@@ -44,14 +44,14 @@
             {% endif %}
 
             <li id="wiki">
-              <a class="waves-effect waves-dark" href="/dashboard/wiki/" aria-expanded="false">
+              <a class="waves-effect waves-dark" href="/wiki/" aria-expanded="false">
                 <i class="fa fa-database"></i>
                 <span class="hide-menu">Wiki</span>
               </a>
             </li>
 
             <div class="text-center m-t-30">
-              <a href="{{url_for('dashboard.logout')}}" class="waves-effect waves-light btn btn-outline-danger"> logout </a>
+              <a href="{{url_for('dashboards.logout')}}" class="waves-effect waves-light btn btn-outline-danger"> logout </a>
             </div>
 
           </ul>

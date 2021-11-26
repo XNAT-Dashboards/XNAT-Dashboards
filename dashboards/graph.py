@@ -21,7 +21,7 @@ def __get_modules__(m):
     return modules
 
 
-def __find_all_commands__(m):
+def __find_all_commands__(m, pattern='Graph'):
     """Browses bx and looks for any class named as a Command"""
     import inspect
     modules = []
@@ -30,7 +30,7 @@ def __find_all_commands__(m):
     forbidden_classes = []  # Test, ScanTest, ExperimentTest]
     for m in modules:
         for name, obj in inspect.getmembers(m):
-            if inspect.isclass(obj) and 'Graph' in name \
+            if inspect.isclass(obj) and pattern in name \
                     and obj not in forbidden_classes:
                 classes.append(obj)
     return classes
@@ -312,7 +312,7 @@ class ScanTypeGraph(BarChart):
         self.id = id
 
         fn = dashboards.__file__
-        fp = op.join(op.dirname(fn), '..', 'data', 'whitelist.json')
+        fp = op.join(op.dirname(fn), '..', 'whitelist.json')
         whitelist = json.load(open(fp))
         filtered_scans = [s for s in p['scans']
                           if s['xnat:imagescandata/type'] in whitelist]

@@ -1,8 +1,5 @@
 $(document).ready(function() {
-  // Removes preloader after all files loaded
-  $(window).on('load', function() {
-    $(".preloader").remove();
-  });
+  $(".preloader").remove();
 
   $(document).on('click', '.mega-dropdown', function(e) {
     e.stopPropagation()
@@ -42,28 +39,10 @@ $(document).ready(function() {
 
   $("body, .page-wrapper").trigger("resize");
 
-  $('a[data-action="collapse"]').on('click', function(e) {
-    e.preventDefault();
-    $(this).closest('.card').find('[data-action="collapse"] i').toggleClass('ti-minus ti-plus');
-    $(this).closest('.card').children('.card-body').collapse('toggle');
-  });
-
-  // Toggle fullscreen
-  $('a[data-action="expand"]').on('click', function(e) {
-    e.preventDefault();
-    $(this).closest('.card').find('[data-action="expand"] i').toggleClass('mdi-arrow-expand mdi-arrow-compress');
-    $(this).closest('.card').toggleClass('card-fullscreen');
-  });
-
-  // Close Card
-  $('a[data-action="close"]').on('click', function() {
-    $(this).closest('.card').removeClass().slideUp('fast');
-  });
-
   // Card hover animation for adding shadow
   $(".card").hover(
     function() {
-      $(this).addClass('shadow-lg').css('cursor', 'pointer');
+      $(this).addClass('shadow-lg')
     },
     function() {
       $(this).removeClass('shadow-lg');

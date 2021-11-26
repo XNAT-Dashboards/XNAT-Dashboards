@@ -31,6 +31,12 @@
                 <li>
                     &nbsp&nbsp&nbsp
                 </li>
+                <li class="nav-item dropdown badge badge-dark">
+                    {{role}}
+                </li>
+                <li>
+                    &nbsp&nbsp&nbsp
+                </li>
                 <li>
                     <i class="fa fa-sign-out logout" aria-hidden="true"></i>
                 </li>
@@ -38,7 +44,7 @@
                     &nbsp&nbsp
                 </li>
                 <li class="nav-item dropdown">
-                    <a href="{{url_for('dashboard.logout')}}" class="logout" > logout</a>
+                    <a href="{{url_for('dashboards.logout')}}" class="logout" > logout</a>
                 </li>
             </ul>
         </div>
