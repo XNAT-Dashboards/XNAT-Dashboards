@@ -63,8 +63,8 @@ class BarChart():
                   'margin': {'l': 100, 'r': 100, 'b': 100, 't': 100}}
 
         drill = self.get_drill(g, data)
-        return (g['id'], data, layout, g.get('id_type', 'other'), g['description'],
-                g['name'], drill, g['type'])
+        return (g['id'], data, layout, g['description'], g['name'], drill,
+                g['type'])
 
 
 class PieChart():
@@ -99,8 +99,8 @@ class PieChart():
                   'colorway': color}
 
         drill = self.get_drill(g, data)
-        return (g['id'], data, layout, g.get('id_type', 'other'), g['description'],
-                g['name'], drill, g['type'])
+        return (g['id'], data, layout, g['description'], g['name'], drill,
+                g['type'])
 
 
 class StackedBarChart():
@@ -155,8 +155,8 @@ class StackedBarChart():
                   }
 
         drill = self.get_drill(g, data)
-        return (g['id'], data, layout, g.get('id_type', 'other'), g['description'],
-                g['name'], drill, g['type'])
+        return (g['id'], data, layout, g['description'], g['name'], drill,
+                g['type'])
 
 
 class LineChart():
@@ -186,8 +186,8 @@ class LineChart():
         layout = {'title': g['name'],
                   'colorway': color}
 
-        return (g['id'], data, layout, g.get('id_type', 'other'), g['description'],
-                g['name'], None, g['type'])
+        return (g['id'], data, layout, g['description'], g['name'], None,
+                g['type'])
 
 
 class ProjectGraph(BarChart):
@@ -196,7 +196,6 @@ class ProjectGraph(BarChart):
     description = 'Shows available projects (and their accessibility).'
     visibility = ["admin", "superuser", "guest"]
     color = "#7394CB"
-    id_type = 'project'
 
     def __init__(self):
         pass
@@ -206,7 +205,7 @@ class ProjectGraph(BarChart):
         data, x, y = p['projects'], 'project_access', 'id'
         df = pd.DataFrame([[e[x], e[y]] for e in data], columns=[x, y])
         res = filter.res_df_to_dict(df, x, y)
-        for e in ['name', 'id', 'id_type', 'color', 'description', 'type']:
+        for e in ['name', 'id', 'color', 'description', 'type']:
             res[e] = getattr(self, e)
 
         return res
@@ -218,7 +217,6 @@ class PerProjectSessionGraph(StackedBarChart):
     description = "Shows sessions per available project."
     visibility = ["admin", "superuser", "guest"]
     color = ["#00cc99", "#ff80ff"]
-    id_type = 'experiment'
 
     def __init__(self):
         pass
@@ -226,7 +224,7 @@ class PerProjectSessionGraph(StackedBarChart):
     def get_data(self, id, p):
         self.id = id
         res = filter.res_df_to_stacked(p['experiments'], 'project', 'xsiType', 'ID')
-        for e in ['name', 'id', 'id_type', 'color', 'description', 'type']:
+        for e in ['name', 'id', 'color', 'description', 'type']:
             res[e] = getattr(self, e)
         return res
 
@@ -237,7 +235,6 @@ class SubjectGraph(BarChart):
     description = "Shows subjects per available project."
     visibility = ["admin", "superuser"]
     color = "#f3cec9"
-    id_type = 'subject'
 
     def __init__(self):
         pass
@@ -247,7 +244,7 @@ class SubjectGraph(BarChart):
         data, x, y = p['subjects'], 'project', 'ID'
         df = pd.DataFrame([[e[x], e[y]] for e in data], columns=[x, y])
         res = filter.res_df_to_dict(df, x, y)
-        for e in ['name', 'id', 'id_type', 'color', 'description', 'type']:
+        for e in ['name', 'id', 'color', 'description', 'type']:
             res[e] = getattr(self, e)
         return res
 
@@ -258,7 +255,6 @@ class SessionGraph(BarChart):
     description = "Shows the grand total of available imaging sessions."
     visibility = ["admin", "superuser"]
     color = "#e60000"
-    id_type = 'experiment'
 
     def __init__(self):
         pass
@@ -268,7 +264,7 @@ class SessionGraph(BarChart):
         data, x, y = p['experiments'], 'xsiType', 'ID'
         df = pd.DataFrame([[e[x], e[y]] for e in data], columns=[x, y])
         res = filter.res_df_to_dict(df, x, y)
-        for e in ['name', 'id', 'id_type', 'color', 'description', 'type']:
+        for e in ['name', 'id', 'color', 'description', 'type']:
             res[e] = getattr(self, e)
         return res
 
@@ -279,7 +275,6 @@ class ScanQualityGraph(PieChart):
     description = "Shows proportions of scans marked as usable, unusable or questionable.",
     visibility = ["admin", "superuser"]
     color = ["#cc0066", "#cc66cc", "#00ace6"]
-    id_type = 'experiment'
 
     def __init__(self):
         pass
@@ -291,7 +286,7 @@ class ScanQualityGraph(PieChart):
         df = pd.DataFrame([[e[x], e[y]] for e in p['scans']], columns=columns[:2])
         df[x].replace({'': 'No Data'}, inplace=True)
         res = filter.res_df_to_dict(df, x, y)
-        for e in ['name', 'id', 'id_type', 'color', 'description', 'type']:
+        for e in ['name', 'id', 'color', 'description', 'type']:
             res[e] = getattr(self, e)
         return res
 
@@ -302,7 +297,6 @@ class ScanTypeGraph(BarChart):
     description = "Shows the types of scans present in the project."
     visibility = ["admin", "superuser"]
     color = "#ffdb4d"
-    id_type = 'experiment'
 
     def __init__(self):
         pass
@@ -321,7 +315,7 @@ class ScanTypeGraph(BarChart):
                           columns=[x, y])
         res = filter.res_df_to_dict(df, x, y)
 
-        for e in ['name', 'id', 'id_type', 'color', 'description', 'type']:
+        for e in ['name', 'id', 'color', 'description', 'type']:
             res[e] = getattr(self, e)
         return res
 
@@ -357,7 +351,6 @@ class UsableT1SessionGraph(PieChart):
         " is labelled as usable. Fails otherwise. No data refers to"\
         " sessions for which the test has not been completed."
     visibility = ["admin"]
-    id_type = 'experiment'
     color = ["#ff66ff", "#70db70", "#ffb84d"]
 
     def __init__(self):
@@ -376,7 +369,7 @@ class UsableT1SessionGraph(PieChart):
 
         # Usable t1
         res = filter.res_df_to_dict(data, 'HasUsableT1', 'Session')
-        for e in ['id_type', 'name', 'id', 'color', 'description', 'type']:
+        for e in ['name', 'id', 'color', 'description', 'type']:
             res[e] = getattr(self, e)
         return res
 
@@ -387,7 +380,6 @@ class VersionGraph(PieChart):
     description = "Different versions of Archiving validator for each session."
     visibility = ["admin"]
     color = ["#54a0ff", "#00b894"]
-    id_type = 'experiment'
 
     def __init__(self):
         pass
@@ -404,7 +396,7 @@ class VersionGraph(PieChart):
         data = data.join(tests).reset_index()
         # Version Distribution
         res = filter.res_df_to_dict(data, 'version', 'Session')
-        for e in ['name', 'id', 'color', 'description', 'type', 'id_type']:
+        for e in ['name', 'id', 'color', 'description', 'type']:
             res[e] = getattr(self, e)
         return res
 
@@ -416,7 +408,6 @@ class ValidatorGraph(StackedBarChart):
                   " sessions with BBRC validator resource.",
     visibility = ["admin"]
     color = ["#ff9900", "#1abc9c"]
-    id_type = 'experiment'
 
     def __init__(self):
         pass
@@ -432,7 +423,7 @@ class ValidatorGraph(StackedBarChart):
         tests = bbrc.get_tests(data, ['HasUsableT1', 'IsAcquisitionDateConsistent'])
         data = data.join(tests).reset_index()
         res = bbrc.which_sessions_have_validators(data)
-        for e in ['name', 'id', 'color', 'description', 'type', 'id_type']:
+        for e in ['name', 'id', 'color', 'description', 'type']:
             res[e] = getattr(self, e)
         return res
 
@@ -453,7 +444,6 @@ class ConsistentAcquisitionDateGraph(PieChart):
         " cases where this test has not been completed."
     visibility = ["admin"]
     color = ["#2ecc71", "#3498db", "#9b59b6"]
-    id_type = 'experiment'
 
     def __init__(self):
         pass
@@ -471,7 +461,7 @@ class ConsistentAcquisitionDateGraph(PieChart):
 
         # consistent_acq_date
         res = filter.res_df_to_dict(data, 'IsAcquisitionDateConsistent', 'Session')
-        for e in ['id_type', 'name', 'id', 'color', 'description', 'type']:
+        for e in ['name', 'id', 'color', 'description', 'type']:
             res[e] = getattr(self, e)
         return res
 
@@ -508,7 +498,6 @@ class SessionsPerSubjectGraph(PieChart):
     description = "Shows numbers of sessions per subject (in proportions)."
     visibility = ["admin", "superuser"]
     color = ["#ccccff", "#ffa31a", "#ffff33"]
-    id_type = 'subject'
 
     def __init__(self):
         pass
@@ -516,7 +505,7 @@ class SessionsPerSubjectGraph(PieChart):
     def get_data(self, id, p):
         self.id = id
         res = filter.proportion_graphs(p['experiments'], 'subject_ID', 'ID', 'Subjects with ', ' experiment(s)')
-        for e in ['id_type', 'name', 'id', 'color', 'description', 'type']:
+        for e in ['name', 'id', 'color', 'description', 'type']:
             res[e] = getattr(self, e)
         return res
 
@@ -527,7 +516,6 @@ class ScansPerSessionGraph(BarChart):
     description = "Shows number of scans per session."
     visibility = ["admin", "superuser"]
     color = "#666699"
-    id_type = 'experiment'
 
     def __init__(self):
         pass
@@ -535,7 +523,7 @@ class ScansPerSessionGraph(BarChart):
     def get_data(self, id, p):
         self.id = id
         res = filter.proportion_graphs(p['scans'], 'ID', 'xnat:imagescandata/id', '', ' scans')
-        for e in ['id_type', 'id', 'name', 'color', 'description', 'type']:
+        for e in ['id', 'name', 'color', 'description', 'type']:
             res[e] = getattr(self, e)
         return res
 
@@ -543,7 +531,6 @@ class ScansPerSessionGraph(BarChart):
 class ResourcesPerSessionGraph(StackedBarChart):
     name = 'Resources per session'
     type = 'stacked_bar'
-    id_type = 'experiment'
     description = "Shows numbers of resources per session per project."
     visibility = ["admin"]
     color = ["#33cccc", "#5cd65c", "#ff9900", "#c44dff", "#ff1a1a",
@@ -557,7 +544,7 @@ class ResourcesPerSessionGraph(StackedBarChart):
         self.id = id
         resources = [e for e in p['resources'] if len(e) == 4]
         res = filter.get_nres_per_session(resources)
-        for e in ['name', 'id', 'color', 'description', 'type', 'id_type']:
+        for e in ['name', 'id', 'color', 'description', 'type']:
             res[e] = getattr(self, e)
         return res
 

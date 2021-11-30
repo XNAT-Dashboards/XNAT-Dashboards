@@ -17,26 +17,35 @@ function show_graphs(graphs) {
   $("#graphs").html(html)
 
 
-  function make_drill(drill, id_type, type) {
+  function make_drill(drill) {
+    is_array = Array.isArray(drill);
+    console.log(is_array)
+
+    if (is_array) {
+      item = drill[0];
+    } else {
+      k = Object.keys(drill)[0];
+      item = drill[k][0][0]
+    }
+
+    if (item.split('_')[1][0] == 'E')
+      id_type = 'experiment'
+    else if (item.split('_')[1][0] == 'S')
+      id_type = 'subject'
+    else
+      id_type = 'project'
+
 
     html = ''
     for (i in drill) {
       item = drill[i];
-      if (type == 'stacked_bar') {
-
-        html = html + '<center><b>' + i + '</b></center><br/>'
-
-        for (x in item[0]) {
-          if (id_type == 'project' || id_type == 'subject' || id_type == 'experiment')
-            html += '<center><a href="' + server + '/data/' + id_type + 's/' + item[0][x].split('/')[0] + '?format=html" target="_blank">' + item[0][x] + '</a></center><br/>'
-          else
-            html += '<center>' + item[0][x] + '</center><br/>'
-        }
+      if (is_array) {
+        html += '<center><a href="' + server + '/data/' + id_type + 's/' + item.split('/')[0] + '?format=html" target="_blank">' + item + '</a></center><br/>'
       } else {
-        if (id_type == 'project' || id_type == 'subject' || id_type == 'experiment')
-          html += '<center><a href="' + server + '/data/' + id_type + 's/' + item.split('/')[0] + '?format=html" target="_blank">' + item + '</a></center><br/>'
-        else
-          html += '<center>' + item + '</center><br/>'
+        html = html + '<center><b>' + i + '</b></center><br/>'
+        for (x in item[0]) {
+          html += '<center><a href="' + server + '/data/' + id_type + 's/' + item[0][x].split('/')[0] + '?format=html" target="_blank">' + item[0][x] + '</a></center><br/>'
+        }
       }
     }
     return html;
@@ -47,12 +56,13 @@ function show_graphs(graphs) {
     id = graph[0];
     data = graph[1];
     layout = graph[2];
-    layout['font'] = {family: 'Poppins, sans-serif'}
-    id_type = graph[3];
-    desc = graph[4];
-    name = graph[5];
-    drill = graph[6];
-    type = graph[7];
+    layout['font'] = {
+      family: 'Poppins, sans-serif'
+    }
+    desc = graph[3];
+    name = graph[4];
+    drill = graph[5];
+    type = graph[6];
     Plotly.newPlot('graph_body' + id, data, layout, {
       responsive: true
     });
@@ -64,15 +74,14 @@ function show_graphs(graphs) {
       id = $(data.event.target).closest('div.card-body').attr('id');
       id = parseInt(id.slice('graph_id'.length))
       graph = graphs[id]
-      id_type = graph[3];
-      name = graph[5];
-      drill = graph[6];
-      type = graph[7];
+      name = graph[4];
+      drill = graph[5];
+      type = graph[6];
       $('#drillDownTitle').append(name + ': ' + pn);
 
       if (drill != undefined) {
-        drill = graph[6][pn];
-        $('#modalBodyDrillDown').append(make_drill(drill, id_type, type));
+        drill = graph[5][pn];
+        $('#modalBodyDrillDown').append(make_drill(drill));
       }
     })
 
