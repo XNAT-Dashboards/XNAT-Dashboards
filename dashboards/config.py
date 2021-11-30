@@ -28,5 +28,3 @@ JSON_SORT_KEYS = False
 DASHBOARD_CONFIG_PATH = ''
 
 PICKLE_PATH = ''
-
-BX_PATH = '/home/grg/tmp/bx'

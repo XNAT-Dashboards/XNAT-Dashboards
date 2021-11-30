@@ -54,10 +54,10 @@ def project(project_id):
     p = df.filter_data(p, [project_id])
 
     all_graphs = [g.SessionsPerSubjectGraph, g.ScanQualityGraph,
-              g.ScanTypeGraph, g.ScansPerSessionGraph,
-              g.UsableT1SessionGraph, g.VersionGraph,
-              g.ValidatorGraph, g.ConsistentAcquisitionDateGraph,
-              g.DateDifferenceGraph]
+                  g.ScanTypeGraph, g.ScansPerSessionGraph,
+                  g.UsableT1SessionGraph, g.VersionGraph,
+                  g.ValidatorGraph, g.ConsistentAcquisitionDateGraph,
+                  g.DateDifferenceGraph]
     all_graphs = [v() for v in all_graphs]
     graphs = []
     for i, e in enumerate(all_graphs):
@@ -85,7 +85,7 @@ def project(project_id):
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if session.get('username') is None or session.get('if_logged') is None:
+        if session.get('username') is None:
             return redirect('/login', code=302)
         return f(*args, **kwargs)
     return decorated_function
@@ -95,7 +95,9 @@ def login_required(f):
 @login_required
 def protected(filename):
     import os.path as op
-    return send_from_directory(op.join(app.instance_path, 'protected'), filename)
+    from flask import send_from_directory
+    wd = op.join(op.dirname(dashboards.__file__), 'app', 'protected')
+    return send_from_directory(wd, filename)
 
 
 @app.route('/wiki/', methods=['GET'])
@@ -107,10 +109,16 @@ def wiki():
 
     items = [e() for e in g.__find_all_commands__(dashboards, pattern='Card')]
 
-    card_deco = '<div class="card wiki">{img}<div class="card-body">'\
+    card_deco = '<div class="card wiki"><a name="{name}"></a>{img}<div class="card-body">'\
                 '<h5 class="card-title">{title}</h5>{desc}<br>{links}</div></div>'
 
-    cards = [card_deco.format(**e.to_dict()) for e in items]
+    items = [e.to_dict() for e in items]
+    items = {e['title'] : e for e in items}
+    titles = sorted([k for k, v in items.items()])
+    items = [items[e] for e in titles]
+
+    cards = [card_deco.format(**e) for e in items]
+    toc = ' - '.join(['<a href="#%s">%s</a>' % (e['name'], e['title']) for e in items])
 
     wiki = '<div class="row"> %s </div>' % ' '.join(cards)
 
@@ -118,6 +126,7 @@ def wiki():
             'role': session['role'],
             'projects': dashboards.pickle.get_projects_by_4(p),
             'wiki': wiki,
+            'toc': toc,
             'server': session['server']}
     return render_template('wiki.html', **data)
 

@@ -1,7 +1,7 @@
 {
   "roles": {
     "admin": {
-      "users": ["testadmin", "asif", "mgarcia", "mgarciabbrc", "goperto"],
+      "users": ["testadmin", "asif", "mgarcia", "mgarciabbrc", "goperto", "gregory"],
       "projects": ["*"]
     },
     "superuser": {"users": ["testuser"], "projects": ["*"]},

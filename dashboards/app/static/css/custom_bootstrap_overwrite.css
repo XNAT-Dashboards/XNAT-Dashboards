@@ -1,3 +1,11 @@
+.truncate-text {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 500px;
+    display: block;
+    overflow: hidden
+}
+
 .btn-circle {
   border-radius: 100%;
   width: 40px;

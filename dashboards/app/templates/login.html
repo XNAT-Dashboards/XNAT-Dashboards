@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Dashboards login</title>
+	<title>Dashboards for XNAT</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<script>
@@ -33,9 +33,7 @@
 			<div class="wrap-login100">
 
 				<form method="POST" action="{{ url_for('dashboards.login') }}" class="login100-form validate-form">
-					<span class="login100-form-title">
-						Login to XNAT Dashboards
-                    </span>
+					<h2>Dashboards for XNAT</h2><br>
                     {% if error is defined %}
 					<div class="alert alert-danger" role="alert" id = "success-alert">
                         {{error}}
