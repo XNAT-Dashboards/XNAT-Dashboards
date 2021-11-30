@@ -112,13 +112,13 @@
                         <td><b>Owner(s)</b></td>
                         <td class="text-center">
                           {% for user in project['Owner(s)']%}
-                          {{user}}&nbsp
+                          <span class="badge badge-secondary">{{user}}</span>&nbsp
                           {%endfor%}
                         </td>
                       </tr>
                       <tr>
                         <td><b>Inserted on </b></td>
-                        <td class="text-center">{{project['insert_date']}} <b>by</b> {{project['insert_user']}}</td>
+                        <td class="text-center">{{project['insert_date']}} <b>by</b>   <span class="badge badge-secondary">{{project['insert_user']}}</span></td>
                       </tr>
                       <tr>
                         <td><b>Last workflow</b></td>
@@ -128,7 +128,7 @@
                         <td><b>Collaborators</b></td>
                         <td class="text-center">
                           {% for user in project['Collaborator(s)']%}
-                          {{user}}&nbsp
+                          <span class="badge badge-secondary">{{user}}</span>&nbsp
                           {%endfor%}
                         </td>
                       </tr>
@@ -136,7 +136,7 @@
                         <td><b>Members</b></td>
                         <td class="text-center">
                           {% for user in project['Member(s)']%}
-                          {{user}}&nbsp
+                          <span class="badge badge-secondary">{{user}}</span>&nbsp
                           {% endfor%}
                         </td>
                       </tr>
@@ -144,7 +144,7 @@
                         <td><b>Users</b></td>
                         <td class="text-center">
                           {% for user in project['User(s)']%}
-                          {{user}}&nbsp
+                          <span class="badge badge-secondary">{{user}}</span>&nbsp
                           {%endfor%}
                         </td>
                       </tr>
@@ -152,7 +152,7 @@
                         <td><b>Last access</b></td>
                         <td class="text-center">
                           {% for user in  project['last_accessed']%}
-                          {{user}}&nbsp
+                          <span class="badge badge-secondary">{{user}}</span>&nbsp
                           {% endfor %}
                         </td>
                       </tr>
