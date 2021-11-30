@@ -25,11 +25,12 @@ function show_graphs(graphs) {
       if (type == 'stacked_bar') {
 
         html = html + '<center><b>' + i + '</b></center><br/>'
+
         for (x in item[0]) {
           if (id_type == 'project' || id_type == 'subject' || id_type == 'experiment')
             html += '<center><a href="' + server + '/data/' + id_type + 's/' + item[0][x].split('/')[0] + '?format=html" target="_blank">' + item[0][x] + '</a></center><br/>'
           else
-            html += '<center>' + item[x] + '</center><br/>'
+            html += '<center>' + item[0][x] + '</center><br/>'
         }
       } else {
         if (id_type == 'project' || id_type == 'subject' || id_type == 'experiment')
@@ -69,7 +70,6 @@ function show_graphs(graphs) {
       type = graph[7];
       $('#drillDownTitle').append(name + ': ' + pn);
 
-      console.log(drill);
       if (drill != undefined) {
         drill = graph[6][pn];
         $('#modalBodyDrillDown').append(make_drill(drill, id_type, type));

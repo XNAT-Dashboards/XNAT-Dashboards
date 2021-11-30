@@ -48,7 +48,6 @@ class BarChart():
         g = self.get_data(id, p)
         if g['name'] in ['Dates difference (Acquisition date - Insertion date)',
                          'Scans per session']:
-            print('toto', g['name'])
             if 'count' not in g.keys():
                 raise KeyError("'count' key missing")
             x, y = list(g['count'].keys()), list(g['count'].values())
@@ -417,6 +416,7 @@ class ValidatorGraph(StackedBarChart):
                   " sessions with BBRC validator resource.",
     visibility = ["admin"]
     color = ["#ff9900", "#1abc9c"]
+    id_type = 'experiment'
 
     def __init__(self):
         pass
@@ -432,7 +432,7 @@ class ValidatorGraph(StackedBarChart):
         tests = bbrc.get_tests(data, ['HasUsableT1', 'IsAcquisitionDateConsistent'])
         data = data.join(tests).reset_index()
         res = bbrc.which_sessions_have_validators(data)
-        for e in ['name', 'id', 'color', 'description', 'type']:
+        for e in ['name', 'id', 'color', 'description', 'type', 'id_type']:
             res[e] = getattr(self, e)
         return res
 
@@ -541,8 +541,9 @@ class ScansPerSessionGraph(BarChart):
 
 
 class ResourcesPerSessionGraph(StackedBarChart):
-    name = "Resources per session"
-    type = "stacked_bar"
+    name = 'Resources per session'
+    type = 'stacked_bar'
+    id_type = 'experiment'
     description = "Shows numbers of resources per session per project."
     visibility = ["admin"]
     color = ["#33cccc", "#5cd65c", "#ff9900", "#c44dff", "#ff1a1a",
@@ -556,7 +557,7 @@ class ResourcesPerSessionGraph(StackedBarChart):
         self.id = id
         resources = [e for e in p['resources'] if len(e) == 4]
         res = filter.get_nres_per_session(resources)
-        for e in ['name', 'id', 'color', 'description', 'type']:
+        for e in ['name', 'id', 'color', 'description', 'type', 'id_type']:
             res[e] = getattr(self, e)
         return res
 
