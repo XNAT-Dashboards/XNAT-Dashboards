@@ -28,7 +28,6 @@ class Dictable():
         fp = '/static/images/%s.jpg' % self.__class__.__name__.split('Card')[0].lower()
         img = ''
         fp2 = op.join(op.dirname(dashboards.__file__), 'app', fp[1:])
-        print(fp2)
         if op.isfile(fp2):
             img = '<img class="card-img-top" src="%s" alt="">' % fp
         bx_path = op.join(op.dirname(dashboards.__file__), 'app', 'protected', 'bx')
@@ -37,7 +36,6 @@ class Dictable():
         subcommand = getattr(self, 'subcommand', None)
         if subcommand not in (None, True):
             command += '_' + subcommand
-        print(command)
         files = [op.basename(e) for e in all_bx
                  if op.basename(e).startswith('bx_%s' % command)]
 
