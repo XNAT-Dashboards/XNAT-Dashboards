@@ -64,8 +64,10 @@ def project(project_id):
         if e.name in session['graphs']:
             try:
                 graphs.append(e.get_chart(i, p))
-            except KeyError:
-                print('Skipping ' + e.name)
+            except KeyError as err:
+                print('Skipping %s (%s)' % (e.name, err))
+            except TypeError as err:
+                print('Skipping %s (%s)' % (e.name, err))
 
     # session['excel'] = (tests_list, diff_version)
     stats = dashboards.pickle.get_stats(p)
