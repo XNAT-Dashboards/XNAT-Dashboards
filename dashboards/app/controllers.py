@@ -110,10 +110,10 @@ def wiki():
     items = [e() for e in g.__find_all_commands__(dashboards, pattern='Card')]
 
     card_deco = '<div class="card wiki"><a name="{name}"></a>{img}<div class="card-body">'\
-                '<h5 class="card-title">{title}</h5>{desc}<br>{links}</div></div>'
+                '<h2 class="card-title">{title}</h2>{desc}<br>{links}</div></div>'
 
     items = [e.to_dict() for e in items]
-    items = {e['title'] : e for e in items}
+    items = {e['title']: e for e in items}
     titles = sorted([k for k, v in items.items()])
     items = [items[e] for e in titles]
 
