@@ -47,12 +47,11 @@ class Dictable():
         for f in files:
 
             subc = f.split('_')[2]
-            if subc != b:
+            if (subcommand is True or subcommand is not None) and subc != b:
                 if len(links_subsection) != 0:
                     links_section.append(links_subsection)
-                if subcommand is True or subcommand is not None:
-                    header = '<b>Subcommand <span class="badge badge-info">%s</span></b> :<br/>' % translate.get(subc, subc)
-                    links_subsection = [header]
+                header = '<b>Subcommand <span class="badge badge-info">%s</span></b> :<br/>' % translate.get(subc, subc)
+                links_subsection = [header]
                 b = subc
             links = '<div style="padding:10px; margin-bottom:5px; margin-top:5px; border-left: 4px solid #17a2b8">'
             fn = f.split('.xlsx')[0]
