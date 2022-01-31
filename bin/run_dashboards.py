@@ -30,4 +30,10 @@ if __name__ == "__main__":
 
     config.DASHBOARD_CONFIG_PATH = op.abspath(args.config)
     config.PICKLE_PATH = op.abspath(args.pickle)
-    app.run(host=args.url, port=args.port, debug=args.debug)
+
+    from gevent.pywsgi import WSGIServer
+    http_server = WSGIServer(('', int(args.port)), app)
+    http_server.serve_forever()
+    
+    #from waitress import serve
+    #serve(app, host=args.url, port=args.port)#, debug=args.debug)
