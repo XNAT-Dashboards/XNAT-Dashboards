@@ -116,8 +116,10 @@ def build_test_grid(p):
         return [], [], []
 
     excluded = ['version', 'experiment_id', 'generated']
-    tests = set(df.iloc[0]['archiving_validator']).difference(excluded)
-    tests = sorted(tests)
+    tests = df.iloc[0]['archiving_validator']
+    if isinstance(tests, str):
+        return [[], None, None]
+    tests = sorted(set(tests).difference(excluded))
 
     data = get_tests(df, tests, 'data')
     has_passed = get_tests(df, tests)
