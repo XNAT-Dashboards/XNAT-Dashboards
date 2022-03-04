@@ -24,8 +24,8 @@ class BarChart():
                 raise KeyError("'count' key missing")
             x, y = list(g['count'].keys()), list(g['count'].values())
         else:
-            sd = OrderedDict(sorted({v: k for k, v in g['count'].items()}.items()))
-            x, y = (list(sd.values()), list(sd.keys()))
+            sd = OrderedDict(sorted(g['count'].items(), key=lambda dct: dct[1]))
+            x, y = (list(sd.keys()), list(sd.values()))
 
         data = [{'x': x,
                  'y': y,
@@ -50,8 +50,8 @@ class PieChart():
     def get_chart(self, id, p):
         g = self.get_data(id, p)
 
-        sd = OrderedDict(sorted({v: k for k, v in g['count'].items()}.items()))
-        x, y = (list(sd.values()), list(sd.keys()))
+        sd = OrderedDict(sorted(g['count'].items(), key=lambda dct: dct[1]))
+        x, y = (list(sd.keys()), list(sd.values()))
 
         color = g['color']
         colors = ['#00b33c', '#c299ff', '#660066', '#0033cc', ' #009999',
