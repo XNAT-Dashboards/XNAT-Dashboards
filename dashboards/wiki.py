@@ -95,6 +95,7 @@ class Dictable():
 class ArchivingCard(Dictable):
     title = 'Raw MRI quality control (archiving)'
     command = 'archiving'
+    subcommand = True
 
 
 class ASHSCard(Dictable):
@@ -118,6 +119,7 @@ class BamosCard(Dictable):
 class BasilCard(Dictable):
     title = 'Bayesian Inference for Arterial Spin Labeling MRI'
     command = 'basil'
+    subcommand = True
 
 
 class FreeSurfer6AparcCard(Dictable):
