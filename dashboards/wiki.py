@@ -146,6 +146,12 @@ class FreeSurfer6HippoSfCard(Dictable):
     subcommand = 'hippoSfVolumes'
 
 
+class FreeSurfer7HippoSfCard(Dictable):
+    title = 'Hippocampal subfield volumetry (FreeSurfer v7.1)'
+    command = 'freesurfer7'
+    subcommand = 'hippoSfVolumes'
+
+
 class FreeSurfer7AsegCard(Dictable):
     title = 'Subcortical volumes (FreeSurfer v7.1)'
     command = 'freesurfer7'
