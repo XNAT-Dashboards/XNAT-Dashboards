@@ -182,6 +182,12 @@ class FreeSurfer7BrainstemCard(Dictable):
     subcommand = 'brainstem'
 
 
+class FreeSurfer7JackCard(Dictable):
+    title = 'Cortical AD signature (FreeSurfer v7.1)'
+    command = 'freesurfer7'
+    subcommand = 'jack'
+
+
 class DONSURFCard(Dictable):
     title = 'Diffusion on cortical surface (DONSURF)'
     command = 'donsurf'
