@@ -242,7 +242,7 @@ class PETFDGCard(Dictable):
     title = 'Landau signatures from PET-FDG'
     command = 'fdg'
     subcommand = True
-    desc = """fdg_quantification pipeline steps
+    desc = """<b>FDG quantification pipeline steps</b>
 
             1. Data fetching: given an XNAT PETSession, pulls a PET_FDG_4x5min scan image (NIfTI)
             and a T1_ALFA1 scan image from a closer MRSession from the same subject.
