@@ -19,6 +19,12 @@ class Dictable():
 
     def to_dict(self):
         desc = commands[self.command].__doc__.replace('\n\n', '<br/><br/>')
+        extra_desc = getattr(self, 'desc', '').replace('\n', '<br/>')
+        if extra_desc != '':
+            extra_desc = '<br><br><div style="border: 0.5px #AAAAAA solid; padding:15px; font-size:10px"> %s </div>' % extra_desc
+        url = getattr(commands[self.command], 'url', '')
+        if url != '':
+            url = '<div style="text-align:right;"><a href="%s">🔗 (click for more details)</a></div><br>' % url
         ref = ''
         if 'References' in desc:
             ref = '<br/>References:</br>' + \
@@ -88,6 +94,8 @@ class Dictable():
                   'desc': desc,
                   'name': command,
                   'img': img,
+                  'url': url,
+                  'extra_desc': extra_desc,
                   'links': links_section}
         return kwargs
 
@@ -168,24 +176,60 @@ class FreeSurfer7HypothalCard(Dictable):
     title = 'Hypothalamic subunit segmentation (FreeSurfer v7.2)'
     command = 'freesurfer7'
     subcommand = 'hypothalamus'
+    desc = """<b>Hypothalamic Subunits</b>
+
+            Automated segmentation of the hypothalamus and its associated subunits in T1w
+            scans of ~1mm isotropic resolution using a convolutional neural network. Produces
+            segmentation maps for 5 subregions:
+
+            Anterior-inferior: suprachiasmatic nucleus; supraoptic nucleus (SON)
+            Anterior-superior: preoptic area; paraventricular nucleus (PVN)
+            Posterior: mamillary body (including medial and lateral mamillary nuclei);
+            lateral hypothalamus; tuberomamillary nucleus (TMN)
+            Inferior tubular: infundibular (or arcuate) nucleus; ventromedial nucleus;
+            SON; lateral tubular nucleus; TMN
+            Superior tubular: dorsomedial nucleus; PVN; lateral hypothalamus
+
+
+            <i>Automated segmentation of the hypothalamus and associated subunits in brain MRI.</i>
+            Billot B. et al. (DOI: <a href="https://doi.org/10.1016/j.neuroimage.2020.117287">10.1016/j.neuroimage.2020.117287</a>)"""
 
 
 class FreeSurfer7ThalamicCard(Dictable):
     title = 'Thalamic nuclei segmentation (FreeSurfer v7.2)'
     command = 'freesurfer7'
     subcommand = 'thalamus'
+    desc = """<b>Thalamic Nuclei</b>
+
+            Parcellation of the thalamus into 25 different nuclei, using a probabilistic
+            atlas built with histological data. The parcellation is based on the main T1w
+            scan processed through recon-all.
+
+            <i>A probabilistic atlas of the human thalamic nuclei combining ex vivo MRI and histology.</i>
+            Iglesias J.E. et al. (DOI: <a href="https://doi.org/10.1016/j.neuroimage.2018.08.012">10.1016/j.neuroimage.2018.08.012</a>)"""
 
 
 class FreeSurfer7BrainstemCard(Dictable):
     title = 'Brainstem segmentation (FreeSurfer v7.2)'
     command = 'freesurfer7'
     subcommand = 'brainstem'
+    desc = """<b>Brainstem Substructures</b>
+
+            Automated segmentation of four different brainstem structures from the input T1
+            scan: medulla oblongata, pons, midbrain and superior cerebellar peduncle (SCP).
+
+            <i>Bayesian segmentation of brainstem structures in MRI.</i> Iglesias J.E. et al.
+            (DOI: <a href="https://doi.org/10.1016/j.neuroimage.2015.02.065">10.1016/j.neuroimage.2015.02.065</a>)"""
 
 
 class FreeSurfer7JackCard(Dictable):
     title = 'Cortical AD signature (FreeSurfer v7.1)'
     command = 'freesurfer7'
     subcommand = 'jack'
+    desc = """FreeSurfer version 7.1 is used to determine the thickness of specific
+        regions of interest (ROIs) vulnerable to AD. The Jack's <i>AD signature<i> is calculated as the surface-area
+        weighted average of the individual thickness values of the following ROIs: entorhinal, inferior
+        temporal, middle temporal, and fusiform in both hemispheres."""
 
 
 class DONSURFCard(Dictable):
@@ -198,12 +242,46 @@ class PETFDGCard(Dictable):
     title = 'Landau signatures from PET-FDG'
     command = 'fdg'
     subcommand = True
+    desc = """fdg_quantification pipeline steps
+
+            1. Data fetching: given an XNAT PETSession, pulls a PET_FDG_4x5min scan image (NIfTI)
+            and a T1_ALFA1 scan image from a closer MRSession from the same subject.
+            2. Realignment of all PET image volumes (via SPM12 Realign)
+            3. Averaging of realigned PET images (via FSL), saved as intermediate result file (static_pet.nii.gz)
+            4. Optimized (smoothed) version of the averaged PET (optimized_static_pet.nii)
+            5. Coregistration of averaged PET images and MRI T1w image to ICBM 152 atlas (via SPM12 Coregister)
+            6. Coregistration of resulting PET image to T1 space (via SPM12 Coregister)
+            7. Segmentation of T1 image (via SPM12 NewSegment), outputing the deformation fields and the GM-tissue image
+            8. Normalization of PET, T1 and GM-tissue images (via SPM12 Normalize)
+            9. Compute quantification metrics from the input PET images for different regions of reference
+            (including cortex, resilience signature and Landau metaROIs SUVr values). Also compute regional quantification
+            (cortex SUVr) metrics using AAL and
+            Hammers atlases as references.
+            10. Results uploading into XNAT as FDG_QUANTIFICATION PETSession resource
+            11. Notification: When configured, notify via email the end-user(s)"""
 
 
 class PETFTMCard(Dictable):
     title = 'Centiloid scale from PET-FTM'
     command = 'ftm'
     subcommand = True
+    desc = """<b>Centiloid pipeline steps</b>
+
+            1. Data fetching: given an XNAT PETSession, pulls a PET_Flutemetamol_4x5min scan image (NIfTI)
+            and a T1_ALFA1 scan image from a closer MRSession from the same subject.
+            2. Realignment of all PET image volumes (via SPM12 Realign)
+            3. Averaging of realigned PET images (via FSL), saved as intermediate result file (static_pet.nii.gz)
+            4. Optimized (smoothed) version of the averaged PET (optimized_static_pet.nii)
+            5. Coregistration of averaged PET images and MRI T1w image to ICBM 152 atlas (via SPM12 Coregister)
+            6. Coregistration of resulting PET images to T1 space (via SPM12 Coregister)
+            7. Segmentation of T1 image (via SPM12 NewSegment), outputing the deformation fields and the GM-tissue image
+            8. Normalization of PET, T1 and GM-tissue images (via SPM12 Normalize)
+            9. Compute quantification metrics from the input PET images for different regions of reference
+            (including Centiloid and cortex SUVr values). Also compute atlas-based regional quantification
+            (cortex SUVr) metrics using AAL and
+            Hammers atlases as references.
+            10. Results uploading into XNAT as FTM_QUANTIFICATION PETSession resource
+            11. Notification: When configured, notify via email the end-user(s)"""
 
 
 class ScandateCard(Dictable):
@@ -215,3 +293,7 @@ class SignatureCard(Dictable):
     title = 'Cortical AD signature'
     command = 'signature'
     subcommand = True
+    desc = """FreeSurfer version 6.0 is used to determine the thickness of specific
+            regions of interest (ROIs) vulnerable to AD. The Jack's <i>AD signature</i> is calculated as the surface-area
+            weighted average of the individual thickness values of the following ROIs: entorhinal, inferior
+            temporal, middle temporal, and fusiform in both hemispheres."""
