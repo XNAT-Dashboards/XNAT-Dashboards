@@ -226,10 +226,10 @@ class FreeSurfer7JackCard(Dictable):
     title = 'Cortical AD signature (FreeSurfer v7.1)'
     command = 'freesurfer7'
     subcommand = 'jack'
-    desc = """FreeSurfer version 7.1 is used to determine the thickness of specific
-        regions of interest (ROIs) vulnerable to AD. The Jack's <i>AD signature<i> is calculated as the surface-area
-        weighted average of the individual thickness values of the following ROIs: entorhinal, inferior
-        temporal, middle temporal, and fusiform in both hemispheres."""
+    desc = """FreeSurfer version 7.1 is used to determine the thickness of specific regions of interest (ROIs) 
+            vulnerable to AD. The Jack's <i>AD signature</i> is calculated as the surface-area weighted average 
+            of the individual thickness values of the following ROIs: entorhinal, inferior temporal, 
+            middle temporal and fusiform in both hemispheres."""
 
 
 class DONSURFCard(Dictable):
@@ -293,7 +293,7 @@ class SignatureCard(Dictable):
     title = 'Cortical AD signature'
     command = 'signature'
     subcommand = True
-    desc = """FreeSurfer version 6.0 is used to determine the thickness of specific
-            regions of interest (ROIs) vulnerable to AD. The Jack's <i>AD signature</i> is calculated as the surface-area
-            weighted average of the individual thickness values of the following ROIs: entorhinal, inferior
-            temporal, middle temporal, and fusiform in both hemispheres."""
+    desc = """FreeSurfer version 6.0 is used to determine the thickness of specific regions of interest (ROIs) 
+            vulnerable to AD. The Jack's <i>AD signature</i> is calculated as the surface-area weighted average 
+            of the individual thickness values of the following ROIs: entorhinal, inferior temporal, 
+            middle temporal and fusiform in both hemispheres."""
