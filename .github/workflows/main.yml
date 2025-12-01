@@ -6,9 +6,9 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: [ master ]
+    branches: [ master, wiki ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, wiki ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -23,15 +23,14 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - run: sudo apt-get update
       - run: pip install -r requirements-dev.txt
       - run: python dashboards/tests/fetch_config.py https://devxnat.barcelonabeta.org --xnat_user $XNAT_USER --xnat_password $XNAT_PASSWORD
         env:
           XNAT_USER: ${{ secrets.XNAT_USER }}
           XNAT_PASSWORD: ${{ secrets.XNAT_PASSWORD }}
-      - run: nosetests dashboards/tests --nocapture --nologcapture --with-coverage --cover-erase --cover-inclusive --cover-package .
+      - run: pytest
         env:
           CI_TEST: 0
           PYTHONPATH: $PYTHONPATH:$(pwd)
