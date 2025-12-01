@@ -37,7 +37,7 @@ def test_001_pickle_save():  # should be run first
 
 def test_002_pickle_project_data():
 
-    c = pyxnat.Interface(server='https://central.xnat.org', anonymous=True)
+    c = pyxnat.Interface(server='https://www.nitrc.org/ir', anonymous=True)
     projects = pk.get_projects(c)
 
     p = projects.pop()
@@ -53,7 +53,7 @@ def test_002_pickle_project_data():
 
 def test_003_pickle_subject_data():
 
-    c = pyxnat.Interface(server='https://central.xnat.org', anonymous=True)
+    c = pyxnat.Interface(server='https://www.nitrc.org/ir', anonymous=True)
     subjects = pk.get_subjects(c)
 
     s = subjects.pop()
@@ -63,7 +63,7 @@ def test_003_pickle_subject_data():
 
 def test_004_pickle_experiment_data():
 
-    c = pyxnat.Interface(server='https://central.xnat.org', anonymous=True)
+    c = pyxnat.Interface(server='https://www.nitrc.org/ir', anonymous=True)
     experiments = pk.get_experiments(c)
 
     e = experiments.pop()
@@ -74,7 +74,7 @@ def test_004_pickle_experiment_data():
 
 def test_005_pickle_scan_data():
 
-    c = pyxnat.Interface(server='https://central.xnat.org', anonymous=True)
+    c = pyxnat.Interface(server='https://www.nitrc.org/ir', anonymous=True)
     scans = pk.get_scans(c)
 
     s = scans.pop()
@@ -86,7 +86,7 @@ def test_005_pickle_scan_data():
 
 def test_006_pickle_resource_data():
 
-    c = pyxnat.Interface(server='https://central.xnat.org', anonymous=True)
+    c = pyxnat.Interface(server='https://www.nitrc.org/ir', anonymous=True)
     resources = pk.get_resources(c)
 
     r = resources.pop()
