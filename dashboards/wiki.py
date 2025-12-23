@@ -51,8 +51,10 @@ class Dictable():
         links_subsection = []
         b = ''
         for f in files:
-
-            subc = f.split('_')[2]
+            if command == 'spm12' and 't1t2' in f:
+                subc = '_'.join(files[-1].split('_')[2:4])
+            else:
+                subc = f.split('_')[2]
             if (subcommand is True or subcommand is not None) and subc != b:
                 if len(links_subsection) != 0:
                     links_section.append(links_subsection)
@@ -72,7 +74,10 @@ class Dictable():
 
             ds = '_'.join(f.split('_')[2:-2])
             if subcommand is True or subcommand is not None:
-                ds = '_'.join(f.split('_')[3:-2])
+                if command == 'spm12' and 't1t2' in f:
+                    ds = '_'.join(f.split('_')[4:-2])
+                else:
+                    ds = '_'.join(f.split('_')[3:-2])
 
             links += 'Dataset: <span class="badge badge-dark">%s</span><br>' % ds
             links += '# subjects: <b>%s</b> <br/>' % str(n_subjects)
@@ -309,3 +314,9 @@ class PymentCard(Dictable):
     subcommand = True
     desc = """Automated brain-age prediction from minimally preprocessed T1-weighted MRI data using pretrained 
             deep learning models from the <a href="https://github.com/estenhl/pyment-public">pyment-public</a> project"""
+
+
+class SPM12Card(Dictable):
+    title = 'Structural Volumes — T1 & T1/T2 Segmentation (SPM12)'
+    command = 'spm12'
+    subcommand = True
