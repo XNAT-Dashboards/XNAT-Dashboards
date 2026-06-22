@@ -294,8 +294,8 @@ class LcmodelCard(Dictable):
 
 
 class CenTauRZCard(Dictable):
-    title = 'Tau-PET quantification (CenTauRz)'
-    command = 'tau'
+    title = 'Standardized Tau-PET quantification (CenTauRz)'
+    command = 'centaur'
     subcommand = True
     desc = """Dockerized SPM12 implementation of the CenTauR method for tau-PET quantification, as defined by the 
             GAAIN <a href="https://www.gaain.org/centaur-project">CenTauR project</a>. 
@@ -309,3 +309,15 @@ class PymentCard(Dictable):
     subcommand = True
     desc = """Automated brain-age prediction from minimally preprocessed T1-weighted MRI data using pretrained 
             deep learning models from the <a href="https://github.com/estenhl/pyment-public">pyment-public</a> project"""
+    
+
+class PETTAUCard(Dictable):
+    title = 'Tau-PET quantification'
+    command = 'tau'
+    subcommand = True
+
+
+class PetPreprocessingCard(Dictable):
+    title = 'PET preprocessing'
+    command = 'petpreprocessing'
+    subcommand = True
